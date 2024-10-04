@@ -7,3 +7,4 @@ node_modules/
 playwright.config.ts
 package-lock.json
 /tests/fixtures/test-flags.json
+.env
