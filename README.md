@@ -83,6 +83,7 @@ By integrating these technologies, this testing suite provides a robust framewor
 
    ```bash
    cp .env.example .env
+   cp playwright.config.example.ts playwright.config.ts
    ```
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
