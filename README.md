@@ -98,9 +98,11 @@ Here's an example of how to write a test:
 
 ```javascript
 /**
- * @given I am on the Magento 2 homepage
- * @when I search for "Example Product"
- * @then I should see "Example Product" in the search results
+ * @feature Magento 2 Product Search
+ *   @scenario User searches for a product on the Magento 2 homepage
+ *     @given I am on the Magento 2 homepage
+ *     @when I search for "Example Product"
+ *     @then I should see "Example Product" in the search results
  */
 test('User can search for a product', async ({ page }) => {
   // Test implementation using Playwright
