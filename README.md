@@ -49,6 +49,15 @@ By integrating these technologies, this testing suite provides a robust framewor
 - **Collaborative testing**: enable collaboration between technical and non-technical team members.
 - **Extensible architecture**: easily extend and customize to fit your project's needs.
 
+## Folder structure for fixtures
+Organizing your fixture folder structure into ``before, during, and verify`` creates a clear chronological flow for your tests. This approach enhances readability and maintains a structured separation of concerns:
+
+- ``before``: contains setup data like slugs to prepare the test environment.
+- ``during``: holds selectors and input values needed during the test execution.
+- ``verify``: includes expected results or assertions to validate test outcomes.
+
+By naming the folders this way, they naturally sort in the desired order, making the test workflow intuitive and easy to follow.
+
 ## Getting Started
 
 ### Prerequisites
