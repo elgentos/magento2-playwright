@@ -1,0 +1,17 @@
+{
+  "name": "magento2-bdd-e2e-testing-suite",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.47.2",
+    "@types/node": "^22.7.4"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
+}
