@@ -1,0 +1,23 @@
+{
+    "newAccountFirstName": "John",
+    "newAccountLastName": "Doe",
+    "newAccountEmailHandle": "test-user",
+    "newAccountEmailHost": "gmail.com",
+    "newAccountPassword": "SecurePassword123",
+    "existingAccountEmail": "test-user40618@gmail.com",
+    "existingAccountPassword": "SecurePassword123",
+    "existingAccountChangedPassword": "SecurePassword321",
+    "newAddressCompany": "ACME Company",
+    "newAddressTelephoneNumber": "0600000000",
+    "newAddressStreetAddress": "Teststraat 1",
+    "newAddressZipCode": "1234AA",
+    "newAddressCityName": "Testdam",
+    "newAddressProvinceValue": "1",
+    "newChangedAddressFirstName": "Jane",
+    "newChangedAddressLastName": "Dont",
+    "newChangedAddressCompany": "Disney Company",
+    "newChangedAddressTelephoneNumber": "0612345678",
+    "newChangedAddressStreetAddress": "Straat Der Testen 100",
+    "newChangedAddressZipCode": "4321 BB",
+    "newChangedAddressCityName": "Testdorp"
+}

@@ -1,0 +1,13 @@
+{
+    "testForPageErrors": true,
+    "account": {
+        "testAccountCreation": true,
+        "testAccountLogin": true,
+        "testAccountPasswordChange": true,
+        "testAccountPageTitles": 
+        {
+            "all": true,
+            "ProductReviewsTest": false
+        }
+    }
+}
