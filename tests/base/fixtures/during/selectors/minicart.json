@@ -1,0 +1,5 @@
+{
+    "miniCartIconSelector": "#menu-cart-icon",
+    "miniCartDrawerTitleSelector": "#cart-drawer-title",
+    "miniCartCheckoutButtonSelector": "a.btn.btn-primary[href$='/checkout/']"
+}
