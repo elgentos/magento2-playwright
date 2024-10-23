@@ -12,7 +12,7 @@
     "accountEditSlug": "/customer/account/edit/",
     "afterAccountCreationSlug": "/customer/account/",
     "afterLoginSlug": "/customer/account/",
-    "afterLogoutSlug": "/customer/account/login/",
+    "afterLogoutSlug": "/customer/account/logoutSuccess/",
     "changePasswordSlug": "/customer/account/edit/changepass/",
     "accountChangeInformationSlug": "/customer/account/edit/",
     "accountAddressBookSlug": "/customer/address/",
