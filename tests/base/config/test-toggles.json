@@ -11,6 +11,7 @@
         }
     },
     "minicart": {
-        "testCheckoutButton": true
+        "testCheckoutButton": true,
+        "testCartLink": true
     }
 }
