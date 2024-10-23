@@ -9,5 +9,8 @@
             "all": true,
             "ProductReviewsTest": false
         }
+    },
+    "minicart": {
+        "testCheckoutButton": true
     }
 }
