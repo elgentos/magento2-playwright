@@ -2,5 +2,7 @@
     "miniCartIconSelector": "#menu-cart-icon",
     "miniCartDrawerTitleSelector": "#cart-drawer-title",
     "miniCartCheckoutButtonSelector": "a.btn.btn-primary[href$='/checkout/']",
-    "miniCartCartLinkSelector": "a.underline[href$='/checkout/cart/']"
+    "miniCartCartLinkSelector": "a.underline[href$='/checkout/cart/']",
+    "miniCartQuantityButtonSelector": "a[href*='checkout/cart/configure/']",
+    "miniCartQuantitySelector": "span[x-html='item.qty']"
 }
