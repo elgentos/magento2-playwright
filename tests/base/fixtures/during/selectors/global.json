@@ -1,3 +1,4 @@
 {
-    "mainColumn": ".column.main"
+    "mainColumn": ".column.main",
+    "successMessages": ".message.success"
 }

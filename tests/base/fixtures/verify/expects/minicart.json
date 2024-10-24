@@ -1,3 +1,4 @@
 {
-    "productQuantity": "2"
+    "productQuantity": "2",
+    "productDeletedFromCartNotificationText": "You removed the item."
 }
