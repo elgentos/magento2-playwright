@@ -13,6 +13,7 @@
     "minicart": {
         "testMiniCartCheckoutButton": true,
         "testMiniCartLink": true,
-        "testMiniCartQuantity": true
+        "testMiniCartQuantity": true,
+        "testMiniCartDeletion": true
     }
 }
