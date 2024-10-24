@@ -23,5 +23,6 @@
     "accountSavedPaymentMethodsSlug": "vault/cards/listaction/",
     "accountReviewsSlug": "/review/customer/",
     "accountNewsletterSubscriptionsSlug": "/newsletter/manage/",
-    "contactSlug": "/contact/"
+    "contactSlug": "/contact/",
+    "productQuantityChangeSlug": "/checkout/cart/configure/id/"
 }
