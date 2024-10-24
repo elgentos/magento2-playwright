@@ -1,6 +1,7 @@
 import { test, expect, selectors } from '@playwright/test';
 import { PageTester } from './utils/PageTester';
 import { Account } from './utils/Account';
+import dotenv from 'dotenv';
 
 import toggle from './config/test-toggles.json';
 import slugs from './fixtures/before/slugs.json';
@@ -11,21 +12,24 @@ import accountExpected from './fixtures/verify/expects/account.json';
 
 test.describe('Test user flow', () => {
 
+    const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+    const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    const existingAccountChangedPassword = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+
     if(toggle.account.testAccountCreation) {
         test('Create an account', async ({ page }) => {
             const randomNumber = Math.floor(Math.random() * 10000000);
             const emailHandle = accountValue.newAccountEmailHandle;
             const emailHost = accountValue.newAccountEmailHost;
             const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
-            const newAccountPassword = accountValue.newAccountPassword;
 
             await page.goto(slugs.accountCreationSlug);
 
             await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
             await page.fill(accountSelector.registrationLastNameSelector, accountValue.newAccountLastName);
             await page.fill(accountSelector.registrationEmailAddressSelector, uniqueEmail);
-            await page.fill(accountSelector.registrationPasswordSelector, newAccountPassword);
-            await page.fill(accountSelector.registrationConfirmPasswordSelector, newAccountPassword);
+            await page.fill(accountSelector.registrationPasswordSelector, existingAccountPassword);
+            await page.fill(accountSelector.registrationConfirmPasswordSelector, existingAccountPassword);
 
             await page.click(accountSelector.registrationCreateAccountButtonSelector);
 
@@ -39,19 +43,17 @@ test.describe('Test user flow', () => {
     if(toggle.account.testAccountLogin) {
         test('Login with an account', async ({ page }) => {
             const account = new Account(page);
-            await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
+            await account.login(existingAccountEmail, existingAccountPassword);
 
             const accountPageTester = new PageTester(page, page.url());
             await accountPageTester.testPage();
-
-            const existingAccountEmail = accountValue.existingAccountEmail;
             await expect(page.locator(`text=${existingAccountEmail}`)).toBeVisible();
         });
     }
 
     test('Add new address on account', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
+        await account.login(existingAccountEmail, existingAccountPassword);
 
         await page.goto(slugs.accountNewAddressSlug);
         await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
@@ -72,11 +74,9 @@ test.describe('Test user flow', () => {
 
     test('Edit address on account', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
-        await page.waitForTimeout(2000); // Do we need this?
+        await account.login(existingAccountEmail, existingAccountPassword)
 
         await page.goto(slugs.accountAddressBookSlug);
-
         await page.locator(accountSelector.accountEditAddressButtons).first().click();
         await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newChangedAddressFirstName);
         await page.fill(accountSelector.registrationLastNameSelector, accountValue.newChangedAddressLastName);
@@ -84,7 +84,6 @@ test.describe('Test user flow', () => {
         await page.fill(accountSelector.accountStreetAddressSelector, accountValue.newAddressStreetAddress);
         await page.fill(accountSelector.accountZipSelector, accountValue.newAddressZipCode);
         await page.fill(accountSelector.accountCitySelector, accountValue.newAddressCityName);
-
         await page.click(accountSelector.accountAddressSaveButtonSelector);
 
         await expect(page.locator(`text=${accountExpected.accountAddressChangedNotificationText}`)).toBeVisible();
@@ -95,20 +94,18 @@ test.describe('Test user flow', () => {
 
     test('Subscribe and unsubscribe to newsletter', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
+        await account.login(existingAccountEmail, existingAccountPassword);
 
         await page.goto(slugs.accountNewsletterSubscriptionsSlug);
 
         await page.click(accountSelector.subscriptionCheckBoxSelector);
         await page.click(accountSelector.accountSaveButtonSelector);
-        await page.waitForTimeout(2000);
         await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
 
         await page.goto(slugs.accountNewsletterSubscriptionsSlug);
 
         await page.click(accountSelector.subscriptionCheckBoxSelector);
         await page.click(accountSelector.accountSaveButtonSelector);
-        await page.waitForTimeout(2000);
         await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
 
         const accountPageTester = new PageTester(page, page.url());
@@ -118,7 +115,7 @@ test.describe('Test user flow', () => {
     if(toggle.account.testAccountPageTitles.all) {
         test('Test page titles and meta titles', async ({ page }) => {
             const account = new Account(page);
-            await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
+            await account.login(existingAccountEmail, existingAccountPassword);
         
             const accountPageTester = new PageTester(page, page.url());
             await accountPageTester.testPage();
@@ -193,8 +190,7 @@ test.describe('Test user flow', () => {
 
     test('Update firstname and lastname on account', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
-        await page.waitForTimeout(2000); // Do we need this?
+        await account.login(existingAccountEmail, existingAccountPassword);
 
         await page.goto(slugs.accountEditSlug);
         await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountLastName);
@@ -209,11 +205,10 @@ test.describe('Test user flow', () => {
 
     test('Delete address on account', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
+        await account.login(existingAccountEmail, existingAccountPassword);
         page.on('dialog', async (dialog) => {
             if (dialog.type() === 'confirm') {
-                console.log(dialog.message());  // Optional: Log the dialog message
-                await dialog.accept();          // Click the "OK" button (confirm)
+                await dialog.accept();
             }
         });
 
@@ -228,15 +223,7 @@ test.describe('Test user flow', () => {
     });
 
     if(toggle.account.testAccountPasswordChange) {
-        test('Change password for account', async ({ page }) => {
-            const account = new Account(page);
-        
-            // Login to account
-            const login = async (email: string, password: string) => {
-                await account.login(email, password);
-                await page.waitForTimeout(2000);
-            };
-        
+        test('Change password for account', async ({ page }) => {      
             // Change password
             const changePassword = async (currentPassword: string, newPassword: string) => {
                 await page.goto(slugs.changePasswordSlug);
@@ -249,14 +236,13 @@ test.describe('Test user flow', () => {
             };
         
             // Initial login and password change
-            await login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
-            await changePassword(accountValue.existingAccountPassword, accountValue.newAccountPassword);
+            const account = new Account(page);
+            await account.login(existingAccountEmail, existingAccountChangedPassword);
+            await changePassword(existingAccountPassword, existingAccountChangedPassword);
         
             // Verify login with new password
-            await login(accountValue.existingAccountEmail, accountValue.newAccountPassword);
-        
-            // Revert password change
-            await changePassword(accountValue.newAccountPassword, accountValue.existingAccountPassword);
+            await account.login(existingAccountEmail, existingAccountChangedPassword);
+            await changePassword(existingAccountChangedPassword, existingAccountPassword);
         
             // Page test
             const accountPageTester = new PageTester(page, page.url());
@@ -266,10 +252,8 @@ test.describe('Test user flow', () => {
   
     test('Logout with an account', async ({ page }) => {
         const account = new Account(page);
-        await account.login(accountValue.existingAccountEmail, accountValue.existingAccountPassword);
-        await page.waitForTimeout(2000); // Optional, depending on your needs
+        await account.login(existingAccountEmail, existingAccountPassword);
 
-        /* Test logout successful page for page errors */
         await account.logout();
         const accountPageTester = new PageTester(page, page.url()) 
         await accountPageTester.testPage();      
