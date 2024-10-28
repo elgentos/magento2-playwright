@@ -1,7 +1,36 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from "node:fs";
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+
+function getTestFiles(baseDir: string, customDir: string): string[] {
+  const baseFiles = new Set(fs.readdirSync(baseDir).filter(file => file.endsWith('.spec.ts')));
+  const customFiles = fs.readdirSync(customDir).filter(file => file.endsWith('.spec.ts'));
+  const testFiles = new Set<string>();
+
+  // Get base files that have an override in custom
+  for (const file of baseFiles) {
+    const baseFilePath = path.join(baseDir, file);
+    const customFilePath = path.join(customDir, file);
+
+    testFiles.add(fs.existsSync(customFilePath) ? customFilePath : baseFilePath);
+  }
+
+  // Add custom tests that aren't in base
+  for (const file of customFiles) {
+    if (!baseFiles.has(file)) {
+      testFiles.add(path.join(customDir, file));
+    }
+  }
+
+  return Array.from(testFiles);
+}
+
+const testFiles = getTestFiles(
+  path.join(__dirname, 'tests', 'base'),
+  path.join(__dirname, 'tests', 'custom'),
+);
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -33,16 +62,19 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testMatch: testFiles,
       use: { ...devices['Desktop Chrome'] },
     },
 
     {
       name: 'firefox',
+      testMatch: testFiles,
       use: { ...devices['Desktop Firefox'] },
     },
 
     {
       name: 'webkit',
+      testMatch: testFiles,
       use: { ...devices['Desktop Safari'] },
     },
 

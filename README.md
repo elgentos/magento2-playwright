@@ -93,7 +93,7 @@ By naming the folders this way, they naturally sort in the desired order, making
    ```bash
    cp .env.example .env
    cp playwright.config.example.ts playwright.config.ts
-   cp tests/config/test-toggles.example.json tests/config/test-toggles.json 
+   cp tests/config/test-toggles.example.json tests/config/test-toggles.json
    ```
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
@@ -134,6 +134,17 @@ You can also run a specific test file:
 ```bash
 npx playwright test tests/example.test.js
 ```
+
+### Custom tests
+
+The Playwright installation contains a number of tests that work with a default
+Magento 2 webshop with Hyvä. However, your own webshop might not have the exact
+same structure. For that reason you can override default tests in the `custom`
+folder. Tests that exist in both `base` and `custom` will use the `custom` version
+of the file.
+
+Files that exist only in `base` will use that test and if a file only exists in
+`custom` that file will be used.
 
 ## Examples
 
