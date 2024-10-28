@@ -20,7 +20,7 @@ export class Account {
     }
 
     async logout() {
-        await this.page.locator(accountSelector.accountMenuItemsSelector).nth(accountSelector.logoutMenuItemPosition).click();
+        await this.page.locator(`.sidebar a[href*="${slugs.logoutSlug}"]`).click();
         await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
     }
 }
