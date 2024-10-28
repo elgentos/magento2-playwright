@@ -1,7 +1,7 @@
 {
-    "contactName": "John Doe",
-    "contactEmailHandle": "test-user",
-    "contactEmailHost": "gmail.com",
-    "contactTelephoneNumber": "0600000000",
-    "contactComment": "Is this my question?"
+  "contactName": "John Doe",
+  "contactEmailHandle": "test-user",
+  "contactEmailHost": "gmail.com",
+  "contactTelephoneNumber": "0600000000",
+  "contactComment": "Is this my question?"
 }

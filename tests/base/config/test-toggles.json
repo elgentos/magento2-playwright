@@ -1,19 +1,18 @@
 {
-    "testForPageErrors": false,
-    "account": {
-        "testAccountCreation": false,
-        "testAccountLogin": true,
-        "testAccountPasswordChange": true,
-        "testAccountPageTitles": 
-        {
-            "all": true,
-            "ProductReviewsTest": false
-        }
-    },
-    "minicart": {
-        "testMiniCartCheckoutButton": true,
-        "testMiniCartLink": true,
-        "testMiniCartQuantity": true,
-        "testMiniCartDeletion": true
+  "testForPageErrors": false,
+  "account": {
+    "testAccountCreation": false,
+    "testAccountLogin": true,
+    "testAccountPasswordChange": true,
+    "testAccountPageTitles": {
+      "all": true,
+      "ProductReviewsTest": false
     }
+  },
+  "minicart": {
+    "testMiniCartCheckoutButton": true,
+    "testMiniCartLink": true,
+    "testMiniCartQuantity": true,
+    "testMiniCartDeletion": true
+  }
 }
