@@ -1,9 +1,9 @@
 {
-    "miniCartIconSelector": "#menu-cart-icon",
-    "miniCartDrawerTitleSelector": "#cart-drawer-title",
-    "miniCartCheckoutButtonSelector": "a.btn.btn-primary[href$='/checkout/']",
-    "miniCartCartLinkSelector": "a.underline[href$='/checkout/cart/']",
-    "miniCartQuantityButtonSelector": "a[href*='checkout/cart/configure/']",
-    "miniCartDeleteProductButtonSelector": "button[aria-label^='Remove product']",
-    "miniCartQuantitySelector": "span[x-html='item.qty']"
+  "miniCartIconSelector": "#menu-cart-icon",
+  "miniCartDrawerTitleSelector": "#cart-drawer-title",
+  "miniCartCheckoutButtonSelector": "a.btn.btn-primary[href$='/checkout/']",
+  "miniCartCartLinkSelector": "a.underline[href$='/checkout/cart/']",
+  "miniCartQuantityButtonSelector": "a[href*='checkout/cart/configure/']",
+  "miniCartDeleteProductButtonSelector": "button[aria-label^='Remove product']",
+  "miniCartQuantitySelector": "span[x-html='item.qty']"
 }

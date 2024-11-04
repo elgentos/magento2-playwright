@@ -1,4 +1,4 @@
 {
-    "mainColumn": ".column.main",
-    "successMessages": ".message.success"
+  "mainColumn": ".column.main",
+  "successMessages": ".message.success"
 }
