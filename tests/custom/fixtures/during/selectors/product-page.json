@@ -1,4 +1,0 @@
-{
-    "addToCartButtonSelector": "#product-addtocart-button",
-    "productQuantityInputSelector": "input[name='qty'][type='number']"
-}

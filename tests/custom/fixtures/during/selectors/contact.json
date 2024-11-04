@@ -1,7 +1,0 @@
-{
-    "contactNameSelector": ".form.contact #name",
-    "contactEmailSelector": ".form.contact #email",
-    "contactTelephoneSelector": ".form.contact #telephone",
-    "contactCommentSelector": ".form.contact #comment",
-    "contactButtonSelectorName": ".form.contact button[type='submit']"
-}
