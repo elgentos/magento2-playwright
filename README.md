@@ -93,7 +93,7 @@ By naming the folders this way, they naturally sort in the desired order, making
    ```bash
    cp .env.example .env
    cp playwright.config.example.ts playwright.config.ts
-   cp tests/config/test-toggles.example.json tests/config/test-toggles.json 
+   cp tests/base/test-toggles.example.json tests/base/test-toggles.json 
    ```
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
