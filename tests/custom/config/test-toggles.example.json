@@ -4,13 +4,17 @@
         "testAccountCreation": false,
         "testAccountLogin": true,
         "testAccountPasswordChange": true,
-        "testAccountPageTitles": 
+        "testAccountPageTitles":
         {
             "all": true,
             "ProductReviewsTest": false
         }
     },
     "minicart": {
-        "testCheckoutButton": true
+        "testCheckoutButton": true,
+        "testMiniCartCheckoutButton": true,
+        "testMiniCartLink": true,
+        "testMiniCartQuantity": true,
+        "testMiniCartDeletion": true
     }
 }
