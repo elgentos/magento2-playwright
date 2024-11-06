@@ -10,13 +10,7 @@ import globalSelector from './fixtures/during/selectors/global.json';
 import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
 
-/**
- * @feature Magento 2 Full User Flow
- *   The user flow contains a variety of actions a user should be able to perform with their account.
- *   This includes actions like creating an account, updating the address connected to the account, and logging out.
- *   For more details, see the Gherkin comments above each test.
- */
-test.describe('Test user flow', () => {
+test.describe('Test user account actions', () => {
   const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
   const existingAccountChangedPassword = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
@@ -61,8 +55,7 @@ test.describe('Test user flow', () => {
    *    @when I go to the login page
    *    @and I fill in the required information
    *    @and I click the 'Sign in' button
-   *    @then I should be logged in
-   *    @and I should see a confirmation message with my e-mail in this text.
+   *    @then I should see a confirmation message with my e-mail in this text.
    */
   if (toggle.account.testAccountLogin) {
     test('Login with an account', async ({page}) => {
@@ -82,7 +75,7 @@ test.describe('Test user flow', () => {
    *    @when I go to the page where I can update my address
    *    @and I fill in the required information
    *    @and I click the 'Save' button
-   *    @then My address should be updated
+   *    @then My address should be added
    *    @and I should see a notification my address has been updated.
    */
   test('Add new address on account', async ({page}) => {
@@ -138,13 +131,19 @@ test.describe('Test user flow', () => {
 
   /**
    * @feature Magento 2 (Un)subscribe to newsletter
-   *  @scenario User subscribes or unsubscribes from a newsletter
+   *  @scenario User subscribes from a newsletter
    *    @given I am logged in
    *    @when I go to the page where I can update my newsletter subscription settings
-   *    @and I update my subscription settings
+   *    @and I click the checkbox to subscribe
    *    @and I click the 'Save' button
-   *    @then My settings should be updated
-   *    @and I should see a notification explaining how my subscription settings have been updated.
+   *    @then I should see a notification that I am now subscribed.
+   *
+   *   @scenario User unsubscribes from a newsletter
+   *    @given I am logged in
+   *    @when I go to the page where I can update my newsletter subscription settings
+   *    @and I click the checkbox to unsubscribe
+   *    @and I click the 'Save' button
+   *    @then I should see a notification that I am now unsubscribed.
    */
   test('Subscribe and unsubscribe to newsletter', async ({page}) => {
     const account = new Account(page);
@@ -254,7 +253,7 @@ test.describe('Test user flow', () => {
    * @feature Magento 2 Update First Name and Last Name
    *  @scenario User updates their name details
    *    @given I am logged in
-   *    @when I navigate to the page where I can edit my first name and last name
+   *    @when I navigate to the page where I can edit my first name and last name, or only my first name
    *    @and I update the fields I wish to update (both fields)
    *    @and I click the 'Save' button
    *    @then My updated information should be saved
@@ -283,11 +282,10 @@ test.describe('Test user flow', () => {
    * @feature Magento 2 Delete Address
    *  @scenario User removes their address
    *    @given I am logged in
-   *    @when I navigate to the page where I can edit my address
-   *    @and I update the fields I wish to update (both fields)
-   *    @and I click the 'Save' button
-   *    @then My updated information should be saved
-   *    @and I should see a notification that my details have been updated.
+   *    @when I navigate to the page where I can delete my address
+   *    @and I click the trash button for the address I want to delete
+   *    @and I click the confirmation button
+   *    @then the specified address should be removed from the overview.
    */
   test('Delete address on account', async ({page}) => {
     const account = new Account(page);
