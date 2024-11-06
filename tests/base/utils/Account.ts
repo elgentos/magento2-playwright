@@ -9,7 +9,6 @@ export class Account {
     this.page = page;
   }
 
-  // Log in flow
   async login(email: string, password: string) {
     await this.page.goto(slugs.loginSlug);
 
@@ -20,7 +19,6 @@ export class Account {
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLoginSlug}.*`));
   }
 
-  // Log out flow
   async logout() {
     await this.page.locator(accountSelector.accountMenuItemsSelector).nth(accountSelector.logoutMenuItemPosition).click();
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
