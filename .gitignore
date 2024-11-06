@@ -6,5 +6,6 @@ node_modules/
 /playwright/.cache/
 playwright.config.ts
 package-lock.json
-/tests/config/test-toggles.json
+/tests/base/config/test-toggles.json
+/tests/custom/config/test-toggles.json
 .env
