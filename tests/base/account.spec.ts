@@ -35,7 +35,7 @@ test.describe('Test user flow', () => {
       const uniqueSuccessfulAccountCreationNotificationText = accountExpected.uniqueSuccessfulAccountCreationNotificationText;
       await expect(page.locator(`text=${uniqueSuccessfulAccountCreationNotificationText}`)).toBeVisible();
 
-      console.log(`Account created with credentials: email address "${uniqueEmail}" and password "${newAccountPassword}"`);
+      console.log(`Account created with credentials: email address "${uniqueEmail}" and password "${existingAccountPassword}"`);
     });
   }
 
@@ -187,7 +187,7 @@ test.describe('Test user flow', () => {
     });
   }
 
-  test('Update firstname and lastname on account', async ({page}) => {
+  test('Update firstname and lastname on account, check combinations', async ({page}) => {
     const account = new Account(page);
     await account.login(existingAccountEmail, existingAccountPassword);
 
@@ -197,7 +197,11 @@ test.describe('Test user flow', () => {
     await page.click(accountSelector.accountSaveButtonSelector);
     await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
 
-    // Page test
+    await page.goto(slugs.accountEditSlug);
+    await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
+    await page.click(accountSelector.accountSaveButtonSelector);
+    await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
+
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
   });
