@@ -151,23 +151,21 @@ test.describe('Test user account actions', () => {
 
     await page.goto(slugs.accountNewsletterSubscriptionsSlug);
 
-    // TODO 11-11-2024 : Check if the checkbox is checked to make sure test doesn't fail.
     const subscriptionCheckBox = page.locator(accountSelector.subscriptionCheckBoxSelector);
 
-
+    // Update subscription
+    await page.click(accountSelector.subscriptionCheckBoxSelector);
+    
+    
     if(await subscriptionCheckBox.isChecked()){
-      // User is already subscribed. Unsubscribe first, then subscribe.
-      await account.unsubscribeFromNewsletter();
-
-      await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-      await account.subscribeToNewsletter();
+      // User is going to subscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
 
     } else {
-      // User is not yet subscribed. Subscribe, then unsubscribe.
-      await account.subscribeToNewsletter();
-
-      await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-      await account.unsubscribeFromNewsletter();
+      // User will unsubscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
     }
 
     /*

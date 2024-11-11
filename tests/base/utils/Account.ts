@@ -25,6 +25,7 @@ export class Account {
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
   }
 
+  /* TODO 11-11-2024 : If rewrite works, this is not necessary
   async subscribeToNewsletter() {
     await this.page.click(accountSelector.subscriptionCheckBoxSelector);
     await this.page.click(accountSelector.accountSaveButtonSelector);
@@ -38,4 +39,5 @@ export class Account {
 
     await expect(this.page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
   }
+   END OF TODO */
 }
