@@ -33,6 +33,15 @@ if (toggle.minicart.testMiniCartCheckoutButton) {
 }
 
 
+/**
+  * @feature Magento 2 Minicart Link to Cart
+  * @scenario User adds a product to their cart, then uses the minicart links to navigate to the cart page
+  *   @given I am on any Magento 2 page
+  *   @when I go to a Simple Product page
+  *     @and I add it to my cart
+  *     @and I open my minicart to click the link to the Cart page
+  *   @then I should navigate to the Cart page
+  */
 
 if (toggle.minicart.testMiniCartLink) {
   test('Test minicart to cart', async ({page}) => {
@@ -45,6 +54,15 @@ if (toggle.minicart.testMiniCartLink) {
   });
 }
 
+/**
+  * @feature Magento 2 Minicart Link to Cart
+  * @scenario User adds a product to their cart, then uses the minicart links to navigate to the cart page
+  *   @given I am on any Magento 2 page
+  *   @when I go to a Simple Product page
+  *     @and I add it to my cart
+  *     @and I open my minicart to click the link to the Cart page
+  *   @then I should navigate to the Cart page
+  */
 if (toggle.minicart.testMiniCartQuantity) {
   test('Test minicart quantity change', async ({page}) => {
     const cart = new Cart(page);
@@ -62,6 +80,16 @@ if (toggle.minicart.testMiniCartQuantity) {
   });
 }
 
+/**
+  * @feature Magento 2 Delete product using Minicart
+  * @scenario User adds a product to their cart, then deletes product from Minicart
+  *   @given I am on any Magento 2 page
+  *   @when I go to a Simple Product page
+  *     @and I add it to my cart
+  *     @and I then delete it using the Minicart 'trash' button
+  *   @then I the product should not be visible in my (mini)cart anymore
+  *     @and I should receive a notification that the product has been removed from the cart.
+  */
 if (toggle.minicart.testMiniCartDeletion) {
   test('Test minicart deletion', async ({page}) => {
     const cart = new Cart(page);
