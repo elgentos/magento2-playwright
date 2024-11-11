@@ -280,9 +280,9 @@ test.describe('Test user account actions', () => {
 
   /**
    * @feature Magento 2 Delete Address
-   *  @scenario User removes their address
+   *  @scenario User removes one of their addresses
    *    @given I am logged in
-   *    @when I navigate to the page where I can delete my address
+   *    @when I navigate to the page where I can delete one of my addresses
    *    @and I click the trash button for the address I want to delete
    *    @and I click the confirmation button
    *    @then the specified address should be removed from the overview.
@@ -297,13 +297,23 @@ test.describe('Test user account actions', () => {
     });
 
     await page.goto(slugs.accountAddressBookSlug);
-
-    await page.locator(accountSelector.accountDeleteAddressButtons).first().click();
-    await page.waitForTimeout(2000);
-    await expect(page.locator(`text=${accountExpected.accountAddressDeletedNotificationText}`)).toBeVisible();
+    
+    const addressTrashButton = page.locator(accountSelector.accountDeleteAddressButtons);
+    
+    // If trash button is visible, there are multiple addresses.
+    if(await addressTrashButton.isVisible()){
+      await addressTrashButton.first().click();
+      // await page.waitForTimeout(2000);
+      await expect(page.locator(`text=${accountExpected.accountAddressDeletedNotificationText}`)).toBeVisible();
+    } else {
+      console.log("Notice for test \"Delete address on account\": less than 2 addresses available, deleting an address is not possible.");
+      test.skip();
+    }
+    
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
+    
   });
 
   /**
