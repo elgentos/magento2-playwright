@@ -1,6 +1,7 @@
 import {expect, Page} from '@playwright/test';
 import slugs from '../fixtures/before/slugs.json';
 import accountSelector from '../fixtures/during/selectors/account.json';
+import accountExpected from '../fixtures/verify/expects/account.json';
 
 export class Account {
   page: Page;
@@ -22,5 +23,19 @@ export class Account {
   async logout() {
     await this.page.locator(accountSelector.accountMenuItemsSelector).nth(accountSelector.logoutMenuItemPosition).click();
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
+  }
+
+  async subscribeToNewsletter() {
+    await this.page.click(accountSelector.subscriptionCheckBoxSelector);
+    await this.page.click(accountSelector.accountSaveButtonSelector);
+    
+    await expect(this.page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
+  }
+
+  async unsubscribeFromNewsletter() {
+    await this.page.click(accountSelector.subscriptionCheckBoxSelector);
+    await this.page.click(accountSelector.accountSaveButtonSelector);
+
+    await expect(this.page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
   }
 }
