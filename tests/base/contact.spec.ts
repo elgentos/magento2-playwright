@@ -7,7 +7,19 @@ import globalSelector from './fixtures/during/selectors/global.json';
 import contactValue from './fixtures/during/input-values/contact.json';
 import accountExpected from './fixtures/verify/expects/contact.json';
 
-test.describe('Test user flow', () => {
+
+test.describe('Test contact actions', () => {
+
+  /**
+   * @feature Magento 2 Contact Form
+   *  @scenario User sends a filled in contact form
+   *    @given I am on any Magento 2 page
+   *    @when I'm logged in
+   *    @then the name and email fields are already filled in
+   *    @when I fill in the (remaining) required fields
+   *    @and I click the 'Submit' button
+   *    @then I should see a notification to confirm my message has been sent.
+   */
   test('Send contactform', async ({page}) => {
     const randomNumber = Math.floor(Math.random() * 10000000);
     const emailHandle = contactValue.contactEmailHandle;
