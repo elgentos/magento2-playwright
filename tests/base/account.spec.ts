@@ -168,37 +168,6 @@ test.describe('Test user account actions', () => {
       await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
     }
 
-    /*
-    TODO 11-11-2024: Refactored code that works, currently working on improving it.
-
-    if(await subscriptionCheckBox.isChecked()){
-
-      // User is already subscribed. Unsubscribe first, then subscribe.
-      await page.click(accountSelector.subscriptionCheckBoxSelector);
-      await page.click(accountSelector.accountSaveButtonSelector);
-      await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
-      
-      await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-
-      await page.click(accountSelector.subscriptionCheckBoxSelector);
-      await page.click(accountSelector.accountSaveButtonSelector);
-      await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
-
-    } else {
-
-      // User is not yet subscribed. Subscribe, then unsubscribe.
-      await page.click(accountSelector.subscriptionCheckBoxSelector);
-      await page.click(accountSelector.accountSaveButtonSelector);
-      await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
-
-      await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-
-      await page.click(accountSelector.subscriptionCheckBoxSelector);
-      await page.click(accountSelector.accountSaveButtonSelector);
-      await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
-    }
-    END OF TODO */
-
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
   });
