@@ -6,7 +6,9 @@ import slugs from './fixtures/before/slugs.json';
 
 import globalSelector from './fixtures/during/selectors/global.json';
 import miniCartSelector from './fixtures/during/selectors/minicart.json';
+import productSelector from './fixtures/during/selectors/product-page.json';
 import miniCartExpected from './fixtures/verify/expects/minicart.json';
+
 
 if (toggle.minicart.testMiniCartCheckoutButton) {
   test('Test minicart to checkout', async ({page}) => {
