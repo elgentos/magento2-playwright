@@ -36,9 +36,14 @@ test.describe('Check for page errors', () => {
    *      @and I check it for errors
    *    @then I should not get errors
    */  
-  test('Check for product page errors', async ({page}) => {
-    const productTester = new PageTester(page, slugs.pageSlug);
-    await productTester.testPage();
+  test('Check for (simple) product page errors', async ({page}) => {
+   const productTester = new PageTester(page, slugs.simpleProductSlug);
+   await productTester.testPage();
+  });
+    
+  test('Check for (configurable) product page errors', async ({page}) => {
+   const productTester = new PageTester(page, slugs.configurableProductSlug);
+   await productTester.testPage();
   });
 
   /**
