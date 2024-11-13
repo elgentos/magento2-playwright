@@ -1,4 +1,5 @@
 {
   "addToCartButtonSelector": "#product-addtocart-button",
-  "productQuantityInputSelector": "input[name='qty'][type='number']"
+  "productQuantityInputSelector": "input[name='qty'][type='number']",
+  "simpleProductPrice" : ".final-price .price-wrapper .price"
 }

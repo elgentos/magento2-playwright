@@ -9,6 +9,9 @@ import miniCartSelector from './fixtures/during/selectors/minicart.json';
 import productSelector from './fixtures/during/selectors/product-page.json';
 import miniCartExpected from './fixtures/verify/expects/minicart.json';
 
+import cartSelector from './fixtures/during/selectors/cart.json';
+import cartExpected from './fixtures/verify/expects/cart.json';
+
 
 if (toggle.minicart.testMiniCartCheckoutButton) {
   /**
@@ -101,5 +104,41 @@ if (toggle.minicart.testMiniCartDeletion) {
 
     const successMessage = page.locator(globalSelector.successMessages, {hasText: miniCartExpected.productDeletedFromCartNotificationText});
     await expect(successMessage).toContainText(miniCartExpected.productDeletedFromCartNotificationText);
+  });
+}
+
+/**
+  * @feature Magento 2 Simple Product Price Check
+  * @scenario The user adds a product to their cart, the price on the product page should be the same as the price displayed in their (mini) cart
+  *   @given I am on any Magento 2 page
+  *   @when I go to a Simple Product Page
+  *     @and I add it to my cart
+  *   @then the price on the page should be the same as the price in my minicart
+  */
+if(toggle.minicart.testSimpleProductPriceCheck) {
+  test('Test check simple product price in minicart', async ({page}) => {
+    const cart = new Cart(page);
+
+    // toggle to pre-add item to the cart for robustness
+    if(toggle.minicart.preFillMinicart) {
+      await cart.preFillCartWithSimpleProduct();
+    }
+
+    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
+
+    const priceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
+    const simpleProductTitle = await page.getByRole('heading', { level : 1}).innerText();
+
+    await page.goto(slugs.cartSlug);
+    await expect(page.getByRole('heading', { name : cartExpected.cartTitle})).toBeVisible();
+
+    // Find product by selecting the row where the product name is found
+    const productListing = page.getByRole('row').filter({ hasText: simpleProductTitle});
+    // Retrieve listed price
+    const priceInCart = await productListing.locator(cartSelector.priceExcludingTax).first().innerText();
+
+    // soft expect, since test execution does not have to terminated.
+    expect.soft(priceOnPage).toBe(priceInCart);
+    
   });
 }
