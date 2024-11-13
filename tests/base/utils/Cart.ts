@@ -19,6 +19,18 @@ export class Cart {
     await expect(this.page.locator(`text=${productPageExpected.productAddedToCartNotificationText}`)).toBeVisible();
   }
 
+  async addConfigurableProductToCart(productSlug: string){
+    await this.page.goto(slugs.configurableProductSlug);
+    const productOptions = this.page.locator(productPageSelector.configurableProductOptionForm);
+
+    // loop through each radiogroup (product option) within the form
+    for (const option of await productOptions.getByRole('radiogroup').all()) {
+        await option.locator(productPageSelector.configurableProductOptionValue).first().check();
+    }
+
+    await this.page.click(productPageSelector.addToCartButtonSelector);
+  }
+
   async openMiniCart() {
     await this.page.click(miniCartSelector.miniCartIconSelector);
     await expect(this.page.locator(miniCartSelector.miniCartDrawerTitleSelector)).toBeVisible();

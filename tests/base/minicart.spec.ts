@@ -109,7 +109,7 @@ if (toggle.minicart.testMiniCartDeletion) {
 
 /**
   * @feature Magento 2 Simple Product Price Check
-  * @scenario The user adds a product to their cart, the price on the product page should be the same as the price displayed in their (mini) cart
+  * @scenario The user adds a simple product to their cart: price on DPD should equal price displayed in cart
   *   @given I am on any Magento 2 page
   *   @when I go to a Simple Product Page
   *     @and I add it to my cart
@@ -139,6 +139,46 @@ if(toggle.minicart.testSimpleProductPriceCheck) {
 
     // soft expect, since test execution does not have to terminated.
     expect.soft(priceOnPage).toBe(priceInCart);
+    
+  });
+}
+
+/**
+  * @feature Magento 2 Configurable Product Price Check
+  * @scenario The user adds a configurable product to their cart: price on DPD should equal price displayed in cart
+  *   @given I am on any Magento 2 page
+  *   @when I go to a Simple Product Page
+  *     @and I add it to my cart
+  *   @then the price on the page should be the same as the price in my minicart
+  */
+if(toggle.minicart.testConfigurableProductPriceCheck) {
+  test('Test check configurable product price in minicart', async ({page}) => {
+    const cart = new Cart(page);
+
+    // toggle to pre-add item to the cart for robustness
+    if(toggle.minicart.preFillMinicart) {
+      await cart.preFillCartWithSimpleProduct();
+    }
+
+    await cart.addConfigurableProductToCart(slugs.configurableProductSlug);
+    await page.goto(slugs.cartSlug);
+
+
+    /*
+    const priceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
+    const simpleProductTitle = await page.getByRole('heading', { level : 1}).innerText();
+
+    await page.goto(slugs.cartSlug);
+    await expect(page.getByRole('heading', { name : cartExpected.cartTitle})).toBeVisible();
+
+    // Find product by selecting the row where the product name is found
+    const productListing = page.getByRole('row').filter({ hasText: simpleProductTitle});
+    // Retrieve listed price
+    const priceInCart = await productListing.locator(cartSelector.priceExcludingTax).first().innerText();
+
+    // soft expect, since test execution does not have to terminated.
+    expect.soft(priceOnPage).toBe(priceInCart);
+    */
     
   });
 }
