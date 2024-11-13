@@ -24,20 +24,4 @@ export class Account {
     await this.page.locator(accountSelector.accountMenuItemsSelector).nth(accountSelector.logoutMenuItemPosition).click();
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
   }
-
-  /* TODO 11-11-2024 : If rewrite works, this is not necessary
-  async subscribeToNewsletter() {
-    await this.page.click(accountSelector.subscriptionCheckBoxSelector);
-    await this.page.click(accountSelector.accountSaveButtonSelector);
-    
-    await expect(this.page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
-  }
-
-  async unsubscribeFromNewsletter() {
-    await this.page.click(accountSelector.subscriptionCheckBoxSelector);
-    await this.page.click(accountSelector.accountSaveButtonSelector);
-
-    await expect(this.page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
-  }
-   END OF TODO */
 }
