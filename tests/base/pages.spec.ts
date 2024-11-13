@@ -14,8 +14,13 @@ test.describe('Check for page errors', () => {
     await categoryTester.testPage();
   });
 
-  test('Check for product page errors', async ({page}) => {
-    const productTester = new PageTester(page, slugs.pageSlug);
+  test('Check for (simple) product page errors', async ({page}) => {
+    const productTester = new PageTester(page, slugs.simpleProductSlug);
+    await productTester.testPage();
+  });
+
+  test('Check for (configurable) product page errors', async ({page}) => {
+    const productTester = new PageTester(page, slugs.configurableProductSlug);
     await productTester.testPage();
   });
 
