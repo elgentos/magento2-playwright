@@ -9,4 +9,4 @@ package-lock.json
 /tests/base/config/test-toggles.json
 /tests/custom/config/test-toggles.json
 .env
-.vscode/
+.vscode
