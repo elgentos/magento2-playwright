@@ -24,5 +24,6 @@
   "accountReviewsSlug": "/review/customer/",
   "accountNewsletterSubscriptionsSlug": "/newsletter/manage/",
   "contactSlug": "/contact/",
-  "productQuantityChangeSlug": "/checkout/cart/configure/id/"
+  "productQuantityChangeSlug": "/checkout/cart/configure/id/",
+  "orderGridSlug": "/sales/order/history/"
 }

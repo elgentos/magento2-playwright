@@ -1,7 +1,7 @@
 import {test, expect, selectors} from '@playwright/test';
 import {PageTester} from './utils/PageTester';
 import {Account} from './utils/Account';
-import dotenv from 'dotenv';
+import {Order} from './utils/Order';
 
 import toggle from './config/test-toggles.json';
 import slugs from './fixtures/before/slugs.json';
@@ -9,6 +9,7 @@ import accountSelector from './fixtures/during/selectors/account.json';
 import globalSelector from './fixtures/during/selectors/global.json';
 import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
+import { todo } from 'node:test';
 
 test.describe('Test user flow', () => {
   const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
@@ -238,20 +239,27 @@ test.describe('Test user flow', () => {
         await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
       };
 
-      // Initial login and password change
       const account = new Account(page);
       await account.login(existingAccountEmail, existingAccountChangedPassword);
       await changePassword(existingAccountPassword, existingAccountChangedPassword);
 
-      // Verify login with new password
       await account.login(existingAccountEmail, existingAccountChangedPassword);
       await changePassword(existingAccountChangedPassword, existingAccountPassword);
 
-      // Page test
       const accountPageTester = new PageTester(page, page.url());
       await accountPageTester.testPage();
     });
   }
+
+  test('Check order history for orders', async ({page}) => {
+    const order = new Order(page);
+    await order.create();
+
+    await expect(page.locator('.checkout-success .order-number')).toBeVisible();
+    const orderID = await page.locator('.checkout-success .order-number strong').innerText();
+    await page.goto(slugs.orderGridSlug);
+    await expect(page.locator(`text=${orderID}`)).toBeVisible();
+  });
 
   test('Logout with an account', async ({page}) => {
     const account = new Account(page);
