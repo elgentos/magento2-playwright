@@ -11,6 +11,10 @@
     "testAccountOrders": true
   },
   "minicart": {
-    "testCheckoutButton": true
+    "testCheckoutButton": true,
+    "testMiniCartCheckoutButton": true,
+    "testMiniCartLink": true,
+    "testMiniCartQuantity": true,
+    "testMiniCartDeletion": true
   }
 }
