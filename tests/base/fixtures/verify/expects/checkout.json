@@ -1,5 +1,6 @@
 {
   "cart": {
-    "couponCodeAppliedNotificationText": "You used coupon code"
+    "couponCodeAppliedNotificationText": "You used coupon code",
+    "couponCodeRemovedNotificationText": "You canceled the coupon code."
   }
 }

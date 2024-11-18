@@ -29,25 +29,20 @@ test.describe('Test discount code features', () => {
       const cart = new Cart(page);
       await cart.addSimpleProductToCart(slugs.simpleProductSlug);
       await cart.openMiniCart();
-
       await page.click(miniCartSelector.miniCartCartLinkSelector);
       await expect(page).toHaveURL(new RegExp(`${slugs.cartSlug}.*`));
 
       await page.click(cartSelector.cart.showCouponFormButton);
       await page.fill(cartSelector.cart.couponFormField, cartValue.discountCode);
-
       await page.click(cartSelector.cart.applyCouponFormButton);
 
-      // Expect message that discount code was added
+      
       const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
       await expect(successMessage).toContainText(cartExpected.cart.couponCodeAppliedNotificationText);
 
       // Expect that coupon code field is now disabled because an existing coupon code is now entered.
       await expect(page.locator(cartSelector.cart.couponFormField)).toBeDisabled();
     });
-  
-    // TODO 13-11-2024 : Add test for removing and re-adding coupon code in cart
-    // Gherkin described below
   
     /**
      *  @feature Magento 2 Remove Coupon Code(s) in Checkout
@@ -61,5 +56,31 @@ test.describe('Test discount code features', () => {
      *      @and it should be removed from my overview
      *      @and the price(s) should be adjusted.
      */
-  }
+
+    test('Remove Coupon Code in checkout', async ({page}) => {
+      const cart = new Cart(page);
+      await cart.addSimpleProductToCart(slugs.simpleProductSlug);
+      await page.goto(slugs.cartSlug);
+      
+      if(await page.locator(cartSelector.cart.couponFormField).isEnabled()){
+        // add coupon code
+        await page.click(cartSelector.cart.showCouponFormButton);
+        await page.fill(cartSelector.cart.couponFormField, cartValue.discountCode);
+        await page.click(cartSelector.cart.applyCouponFormButton);
+
+        const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
+        await expect(successMessage).toContainText(cartExpected.cart.couponCodeAppliedNotificationText);
+      }
+
+      await page.click(cartSelector.cart.applyCouponFormButton);
+      const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeRemovedNotificationText});
+      await expect(successMessage).toContainText(cartExpected.cart.couponCodeRemovedNotificationText);
+
+      await expect(page.locator(cartSelector.cart.couponFormField)).toBeEnabled();
+
+      
+    });
+  
+  } // end of if-statement test coupon toggle
+  
 });
