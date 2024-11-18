@@ -1,0 +1,8 @@
+
+{
+  "cart": {
+    "applyCouponFormButton": "#discount-coupon-form button",
+    "couponFormField": "#coupon_code",
+    "showCouponFormButton": "#discount-form-toggle"
+  }
+}
