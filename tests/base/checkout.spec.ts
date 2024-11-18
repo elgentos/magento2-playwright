@@ -25,7 +25,7 @@ test.describe('Test discount code features', () => {
      *      @and it should be added to the overview
      *      @and the correct discount should be applied.
      */
-    test('Add Coupon Code', async ({page}) => {
+    test('Add Coupon Code in cart', async ({page}) => {
       const cart = new Cart(page);
       await cart.addSimpleProductToCart(slugs.simpleProductSlug);
       await cart.openMiniCart();
@@ -57,7 +57,7 @@ test.describe('Test discount code features', () => {
      *      @and the price(s) should be adjusted.
      */
 
-    test('Remove Coupon Code in checkout', async ({page}) => {
+    test('Remove Coupon Code in cart', async ({page}) => {
       const cart = new Cart(page);
       await cart.addSimpleProductToCart(slugs.simpleProductSlug);
       await page.goto(slugs.cartSlug);
