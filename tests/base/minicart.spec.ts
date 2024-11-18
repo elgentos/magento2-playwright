@@ -155,30 +155,27 @@ if(toggle.minicart.testConfigurableProductPriceCheck) {
   test('Test check configurable product price in minicart', async ({page}) => {
     const cart = new Cart(page);
 
-    // toggle to pre-add item to the cart for robustness
+    // toggle to pre-add item to the cart for robustness. Off by default
     if(toggle.minicart.preFillMinicart) {
       await cart.preFillCartWithSimpleProduct();
     }
 
     await cart.addConfigurableProductToCart(slugs.configurableProductSlug);
-    await page.goto(slugs.cartSlug);
 
-
-    /*
-    const priceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
-    const simpleProductTitle = await page.getByRole('heading', { level : 1}).innerText();
+    const confPriceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
+    const configurableProductTitle = await page.getByRole('heading', { level : 1}).innerText();
 
     await page.goto(slugs.cartSlug);
     await expect(page.getByRole('heading', { name : cartExpected.cartTitle})).toBeVisible();
 
     // Find product by selecting the row where the product name is found
-    const productListing = page.getByRole('row').filter({ hasText: simpleProductTitle});
+    const productListing = page.getByRole('row').filter({ hasText: configurableProductTitle});
     // Retrieve listed price
     const priceInCart = await productListing.locator(cartSelector.priceExcludingTax).first().innerText();
-
-    // soft expect, since test execution does not have to terminated.
-    expect.soft(priceOnPage).toBe(priceInCart);
-    */
     
+    // soft expect, since test execution does not have to terminated.
+    expect.soft(confPriceOnPage).toBe(priceInCart);
+
+
   });
 }
