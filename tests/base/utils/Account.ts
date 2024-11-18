@@ -1,6 +1,7 @@
 import {expect, Page} from '@playwright/test';
 import slugs from '../fixtures/before/slugs.json';
 import accountSelector from '../fixtures/during/selectors/account.json';
+import accountExpected from '../fixtures/verify/expects/account.json';
 
 export class Account {
   page: Page;
