@@ -1,8 +1,13 @@
 
 {
+  "openDiscountFormButton": "Apply Discount Code",
+  "discountInputFieldPlaceholder": "Enter discount code",
+  "removeDiscountButton": "Cancel Coupon",
   "cart": {
-    "applyCouponFormButton": "#discount-coupon-form button",
     "couponFormField": "#coupon_code",
-    "showCouponFormButton": "#discount-form-toggle"
+    "applyDiscountCartButton": "Apply Discount"
+  },
+  "checkout": {
+    "applyDiscountFormButton": "Apply Coupon"
   }
 }
