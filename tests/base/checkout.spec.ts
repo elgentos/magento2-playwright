@@ -5,13 +5,9 @@ import toggle from './config/test-toggles.json';
 import slugs from './fixtures/before/slugs.json'; 
 
 import globalSelector from './fixtures/during/selectors/global.json';
-import miniCartSelector from './fixtures/during/selectors/minicart.json';
 import cartSelector from './fixtures/during/selectors/checkout.json';
 
-import cartValue from './fixtures/during/input-values/checkout.json';
-
 import cartExpected from './fixtures/verify/expects/checkout.json';
-import { glob } from 'fs';
 
 
 test.describe('Test discount code features', () => {
