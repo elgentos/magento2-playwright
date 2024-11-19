@@ -20,6 +20,7 @@ export class Order {
 
     const account = new Account(this.page);
     await account.login(magentoAccountEmail, magentoAccountPassword);
+    await account.addAddress();
     const cart = new Cart(this.page);
     await cart.addSimpleProductToCart(slugs.simpleProductSlug);
 

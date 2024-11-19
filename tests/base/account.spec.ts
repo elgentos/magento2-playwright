@@ -82,19 +82,7 @@ test.describe('Test user account actions', () => {
   test('Add new address on account', async ({page}) => {
     const account = new Account(page);
     await account.login(existingAccountEmail, existingAccountPassword);
-
-    await page.goto(slugs.accountNewAddressSlug);
-    await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
-    await page.fill(accountSelector.registrationLastNameSelector, accountValue.newAccountLastName);
-    await page.fill(accountSelector.accountTelephoneSelector, accountValue.newAddressTelephoneNumber);
-    await page.fill(accountSelector.accountStreetAddressSelector, accountValue.newAddressStreetAddress);
-    await page.fill(accountSelector.accountZipSelector, accountValue.newAddressZipCode);
-    await page.fill(accountSelector.accountCitySelector, accountValue.newAddressCityName);
-    await page.selectOption(accountSelector.accountProvinceSelector, {value: accountValue.newAddressProvinceValue});
-
-    await page.click(accountSelector.accountAddressSaveButtonSelector);
-
-    await expect(page.locator(`text=${accountExpected.accountAddressChangedNotificationText}`)).toBeVisible();
+    await account.addAddress();
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
@@ -342,16 +330,25 @@ test.describe('Test user account actions', () => {
     });
   }
 
-  test('Check order history for orders', async ({page}) => {
-    const order = new Order(page);
-    await order.create();
+  /**
+   * @feature Magento 2 See order history
+   *  @scenario User places an order and sees them in their order history
+   *    @given I am logged in
+   *    @when I place an order
+   *    @then I should see my order in my order history
+   */
+  if (toggle.account.testAccountOrders) {
+    test('Check order history for orders', async ({page}) => {
+      const order = new Order(page);
+      await order.create();
 
-    await expect(page.locator('.checkout-success .order-number')).toBeVisible();
-    const orderID = await page.locator('.checkout-success .order-number strong').innerText();
-    await page.goto(slugs.orderGridSlug);
-    await expect(page.locator(`text=${orderID}`)).toBeVisible();
-  });
-  
+      await expect(page.locator('.checkout-success .order-number')).toBeVisible();
+      const orderID = await page.locator('.checkout-success .order-number strong').innerText();
+      await page.goto(slugs.orderGridSlug);
+      await expect(page.locator(`text=${orderID}`)).toBeVisible();
+    });
+  }
+
   /**
    * @feature Magento 2 Logout
    *  @scenario User logs out
