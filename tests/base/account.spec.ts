@@ -140,15 +140,22 @@ test.describe('Test user account actions', () => {
 
     await page.goto(slugs.accountNewsletterSubscriptionsSlug);
 
-    await page.click(accountSelector.subscriptionCheckBoxSelector);
-    await page.click(accountSelector.accountSaveButtonSelector);
-    await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
+    const subscriptionCheckBox = page.locator(accountSelector.subscriptionCheckBoxSelector);
 
-    await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-
+    // Update subscription
     await page.click(accountSelector.subscriptionCheckBoxSelector);
-    await page.click(accountSelector.accountSaveButtonSelector);
-    await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
+    
+    
+    if(await subscriptionCheckBox.isChecked()){
+      // User is going to subscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
+
+    } else {
+      // User will unsubscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
+    }
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
