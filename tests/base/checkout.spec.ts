@@ -1,4 +1,4 @@
-import {test, expect, selectors} from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import {Cart} from './utils/Cart';
 
 import toggle from './config/test-toggles.json';
@@ -16,7 +16,7 @@ import { glob } from 'fs';
 
 test.describe('Test discount code features', () => {
 
-  if(toggle.checkout.testCouponCodes){
+  if(toggle.checkout.testCartCouponCodes){
     test.describe('Cart', () => {
       /**
        * @feature Magento 2 add discount code in cart
@@ -65,24 +65,29 @@ test.describe('Test discount code features', () => {
         
         if(await page.locator(cartSelector.cart.couponFormField).isEnabled()){
           // add coupon code
-          await page.click(cartSelector.cart.showCouponFormButton);
-          await page.fill(cartSelector.cart.couponFormField, cartValue.discountCode);
-          await page.click(cartSelector.cart.applyCouponFormButton);
+          await page.getByRole('button', {name: cartSelector.openDiscountFormButton}).click();
+          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.DISCOUNT_CODE);
+          await page.getByRole('button', {name: cartSelector.cart.applyDiscountCartButton, exact: true}).click();
   
+          // Expect that coupon code field is now disabled because an existing coupon code is now entered.
           const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
           await expect(successMessage).toContainText(cartExpected.cart.couponCodeAppliedNotificationText);
         }
   
-        await page.click(cartSelector.cart.applyCouponFormButton);
+        await page.getByRole('button', {name: cartSelector.removeDiscountButton}).click();
+
         const updateMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeRemovedNotificationText});
         await expect(updateMessage).toContainText(cartExpected.cart.couponCodeRemovedNotificationText);
   
+        // Expect that coupon code field is now enabled because an existing coupon code has been entered.
         await expect(page.locator(cartSelector.cart.couponFormField)).toBeEnabled();
   
         
       });
     });
+  }
 
+  if(toggle.checkout.testCheckoutCouponCodes){
     test.describe('checkout', () => {
       /**
        *  @feature Magento 2 Add discount code to checkout
@@ -153,7 +158,5 @@ test.describe('Test discount code features', () => {
 
       });
     });
-  
-  } // end of if-statement test coupon toggle
-  
+  }
 });
