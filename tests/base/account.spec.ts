@@ -85,9 +85,11 @@ test.describe('Test user account actions', () => {
       const account = new Account(page);
 
       // Throw an error if existingAccountPassword is empty
+      // TODO this error should be handled in the login function
       if(!existingAccountPassword || !existingAccountEmail){
         throw new Error("Existing Password or Email variable not defined in .env");
       }
+      
       
       await account.login(existingAccountEmail, existingAccountPassword);
 
@@ -110,6 +112,12 @@ test.describe('Test user account actions', () => {
    */
   test('Add new address on account', async ({page}) => {
     const account = new Account(page);
+
+    // Throw an error if existingAccountPassword is empty
+    if(!existingAccountPassword || !existingAccountEmail){
+      throw new Error("Existing Password or Email variable not defined in .env");
+    }
+    
     await account.login(existingAccountEmail, existingAccountPassword);
     await account.addAddress();
 

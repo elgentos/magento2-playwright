@@ -1,0 +1,11 @@
+{
+  "accountFirstNameValue": "John",
+  "accountLastNameValue": "Doe",
+  "newAddressCompanyValue": "ACME Company",
+  "newAddressPhoneNumberValue": "0622000000",
+  "newAddressStreetValue": "Teststraat 1",
+  "newAddressZipCodeValue": "12345",
+  "newAddressCityValue": "Testing Valley",
+  "newAddressNonDefaultCountry": "Netherlands",
+  "newAddressProvinceValue": "Idaho"
+}
