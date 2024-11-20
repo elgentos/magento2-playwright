@@ -34,17 +34,39 @@ test.describe('Test user account actions', () => {
 
       await page.goto(slugs.accountCreationSlug);
 
-      await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
-      await page.fill(accountSelector.registrationLastNameSelector, accountValue.newAccountLastName);
-      await page.fill(accountSelector.registrationEmailAddressSelector, uniqueEmail);
-      await page.fill(accountSelector.registrationPasswordSelector, existingAccountPassword);
-      await page.fill(accountSelector.registrationConfirmPasswordSelector, existingAccountPassword);
+      // TODO These variables should be stored in the helper class (register.page.js) 
+      // TODO note: the unique email that is created above should also be moved to the helper class.
+      let firstName = "John";
+      let lastName = "Doe";
+      let accountCreatedNotification = "Thank you for registering with Main Website Store.";
+      
+      // TODO these selector variables (variables that users of our testing-suite might want to change) should be stored in the variables folder (register.json)
+      const firstNameField = page.getByLabel('First Name');
+      const lastNameField = page.getByLabel('Last Name');
+      const emailField = page.getByLabel('Email', {exact : true});
+      const passwordField = page.getByTitle('Password', {exact : true});
+      const confirmPasswordField = page.getByLabel('Confirm Password');
+      const createAccountButton = page.getByRole('button', {name: 'Create an Account'});
 
-      await page.click(accountSelector.registrationCreateAccountButtonSelector);
+      // TODO The filling in we're doing below is an action and can be captured in a function.
+      // These should be moved to the helper class.
+      await firstNameField.fill(firstName);
+      await lastNameField.fill(lastName);
+      await emailField.fill(uniqueEmail);
+      // Throw an error if existingAccountPassword is empty
+      if(!existingAccountPassword){
+        throw new Error("Password variable not defined in .env");
+      }
+      await passwordField.fill(existingAccountPassword);
+      await confirmPasswordField.fill(existingAccountPassword);
+      await createAccountButton.click();
+      
+      
+      // TODO in this test file, we can call the functions, then use an expect() to confirm our assertions.
+      // TODO these are the assertions we want to confirm with our tests.
+      await expect(page.getByText(accountCreatedNotification)).toBeVisible();
 
-      const uniqueSuccessfulAccountCreationNotificationText = accountExpected.uniqueSuccessfulAccountCreationNotificationText;
-      await expect(page.locator(`text=${uniqueSuccessfulAccountCreationNotificationText}`)).toBeVisible();
-
+      // log credentials to console to add to .env file
       console.log(`Account created with credentials: email address "${uniqueEmail}" and password "${existingAccountPassword}"`);
     });
   }
