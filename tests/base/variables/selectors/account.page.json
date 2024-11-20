@@ -9,5 +9,8 @@
   "countryLabel": "Country",
   "provinceSelectLabel": "State/Province",
   "provinceSelectFilterLabel": "Please select a region, state or province.",
-  "saveAdressButton": "Save Address"
+  "saveAdressButton": "Save Address",
+  "addressbook": {
+    "editAdressLink": "Edit"
+  }
 }

@@ -11,6 +11,7 @@ import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
 import { todo } from 'node:test';
 
+import newAccountSelectors from './variables/selectors/account.page.json';
 import accountExpectations from './variables/expected-variables/account.page.json';
 
 test.describe('Test user account actions', () => {
@@ -139,9 +140,19 @@ test.describe('Test user account actions', () => {
    */
   test('Edit address on account', async ({page}) => {
     const account = new Account(page);
-    await account.login(existingAccountEmail, existingAccountPassword)
 
+    // Throw an error if existingAccountPassword is empty
+    if(!existingAccountPassword || !existingAccountEmail){
+      throw new Error("Existing Password or Email variable not defined in .env");
+    }
+
+    await account.login(existingAccountEmail, existingAccountPassword);
     await page.goto(slugs.accountAddressBookSlug);
+
+    // let editIcon = page.getByTitle(newAccountSelectors.addressbook.editAdressLink).first();
+    // await editIcon.click();
+
+    
     await page.locator(accountSelector.accountEditAddressButtons).first().click();
     await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newChangedAddressFirstName);
     await page.fill(accountSelector.registrationLastNameSelector, accountValue.newChangedAddressLastName);
@@ -155,6 +166,7 @@ test.describe('Test user account actions', () => {
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
+    
   });
 
   /**
