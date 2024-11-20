@@ -7,5 +7,14 @@
   "newAddressZipCodeValue": "12345",
   "newAddressCityValue": "Testing Valley",
   "newAddressNonDefaultCountry": "Netherlands",
-  "newAddressProvinceValue": "Idaho"
+  "newAddressProvinceValue": "Idaho",
+  "editAccountValues": {
+    "changedFirstNameValue": "Jane",
+    "changedLastNameVale": "Dohn",
+    "changedAddressCompanyValue": "Disney Company",
+    "changedAddressPhoneNumberValue": "0612345678",
+    "changedAddressStreetValue": "Straat Der Testen 100",
+    "changedAddressZipCodeValue": "67890",
+    "changedAddressCityValue": "Testdorp"
+  }
 }

@@ -149,8 +149,8 @@ test.describe('Test user account actions', () => {
     await account.login(existingAccountEmail, existingAccountPassword);
     await page.goto(slugs.accountAddressBookSlug);
 
-    // let editIcon = page.getByTitle(newAccountSelectors.addressbook.editAdressLink).first();
-    // await editIcon.click();
+    let editIcon = page.getByTitle(newAccountSelectors.addressbook.editAdressLink).first();
+    await editIcon.click();
 
     
     await page.locator(accountSelector.accountEditAddressButtons).first().click();
