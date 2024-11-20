@@ -6,7 +6,8 @@
     "testAccountPageTitles": {
       "all": true,
       "ProductReviewsTest": false
-    }
+    },
+    "testAccountOrders": true
   },
   "cart": {
     "testCouponCodes": false
