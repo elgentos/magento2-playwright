@@ -83,11 +83,18 @@ test.describe('Test user account actions', () => {
   if (toggle.account.testAccountLogin) {
     test('Login with an account', async ({page}) => {
       const account = new Account(page);
+
+      // Throw an error if existingAccountPassword is empty
+      if(!existingAccountPassword || !existingAccountEmail){
+        throw new Error("Existing Password or Email variable not defined in .env");
+      }
+      
       await account.login(existingAccountEmail, existingAccountPassword);
 
       const accountPageTester = new PageTester(page, page.url());
       await accountPageTester.testPage();
-      await expect(page.locator(`text=${existingAccountEmail}`)).toBeVisible();
+
+      await expect(page.getByText(existingAccountEmail)).toBeVisible();
     });
   }
 
