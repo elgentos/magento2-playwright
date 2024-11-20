@@ -1,5 +1,4 @@
 {
-  "testForPageErrors": false,
   "account": {
     "testAccountCreation": false,
     "testAccountLogin": true,
@@ -7,13 +6,27 @@
     "testAccountPageTitles": {
       "all": true,
       "ProductReviewsTest": false
-    }
+    },
+    "testAccountOrders": true
+  },
+  "cart": {
+    "testCouponCodes": false
+  },
+  "checkout": {
+    "testCartCouponCodes": true,
+    "testCheckoutCouponCodes": true
+  },
+  "general": {
+    "testForPageErrors": false
   },
   "minicart": {
+    "preFillMinicart": false,
     "testCheckoutButton": true,
     "testMiniCartCheckoutButton": true,
     "testMiniCartLink": true,
     "testMiniCartQuantity": true,
-    "testMiniCartDeletion": true
+    "testMiniCartDeletion": true,
+    "testSimpleProductPriceCheck": true,
+    "testConfigurableProductPriceCheck": true
   }
 }
