@@ -9,6 +9,7 @@ import accountExpected from '../fixtures/verify/expects/account.json';
 // This implementation allows for localization.
 import newAccountSelectors from '../variables/selectors/account.page.json';
 import accountImportValues from '../variables/input-values/account.page.json';
+import accountExpectations from '../variables/expected-variables/account.page.json';
 
 export class Account {
   page: Page;
@@ -50,7 +51,7 @@ export class Account {
   }
 
   async addAddress() {
-    let addressAddedNotification = 'You saved the address.';
+    let addressAddedNotification = accountExpectations.newAddressAddedExpectedNotifcation;
 
     // TODO move slugs to variables folder.
     await this.page.goto(slugs.accountNewAddressSlug);

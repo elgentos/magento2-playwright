@@ -11,6 +11,8 @@ import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
 import { todo } from 'node:test';
 
+import accountExpectations from './variables/expected-variables/account.page.json';
+
 test.describe('Test user account actions', () => {
   const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -38,7 +40,7 @@ test.describe('Test user account actions', () => {
       // TODO note: the unique email that is created above should also be moved to the helper class.
       let firstName = "John";
       let lastName = "Doe";
-      let accountCreatedNotification = "Thank you for registering with Main Website Store.";
+      let accountCreatedNotification = accountExpectations.accountCreationExpectedNotification;
       
       // TODO these selector variables (variables that users of our testing-suite might want to change) should be stored in the variables folder (register.json)
       const firstNameField = page.getByLabel('First Name');
