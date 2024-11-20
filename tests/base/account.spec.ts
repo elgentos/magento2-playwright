@@ -295,17 +295,14 @@ test.describe('Test user account actions', () => {
     await page.goto(slugs.accountAddressBookSlug);
     
     const addressTrashButton = page.locator(accountSelector.accountDeleteAddressButtons);
-    
-    // If trash button is visible, there are multiple addresses.
-    if(await addressTrashButton.isVisible()){
-      await addressTrashButton.first().click();
-      // await page.waitForTimeout(2000);
-      await expect(page.locator(`text=${accountExpected.accountAddressDeletedNotificationText}`)).toBeVisible();
-    } else {
-      console.log("Notice for test \"Delete address on account\": less than 2 addresses available, deleting an address is not possible.");
-      test.skip();
+  
+    // If trash button is hidden, there is only one address.
+    if(await addressTrashButton.isHidden()){
+      await account.addAddress();
     }
-    
+
+    await addressTrashButton.first().click();
+    await expect(page.locator(`text=${accountExpected.accountAddressDeletedNotificationText}`)).toBeVisible();
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
