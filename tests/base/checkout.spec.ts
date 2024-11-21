@@ -62,7 +62,7 @@ test.describe('Test discount code features', () => {
         if(await page.locator(cartSelector.cart.couponFormField).isEnabled()){
           // add coupon code
           await page.getByRole('button', {name: cartSelector.openDiscountFormButton}).click();
-          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.DISCOUNT_CODE);
+          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
           await page.getByRole('button', {name: cartSelector.cart.applyDiscountCartButton, exact: true}).click();
   
           // Expect that coupon code field is now disabled because an existing coupon code is now entered.
@@ -102,7 +102,7 @@ test.describe('Test discount code features', () => {
         await page.goto(slugs.checkoutSlug);
 
         await page.getByText(cartSelector.openDiscountFormButton).click();
-        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.DISCOUNT_CODE);
+        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
         await page.getByLabel(cartSelector.checkout.applyDiscountFormButton).click();
         
         const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.checkout.checkoutDiscountAppliedNotificationText});
@@ -134,7 +134,7 @@ test.describe('Test discount code features', () => {
 
         if(await couponFormField.isEnabled()){
           // coupon field is enabled, no discount has been applied
-          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.DISCOUNT_CODE);
+          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
           await page.getByLabel(cartSelector.checkout.applyDiscountFormButton).click();
 
           const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.checkout.checkoutDiscountAppliedNotificationText});
