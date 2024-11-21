@@ -31,7 +31,7 @@ test.describe('Test discount code features', () => {
         await page.goto(slugs.cartSlug);
   
         await page.getByRole('button', {name: cartSelector.openDiscountFormButton}).click();
-        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.DISCOUNT_CODE);
+        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
         await page.getByRole('button', {name: cartSelector.cart.applyDiscountCartButton, exact: true}).click();
         
         const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
