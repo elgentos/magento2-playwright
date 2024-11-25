@@ -1,4 +1,5 @@
 {
   "priceExcludingTax": ".cart-price .price",
-  "productQuantityTitle" : "Qty"
+  "productQuantityTitle" : "Qty",
+  "toCheckoutButtonSelector": "#checkout-link-button"
 }

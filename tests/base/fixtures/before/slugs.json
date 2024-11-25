@@ -19,6 +19,8 @@
   "changePasswordSlug": "/customer/account/edit/changepass/",
   "configurableProductSlug": "/inez-full-zip-jacket.html",
   "contactSlug": "/contact/",
+  "productQuantityChangeSlug": "/checkout/cart/configure/id/",
+  "orderGridSlug": "/sales/order/history/",
   "forgotPasswordSlug": "/customer/account/forgotpassword/",
   "homepageSlug": "/",
   "loginSlug": "/customer/account/login/",
