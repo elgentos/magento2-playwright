@@ -1,4 +1,5 @@
 {
   "addToCartButtonSelector": "#product-addtocart-button",
+  "addToCartButtonPDP": "shopping-cart Add to Cart",
   "productQuantityInputSelector": "input[name='qty'][type='number']"
 }

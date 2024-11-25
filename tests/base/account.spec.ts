@@ -151,9 +151,9 @@ test.describe('Test user account actions', () => {
 
     let editIcon = page.getByTitle(newAccountSelectors.addressbook.editAdressLink).first();
     await editIcon.click();
-
     
-    await page.locator(accountSelector.accountEditAddressButtons).first().click();
+    
+    // await page.locator(accountSelector.accountEditAddressButtons).first().click();
     await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newChangedAddressFirstName);
     await page.fill(accountSelector.registrationLastNameSelector, accountValue.newChangedAddressLastName);
     await page.fill(accountSelector.accountTelephoneSelector, accountValue.newAddressTelephoneNumber);
