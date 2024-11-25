@@ -1,0 +1,6 @@
+{
+  "login": {
+    "email": "process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL",
+    "password": "process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD"
+  }
+}
