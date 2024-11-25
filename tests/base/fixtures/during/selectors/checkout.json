@@ -1,8 +1,11 @@
-
 {
   "openDiscountFormButton": "Apply Discount Code",
   "discountInputFieldPlaceholder": "Enter discount code",
   "removeDiscountButton": "Cancel Coupon",
+  "firstAccountAddressSelector": "#shipping-details .address-item",
+  "firstShipmentOptionSelector": "#shipping-method-option-flatrate input[type='radio']",
+  "firstPaymentOptionSelector": "#payment-method-option-checkmo input[type='radio']",
+  "placeOrderButtonSelector": ".btn-place-order",
   "cart": {
     "couponFormField": "#coupon_code",
     "applyDiscountCartButton": "Apply Discount"

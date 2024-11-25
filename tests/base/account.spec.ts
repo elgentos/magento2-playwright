@@ -1,7 +1,7 @@
 import {test, expect, selectors} from '@playwright/test';
 import {PageTester} from './utils/PageTester';
 import {Account} from './utils/Account';
-import dotenv from 'dotenv';
+import {Order} from './utils/Order';
 
 import toggle from './config/test-toggles.json';
 import slugs from './fixtures/before/slugs.json';
@@ -9,6 +9,7 @@ import accountSelector from './fixtures/during/selectors/account.json';
 import globalSelector from './fixtures/during/selectors/global.json';
 import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
+import { todo } from 'node:test';
 
 test.describe('Test user account actions', () => {
   const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
@@ -81,19 +82,7 @@ test.describe('Test user account actions', () => {
   test('Add new address on account', async ({page}) => {
     const account = new Account(page);
     await account.login(existingAccountEmail, existingAccountPassword);
-
-    await page.goto(slugs.accountNewAddressSlug);
-    await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
-    await page.fill(accountSelector.registrationLastNameSelector, accountValue.newAccountLastName);
-    await page.fill(accountSelector.accountTelephoneSelector, accountValue.newAddressTelephoneNumber);
-    await page.fill(accountSelector.accountStreetAddressSelector, accountValue.newAddressStreetAddress);
-    await page.fill(accountSelector.accountZipSelector, accountValue.newAddressZipCode);
-    await page.fill(accountSelector.accountCitySelector, accountValue.newAddressCityName);
-    await page.selectOption(accountSelector.accountProvinceSelector, {value: accountValue.newAddressProvinceValue});
-
-    await page.click(accountSelector.accountAddressSaveButtonSelector);
-
-    await expect(page.locator(`text=${accountExpected.accountAddressChangedNotificationText}`)).toBeVisible();
+    await account.addAddress();
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
@@ -151,15 +140,22 @@ test.describe('Test user account actions', () => {
 
     await page.goto(slugs.accountNewsletterSubscriptionsSlug);
 
-    await page.click(accountSelector.subscriptionCheckBoxSelector);
-    await page.click(accountSelector.accountSaveButtonSelector);
-    await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
+    const subscriptionCheckBox = page.locator(accountSelector.subscriptionCheckBoxSelector);
 
-    await page.goto(slugs.accountNewsletterSubscriptionsSlug);
-
+    // Update subscription
     await page.click(accountSelector.subscriptionCheckBoxSelector);
-    await page.click(accountSelector.accountSaveButtonSelector);
-    await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
+    
+    
+    if(await subscriptionCheckBox.isChecked()){
+      // User is going to subscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterSubscribedNotificationText}`)).toBeVisible();
+
+    } else {
+      // User will unsubscribe.
+      await page.click(accountSelector.accountSaveButtonSelector);
+      await expect(page.locator(`text=${accountExpected.accountNewsletterUnsubscribedNotificationText}`)).toBeVisible();
+    }
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
@@ -329,18 +325,34 @@ test.describe('Test user account actions', () => {
         await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
       };
 
-      // Initial login and password change
       const account = new Account(page);
       await account.login(existingAccountEmail, existingAccountChangedPassword);
       await changePassword(existingAccountPassword, existingAccountChangedPassword);
 
-      // Verify login with new password
       await account.login(existingAccountEmail, existingAccountChangedPassword);
       await changePassword(existingAccountChangedPassword, existingAccountPassword);
 
-      // Page test
       const accountPageTester = new PageTester(page, page.url());
       await accountPageTester.testPage();
+    });
+  }
+
+  /**
+   * @feature Magento 2 See order history
+   *  @scenario User places an order and sees them in their order history
+   *    @given I am logged in
+   *    @when I place an order
+   *    @then I should see my order in my order history
+   */
+  if (toggle.account.testAccountOrders) {
+    test('Check order history for orders', async ({page}) => {
+      const order = new Order(page);
+      await order.create();
+
+      await expect(page.locator('.checkout-success .order-number')).toBeVisible();
+      const orderID = await page.locator('.checkout-success .order-number strong').innerText();
+      await page.goto(slugs.orderGridSlug);
+      await expect(page.locator(`text=${orderID}`)).toBeVisible();
     });
   }
 

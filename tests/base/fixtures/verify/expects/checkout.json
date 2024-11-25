@@ -1,4 +1,7 @@
 {
+  "orderSucceedNotificationText": "Thank you for your purchase!",
+  "savingShippingMethodNotificationText": "Saving shipping method",
+  "savingPaymentMethodNotificationText": "Saving method",
   "cart": {
     "couponCodeAppliedNotificationText": "You used coupon code",
     "couponCodeRemovedNotificationText": "You canceled the coupon code."
