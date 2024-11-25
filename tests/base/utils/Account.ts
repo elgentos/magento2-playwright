@@ -23,6 +23,11 @@ export class Account {
   countrySelect: Locator;
   provinceSelect: Locator;
   saveAddressButton: Locator;
+  loginEmailField: Locator;
+  loginPasswordField: Locator;
+  loginButton: Locator;
+  myAccountMenuButton: Locator;
+  menuLogOutButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -38,15 +43,23 @@ export class Account {
     this.countrySelect = page.getByLabel(newAccountSelectors.countryLabel);
     this.provinceSelect = page.getByLabel(newAccountSelectors.provinceSelectLabel).filter({hasText: newAccountSelectors.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: newAccountSelectors.saveAdressButton});
+
+    //TODO: move labels to variable file
+    this.loginEmailField = page.getByLabel('Email', {exact: true});
+    this.loginPasswordField = page.getByLabel('Password', {exact: true});
+    this.loginButton = page.getByRole('button', { name: 'Sign In' });
+    this.myAccountMenuButton = page.getByLabel('My Account');
+    this.menuLogOutButton = page.getByTitle('Sign Out');
+
   }
 
   async login(email: string, password: string) {
     await this.page.goto(slugs.loginSlug);
 
-    await this.page.fill(accountSelector.loginEmailAddressSelector, email);
-    await this.page.fill(accountSelector.loginPasswordSelector, password);
+    await this.loginEmailField.fill(email);
+    await this.loginPasswordField.fill(password);
+    await this.loginButton.click();
 
-    await this.page.click(accountSelector.loginButtonSelectorName);
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLoginSlug}.*`));
   }
 
@@ -71,7 +84,9 @@ export class Account {
   }
 
   async logout() {
-    await this.page.locator(accountSelector.accountMenuItemsSelector).nth(accountSelector.logoutMenuItemPosition).click();
+    await this.myAccountMenuButton.click();
+    await this.menuLogOutButton.click();
+
     await expect(this.page).toHaveURL(new RegExp(`${slugs.afterLogoutSlug}.*`));
   }
 }
