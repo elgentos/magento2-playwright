@@ -32,4 +32,7 @@ export class RegisterPage {
     this.provinceSelect = page.getByLabel(selectors.registration.provinceSelectLabel).filter({hasText: selectors.registration.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: selectors.registration.saveAdressButton});
   }
+
+
+  //TODO: write account creation function
 }

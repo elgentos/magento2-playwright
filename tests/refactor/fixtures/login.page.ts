@@ -34,6 +34,7 @@ export class LoginPage {
     await this.loginButton.click();
 
     // this element cannot be defined in the constructor, since the sign out button only appears after logging in.
-    await expect(this.page.getByRole('link', { name: expected.account.signOutButtonLabel })).toBeVisible();
+    // Using a selector rather than expected, since it's we're locating a button rather than an expected notification.
+    await expect(this.page.getByRole('link', { name: selectors.mainMenu.myAccountLogoutItem })).toBeVisible();
   }
 }

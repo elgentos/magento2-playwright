@@ -1,4 +1,8 @@
 {
+  "mainMenu": {
+    "myAccountButtonLabel": "My Account",
+    "myAccountLogoutItem": "Sign Out"
+  },
   "login": {
     "emailFieldLabel": "Email",
     "PasswordFieldLabel": "Password",
