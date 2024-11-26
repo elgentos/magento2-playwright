@@ -1,5 +1,14 @@
 {
   "orderSucceedNotificationText": "Thank you for your purchase!",
   "savingShippingMethodNotificationText": "Saving shipping method",
-  "savingPaymentMethodNotificationText": "Saving method"
+  "savingPaymentMethodNotificationText": "Saving method",
+  "cart": {
+    "couponCodeAppliedNotificationText": "You used coupon code",
+    "couponCodeRemovedNotificationText": "You canceled the coupon code."
+  },
+  "checkout": {
+    "checkoutDiscountAppliedNotificationText": "Your coupon was successfully applied.",
+    "checkoutDiscountRemovedNotificationText": "Your coupon was successfully removed.",
+    "checkoutDiscountDescriptionField": ".discount"
+  }
 }
