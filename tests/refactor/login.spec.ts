@@ -1,8 +1,6 @@
 import {test as base} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
 
-import slugs from './config/slugs.json';
-
 /*
 const test = base.extend<{ loginPage:LoginPage }>({
  loginPage: async ({ page }, use) => {
@@ -29,10 +27,12 @@ base.use({ storageState: { cookies: [], origins: [] } });
  *  @then I should see a messsage confirming my account was created
  */
 base('User can log in with valid credentials', async ({page}) => {
-  const account = new LoginPage(page);
-  await account.login();
+  const loginPage = new LoginPage(page);
+  await loginPage.login();
 });
 
 //TODO: Add test to ensure user cannot log in with invalid credentials.
 // Basically, we log in with wrong credentials, then expect a failure message.
 
+
+//TODO: Add test to test 'Forgot your Password' functionality

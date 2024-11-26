@@ -3,5 +3,18 @@
     "emailFieldLabel": "Email",
     "PasswordFieldLabel": "Password",
     "loginButtonLabel": "Sign In"
+  },
+  "registration": {
+    "firstNameLabel": "First Name",
+    "lastNameLabel": "Last Name",
+    "companyNameLabel": "Company",
+    "phoneNumberLabel": "Phone Number",
+    "streetAddressLabel": "Street Address",
+    "zipCodeLabel": "Zip/Postal Code",
+    "cityNameLabel": "City",
+    "countryLabel": "Country",
+    "provinceSelectLabel": "State/Province",
+    "provinceSelectFilterLabel": "Please select a region, state or province.",
+    "saveAdressButton": "Save Address"
   }
 }
