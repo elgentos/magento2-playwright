@@ -18,7 +18,6 @@ export class LoginPage {
   }
 
   // Note: this login function is simply written to quickly log in for tests which require you to be logged in.
-  // Do NOT use this to test logging in.
   // TODO: this login function should be moved to an auth file. see login.spec.ts line 15 and 16 for more info.
   async login(email: string, password: string){
     await this.page.goto(slugs.account.loginSlug);
