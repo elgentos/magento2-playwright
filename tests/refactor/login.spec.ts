@@ -12,6 +12,13 @@ const test = base.extend<{ loginPage:LoginPage }>({
 });
 */
 
+//TODO: create an auth.setup.ts file to handle authentication (see login function on login.page.ts)
+//TODO: link that setup file in project dependencies to be logged for all tests.
+// See: https://playwright.dev/docs/auth#basic-shared-account-in-all-tests
+
+// Reset storageState to ensure we're not logged in before running these tests.
+base.use({ storageState: { cookies: [], origins: [] } });
+
 /**
  * @feature Magento 2 Account Creation
  * @scenario The user creates an account on the website
@@ -21,8 +28,11 @@ const test = base.extend<{ loginPage:LoginPage }>({
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
-base('Login with existing account', async ({page}) => {
+base('User can log in with valid credentials', async ({page}) => {
   const account = new LoginPage(page);
-
   await account.login();
 });
+
+//TODO: Add test to ensure user cannot log in with invalid credentials.
+// Basically, we log in with wrong credentials, then expect a failure message.
+
