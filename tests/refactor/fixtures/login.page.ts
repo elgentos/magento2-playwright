@@ -20,17 +20,10 @@ export class LoginPage {
   // Note: this login function is simply written to quickly log in for tests which require you to be logged in.
   // Do NOT use this to test logging in.
   // TODO: this login function should be moved to an auth file. see login.spec.ts line 15 and 16 for more info.
-  async login(){
-    let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-    
-    if(!emailInputValue || !passwordInputValue) {
-      throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
-    }
-
+  async login(email: string, password: string){
     await this.page.goto(slugs.account.loginSlug);
-    await this.loginEmailField.fill(emailInputValue);
-    await this.loginPasswordField.fill(passwordInputValue);
+    await this.loginEmailField.fill(email);
+    await this.loginPasswordField.fill(password);
     await this.loginButton.click();
 
     // this element cannot be defined in the constructor, since the sign out button only appears after logging in.

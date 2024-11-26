@@ -20,8 +20,15 @@ const test = base.extend<{ loginPage:LoginPage }>({
 base.use({ storageState: { cookies: [], origins: [] } });
 
 base('User can log in with valid credentials', async ({page}) => {
+  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+  if(!emailInputValue || !passwordInputValue) {
+    throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+  }
+
   const loginPage = new LoginPage(page);
-  await loginPage.login();
+  await loginPage.login(emailInputValue, passwordInputValue);
 });
 
 //TODO: Add test to ensure user cannot log in with invalid credentials.
