@@ -13,3 +13,4 @@ package-lock.json
 .env
 .vscode
 /tests/base/devtools.spec.ts
+/tests/.auth/
