@@ -3,14 +3,20 @@
     "myAccountButtonLabel": "My Account",
     "myAccountLogoutItem": "Sign Out"
   },
-  "login": {
+  "credentials": {
     "emailFieldLabel": "Email",
-    "PasswordFieldLabel": "Password",
+    "passwordFieldLabel": "Password",
+    "passwordConfirmFieldLabel": "Confirm Password",
     "loginButtonLabel": "Sign In"
   },
-  "registration": {
+  "personalInformation": {
     "firstNameLabel": "First Name",
-    "lastNameLabel": "Last Name",
+    "lastNameLabel": "Last Name"
+  },
+  "accountCreation": {
+    "createAccountButtonLabel": "Create an Account"
+  },
+  "newAddress": {
     "companyNameLabel": "Company",
     "phoneNumberLabel": "Phone Number",
     "streetAddressLabel": "Street Address",

@@ -1,6 +1,8 @@
 {
-  "login": {
-    "email": "process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL",
-    "password": "process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD"
+  "accountCreation": {
+    "firstNameValue": "John",
+    "lastNameValue": "Doe",
+    "emailHandleValue":"test-user",
+    "emailHostValue": "gmail.com"
   }
 }

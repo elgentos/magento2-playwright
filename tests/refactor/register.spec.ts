@@ -1,8 +1,8 @@
-import {test as base} from '@playwright/test';
+import {test} from '@playwright/test';
 import {RegisterPage} from './fixtures/register.page';
 
 // Reset storageState to ensure we're not logged in before running these tests.
-base.use({ storageState: { cookies: [], origins: [] } });
+test.use({ storageState: { cookies: [], origins: [] } });
 
 /**
  * @feature Magento 2 Account Creation
@@ -13,10 +13,13 @@ base.use({ storageState: { cookies: [], origins: [] } });
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
-// TODO: Fix account registration test when storageState has been implemented.
-base('User can register an account', async ({page}) => {
-  base.fixme(true,'This is skipped until the storageState authentication is fully operational. Use base/account.spec.ts instead');
+test('User can register an account', async ({page}) => {
+  const registerPage = new RegisterPage(page);
+  await registerPage.createNewAccount();
 });
 
 // TODO: registration should not work if mistakes are made, and proper messages should be displayed.
 // These tests should have a specific "error checker" tag.
+test('Account creation fails if required fields are not filled in', { tag: '@error-checker', }, async ({page}) => {
+  test.fixme(true,'Skipped, test will be created later');
+});

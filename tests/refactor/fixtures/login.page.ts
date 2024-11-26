@@ -12,9 +12,9 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.loginEmailField = page.getByLabel(selectors.login.emailFieldLabel, {exact: true});
-    this.loginPasswordField = page.getByLabel(selectors.login.PasswordFieldLabel, {exact: true});
-    this.loginButton = page.getByRole('button', { name: selectors.login.loginButtonLabel });
+    this.loginEmailField = page.getByLabel(selectors.credentials.emailFieldLabel, {exact: true});
+    this.loginPasswordField = page.getByLabel(selectors.credentials.passwordFieldLabel, {exact: true});
+    this.loginButton = page.getByRole('button', { name: selectors.credentials.loginButtonLabel });
   }
 
   // Note: this login function is simply written to quickly log in for tests which require you to be logged in.
