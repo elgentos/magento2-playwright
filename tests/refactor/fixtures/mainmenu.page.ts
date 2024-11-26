@@ -23,7 +23,7 @@ export class MainMenuPage {
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
 
-    await expect(this.page.getByRole('heading', { name: expected.account.accountPageTitle })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: selectors.accountDashboard.accountDashboardTitleLabel })).toBeVisible();
   }
 
   async logout(){

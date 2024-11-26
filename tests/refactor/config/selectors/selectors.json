@@ -16,6 +16,9 @@
   "accountCreation": {
     "createAccountButtonLabel": "Create an Account"
   },
+  "accountDashboard": {
+    "accountDashboardTitleLabel": "Account Information"
+  },
   "newAddress": {
     "companyNameLabel": "Company",
     "phoneNumberLabel": "Phone Number",
