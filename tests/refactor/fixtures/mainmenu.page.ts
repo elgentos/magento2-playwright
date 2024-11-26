@@ -1,7 +1,9 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
+import slugs from '../config/slugs.json';
 import selectors from '../config/selectors/selectors.json';
 import expected from '../config/expected/expected.json';
+
 
 export class MainMenuPage {
   readonly page: Page;
@@ -16,6 +18,7 @@ export class MainMenuPage {
 
 
   async logout(){
+    await this.page.goto(slugs.account.accountOverviewSlug);
     await this.mainMenuAccountButton.click();
     await this.mainMenuLogoutItem.click();
 

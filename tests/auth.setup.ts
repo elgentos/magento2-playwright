@@ -1,6 +1,6 @@
 import { test as setup, expect } from '@playwright/test';
 import path from 'path';
-import slugs from './refactor/config/slugs.json'
+import slugs from './refactor/config/slugs.json';
 import selectors from './refactor/config/selectors/selectors.json';
 
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
@@ -14,7 +14,7 @@ setup('authenticate', async ({ page }) => {
   }
 
   // Perform authentication steps. Replace these actions with your own.
-  await page.goto('');
+  await page.goto(slugs.account.loginSlug);
   await page.getByLabel(selectors.login.emailFieldLabel, {exact: true}).fill(emailInputValue);
   await page.getByLabel(selectors.login.PasswordFieldLabel, {exact: true}).fill(passwordInputValue);
   await page.getByRole('button', { name: selectors.login.loginButtonLabel }).click();
