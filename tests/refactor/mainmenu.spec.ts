@@ -16,7 +16,10 @@ import {MainMenuPage} from './fixtures/mainmenu.page';
  */
 base('User can log out', async ({page}) => {
   // TODO: remove login once storageState has been implemented.
+  // TODO: add if-statement to only log in if we're not logged in yet.
   const loginPage = new LoginPage(page);
   await loginPage.login();
   
+  const mainMenu = new MainMenuPage(page);
+  await mainMenu.logout();
 });
