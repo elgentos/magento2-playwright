@@ -25,30 +25,25 @@ export class RegisterPage {
   }
 
 
-  async createNewAccount(){
+  async createNewAccount(firstName: string, lastName: string, email: string){
     const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
     if(!existingAccountPassword){
       throw new Error("Password variable not defined in .env");
     }
 
-    //Create unique email with custom handle and host, adding a number between 0 - 100
-    const randomNumber = Math.floor(Math.random() * 100);
-    let emailHandle = inputvalues.accountCreation.emailHandleValue;
-    let emailHost = inputvalues.accountCreation.emailHostValue;
-    const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
     
     await this.page.goto(slugs.account.createAccountSlug);
 
-    await this.accountCreationFirstNameField.fill(inputvalues.accountCreation.firstNameValue);
-    await this.accountCreationLastNameField.fill(inputvalues.accountCreation.lastNameValue);
-    await this.accountCreationEmailField.fill(uniqueEmail);
+    await this.accountCreationFirstNameField.fill(firstName);
+    await this.accountCreationLastNameField.fill(lastName);
+    await this.accountCreationEmailField.fill(email);
     await this.accountCreationPasswordField.fill(existingAccountPassword);
     await this.accountCreationPasswordRepeatField.fill(existingAccountPassword);
     await this.accountCreationConfirmButton.click();
 
     await expect(this.page.getByText(expected.account.accountCreatedNotificationText)).toBeVisible();
     // log credentials to console to add to .env file
-    console.log(`Account created with credentials: email address "${uniqueEmail}" and password "${existingAccountPassword}"`);
+    console.log(`Account created with credentials: email address "${email}" and password "${existingAccountPassword}"`);
   }
 }

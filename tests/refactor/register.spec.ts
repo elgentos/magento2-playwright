@@ -1,6 +1,8 @@
 import {test} from '@playwright/test';
 import {RegisterPage} from './fixtures/register.page';
 
+import inputvalues from './config/input-values/input-values.json';
+
 // Reset storageState to ensure we're not logged in before running these tests.
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -15,7 +17,18 @@ test.use({ storageState: { cookies: [], origins: [] } });
  */
 test('User can register an account', async ({page}) => {
   const registerPage = new RegisterPage(page);
-  await registerPage.createNewAccount();
+
+  var firstName = inputvalues.accountCreation.firstNameValue;
+  var lastName = inputvalues.accountCreation.lastNameValue;
+
+  //Create unique email with custom handle and host, adding a number between 0 - 100
+  let randomNumber = Math.floor(Math.random() * 100);
+  let emailHandle = inputvalues.accountCreation.emailHandleValue;
+  let emailHost = inputvalues.accountCreation.emailHostValue;
+  const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
+
+  // password is retrieved from .env file in createNewAccount() function
+  await registerPage.createNewAccount(firstName, lastName, uniqueEmail);
 });
 
 // TODO: registration should not work if mistakes are made, and proper messages should be displayed.
