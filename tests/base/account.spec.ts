@@ -276,9 +276,9 @@ test.describe('Test user account actions', () => {
 
   /**
    * @feature Magento 2 Delete Address
-   *  @scenario User removes their address
+   *  @scenario User removes one of their addresses
    *    @given I am logged in
-   *    @when I navigate to the page where I can delete my address
+   *    @when I navigate to the page where I can delete one of my addresses
    *    @and I click the trash button for the address I want to delete
    *    @and I click the confirmation button
    *    @then the specified address should be removed from the overview.
@@ -293,13 +293,20 @@ test.describe('Test user account actions', () => {
     });
 
     await page.goto(slugs.accountAddressBookSlug);
+    
+    const addressTrashButton = page.locator(accountSelector.accountDeleteAddressButtons);
+  
+    // If trash button is hidden, there is only one address.
+    if(await addressTrashButton.isHidden()){
+      await account.addAddress();
+    }
 
-    await page.locator(accountSelector.accountDeleteAddressButtons).first().click();
-    await page.waitForTimeout(2000);
+    await addressTrashButton.first().click();
     await expect(page.locator(`text=${accountExpected.accountAddressDeletedNotificationText}`)).toBeVisible();
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
+    
   });
 
   /**
