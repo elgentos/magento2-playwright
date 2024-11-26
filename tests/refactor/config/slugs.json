@@ -1,0 +1,6 @@
+{
+  "account": {
+    "loginSlug": "/customer/account/login",
+    "createAccountSlug": "/customer/account/create"
+  }
+}

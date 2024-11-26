@@ -12,3 +12,4 @@ package-lock.json
 /tests/base/utils/AccountPage.ts
 .env
 .vscode
+/tests/base/devtools.spec.ts
