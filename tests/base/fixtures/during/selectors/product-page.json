@@ -1,4 +1,9 @@
 {
   "addToCartButtonSelector": "#product-addtocart-button",
-  "productQuantityInputSelector": "input[name='qty'][type='number']"
+  "configurableProductSizeLabel": "Size",
+  "configurableProductColorLabel": "Color",
+  "productQuantityInputSelector": "input[name='qty'][type='number']",
+  "simpleProductPrice": ".final-price .price-wrapper .price",
+  "configurableProductOptionForm": "#product_addtocart_form",
+  "configurableProductOptionValue": ".product-option-value-label"
 }
