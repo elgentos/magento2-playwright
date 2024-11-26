@@ -60,15 +60,16 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // TODO: uncomment the setup line once authentication works!
     // Import our auth.setup.ts file
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    //{ name: 'setup', testMatch: /.*\.setup\.ts/ },
 
     {
+      // TODO: uncomment dependency and storage state once authentication works!
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
-       },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome']},
+        // storageState: 'playwright/.auth/user.json',
+      // dependencies: ['setup'],
     },
 
     {
