@@ -107,6 +107,10 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been deleted. 
    *  @and The address should be removed from the overview.
    */
+  test('I can delete an address',{ tag: '@address-actions', }, async ({page}) => {
+    const accountPage = new AccountPage(page);
+    await accountPage.deleteFirstAddressFromAddressBook();
+  });
 });
 
 

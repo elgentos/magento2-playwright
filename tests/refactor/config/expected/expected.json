@@ -5,7 +5,8 @@
     "addressBookTitle": "Customer Address"
   },
   "address": {
-    "newAddressAddedNotifcation": "You saved the address."
+    "newAddressAddedNotifcation": "You saved the address.",
+    "addressDeletedNotification": "You deleted the address."
   },
   "logout": {
     "logoutConfirmationText": "You have signed out"

@@ -18,6 +18,7 @@ export class AccountPage {
   readonly stateSelectorField: Locator; 
   readonly saveAddressButton: Locator;
   readonly addNewAddressButton: Locator;
+  readonly deleteAddressButton: Locator;
 
   // fields below are not required when adding an address.
   /*
@@ -40,19 +41,12 @@ export class AccountPage {
     this.countrySelectorField = page.getByLabel(selectors.newAddress.countryLabel);
     this.stateSelectorField = page.getByLabel(selectors.newAddress.provinceSelectLabel).filter({hasText: selectors.newAddress.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: selectors.newAddress.saveAdressButton});
-
-    this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
     //unrequired fields
     // this.companyField = page.getByLabel(selectors.newAddress.companyNameLabel);
 
-    /*
-    //TODO: move labels to variable file
-    this.loginEmailField = page.getByLabel('Email', {exact: true});
-    this.loginPasswordField = page.getByLabel('Password', {exact: true});
-    this.loginButton = page.getByRole('button', { name: 'Sign In' });
-    this.myAccountMenuButton = page.getByLabel('My Account');
-    this.menuLogOutButton = page.getByTitle('Sign Out');
-    */
+    // Address Book elements
+    this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
+    this.deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteButton}).first();
   }
 
   //TODO: Add ability to choose different country other than US
@@ -70,8 +64,21 @@ export class AccountPage {
     await this.stateSelectorField.selectOption(state);
     await this.saveAddressButton.click();
 
-    //TODO: Add expect check to confirm address by looking for streetname or something on the new page?
     await expect(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
+  }
+
+  // TODO: Update function to remove random address from address book?
+  async deleteFirstAddressFromAddressBook(){
+    let addressDeletedNotification = verify.address.addressDeletedNotification;
+    // Dialog function to click confirm
+    this.page.on('dialog', async (dialog) => {
+      if (dialog.type() === 'confirm') {
+        await dialog.accept();
+      }
+    });
+
+    await this.deleteAddressButton.click();
+    await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
   }
 }

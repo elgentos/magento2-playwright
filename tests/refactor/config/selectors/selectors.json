@@ -19,7 +19,8 @@
   "accountDashboard": {
     "accountDashboardTitleLabel": "Account Information",
     "accountSideBarLabel": "Sidebar Main",
-    "addAddressButtonLabel": "ADD NEW ADDRESS"
+    "addAddressButtonLabel": "ADD NEW ADDRESS",
+    "addressDeleteButton": "trash"
   },
   "newAddress": {
     "companyNameLabel": "Company",
