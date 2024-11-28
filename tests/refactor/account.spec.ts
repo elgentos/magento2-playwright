@@ -3,6 +3,7 @@ import {LoginPage} from './fixtures/login.page';
 import {AccountPage} from './fixtures/account.page';
 
 import slugs from './config/slugs.json';
+import inputvalues from './config/input-values/input-values.json';
 import verify from './config/expected/expected.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
@@ -43,6 +44,18 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
+    // First Name and Last Name should be filled.
+    await expect(accountPage.firstNameField).not.toBeEmpty();
+    await expect(accountPage.lastNameField).not.toBeEmpty();
+
+    // async addFirstAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
+    var phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
+    var addressValue = inputvalues.firstAddress.firstStreetAddressValue;
+    var zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
+    var cityNameValue = inputvalues.firstAddress.firstCityValue;
+    var stateValue = inputvalues.firstAddress.firstProvinceValue;
+
+    await accountPage.addFirstAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
 
   });
 

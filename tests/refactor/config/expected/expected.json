@@ -4,6 +4,9 @@
     "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
     "addressBookTitle": "Customer Address"
   },
+  "address": {
+    "newAddressAddedNotifcation": "You saved the address."
+  },
   "logout": {
     "logoutConfirmationText": "You have signed out"
   } 
