@@ -1,7 +1,8 @@
 {
   "account": {
     "accountPageTitle": "Account Information",
-    "accountCreatedNotificationText": "Thank you for registering with Main Website Store."
+    "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
+    "addressBookTitle": "Customer Address"
   },
   "logout": {
     "logoutConfirmationText": "You have signed out"

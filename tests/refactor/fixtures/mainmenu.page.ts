@@ -26,6 +26,10 @@ export class MainMenuPage {
     await expect(this.page.getByRole('heading', { name: selectors.accountDashboard.accountDashboardTitleLabel })).toBeVisible();
   }
 
+  async gotoAddressBook() {
+    // TODO: create function to navigate to Address Book through the header menu links
+  }
+
   async logout(){
     await this.page.goto(slugs.account.accountOverviewSlug);
     await this.mainMenuAccountButton.click();

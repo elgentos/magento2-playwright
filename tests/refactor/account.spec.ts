@@ -1,5 +1,9 @@
-import {test} from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
+import {AccountPage} from './fixtures/account.page';
+
+import slugs from './config/slugs.json';
+import verify from './config/expected/expected.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
@@ -19,6 +23,11 @@ test.beforeEach(async ({ page }) => {
 
 
 test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Address Book'},}, () => {
+  test.beforeEach(async ({page}) => {
+    // go to the Adress Book page
+    await page.goto(slugs.account.addressBookSlug);
+    await expect(page.getByText(verify.account.addressBookTitle, { exact: true })).toBeVisible();
+  });
   /**
    * @feature Magento 2 Add First Address to Account
    * @scenario User adds a first address to their account
@@ -32,8 +41,9 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    *  @and The new address should be selected as default and shipping address
    */
 
-  test('I can add my first address', async ({page}) => {
-    // insert your code here
+  test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
+    const accountPage = new AccountPage(page);
+
   });
 
   /*
