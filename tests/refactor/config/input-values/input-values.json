@@ -13,5 +13,14 @@
     "firstCityValue": "Testing Valley",
     "firstNonDefaultCountry": "Netherlands",
     "firstProvinceValue": "Idaho"
+  },
+  "secondAddress": {
+    "secondCompanyNameValue": "Hogwarts",
+    "secondPhoneNumberValue": "0620081998",
+    "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
+    "secondZipCodeValue": "67890",
+    "secondCityValue": "Little Whinging",
+    "secondNonDefaultCountry": "United Kingdom",
+    "secondProvinceValue": "South Dakota"
   }
 }

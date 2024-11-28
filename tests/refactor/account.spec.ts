@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import {test, expect, selectors} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
 import {AccountPage} from './fixtures/account.page';
 
@@ -27,8 +27,9 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
-    await expect(page.getByText(verify.account.addressBookTitle, { exact: true })).toBeVisible();
+    await page.waitForURL('**/address**');
   });
+
   /**
    * @feature Magento 2 Add First Address to Account
    * @scenario User adds a first address to their account
@@ -44,37 +45,42 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    // First Name and Last Name should be filled.
-    await expect(accountPage.firstNameField).not.toBeEmpty();
-    await expect(accountPage.lastNameField).not.toBeEmpty();
 
-    // async addFirstAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
-    var phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
-    var addressValue = inputvalues.firstAddress.firstStreetAddressValue;
-    var zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
-    var cityNameValue = inputvalues.firstAddress.firstCityValue;
-    var stateValue = inputvalues.firstAddress.firstProvinceValue;
+    let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
+    let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
+    let zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
+    let cityNameValue = inputvalues.firstAddress.firstCityValue;
+    let stateValue = inputvalues.firstAddress.firstProvinceValue;
 
-    await accountPage.addFirstAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
 
   });
 
-  /*
-  test('Add new address on account', async ({page}) => {
-    const account = new Account(page);
+  /**
+   * @feature Magento 2 Add another Address to Account
+   * @scenario User adds a another address to their account
+   * @given I am logged in
+   *  @and I am on the account dashboard page
+   * @when I go to the page where I can add another address
+   * @when I fill in the required information
+   *   @and I click the save button
+   * @then I should see a notification my address has been updated. 
+   *  @and The new address should be listed
+   */
+  test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
+    await page.goto(slugs.account.addressNewSlug);
 
-    // Throw an error if existingAccountPassword is empty
-    if(!existingAccountPassword || !existingAccountEmail){
-      throw new Error("Existing Password or Email variable not defined in .env");
-    }
-    
-    await account.login(existingAccountEmail, existingAccountPassword);
-    await account.addAddress();
+    const accountPage = new AccountPage(page);
 
-    const accountPageTester = new PageTester(page, page.url());
-    await accountPageTester.testPage();
+    let phoneNumberValue = inputvalues.secondAddress.secondPhoneNumberValue;
+    let addressValue = inputvalues.secondAddress.secondStreetAddressValue;
+    let zipCodeValue = inputvalues.secondAddress.secondZipCodeValue;
+    let cityNameValue = inputvalues.secondAddress.secondCityValue;
+    let stateValue = inputvalues.secondAddress.secondProvinceValue;
+
+    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+
   });
-  */
 
   /**
    * @feature Magento 2 Update Address in Account

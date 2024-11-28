@@ -3,7 +3,9 @@
     "accountOverviewSlug": "/customer/account/",
     "loginSlug": "/customer/account/login",
     "createAccountSlug": "/customer/account/create",
-    "addressBookSlug": "/customer/address"
+    "addressBookSlug": "/customer/address",
+    "addressIndexSlug": "/customer/address/index",
+    "addressNewSlug": "customer/address/new"
   },
   "productpage": {
     "simpleProductSlug": "/push-it-messenger-bag.html"

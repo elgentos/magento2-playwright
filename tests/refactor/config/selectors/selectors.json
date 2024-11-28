@@ -17,7 +17,9 @@
     "createAccountButtonLabel": "Create an Account"
   },
   "accountDashboard": {
-    "accountDashboardTitleLabel": "Account Information"
+    "accountDashboardTitleLabel": "Account Information",
+    "accountSideBarLabel": "Sidebar Main",
+    "addAddressButtonLabel": "ADD NEW ADDRESS"
   },
   "newAddress": {
     "companyNameLabel": "Company",

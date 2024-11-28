@@ -17,6 +17,7 @@ export class AccountPage {
   readonly countrySelectorField: Locator;
   readonly stateSelectorField: Locator; 
   readonly saveAddressButton: Locator;
+  readonly addNewAddressButton: Locator;
 
   // fields below are not required when adding an address.
   /*
@@ -40,6 +41,7 @@ export class AccountPage {
     this.stateSelectorField = page.getByLabel(selectors.newAddress.provinceSelectLabel).filter({hasText: selectors.newAddress.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: selectors.newAddress.saveAdressButton});
 
+    this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
     //unrequired fields
     // this.companyField = page.getByLabel(selectors.newAddress.companyNameLabel);
 
@@ -54,14 +56,13 @@ export class AccountPage {
   }
 
   //TODO: Add ability to choose different country other than US
-  async addFirstAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
-
-    // fill in fields
-    // click save address
-    // check if address has been added
+  async addNewAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
     let addressAddedNotification = verify.address.newAddressAddedNotifcation;
+    
+    // Name should be filled in automatically.
+    await expect(this.firstNameField).not.toBeEmpty();
+    await expect(this.lastNameField).not.toBeEmpty();
 
-    // fill in required fields
     await this.phoneNumberField.fill(phonenumber);
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
@@ -71,6 +72,6 @@ export class AccountPage {
 
     //TODO: Add expect check to confirm address by looking for streetname or something on the new page?
     await expect(this.page.getByText(addressAddedNotification)).toBeVisible();
-
+    await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
 }
