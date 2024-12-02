@@ -46,7 +46,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @and I should be able to login with my new credentials.
    */
 
-  test('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+  //TODO Remove only once test works
+  test.only('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -60,35 +61,9 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     sidebarAccountInfoLink.click();
     await expect(page.getByRole('heading', { name: 'Account Information' }).locator('span')).toBeVisible();
 
-    accountPage.updatePassword(passwordInputValue, changedPasswordValue);
+    await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
   });
-
-  /*
-      test('Change password for account', async ({page}) => {
-      // Change password
-      const changePassword = async (currentPassword: string, newPassword: string) => {
-        await page.goto(slugs.changePasswordSlug);
-        await page.click(accountSelector.changePasswordLabel);
-        await page.fill(accountSelector.currentPasswordFieldSelector, currentPassword);
-        await page.fill(accountSelector.registrationPasswordSelector, newPassword);
-        await page.fill(accountSelector.registrationConfirmPasswordSelector, newPassword);
-        await page.click(accountSelector.accountSaveButtonSelector);
-        await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
-      };
-
-      const account = new Account(page);
-      await account.login(existingAccountEmail, existingAccountChangedPassword);
-      await changePassword(existingAccountPassword, existingAccountChangedPassword);
-
-      await account.login(existingAccountEmail, existingAccountChangedPassword);
-      await changePassword(existingAccountChangedPassword, existingAccountPassword);
-
-      const accountPageTester = new PageTester(page, page.url());
-      await accountPageTester.testPage();
-    });
-  */
-
 });
 
 

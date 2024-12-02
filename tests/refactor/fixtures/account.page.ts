@@ -53,8 +53,13 @@ export class AccountPage {
     // this.companyField = page.getByLabel(selectors.newAddress.companyNameLabel);
 
     // Account Information elements
-    this.changePasswordCheck = page.getByLabel(selectors.personalInformation.changePasswordCheckLabel);
+    this.changePasswordCheck = page.getByRole('checkbox', {name: selectors.personalInformation.changePasswordCheckLabel});
+    //TODO: Fix these once I can log in again
+    this.currentPasswordField = page.getByLabel('Current Password');
+    this.newPasswordField = page.getByLabel('New Password', {exact:true});
+    this.confirmNewPasswordField = page.getByLabel('Confirm New Password')
     this.genericSaveButton = page.getByRole('button', { name: selectors.general.genericSaveButtonLabel });
+
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
@@ -123,8 +128,8 @@ export class AccountPage {
 
   async updatePassword(currentPassword:string, newPassword: string){
     let passwordUpdatedNotification = verify.account.changedPasswordNotificationText;
-
     await this.changePasswordCheck.check();
+
     await this.currentPasswordField.fill(currentPassword);
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
