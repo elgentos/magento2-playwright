@@ -137,14 +137,36 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
     await page.goto(slugs.account.accountOverviewSlug);
   });
   
+  // TODO: What if website offers multiple subscriptions?
+
+  /**
+   * @feature Magento 2 newsletter subscriptions
+   * @scenario User (un)subscribes from a newsletter
+   * @given I am logged in
+   *  @and I am on the account dashboard page
+   * @when I click on the newsletter link in the sidebar
+   *  @then I should navigate to the newsletter subscription page
+   * @when I (un)check the subscription button
+   *  @then I should see a message confirming my action
+   *  @and My subscription option should be updated.
+   */
   test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page}) => {
     const newsletterPage = new NewsletterSubscriptionPage(page);
-
     let newsletterLink = page.getByRole('link', { name: selectors.accountDashboard.links.newsletterLink });
+    const newsletterCheckElement = page.getByLabel(selectors.newsletterSubscriptions.generalSubscriptionCheckLabel);
+
     await newsletterLink.click();
     await expect(page.getByText(verify.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
 
-    await newsletterPage.updateNewsletterSubscription();
+    let updateSubscription = await newsletterPage.updateNewsletterSubscription();
+
+    await newsletterLink.click();
+
+    if(updateSubscription){
+      await expect(newsletterCheckElement).toBeChecked();  
+    } else {
+      await expect(newsletterCheckElement).not.toBeChecked();  
+    }
   });
 
 });
