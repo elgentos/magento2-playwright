@@ -20,6 +20,11 @@ export class AccountPage {
   readonly addNewAddressButton: Locator;
   readonly deleteAddressButton: Locator;
   readonly editAddressButton: Locator;
+  readonly changePasswordCheck: Locator;
+  readonly currentPasswordField: Locator;
+  readonly newPasswordField: Locator;
+  readonly confirmNewPasswordField: Locator;
+  readonly genericSaveButton: Locator;
 
   // fields below are not required when adding an address.
   /*
@@ -46,6 +51,10 @@ export class AccountPage {
     this.saveAddressButton = page.getByRole('button',{name: selectors.newAddress.saveAdressButton});
     //unrequired fields
     // this.companyField = page.getByLabel(selectors.newAddress.companyNameLabel);
+
+    // Account Information elements
+    this.changePasswordCheck = page.getByLabel(selectors.personalInformation.changePasswordCheckLabel);
+    this.genericSaveButton = page.getByRole('button', { name: selectors.general.genericSaveButtonLabel });
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
@@ -109,5 +118,20 @@ export class AccountPage {
 
     await this.deleteAddressButton.click();
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+  }
+
+
+  async updatePassword(currentPassword:string, newPassword: string){
+    let passwordUpdatedNotification = verify.account.changedPasswordNotificationText;
+
+    await this.changePasswordCheck.check();
+    await this.currentPasswordField.fill(currentPassword);
+    await this.newPasswordField.fill(newPassword);
+    await this.confirmNewPasswordField.fill(newPassword);
+
+    await this.genericSaveButton.click();
+
+    await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
+    console.log(`Password has been changed! Please update your .env file password with "${newPassword}"`);
   }
 }

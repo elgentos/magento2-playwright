@@ -25,6 +25,73 @@ test.beforeEach(async ({ page }) => {
   await loginPage.login(emailInputValue, passwordInputValue);
 });
 
+test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
+  
+  test.beforeEach(async ({page}) => {
+    await page.goto(slugs.account.accountOverviewSlug);
+  });
+
+  // TODO: add test to update e-mail address
+
+  /**
+   * @feature Magento 2 Change Password
+   * @scenario User changes their password
+   * @given I am logged in
+   * @and I am on the Account Dashboard page
+   * @when I navigate to the Account Information page
+   * @and I check the 'change password' option
+   * @when I fill in the new credentials
+   * @and I click Save
+   * @then I should see a notification that my password has been updated
+   * @and I should be able to login with my new credentials.
+   */
+
+  test('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+    const accountPage = new AccountPage(page);
+    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(!changedPasswordValue || !passwordInputValue) {
+      throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
+    }
+
+    // Navigate to Account Information, confirm by checking heading above sidebar
+    const sidebarAccountInfoLink = page.getByRole('link', { name: 'Account Information' });
+    sidebarAccountInfoLink.click();
+    await expect(page.getByRole('heading', { name: 'Account Information' }).locator('span')).toBeVisible();
+
+    accountPage.updatePassword(passwordInputValue, changedPasswordValue);
+
+  });
+
+  /*
+      test('Change password for account', async ({page}) => {
+      // Change password
+      const changePassword = async (currentPassword: string, newPassword: string) => {
+        await page.goto(slugs.changePasswordSlug);
+        await page.click(accountSelector.changePasswordLabel);
+        await page.fill(accountSelector.currentPasswordFieldSelector, currentPassword);
+        await page.fill(accountSelector.registrationPasswordSelector, newPassword);
+        await page.fill(accountSelector.registrationConfirmPasswordSelector, newPassword);
+        await page.click(accountSelector.accountSaveButtonSelector);
+        await expect(page.locator(`text=${accountExpected.accountInformationUpdatedNotificationText}`)).toBeVisible();
+      };
+
+      const account = new Account(page);
+      await account.login(existingAccountEmail, existingAccountChangedPassword);
+      await changePassword(existingAccountPassword, existingAccountChangedPassword);
+
+      await account.login(existingAccountEmail, existingAccountChangedPassword);
+      await changePassword(existingAccountChangedPassword, existingAccountPassword);
+
+      const accountPageTester = new PageTester(page, page.url());
+      await accountPageTester.testPage();
+    });
+  */
+
+});
+
+
 // TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
 // TODO: Add tests to check address can't be deleted if it's the last/only one.
 test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {

@@ -1,4 +1,7 @@
 {
+  "general": {
+    "genericSaveButtonLabel": "Save"
+  },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
     "myAccountLogoutItem": "Sign Out"
@@ -11,7 +14,8 @@
   },
   "personalInformation": {
     "firstNameLabel": "First Name",
-    "lastNameLabel": "Last Name"
+    "lastNameLabel": "Last Name",
+    "changePasswordCheckLabel": "Change Password"
   },
   "accountCreation": {
     "createAccountButtonLabel": "Create an Account"
