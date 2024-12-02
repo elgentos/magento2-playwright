@@ -21,7 +21,10 @@
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
     "addressDeleteIconButton": "trash",
-    "editAddressIconButton": "pencil-alt"
+    "editAddressIconButton": "pencil-alt",
+    "links": {
+      "newsletterLink": "Newsletter Subscriptions"
+    }
   },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
@@ -34,5 +37,9 @@
     "provinceSelectLabel": "State/Province",
     "provinceSelectFilterLabel": "Please select a region, state or province.",
     "saveAdressButton": "Save Address"
+  },
+  "newsletterSubscriptions": {
+    "generalSubscriptionCheckLabel": "General Subscription",
+    "saveSubscriptionsButton": "Save"
   }
 }

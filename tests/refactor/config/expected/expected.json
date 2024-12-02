@@ -2,7 +2,11 @@
   "account": {
     "accountPageTitle": "Account Information",
     "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
-    "addressBookTitle": "Customer Address"
+    "addressBookTitle": "Customer Address",
+    "newsletterSubscriptionTitle": "Newsletter Subscription",
+    "newsletterSavedNotification": "We have saved your subscription.",
+    "newsletterUpdatedNotification": "We have updated your subscription.",
+    "newsletterRemovedNotification": "We have removed your newsletter subscription."
   },
   "address": {
     "newAddressAddedNotifcation": "You saved the address.",

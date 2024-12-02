@@ -1,14 +1,17 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
 import {AccountPage} from './fixtures/account.page';
+import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
 
 import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
 import selectors from './config/selectors/selectors.json';
+import verify from './config/expected/expected.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
-
 // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
+
+
 // Before each test, log in
 test.beforeEach(async ({ page }) => {
   let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
@@ -22,7 +25,8 @@ test.beforeEach(async ({ page }) => {
   await loginPage.login(emailInputValue, passwordInputValue);
 });
 
-
+// TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
+// TODO: Add tests to check address can't be deleted if it's the last/only one.
 test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
@@ -59,9 +63,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 
   });
 
-  /**
-   * @feature Magento 2 Add another Address to Account
-   * @scenario User adds a another address to their account
+  /**NewsletterSubscriptionPage
    * @given I am logged in
    *  @and I am on the account dashboard page
    * @when I go to the page where I can add another address
@@ -128,7 +130,22 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   });
 });
 
+// TODO: move this to new spec file.
+test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
+  test.beforeEach(async ({page}) => {
+    // go to the Dashboard page
+    await page.goto(slugs.account.accountOverviewSlug);
+  });
+  
+  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page}) => {
+    const newsletterPage = new NewsletterSubscriptionPage(page);
 
+    let newsletterLink = page.getByRole('link', { name: selectors.accountDashboard.links.newsletterLink });
+    await newsletterLink.click();
+    await expect(page.getByText(verify.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
 
-// TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
-// TODO: Add tests to check address can't be deleted if it's the last/only one.
+    await newsletterPage.updateNewsletterSubscription();
+  });
+
+});
+
