@@ -19,6 +19,7 @@ export class AccountPage {
   readonly saveAddressButton: Locator;
   readonly addNewAddressButton: Locator;
   readonly deleteAddressButton: Locator;
+  readonly editAddressButton: Locator;
 
   // fields below are not required when adding an address.
   /*
@@ -26,6 +27,8 @@ export class AccountPage {
   readonly streetAddressFieldTwo: Locator;
   readonly streetAddressFieldThree: Locator;
   */
+
+  // TODO: Update these functionalities to be able to take in non-required fields.
 
   constructor(page: Page){
     this.page = page;
@@ -46,13 +49,15 @@ export class AccountPage {
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
-    this.deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteButton}).first();
+    this.deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
+    this.editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
   }
 
   //TODO: Add ability to choose different country other than US
   async addNewAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
     let addressAddedNotification = verify.address.newAddressAddedNotifcation;
     
+
     // Name should be filled in automatically.
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
@@ -68,7 +73,31 @@ export class AccountPage {
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
 
+  async editExistingAddress(firstName: string, lastName: string, streetName: string, zipCode: string, cityName: string, state: string){
+    // the notification for a modified address is the same as the notification for a new address.
+    let addressModifiedNotification = verify.address.newAddressAddedNotifcation;
+
+    await this.editAddressButton.click();
+    
+    // Name should be filled in automatically, but editable.
+    await expect(this.firstNameField).not.toBeEmpty();
+    await expect(this.lastNameField).not.toBeEmpty();
+
+    await this.firstNameField.fill(firstName);
+    await this.lastNameField.fill(lastName);
+    await this.streetAddressField.fill(streetName);
+    await this.zipCodeField.fill(zipCode);
+    await this.cityField.fill(cityName);
+    await this.stateSelectorField.selectOption(state);
+    await this.saveAddressButton.click();
+
+    await expect(this.page.getByText(addressModifiedNotification)).toBeVisible();
+    await expect(this.page.getByText(streetName).last()).toBeVisible();
+  }
+
+
   // TODO: Update function to remove random address from address book?
+  // deleteAddressButton is currently the first instance it finds.
   async deleteFirstAddressFromAddressBook(){
     let addressDeletedNotification = verify.address.addressDeletedNotification;
     // Dialog function to click confirm

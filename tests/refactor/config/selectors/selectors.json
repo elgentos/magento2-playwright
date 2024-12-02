@@ -20,9 +20,11 @@
     "accountDashboardTitleLabel": "Account Information",
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
-    "addressDeleteButton": "trash"
+    "addressDeleteIconButton": "trash",
+    "editAddressIconButton": "pencil-alt"
   },
   "newAddress": {
+    "addNewAddressTitle": "Add New Address",
     "companyNameLabel": "Company",
     "phoneNumberLabel": "Phone Number",
     "streetAddressLabel": "Street Address",

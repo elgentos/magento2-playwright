@@ -1,10 +1,10 @@
-import {test, expect, selectors} from '@playwright/test';
+import {test, expect} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
 import {AccountPage} from './fixtures/account.page';
 
 import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
-import verify from './config/expected/expected.json';
+import selectors from './config/selectors/selectors.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
@@ -23,11 +23,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 
-test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Address Book'},}, () => {
+test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
-    await page.waitForURL('**/address**');
+
   });
 
   /**
@@ -44,6 +44,9 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
+    // If account has no address, Address Book redirects to the 'Add New Address' page.
+    // We expect this to be true before continuing.
+    await expect(page.getByText(selectors.newAddress.addNewAddressTitle)).toBeVisible();
     const accountPage = new AccountPage(page);
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
@@ -94,7 +97,19 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been updated. 
    *  @and The updated address should be visible in the addres book page.
    */
+  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
+    const accountPage = new AccountPage(page);
+    let newFirstName = inputvalues.editedAddress.editfirstNameValue;
+    let newLastName = inputvalues.editedAddress.editLastNameValue;
+    let newStreet = inputvalues.editedAddress.editStreetAddressValue;
+    let newZipCode = inputvalues.editedAddress.editZipCodeValue;
+    let newCity = inputvalues.editedAddress.editCityValue;
+    let newState = inputvalues.editedAddress.editStateValue;
+    
+    await page.goto(slugs.account.addressBookSlug);
+    await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
 
+  });
 
   /**
    * @feature Magento 2 Delete Address from account

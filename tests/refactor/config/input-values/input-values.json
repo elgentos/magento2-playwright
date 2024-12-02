@@ -22,5 +22,14 @@
     "secondCityValue": "Little Whinging",
     "secondNonDefaultCountry": "United Kingdom",
     "secondProvinceValue": "South Dakota"
+  },
+  "editedAddress": {
+    "editfirstNameValue": "Ash",
+    "editLastNameValue": "Ketchum",
+    "editCompanyNameValue": "Pokémon",
+    "editStreetAddressValue": "House on the left",
+    "editZipCodeValue": "00151",
+    "editCityValue": "Pallet Town",
+    "editStateValue": "Kansas"
   }
 }
