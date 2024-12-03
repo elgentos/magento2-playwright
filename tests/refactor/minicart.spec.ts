@@ -9,7 +9,21 @@ import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
 test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 'Tests for the minicart'},}, () => {
+
+  /** 
+   * BEFORE EACH: Add product to cart, then open minicart
+  */
   
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
+
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart();
+    await mainMenu.openMiniCart();
+  });
+
   /**
    * @feature Magento 2 Minicart to Checkout
    * @scenario User adds a product to cart, then uses minicart to navigate to checkout
@@ -24,18 +38,9 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
    */
 
   test('Add product to minicart, navigate to checkout',{ tag: '@minicart-simple-product',}, async ({page}) => {
-    const mainMenu = new MainMenuPage(page);
     const miniCart = new MiniCartPage(page);
-    const productPage = new ProductPage(page);
-
-    await page.goto(slugs.productpage.simpleProductSlug);
-
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
-    await productPage.addSimpleProductToCart();
     
-    await mainMenu.openMiniCart();
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
-
     await miniCart.goToCheckout();
   });
 
@@ -53,18 +58,9 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
    */
 
   test('Add product to minicart, navigate to cart',{ tag: '@minicart-simple-product',}, async ({page}) => {
-    const mainMenu = new MainMenuPage(page);
     const miniCart = new MiniCartPage(page);
-    const productPage = new ProductPage(page);
 
-    await page.goto(slugs.productpage.simpleProductSlug);
-
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
-    await productPage.addSimpleProductToCart();
-
-    await mainMenu.openMiniCart();
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
-
     await miniCart.goToCart();
   });
 
@@ -84,17 +80,25 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
    *    @and the new amount should be shown in the minicart
    */
   test('Change quantity of a product in minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
-    const mainMenu = new MainMenuPage(page);
     const miniCart = new MiniCartPage(page);
-    const productPage = new ProductPage(page);
-    
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
-    await page.goto(slugs.productpage.simpleProductSlug);
-    await productPage.addSimpleProductToCart();
-    
-    await mainMenu.openMiniCart();
-    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
 
+    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
     await miniCart.updateProduct('3');
+  });
+
+  /**
+   * @feature Magento 2 minicart product deletion
+   * @scenario User adds product to cart, then removes from minicart
+   * @given I am on a (simple) product page
+   * @when I add a product to my cart
+   *  @then I should see a notification
+   * @when I click the minicart in the main menu
+   *  @then I should see the minicart
+   * @when I click on the delete button
+   *  @then The product should not be in my cart anymore
+   *  @and I should see a notification that the product was removed
+   */
+  test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    // insert your code here
   });
 });
