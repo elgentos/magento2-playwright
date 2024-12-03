@@ -21,6 +21,8 @@
   },
   "miniCart": {
     "miniCartTitle": "My Cart",
-    "simpleProductInCartTitle": "x Push It Messenger Bag"
+    "simpleProductInCartTitle": "x Push It Messenger Bag",
+    "productRemovedConfirmation": "You removed the item.",
+    "productQuantityChangedConfirmation": "was updated in your shopping cart"
   }
 }

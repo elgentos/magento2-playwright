@@ -50,7 +50,14 @@
   "productPage": {
     "simpleProductTitle": "Push It Messenger Bag"
   },
+  "cart": {
+    "updateItemButtonLabel": "shopping-cart Update item"
+  },
   "miniCart": {
-    "checkOutButtonLabel": "Checkout"
+    "checkOutButtonLabel": "Checkout",
+    "toCartLinkLabel": "View and Edit Cart",
+    "editProductIconLabel": "Edit product",
+    "productQuantityFieldLabel": "Quantity",
+    "removeProductIconLabel": "Remove product"
   }
 }

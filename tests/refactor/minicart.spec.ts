@@ -99,6 +99,9 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
    *  @and I should see a notification that the product was removed
    */
   test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
-    // insert your code here
+    const miniCart = new MiniCartPage(page);
+
+    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
+    await miniCart.removeProductFromMinicart();
   });
 });
