@@ -67,4 +67,34 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
 
     await miniCart.goToCart();
   });
+
+  /**
+   * @feature Magento 2 Minicart quantity change
+   * @scenario User adds a product to the minicart, then adds another of that product
+   * @given I am on a (simple) product page
+   * @when I add a product to my cart
+   *  @then I should see a notification
+   * @when I click the minicart in the main menu
+   *  @then I should see the minicart
+   * @when I click on the pencil
+   *  @then I should navigate to a product page that is in my cart
+   * @when I change the amount
+   *  @and I click 'update item' button
+   *  @then I should see a confirmation
+   *    @and the new amount should be shown in the minicart
+   */
+  test('Change quantity of a product in minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    const miniCart = new MiniCartPage(page);
+    const productPage = new ProductPage(page);
+    
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart();
+    
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
+
+    await miniCart.updateProduct('3');
+  });
 });

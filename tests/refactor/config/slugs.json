@@ -11,5 +11,6 @@
     "simpleProductSlug": "/push-it-messenger-bag.html"
   },
   "checkoutSlug": "/checkout/",
-  "cartSlug": "/cart/"
+  "cartSlug": "/cart/",
+  "cartProductChangeSlug": "/cart/configure/"
 }
