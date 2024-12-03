@@ -48,7 +48,8 @@
     "saveSubscriptionsButton": "Save"
   },
   "productPage": {
-    "simpleProductTitle": "Push It Messenger Bag"
+    "simpleProductTitle": "Push It Messenger Bag",
+    "simpleProductPrice": ".final-price .price-wrapper .price"
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item"

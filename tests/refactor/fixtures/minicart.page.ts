@@ -59,15 +59,8 @@ export class MiniCartPage {
   }
 
   async checkPriceWithProductPage() {
-    await this.page.waitForLoadState();
-    
-    let productPrice = await this.page.locator(('#product-price')).innerText();
-    //let minicartPrice = await this.page.getByText('$').first().innerText();
-    //await expect(page.locator('#product-price-37')).toContainText('$49.00');
-    await expect(this.page.getByLabel('My Cart', { exact: true })).toContainText(productPrice);
-    // expect(productPrice).toEqual(minicartPrice);
-    //expect(productPrice, `priceOnpage: ${productPrice} and priceInMinicart: ${minicartPrice}`).toEqual(minicartPrice);
-  
-    
+    const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).innerText();
+    const priceInMinicart = await this.page.locator('.price-excluding tax.minicart-price.price').first().innerText();
+    expect(priceOnPage).toBe(priceInMinicart);
   }
 }
