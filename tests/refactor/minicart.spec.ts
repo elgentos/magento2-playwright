@@ -35,10 +35,36 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
     
     await mainMenu.openMiniCart();
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
-    
+
     await miniCart.goToCheckout();
-    
+  });
 
+  /**
+   * @feature Magento 2 Minicart to Cart
+   * @scenario User adds a product to cart, then uses minicart to navigate to their cart
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the menu
+   *  @then I should see a minicart open
+   * @when I click on the 'to cart' button
+   *  @then I should be navigated to the cart page
+   */
 
+  test('Add product to minicart, navigate to cart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    const miniCart = new MiniCartPage(page);
+    const productPage = new ProductPage(page);
+
+    await page.goto(slugs.productpage.simpleProductSlug);
+
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await productPage.addSimpleProductToCart();
+
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
+
+    await miniCart.goToCart();
   });
 });

@@ -49,5 +49,8 @@
   },
   "productPage": {
     "simpleProductTitle": "Push It Messenger Bag"
+  },
+  "miniCart": {
+    "checkOutButtonLabel": "Checkout"
   }
 }
