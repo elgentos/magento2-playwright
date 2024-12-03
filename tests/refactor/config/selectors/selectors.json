@@ -4,7 +4,8 @@
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
-    "myAccountLogoutItem": "Sign Out"
+    "myAccountLogoutItem": "Sign Out",
+    "miniCartLabel": "Toggle minicart"
   },
   "credentials": {
     "emailFieldLabel": "Email",
@@ -45,5 +46,8 @@
   "newsletterSubscriptions": {
     "generalSubscriptionCheckLabel": "General Subscription",
     "saveSubscriptionsButton": "Save"
+  },
+  "productPage": {
+    "simpleProductTitle": "Push It Messenger Bag"
   }
 }

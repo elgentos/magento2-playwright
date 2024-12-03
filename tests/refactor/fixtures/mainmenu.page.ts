@@ -8,12 +8,14 @@ import expected from '../config/expected/expected.json';
 export class MainMenuPage {
   readonly page: Page;
   readonly mainMenuAccountButton: Locator;
+  readonly mainMenuMiniCartButton: Locator;
   readonly mainMenuMyAccountItem: Locator;
   readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.mainMenuAccountButton = page.getByLabel(selectors.mainMenu.myAccountButtonLabel);
+    this.mainMenuMiniCartButton = page.getByLabel(selectors.mainMenu.miniCartLabel);
     this.mainMenuLogoutItem = page.getByTitle(selectors.mainMenu.myAccountLogoutItem);
     this.mainMenuMyAccountItem = page.getByTitle(selectors.mainMenu.myAccountButtonLabel);
   }
@@ -28,6 +30,11 @@ export class MainMenuPage {
 
   async gotoAddressBook() {
     // TODO: create function to navigate to Address Book through the header menu links
+  }
+
+  async openMiniCart() {
+    await this.mainMenuMiniCartButton.click();
+    await expect(this.page.getByText(expected.miniCart.miniCartTitle)).toBeVisible();
   }
 
   async logout(){

@@ -9,5 +9,6 @@
   },
   "productpage": {
     "simpleProductSlug": "/push-it-messenger-bag.html"
-  }
+  },
+  "checkoutSlug": "/checkout/" 
 }

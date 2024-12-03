@@ -15,5 +15,12 @@
   },
   "logout": {
     "logoutConfirmationText": "You have signed out"
-  } 
+  } ,
+  "productPage": {
+    "simpleProductAddedNotification": "You added Push It Messenger"
+  },
+  "miniCart": {
+    "miniCartTitle": "My Cart",
+    "simpleProductInCartTitle": "x Push It Messenger Bag"
+  }
 }

@@ -1,7 +1,5 @@
 import {expect, type Locator, type Page} from '@playwright/test';
-import {LoginPage} from './login.page';
 
-import slugs from '../config/slugs.json';
 import selectors from '../config/selectors/selectors.json';
 import verify from '../config/expected/expected.json';
 
