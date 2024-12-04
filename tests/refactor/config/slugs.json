@@ -13,5 +13,6 @@
   },
   "checkoutSlug": "/checkout/",
   "cartSlug": "/cart/",
-  "cartProductChangeSlug": "/cart/configure/"
+  "cartProductChangeSlug": "/cart/configure/",
+  "contact": "/contact"
 }

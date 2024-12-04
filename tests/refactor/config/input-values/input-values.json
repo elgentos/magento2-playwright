@@ -5,6 +5,10 @@
     "emailHandleValue":"test-user",
     "emailHostValue": "gmail.com"
   },
+  "contact": {
+    "contactFormEmailValue": "robertbaratheon@gameofthrones.com",
+    "contactFormMessage": "Hello! I am filling out this form as a test only. Feel free to ignore this message."
+  },
   "firstAddress": {
     "firstCompanyNameValue": "ACME Company",
     "firstPhoneNumberValue": "0622000000",
