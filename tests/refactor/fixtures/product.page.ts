@@ -21,6 +21,22 @@ export class ProductPage {
     await this.simpleProductAddToCartButon.click();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
+
+  async addConfigurableProductToCart(){
+    /*"configurableProductSizeLabel": "Size",
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label"*/
+
+    const productOptions = this.page.locator(selectors.productPage.configurableProductOptionForm);
+
+    // loop through each radiogroup (product option) within the form
+    for (const option of await productOptions.getByRole('radiogroup').all()) {
+        await option.locator(selectors.productPage.configurableProductOptionValue).first().check();
+    }
+
+    await this.simpleProductAddToCartButon.click();
+  }
 }
 
 // await expect(page.getByRole('heading', { name: 'Push It Messenger Bag', exact: true }).locator('span')).toBeVisible();

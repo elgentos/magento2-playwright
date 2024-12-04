@@ -49,7 +49,12 @@
   },
   "productPage": {
     "simpleProductTitle": "Push It Messenger Bag",
-    "simpleProductPrice": ".final-price .price-wrapper .price"
+    "simpleProductPrice": ".final-price .price-wrapper .price",
+    "configurableProductTitle": "Inez Full Zip Jacket",
+    "configurableProductSizeLabel": "Size",
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label"
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item"

@@ -8,7 +8,7 @@ import inputvalues from './config/input-values/input-values.json';
 import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
-test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 'Tests for the minicart'},}, () => {
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
   
   /**
    * @feature BeforeEach runs before each test in this group.
@@ -94,6 +94,41 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
    * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
   test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.checkPriceWithProductPage();
+  });
+});
+
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart configurable product tests'},}, () => {
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add a configurable product to the cart and confirm it's there.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the main menu
+   *  @then the minicart should become visible
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
+
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.configurableProductSlug);
+    await productPage.addConfigurableProductToCart();
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(verify.miniCart.configurableProductMinicartTitle)).toBeVisible();
+  });
+
+  /**
+   * @feature Price Check: Configurable Product on Product Detail Page (PDP) and Minicart
+   * @scenario The price on a PDP should be the same as the price in the minicart
+   * @given I have added a (configurable) product to the cart and opened the minicart
+   * @then the price listed in the minicart (per product) should be the same as the price on the PDP
+  */
+  test('Price configurable PDP is same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.checkPriceWithProductPage();
   });

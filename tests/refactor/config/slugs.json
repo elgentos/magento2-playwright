@@ -8,7 +8,8 @@
     "addressNewSlug": "customer/address/new"
   },
   "productpage": {
-    "simpleProductSlug": "/push-it-messenger-bag.html"
+    "simpleProductSlug": "/push-it-messenger-bag.html",
+    "configurableProductSlug": "/inez-full-zip-jacket.html"
   },
   "checkoutSlug": "/checkout/",
   "cartSlug": "/cart/",
