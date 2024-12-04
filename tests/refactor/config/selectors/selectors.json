@@ -1,7 +1,9 @@
 {
   "general": {
     "genericSaveButtonLabel": "Save",
-    "genericSubmitButtonLabel": "Submit"
+    "genericSubmitButtonLabel": "Submit",
+    "genericPriceLabel": "Price",
+    "genericPriceSymbol": "$"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
@@ -59,14 +61,16 @@
     "configurableProductOptionValue": ".product-option-value-label"
   },
   "cart": {
-    "updateItemButtonLabel": "shopping-cart Update item"
+    "updateItemButtonLabel": "shopping-cart Update item",
+    "cartQuantityLabel": "Qty"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
     "toCartLinkLabel": "View and Edit Cart",
     "editProductIconLabel": "Edit product",
     "productQuantityFieldLabel": "Quantity",
-    "removeProductIconLabel": "Remove product"
+    "removeProductIconLabel": "Remove product",
+    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price"
   },
   "contactPage": {
     "messageFieldLabel": "What’s on your mind?"

@@ -24,8 +24,8 @@ export class MiniCartPage {
     this.productQuantityField = page.getByLabel(selectors.miniCart.productQuantityFieldLabel);
     this.updateItemButton = page.getByRole('button', { name: selectors.cart.updateItemButtonLabel });
     this.removeProductMiniCartButton = page.getByLabel(selectors.miniCart.removeProductIconLabel).first();
-    this.priceOnPDP = page.getByLabel('Price').getByText('$');
-    this.priceInMinicart = page.getByText('$').first();
+    this.priceOnPDP = page.getByLabel(selectors.general.genericPriceLabel).getByText(selectors.general.genericPriceSymbol);
+    this.priceInMinicart = page.getByText(selectors.general.genericPriceSymbol).first();
   }
   
   async goToCheckout(){
@@ -53,7 +53,7 @@ export class MiniCartPage {
     await this.updateItemButton.click();
     await expect(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
-    let productQuantityInCart = await this.page.getByLabel('Qty').first().inputValue();
+    let productQuantityInCart = await this.page.getByLabel(selectors.cart.cartQuantityLabel).first().inputValue();
     console.log(productQuantityInCart);
     expect(productQuantityInCart).toBe(amount);
   }
@@ -62,7 +62,7 @@ export class MiniCartPage {
     const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).innerText();
     const productTitle = await this.page.getByRole('heading', { level : 1}).innerText();
     const productListing =  this.page.locator('div').filter({hasText: productTitle});
-    const priceInMinicart = await productListing.locator('.price-excluding-tax .minicart-price .price').first().innerText();
+    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().innerText();
     //expect(priceOnPage).toBe(priceInMinicart);
     expect(priceOnPage, `Expect these prices to be the same: priceOnpage: ${priceOnPage} and priceInMinicart: ${priceInMinicart}`).toBe(priceInMinicart);
   }
