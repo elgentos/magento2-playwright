@@ -1,6 +1,7 @@
 {
   "general": {
-    "genericSaveButtonLabel": "Save"
+    "genericSaveButtonLabel": "Save",
+    "genericSubmitButtonLabel": "Submit"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
@@ -8,6 +9,7 @@
     "miniCartLabel": "Toggle minicart"
   },
   "credentials": {
+    "nameFieldLabel": "Name",
     "emailFieldLabel": "Email",
     "passwordFieldLabel": "Password",
     "passwordConfirmFieldLabel": "Confirm Password",
@@ -65,5 +67,8 @@
     "editProductIconLabel": "Edit product",
     "productQuantityFieldLabel": "Quantity",
     "removeProductIconLabel": "Remove product"
+  },
+  "contactPage": {
+    "messageFieldLabel": "What’s on your mind?"
   }
 }
