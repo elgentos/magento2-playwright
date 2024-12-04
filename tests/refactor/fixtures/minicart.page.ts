@@ -60,7 +60,9 @@ export class MiniCartPage {
 
   async checkPriceWithProductPage() {
     const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).innerText();
-    const priceInMinicart = await this.page.locator('.price-excluding tax.minicart-price.price').first().innerText();
+    const configurableProductTitle = await this.page.getByRole('heading', { level : 1}).innerText();
+    const productListing =  this.page.locator('div').filter({hasText: configurableProductTitle});
+    const priceInMinicart = await productListing.locator('.price-excluding-tax .minicart-price .price').first().innerText();
     expect(priceOnPage).toBe(priceInMinicart);
   }
-}
+} 

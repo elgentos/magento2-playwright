@@ -95,6 +95,6 @@ test.describe('Minicart Actions', {annotation: {type: 'Main Menu', description: 
   */
   test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
-    miniCart.checkPriceWithProductPage();
+    await miniCart.checkPriceWithProductPage();
   });
 });
