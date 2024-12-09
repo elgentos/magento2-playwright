@@ -25,5 +25,6 @@
   "homepageSlug": "/",
   "loginSlug": "/customer/account/login/",
   "searchSlug": "/catalogsearch/result/?q=search",
-  "simpleProductSlug": "/push-it-messenger-bag.html"
+  "simpleProductSlug": "/push-it-messenger-bag.html",
+  "simpleProductSlug2": "/aim-analog-watch.html"
 }
