@@ -46,8 +46,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @and I should be able to login with my new credentials.
    */
 
-  //TODO Remove only once test works
-  test.only('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+
+  test('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
