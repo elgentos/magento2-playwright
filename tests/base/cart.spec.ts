@@ -6,7 +6,7 @@ import { CartPage} from './fixtures/cart.page';
 import slugs from './config/slugs.json';
 import verify from './config/expected/expected.json';
 
-test.describe('Coupon Code tests', () => {
+test.describe('Cart functionalities', () => {
   /**
    * @feature BeforeEach runs before each test in this group.
    * @scenario Add a product to the cart and confirm it's there.

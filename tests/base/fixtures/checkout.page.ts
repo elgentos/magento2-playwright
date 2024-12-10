@@ -1,11 +1,15 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
+import selectors from '../config/selectors/selectors.json';
+import verify from '../config/expected/expected.json';
+
 export class CheckoutPage {
 
   //TODO: Expand with fields for when user is not logged in or has not provided an address
   readonly page: Page;
   readonly shippingMethodOptionFixed: Locator;
   readonly paymentMethodOptionCheck: Locator;
+  readonly showDiscountFormButton: Locator;
   readonly placeOrderButton: Locator;
   readonly continueShoppingButton: Locator;
 
@@ -13,6 +17,7 @@ export class CheckoutPage {
     this.page = page;
     this.shippingMethodOptionFixed = this.page.getByLabel('Fixed');
     this.paymentMethodOptionCheck = this.page.getByLabel('Check / Money order Free');
+    this.showDiscountFormButton = this.page.getByRole('button', {name: 'Apply Discount Code'});
     this.placeOrderButton = this.page.getByRole('button', { name: 'Place Order' });
     this.continueShoppingButton = this.page.getByRole('link', { name: 'Continue Shopping' });
   }
@@ -50,5 +55,22 @@ export class CheckoutPage {
     // TODO: replace this with a proper way to write something to the HTML reporter.
     await expect(this.continueShoppingButton, `Your order number is: ${orderNumber}`).toBeVisible();
     return orderNumber;
+  }
+
+  async applyDiscountCodeCheckout(code: string){
+    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open.
+      await this.showDiscountFormButton.click();
+    }
+
+    //TODO: Add check here: if user is logged in and code has already been applied, then it carries over into the checkout.
+    // This happens to all cart actions when user logs in before running the test.
+    let applyCouponCheckoutButton = this.page.getByRole('button', { name: 'Apply Coupon' });
+    let checkoutDiscountField = this.page.getByPlaceholder('Enter discount code');
+    await checkoutDiscountField.fill(code);
+    await applyCouponCheckoutButton.click();
+
+    await expect(this.page.getByText(`${verify.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible();
+    await expect(this.page.getByText(verify.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
   }
 }

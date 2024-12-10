@@ -31,6 +31,9 @@
     "productRemovedConfirmation": "You removed the item.",
     "productQuantityChangedConfirmation": "was updated in your shopping cart"
   },
+  "checkout": {
+    "couponAppliedNotification": "Your coupon was succesfully applied"
+  },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
   },
