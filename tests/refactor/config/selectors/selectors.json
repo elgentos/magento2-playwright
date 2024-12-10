@@ -1,0 +1,78 @@
+{
+  "general": {
+    "genericSaveButtonLabel": "Save",
+    "genericSubmitButtonLabel": "Submit",
+    "genericPriceLabel": "Price",
+    "genericPriceSymbol": "$"
+  },
+  "mainMenu": {
+    "myAccountButtonLabel": "My Account",
+    "myAccountLogoutItem": "Sign Out",
+    "miniCartLabel": "Toggle minicart"
+  },
+  "credentials": {
+    "nameFieldLabel": "Name",
+    "emailFieldLabel": "Email",
+    "passwordFieldLabel": "Password",
+    "passwordConfirmFieldLabel": "Confirm Password",
+    "loginButtonLabel": "Sign In"
+  },
+  "personalInformation": {
+    "firstNameLabel": "First Name",
+    "lastNameLabel": "Last Name",
+    "changePasswordCheckLabel": "Change Password"
+  },
+  "accountCreation": {
+    "createAccountButtonLabel": "Create an Account"
+  },
+  "accountDashboard": {
+    "accountDashboardTitleLabel": "Account Information",
+    "accountSideBarLabel": "Sidebar Main",
+    "addAddressButtonLabel": "ADD NEW ADDRESS",
+    "addressDeleteIconButton": "trash",
+    "editAddressIconButton": "pencil-alt",
+    "links": {
+      "newsletterLink": "Newsletter Subscriptions"
+    }
+  },
+  "newAddress": {
+    "addNewAddressTitle": "Add New Address",
+    "companyNameLabel": "Company",
+    "phoneNumberLabel": "Phone Number",
+    "streetAddressLabel": "Street Address",
+    "zipCodeLabel": "Zip/Postal Code",
+    "cityNameLabel": "City",
+    "countryLabel": "Country",
+    "provinceSelectLabel": "State/Province",
+    "provinceSelectFilterLabel": "Please select a region, state or province.",
+    "saveAdressButton": "Save Address"
+  },
+  "newsletterSubscriptions": {
+    "generalSubscriptionCheckLabel": "General Subscription",
+    "saveSubscriptionsButton": "Save"
+  },
+  "productPage": {
+    "simpleProductTitle": "Push It Messenger Bag",
+    "simpleProductPrice": ".final-price .price-wrapper .price",
+    "configurableProductTitle": "Inez Full Zip Jacket",
+    "configurableProductSizeLabel": "Size",
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label"
+  },
+  "cart": {
+    "updateItemButtonLabel": "shopping-cart Update item",
+    "cartQuantityLabel": "Qty"
+  },
+  "miniCart": {
+    "checkOutButtonLabel": "Checkout",
+    "toCartLinkLabel": "View and Edit Cart",
+    "editProductIconLabel": "Edit product",
+    "productQuantityFieldLabel": "Quantity",
+    "removeProductIconLabel": "Remove product",
+    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price"
+  },
+  "contactPage": {
+    "messageFieldLabel": "What’s on your mind?"
+  }
+}

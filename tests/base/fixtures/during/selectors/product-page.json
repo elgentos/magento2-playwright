@@ -1,5 +1,6 @@
 {
   "addToCartButtonSelector": "#product-addtocart-button",
+  "addToCartButtonPDP": "shopping-cart Add to Cart",
   "configurableProductSizeLabel": "Size",
   "configurableProductColorLabel": "Color",
   "productQuantityInputSelector": "input[name='qty'][type='number']",

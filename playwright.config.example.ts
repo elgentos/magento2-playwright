@@ -62,14 +62,18 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // TODO: uncomment the setup line once authentication works!
+    // Import our auth.setup.ts file
+    //{ name: 'setup', testMatch: /.*\.setup\.ts/ },
+
     {
+      // TODO: uncomment dependency and storage state once authentication works!
       name: 'chromium',
       testMatch: testFiles,
       use: {
         ...devices['Desktop Chrome'],
         storageState: './auth-storage/chromium-storage-state.json',
        },
-
     },
 
     {

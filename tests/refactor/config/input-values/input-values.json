@@ -1,0 +1,39 @@
+{
+  "accountCreation": {
+    "firstNameValue": "John",
+    "lastNameValue": "Doe",
+    "emailHandleValue":"test-user",
+    "emailHostValue": "gmail.com"
+  },
+  "contact": {
+    "contactFormEmailValue": "robertbaratheon@gameofthrones.com",
+    "contactFormMessage": "Hello! I am filling out this form as a test only. Feel free to ignore this message."
+  },
+  "firstAddress": {
+    "firstCompanyNameValue": "ACME Company",
+    "firstPhoneNumberValue": "0622000000",
+    "firstStreetAddressValue": "Teststraat 1",
+    "firstZipCodeValue": "12345",
+    "firstCityValue": "Testing Valley",
+    "firstNonDefaultCountry": "Netherlands",
+    "firstProvinceValue": "Idaho"
+  },
+  "secondAddress": {
+    "secondCompanyNameValue": "Hogwarts",
+    "secondPhoneNumberValue": "0620081998",
+    "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
+    "secondZipCodeValue": "67890",
+    "secondCityValue": "Little Whinging",
+    "secondNonDefaultCountry": "United Kingdom",
+    "secondProvinceValue": "South Dakota"
+  },
+  "editedAddress": {
+    "editfirstNameValue": "Ash",
+    "editLastNameValue": "Ketchum",
+    "editCompanyNameValue": "Pokémon",
+    "editStreetAddressValue": "House on the left",
+    "editZipCodeValue": "00151",
+    "editCityValue": "Pallet Town",
+    "editStateValue": "Kansas"
+  }
+}

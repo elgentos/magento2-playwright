@@ -1,0 +1,32 @@
+{
+  "account": {
+    "accountPageTitle": "Account Information",
+    "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
+    "addressBookTitle": "Customer Address",
+    "changedPasswordNotificationText": "You saved the account",
+    "newsletterSubscriptionTitle": "Newsletter Subscription",
+    "newsletterSavedNotification": "We have saved your subscription.",
+    "newsletterUpdatedNotification": "We have updated your subscription.",
+    "newsletterRemovedNotification": "We have removed your newsletter subscription."
+  },
+  "address": {
+    "newAddressAddedNotifcation": "You saved the address.",
+    "addressDeletedNotification": "You deleted the address."
+  },
+  "logout": {
+    "logoutConfirmationText": "You have signed out"
+  } ,
+  "productPage": {
+    "simpleProductAddedNotification": "You added Push It Messenger"
+  },
+  "miniCart": {
+    "miniCartTitle": "My Cart",
+    "simpleProductInCartTitle": "x Push It Messenger Bag",
+    "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
+    "productRemovedConfirmation": "You removed the item.",
+    "productQuantityChangedConfirmation": "was updated in your shopping cart"
+  },
+  "contactPage": {
+    "messageSentConfirmationText": "Thanks for contacting us with"
+  }
+}

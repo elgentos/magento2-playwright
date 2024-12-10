@@ -48,7 +48,7 @@ export class PageTester {
   }
 
   async testPage() {
-    if (flags.testForPageErrors) {
+    if (flags.general.testForPageErrors) {
       await this.navigateAndCheckStatus();
       await this.waitAndCheckForErrors();
       await this.measurePerformance();

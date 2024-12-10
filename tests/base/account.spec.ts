@@ -11,6 +11,9 @@ import accountValue from './fixtures/during/input-values/account.json';
 import accountExpected from './fixtures/verify/expects/account.json';
 import { todo } from 'node:test';
 
+import newAccountSelectors from './variables/selectors/account.page.json';
+import accountExpectations from './variables/expected-variables/account.page.json';
+
 test.describe('Test user account actions', () => {
   const existingAccountEmail = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -34,17 +37,39 @@ test.describe('Test user account actions', () => {
 
       await page.goto(slugs.accountCreationSlug);
 
-      await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newAccountFirstName);
-      await page.fill(accountSelector.registrationLastNameSelector, accountValue.newAccountLastName);
-      await page.fill(accountSelector.registrationEmailAddressSelector, uniqueEmail);
-      await page.fill(accountSelector.registrationPasswordSelector, existingAccountPassword);
-      await page.fill(accountSelector.registrationConfirmPasswordSelector, existingAccountPassword);
+      // TODO These variables should be stored in the helper class (register.page.js) 
+      // TODO note: the unique email that is created above should also be moved to the helper class.
+      let firstName = "John";
+      let lastName = "Doe";
+      let accountCreatedNotification = accountExpectations.accountCreationExpectedNotification;
+      
+      // TODO these selector variables (variables that users of our testing-suite might want to change) should be stored in the variables folder (register.json)
+      const firstNameField = page.getByLabel('First Name');
+      const lastNameField = page.getByLabel('Last Name');
+      const emailField = page.getByLabel('Email', {exact : true});
+      const passwordField = page.getByTitle('Password', {exact : true});
+      const confirmPasswordField = page.getByLabel('Confirm Password');
+      const createAccountButton = page.getByRole('button', {name: 'Create an Account'});
 
-      await page.click(accountSelector.registrationCreateAccountButtonSelector);
+      // TODO The filling in we're doing below is an action and can be captured in a function.
+      // These should be moved to the helper class.
+      await firstNameField.fill(firstName);
+      await lastNameField.fill(lastName);
+      await emailField.fill(uniqueEmail);
+      // Throw an error if existingAccountPassword is empty
+      if(!existingAccountPassword){
+        throw new Error("Password variable not defined in .env");
+      }
+      await passwordField.fill(existingAccountPassword);
+      await confirmPasswordField.fill(existingAccountPassword);
+      await createAccountButton.click();
+      
+      
+      // TODO in this test file, we can call the functions, then use an expect() to confirm our assertions.
+      // TODO these are the assertions we want to confirm with our tests.
+      await expect(page.getByText(accountCreatedNotification)).toBeVisible();
 
-      const uniqueSuccessfulAccountCreationNotificationText = accountExpected.uniqueSuccessfulAccountCreationNotificationText;
-      await expect(page.locator(`text=${uniqueSuccessfulAccountCreationNotificationText}`)).toBeVisible();
-
+      // log credentials to console to add to .env file
       console.log(`Account created with credentials: email address "${uniqueEmail}" and password "${existingAccountPassword}"`);
     });
   }
@@ -61,11 +86,20 @@ test.describe('Test user account actions', () => {
   if (toggle.account.testAccountLogin) {
     test('Login with an account', async ({page}) => {
       const account = new Account(page);
+
+      // Throw an error if existingAccountPassword is empty
+      // TODO this error should be handled in the login function
+      if(!existingAccountPassword || !existingAccountEmail){
+        throw new Error("Existing Password or Email variable not defined in .env");
+      }
+      
+      
       await account.login(existingAccountEmail, existingAccountPassword);
 
       const accountPageTester = new PageTester(page, page.url());
       await accountPageTester.testPage();
-      await expect(page.locator(`text=${existingAccountEmail}`)).toBeVisible();
+
+      await expect(page.getByText(existingAccountEmail)).toBeVisible();
     });
   }
 
@@ -81,6 +115,12 @@ test.describe('Test user account actions', () => {
    */
   test('Add new address on account', async ({page}) => {
     const account = new Account(page);
+
+    // Throw an error if existingAccountPassword is empty
+    if(!existingAccountPassword || !existingAccountEmail){
+      throw new Error("Existing Password or Email variable not defined in .env");
+    }
+    
     await account.login(existingAccountEmail, existingAccountPassword);
     await account.addAddress();
 
@@ -100,10 +140,20 @@ test.describe('Test user account actions', () => {
    */
   test('Edit address on account', async ({page}) => {
     const account = new Account(page);
-    await account.login(existingAccountEmail, existingAccountPassword)
 
+    // Throw an error if existingAccountPassword is empty
+    if(!existingAccountPassword || !existingAccountEmail){
+      throw new Error("Existing Password or Email variable not defined in .env");
+    }
+
+    await account.login(existingAccountEmail, existingAccountPassword);
     await page.goto(slugs.accountAddressBookSlug);
-    await page.locator(accountSelector.accountEditAddressButtons).first().click();
+
+    let editIcon = page.getByTitle(newAccountSelectors.addressbook.editAdressLink).first();
+    await editIcon.click();
+    
+    
+    // await page.locator(accountSelector.accountEditAddressButtons).first().click();
     await page.fill(accountSelector.registrationFirstNameSelector, accountValue.newChangedAddressFirstName);
     await page.fill(accountSelector.registrationLastNameSelector, accountValue.newChangedAddressLastName);
     await page.fill(accountSelector.accountTelephoneSelector, accountValue.newAddressTelephoneNumber);
@@ -116,6 +166,7 @@ test.describe('Test user account actions', () => {
 
     const accountPageTester = new PageTester(page, page.url());
     await accountPageTester.testPage();
+    
   });
 
   /**
