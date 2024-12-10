@@ -12,7 +12,7 @@
     "configurableProductSlug": "/inez-full-zip-jacket.html"
   },
   "checkoutSlug": "/checkout/",
-  "cartSlug": "/cart/",
+  "cartSlug": "/checkout/cart/",
   "cartProductChangeSlug": "/cart/configure/",
   "contact": "/contact"
 }

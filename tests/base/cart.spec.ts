@@ -3,9 +3,10 @@ import {ProductPage} from './fixtures/product.page';
 import { MainMenuPage } from './fixtures/mainmenu.page';
 
 import slugs from './config/slugs.json';
+import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
-test.describe('Coupon Code tests', () => {
+test.describe('Cart functionalities', () => {
   /**
    * @feature BeforeEach runs before each test in this group.
    * @scenario Add a product to the cart and confirm it's there.
@@ -27,6 +28,10 @@ test.describe('Coupon Code tests', () => {
     await mainMenu.openMiniCart();
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
     await page.goto(slugs.cartSlug);
+  });
+
+  test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
+    await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
 
   test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
