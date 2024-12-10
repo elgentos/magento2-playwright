@@ -63,7 +63,11 @@
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
-    "cartQuantityLabel": "Qty"
+    "cartQuantityLabel": "Qty",
+    "showDiscountFormButtonLabel": "Apply Discount Code",
+    "discountInputFieldLabel": "Enter discount code",
+    "applyDiscountButtonLabel": "Apply Discount",
+    "cancelCouponButtonLabel": "Cancel Coupon"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
