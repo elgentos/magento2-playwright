@@ -3,7 +3,8 @@
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "genericPriceLabel": "Price",
-    "genericPriceSymbol": "$"
+    "genericPriceSymbol": "$",
+    "addToCartLabel": "Add to Cart"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
