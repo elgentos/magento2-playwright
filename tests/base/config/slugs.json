@@ -9,10 +9,11 @@
   },
   "productpage": {
     "simpleProductSlug": "/push-it-messenger-bag.html",
+    "secondSimpleProductSlug": "/aim-analog-watch.html",
     "configurableProductSlug": "/inez-full-zip-jacket.html"
   },
   "checkoutSlug": "/checkout/",
-  "cartSlug": "/cart/",
+  "cartSlug": "/checkout/cart/",
   "cartProductChangeSlug": "/cart/configure/",
   "contact": "/contact"
 }
