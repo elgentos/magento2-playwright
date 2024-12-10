@@ -57,6 +57,8 @@ export default defineConfig({
     /* Ignore https errors if they apply (should only happen on local) */
     ignoreHTTPSErrors: true,
   },
+  /* Setup for global cookie to bypass CAPTCHA, remove '.example' when used */
+  globalSetup: require.resolve('./bypass-captcha.config.example.ts'),
 
   /* Configure projects for major browsers */
   projects: [
@@ -67,21 +69,28 @@ export default defineConfig({
     {
       // TODO: uncomment dependency and storage state once authentication works!
       name: 'chromium',
-      use: { ...devices['Desktop Chrome']},
-        // storageState: 'playwright/.auth/user.json',
-      // dependencies: ['setup'],
+      testMatch: testFiles,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: './auth-storage/chromium-storage-state.json',
+       },
     },
 
     {
       name: 'firefox',
       testMatch: testFiles,
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: './auth-storage/firefox-storage-state.json', },
     },
 
     {
       name: 'webkit',
       testMatch: testFiles,
-      use: { ...devices['Desktop Safari'] },
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: './auth-storage/webkit-storage-state.json',
+       },
     },
 
     /* Test against mobile viewports. */
