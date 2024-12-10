@@ -1,158 +1,58 @@
 import {test, expect} from '@playwright/test';
-import {Cart} from './utils/Cart';
+import {LoginPage} from './fixtures/login.page';
+import {MainMenuPage} from './fixtures/mainmenu.page';
+import {ProductPage} from './fixtures/product.page';
 
-import toggle from './config/test-toggles.json';
-import slugs from './fixtures/before/slugs.json'; 
+import slugs from './config/slugs.json';
+import inputvalues from './config/input-values/input-values.json';
+import selectors from './config/selectors/selectors.json';
+import verify from './config/expected/expected.json';
+import { CheckoutPage } from './fixtures/checkout.page';
 
-import globalSelector from './fixtures/during/selectors/global.json';
-import cartSelector from './fixtures/during/selectors/checkout.json';
-
-import cartExpected from './fixtures/verify/expects/checkout.json';
+// no resetting storageState, mainmenu has more functionalities when logged in.
+// TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 
 
-test.describe('Test discount code features', () => {
+// Before each test, log in
+test.beforeEach(async ({ page }) => {
+  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
-  if(toggle.checkout.testCartCouponCodes){
-    test.describe('Cart', () => {
-      /**
-       * @feature Magento 2 add discount code in cart
-       * @scenario User adds a (valid) coupon code in cart
-       *  @given There is a existing coupon code
-       *    @and I am on any Magento 2 page
-       *  @when I add a product to my shopping cart
-       *  @then I navigate to the Shopping Cart page
-       *  @when I add a valid coupon code
-       *  @then A message should confirm the discount (code) was added
-       *    @and The coupon field should be filled and therefore not editable.
-       */
-      test('Add Coupon Code in cart', async ({page}) => {
-        const cart = new Cart(page);
-        await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-        await page.goto(slugs.cartSlug);
-  
-        await page.getByRole('button', {name: cartSelector.openDiscountFormButton}).click();
-        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
-        await page.getByRole('button', {name: cartSelector.cart.applyDiscountCartButton, exact: true}).click();
-        
-        const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
-        await expect(successMessage).toContainText(cartExpected.cart.couponCodeAppliedNotificationText);
-  
-        // Expect that coupon code field is now disabled because an existing coupon code is now entered.
-        await expect(page.locator(cartSelector.cart.couponFormField)).toBeDisabled();
-      });
-    
-      /**
-       *  @feature Magento 2 Remove Coupon Code(s) in Cart
-       *  @scenario User removes a (valid) coupon code in cart
-       *    @given I am on the cart page
-       *      @and I have both a product in my cart
-       *      @and I have a (valid) coupon code
-       *    @when I navigate to the checkout
-       *    @and I remove my coupon code
-       *    @then I should see a confirmation message that my coupon code was removed
-       *      @and it should be removed from my overview
-       *      @and the price(s) should be adjusted.
-       */
-  
-      test('Remove Coupon Code in cart', async ({page}) => {
-        const cart = new Cart(page);
-        await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-        await page.goto(slugs.cartSlug);
-        
-        if(await page.locator(cartSelector.cart.couponFormField).isEnabled()){
-          // add coupon code
-          await page.getByRole('button', {name: cartSelector.openDiscountFormButton}).click();
-          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
-          await page.getByRole('button', {name: cartSelector.cart.applyDiscountCartButton, exact: true}).click();
-  
-          // Expect that coupon code field is now disabled because an existing coupon code is now entered.
-          const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeAppliedNotificationText});
-          await expect(successMessage).toContainText(cartExpected.cart.couponCodeAppliedNotificationText);
-        }
-  
-        await page.getByRole('button', {name: cartSelector.removeDiscountButton}).click();
-
-        const updateMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.cart.couponCodeRemovedNotificationText});
-        await expect(updateMessage).toContainText(cartExpected.cart.couponCodeRemovedNotificationText);
-  
-        // Expect that coupon code field is now enabled because an existing coupon code has been entered.
-        await expect(page.locator(cartSelector.cart.couponFormField)).toBeEnabled();
-  
-        
-      });
-    });
+  if(!emailInputValue || !passwordInputValue) {
+    throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
   }
 
-  if(toggle.checkout.testCheckoutCouponCodes){
-    test.describe('checkout', () => {
-      /**
-       *  @feature Magento 2 Add discount code to checkout
-       *  @scenario User adds a (valid) coupon code in checkout
-       *    @given There is an existing coupon code
-       *      @and I am on any Magento 2 page
-       *    @when I add a product to my shopping cart
-       *    @then I navigate to the checkout
-       *    @when I add a valid coupon code
-       *    @then A message should confirm the discount (code) was added
-       *    @and the discount should be visible
-       */
-      test('Add Coupon Code in Checkout', async ({page}) => {
-        const cart = new Cart(page);
-        await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-        await page.goto(slugs.checkoutSlug);
+  const loginPage = new LoginPage(page);
+  await loginPage.login(emailInputValue, passwordInputValue);
+});
 
-        await page.getByText(cartSelector.openDiscountFormButton).click();
-        await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
-        await page.getByLabel(cartSelector.checkout.applyDiscountFormButton).click();
-        
-        const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.checkout.checkoutDiscountAppliedNotificationText});
-        await expect(successMessage).toContainText(cartExpected.checkout.checkoutDiscountAppliedNotificationText);
+test.describe('Checkout actions', () => {
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add product to the cart, confirm it's there, then move to checkout.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I navigate to the checkout
+   *  @then the checkout page should be shown
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const productPage = new ProductPage(page);
 
-        // Expect description of discount field to be visible.
-        await expect(page.locator(cartExpected.checkout.checkoutDiscountDescriptionField)).toBeVisible();
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart();
+    await page.goto(slugs.checkoutSlug);    
+  });
 
-      });
+  test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}) => {
+    const checkoutPage = new CheckoutPage(page);
+    await checkoutPage.placeOrder();
+  });
 
-      /**
-       * @feature Magento 2 Remove discount code in checkout
-       * @scenario The user has a product in their cart and an active discount code
-       *  @given I am on the /checkout page
-       *    @and I have at least one product in my shopping cart
-       *    @and I have an active coupon code
-       *  @when I remove the coupon code
-       *  @then A message should confirm the discount (code) was removed
-       *  @and the discount should not be visible
-       */
-      test('Remove Coupon Code in Checkout', async ({page}) => {
-        const cart = new Cart(page);
-        const couponFormField = page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder);
+  // TODO: Write test to confirm order can be placed without an account
+  // TODO: Write test for logged-in user who hasn't added an address yet.
 
-        await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-        await page.goto(slugs.checkoutSlug);
-
-        await page.getByText(cartSelector.openDiscountFormButton).click();
-
-        if(await couponFormField.isEnabled()){
-          // coupon field is enabled, no discount has been applied
-          await page.getByPlaceholder(cartSelector.discountInputFieldPlaceholder).fill(process.env.MAGENTO_COUPON_CODE);
-          await page.getByLabel(cartSelector.checkout.applyDiscountFormButton).click();
-
-          const successMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.checkout.checkoutDiscountAppliedNotificationText});
-          await expect(successMessage).toContainText(cartExpected.checkout.checkoutDiscountAppliedNotificationText);
-
-          // Expect description of discount field to be visible.
-          await expect(page.locator(cartExpected.checkout.checkoutDiscountDescriptionField)).toBeVisible();
-        }
-
-        await page.getByLabel(cartSelector.removeDiscountButton).click();
-
-        const updateMessage = page.locator(globalSelector.successMessages, {hasText: cartExpected.checkout.checkoutDiscountRemovedNotificationText});
-        await expect(updateMessage).toContainText(cartExpected.checkout.checkoutDiscountRemovedNotificationText);
-
-        // Discount should be removed, discount description should not be visible
-        await expect(page.locator(cartExpected.checkout.checkoutDiscountDescriptionField)).not.toBeVisible();
-
-      });
-    });
-  }
 });

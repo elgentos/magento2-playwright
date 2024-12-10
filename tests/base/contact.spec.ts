@@ -1,43 +1,25 @@
-import {test, expect, selectors} from '@playwright/test';
-import {PageTester} from './utils/PageTester';
-import {Contact} from './utils/Contact';
-import slugs from './fixtures/before/slugs.json';
-import contactSelector from './fixtures/during/selectors/contact.json';
-import globalSelector from './fixtures/during/selectors/global.json';
-import contactValue from './fixtures/during/input-values/contact.json';
-import accountExpected from './fixtures/verify/expects/contact.json';
+import {test, expect} from '@playwright/test';
+import { ContactPage } from './fixtures/contact.page';
 
+import slugs from './config/slugs.json';
+import inputvalues from './config/input-values/input-values.json';
 
-test.describe('Test contact actions', () => {
+/**
+ * @feature Magento 2 Contact Form
+ * @scenario User fills in the contact form and sends a message
+ * @given I om any Magento 2 page
+ * @when I navigate to the contact page
+ *  @and I fill in the required fields
+ * @when I click the button to send the form
+ *  @then I should see a notification my message has been sent
+ *  @and the fields should be empty again.
+ */
+test('I can send a message through the contact form',{ tag: '@contact-form',}, async ({page}) => {
+  const contactPage = new ContactPage(page);
+  let formName = inputvalues.accountCreation.firstNameValue;
+  let formEmail = inputvalues.contact.contactFormEmailValue;
+  let message = inputvalues.contact.contactFormMessage;
 
-  /**
-   * @feature Magento 2 Contact Form
-   *  @scenario User sends a filled in contact form
-   *    @given I am on any Magento 2 page
-   *    @when I'm logged in
-   *    @then the name and email fields are already filled in
-   *    @when I fill in the (remaining) required fields
-   *    @and I click the 'Submit' button
-   *    @then I should see a notification to confirm my message has been sent.
-   */
-  test('Send contactform', async ({page}) => {
-    const randomNumber = Math.floor(Math.random() * 10000000);
-    const emailHandle = contactValue.contactEmailHandle;
-    const emailHost = contactValue.contactEmailHost;
-    const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
-
-    await page.goto(slugs.contactSlug);
-
-    await page.fill(contactSelector.contactNameSelector, contactValue.contactName);
-    await page.fill(contactSelector.contactEmailSelector, uniqueEmail);
-    await page.fill(contactSelector.contactTelephoneSelector, contactValue.contactTelephoneNumber);
-    await page.fill(contactSelector.contactCommentSelector, contactValue.contactComment);
-
-    await page.click(contactSelector.contactButtonSelectorName);
-
-    const contactFormSuccessNotificationText = accountExpected.contactFormSuccessNotificationText;
-    await expect(page.locator(`text=${contactFormSuccessNotificationText}`)).toBeVisible();
-
-    console.log(`Contact form submitted by email address "${uniqueEmail}"`);
-  });
+  await page.goto(slugs.contact);
+  await contactPage.fillOutForm(formName,formEmail,message);
 });

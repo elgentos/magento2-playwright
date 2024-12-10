@@ -1,181 +1,135 @@
-import {test, expect, selectors} from '@playwright/test';
-import {Cart} from './utils/Cart';
+import {test, expect} from '@playwright/test';
+import {MainMenuPage} from './fixtures/mainmenu.page';
+import {ProductPage} from './fixtures/product.page';
+import { MiniCartPage } from './fixtures/minicart.page';
 
-import toggle from './config/test-toggles.json';
-import slugs from './fixtures/before/slugs.json';
+import slugs from './config/slugs.json';
+import inputvalues from './config/input-values/input-values.json';
+import selectors from './config/selectors/selectors.json';
+import verify from './config/expected/expected.json';
 
-import globalSelector from './fixtures/during/selectors/global.json';
-import miniCartSelector from './fixtures/during/selectors/minicart.json';
-import productSelector from './fixtures/during/selectors/product-page.json';
-import miniCartExpected from './fixtures/verify/expects/minicart.json';
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
+  
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add a product to the cart and confirm it's there.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the main menu
+   *  @then the minicart should become visible
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
 
-import cartSelector from './fixtures/during/selectors/cart.json';
-import cartExpected from './fixtures/verify/expects/cart.json';
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart();
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
+  });
 
-
-if (toggle.minicart.testMiniCartCheckoutButton) {
   /**
    * @feature Magento 2 Minicart to Checkout
-   *  @scenario User adds a product to their cart, then navigates to checkout through the minicart
-   *    @given I am on any Magento 2 page
-   *    @when I go to a Simple Product page
-   *      @and I add it to my cart
-   *      @then I should see a message to confirm it was added
-   *    @when I click on the shopping cart symbol in the main menu
-   *      @then I should see a mini cart title
-   *    @when I click on 'Checkout'
-   *    @then I should navigate to the checkout page with the product in my cart
+   * @scenario User adds a product to cart, then uses minicart to navigate to checkout
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @when I click on the 'to checkout' button
+   *  @then I should navigate to the checkout page
    */
 
-  test('Test minicart to checkout', async ({page}) => {
-    const cart = new Cart(page);
-    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-    await cart.openMiniCart();
-
-    await page.click(miniCartSelector.miniCartCheckoutButtonSelector);
-    await expect(page).toHaveURL(new RegExp(`${slugs.checkoutSlug}.*`));
+  test('Add product to minicart, navigate to checkout',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.goToCheckout();
   });
-}
 
+  /**
+   * @feature Magento 2 Minicart to Cart
+   * @scenario User adds a product to cart, then uses minicart to navigate to their cart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @when I click on the 'to cart' link
+   * @then I should be navigated to the cart page
+   */
 
-/**
-  * @feature Magento 2 Minicart Link to Cart
-  * @scenario User adds a product to their cart, then uses the minicart links to navigate to the cart page
-  *   @given I am on any Magento 2 page
-  *   @when I go to a Simple Product page
-  *     @and I add it to my cart
-  *     @and I open my minicart to click the link to the Cart page
-  *   @then I should navigate to the Cart page
+  test('Add product to minicart, navigate to cart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.goToCart();
+  });
+
+  /**
+   * @feature Magento 2 Minicart quantity change
+   * @scenario User adds a product to the minicart, then changes the quantity using the minicart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @when I click on the pencil for the product I want to update
+   *  @then I should navigate to a product page that is in my cart
+   * @when I change the amount
+   *  @and I click the 'update item' button
+   *  @then I should see a confirmation
+   *    @and the new amount should be shown in the minicart
+   */
+  test('Change quantity of a product in minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.updateProduct('3');
+  });
+
+  /**
+   * @feature Magento 2 minicart product deletion
+   * @scenario User adds product to cart, then removes from minicart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @when I click on the delete button
+   *  @then The product should not be in my cart anymore
+   *  @and I should see a notification that the product was removed
+   */
+  test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.removeProductFromMinicart();
+  });
+
+  /**
+   * @feature Price Check: Simple Product on Product Detail Page (PDP) and Minicart
+   * @scenario The price on a PDP should be the same as the price in the minicart
+   * @given I have added a (simple) product to the cart and opened the minicart
+   * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
-
-if (toggle.minicart.testMiniCartLink) {
-  test('Test minicart to cart', async ({page}) => {
-    const cart = new Cart(page);
-    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-    await cart.openMiniCart();
-
-    await page.click(miniCartSelector.miniCartCartLinkSelector);
-    await expect(page).toHaveURL(new RegExp(`${slugs.cartSlug}.*`));
+  test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.checkPriceWithProductPage();
   });
-}
+});
 
-/**
-  * @feature Magento 2 Minicart Link to Cart
-  * @scenario User adds a product to their cart, then uses the minicart links to navigate to the cart page
-  *   @given I am on any Magento 2 page
-  *   @when I go to a Simple Product page
-  *     @and I add it to my cart
-  *     @and I open my minicart to click the link to the Cart page
-  *   @then I should navigate to the Cart page
+test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart configurable product tests'},}, () => {
+  /**
+   * @feature BeforeEach runs before each test in this group.
+   * @scenario Add a configurable product to the cart and confirm it's there.
+   * @given I am on any page
+   * @when I navigate to a (simple) product page
+   *  @and I add it to my cart
+   *  @then I should see a notification
+   * @when I click the cart in the main menu
+   *  @then the minicart should become visible
+   *  @and I should see the product in the minicart
+   */
+  test.beforeEach(async ({ page }) => {
+    const mainMenu = new MainMenuPage(page);
+    const productPage = new ProductPage(page);
+
+    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
+    await page.goto(slugs.productpage.configurableProductSlug);
+    await productPage.addConfigurableProductToCart();
+    await mainMenu.openMiniCart();
+    await expect(page.getByText(verify.miniCart.configurableProductMinicartTitle)).toBeVisible();
+  });
+
+  /**
+   * @feature Price Check: Configurable Product on Product Detail Page (PDP) and Minicart
+   * @scenario The price on a PDP should be the same as the price in the minicart
+   * @given I have added a (configurable) product to the cart and opened the minicart
+   * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
-if (toggle.minicart.testMiniCartQuantity) {
-  test('Test minicart quantity change', async ({page}) => {
-    const cart = new Cart(page);
-    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-    await cart.openMiniCart();
-    await page.click(miniCartSelector.miniCartQuantityButtonSelector);
-
-    await expect(page).toHaveURL(new RegExp(`${slugs.productQuantityChangeSlug}.*`));
-    await page.fill(productSelector.productQuantityInputSelector, miniCartExpected.productQuantity);
-    await page.click(productSelector.addToCartButtonSelector);
-
-    await cart.openMiniCart();
-    await expect(page.locator(miniCartSelector.miniCartQuantitySelector)).toContainText(miniCartExpected.productQuantity);
-
+  test('Price configurable PDP is same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+    const miniCart = new MiniCartPage(page);
+    await miniCart.checkPriceWithProductPage();
   });
-}
-
-/**
-  * @feature Magento 2 Delete product using Minicart
-  * @scenario User adds a product to their cart, then deletes product from Minicart
-  *   @given I am on any Magento 2 page
-  *   @when I go to a Simple Product page
-  *     @and I add it to my cart
-  *     @and I then delete it using the Minicart 'trash' button
-  *   @then I the product should not be visible in my (mini)cart anymore
-  *     @and I should receive a notification that the product has been removed from the cart.
-  */
-if (toggle.minicart.testMiniCartDeletion) {
-  test('Test minicart deletion', async ({page}) => {
-    const cart = new Cart(page);
-    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-    await cart.openMiniCart();
-    await page.click(miniCartSelector.miniCartDeleteProductButtonSelector);
-
-    const successMessage = page.locator(globalSelector.successMessages, {hasText: miniCartExpected.productDeletedFromCartNotificationText});
-    await expect(successMessage).toContainText(miniCartExpected.productDeletedFromCartNotificationText);
-  });
-}
-
-/**
-  * @feature Magento 2 Simple Product Price Check
-  * @scenario The user adds a simple product to their cart: price on DPD should equal price displayed in cart
-  *   @given I am on any Magento 2 page
-  *   @when I go to a Simple Product Page
-  *     @and I add it to my cart
-  *   @then the price on the page should be the same as the price in my minicart
-  */
-if(toggle.minicart.testSimpleProductPriceCheck) {
-  test('Test check simple product price in minicart', async ({page}) => {
-    const cart = new Cart(page);
-
-    // toggle to pre-add item to the cart for robustness
-    if(toggle.minicart.preFillMinicart) {
-      await cart.preFillCartWithSimpleProduct();
-    }
-
-    await cart.addSimpleProductToCart(slugs.simpleProductSlug);
-
-    const priceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
-    const simpleProductTitle = await page.getByRole('heading', { level : 1}).innerText();
-
-    await page.goto(slugs.cartSlug);
-    await expect(page.getByRole('heading', { name : cartExpected.cartTitle})).toBeVisible();
-
-    // Find product by selecting the row where the product name is found
-    const productListing = page.getByRole('row').filter({ hasText: simpleProductTitle});
-    // Retrieve listed price
-    const priceInCart = await productListing.locator(cartSelector.priceExcludingTax).first().innerText();
-
-    // soft expect, since test execution does not have to terminated.
-    expect.soft(priceOnPage).toBe(priceInCart);
-    
-  });
-}
-
-/**
-  * @feature Magento 2 Configurable Product Price Check
-  * @scenario The user adds a configurable product to their cart: price on DPD should equal price displayed in cart
-  *   @given I am on any Magento 2 page
-  *   @when I go to a Simple Product Page
-  *     @and I add it to my cart
-  *   @then the price on the page should be the same as the price in my minicart
-  */
-if(toggle.minicart.testConfigurableProductPriceCheck) {
-  test('Test check configurable product price in minicart', async ({page}) => {
-    const cart = new Cart(page);
-
-    // toggle to pre-add item to the cart for robustness. Off by default
-    if(toggle.minicart.preFillMinicart) {
-      await cart.preFillCartWithSimpleProduct();
-    }
-
-    await cart.addConfigurableProductToCart(slugs.configurableProductSlug);
-
-    const confPriceOnPage = await page.locator(productSelector.simpleProductPrice).innerText();
-    const configurableProductTitle = await page.getByRole('heading', { level : 1}).innerText();
-
-    await page.goto(slugs.cartSlug);
-    await expect(page.getByRole('heading', { name : cartExpected.cartTitle})).toBeVisible();
-
-    // Find product by selecting the row where the product name is found
-    const productListing = page.getByRole('row').filter({ hasText: configurableProductTitle});
-    // Retrieve listed price
-    const priceInCart = await productListing.locator(cartSelector.priceExcludingTax).first().innerText();
-    
-    // soft expect, since test execution does not have to terminated.
-    expect.soft(confPriceOnPage).toBe(priceInCart);
-
-
-  });
-}
+});
