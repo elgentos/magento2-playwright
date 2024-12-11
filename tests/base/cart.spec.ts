@@ -31,6 +31,11 @@ test.describe('Cart functionalities', () => {
     await page.goto(slugs.cartSlug);
   });
 
+
+  test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
+    await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+  });
+  
   /**
    * @feature Remove product from cart
    * @scenario User has added a product and wants to remove it from the cart page
@@ -44,6 +49,7 @@ test.describe('Cart functionalities', () => {
     const cart = new CartPage(page);
     await cart.removeProduct(selectors.productPage.simpleProductTitle);
   });
+
 });
 
 //TODO: Write test to add coupon
