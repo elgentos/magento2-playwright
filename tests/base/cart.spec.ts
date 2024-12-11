@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import { ProductPage } from './fixtures/product.page';
 import { MainMenuPage } from './fixtures/mainmenu.page';
 import { CartPage} from './fixtures/cart.page';
-import { CartPage } from './fixtures/cart.page';
 
 import slugs from './config/slugs.json';
 import selectors from './config/selectors/selectors.json';
@@ -30,6 +29,20 @@ test.describe('Cart functionalities', () => {
     await mainMenu.openMiniCart();
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
     await page.goto(slugs.cartSlug);
+  });
+
+  /** 
+   *  @feature Remove product from cart
+   *  @scenario User has added a product and wants to remove it from the cart page
+   *  @given I have added a product to my cart
+   *    @and I am on the cart page
+   *  @when I click the delete button
+   *  @then I should see a notification that the product has been removed from my cart
+   *  @and I should no longer see the product in my cart
+   */
+  test('Remove product from cart',{ tag: '@cart',}, async ({page}) => {
+    const cart = new CartPage(page);
+    await cart.removeProduct(selectors.productPage.simpleProductTitle);
   });
 
   /**
@@ -68,7 +81,6 @@ test.describe('Cart functionalities', () => {
    * @then I should see a notification the discount has been removed
    * @and the discount should no longer be visible.
    */
-
   test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
     const cart = new CartPage(page);
     let discountCode = process.env.DISCOUNT_CODE;
@@ -80,17 +92,5 @@ test.describe('Cart functionalities', () => {
     // TODO: create API call to quickly add discount code rather than run a test again.
     await cart.applyDiscountCode(discountCode);
     await cart.removeDiscountCode();
-
-   /** @feature Remove product from cart
-   * @scenario User has added a product and wants to remove it from the cart page
-   * @given I have added a product to my cart
-   *  @and I am on the cart page
-   * @when I click the delete button
-   * @then I should see a notification that the product has been removed from my cart
-   *  @and I should no longer see the product in my cart
-   */
-  test('Remove product from cart',{ tag: '@cart',}, async ({page}) => {
-    const cart = new CartPage(page);
-    await cart.removeProduct(selectors.productPage.simpleProductTitle);
   });
-
+})

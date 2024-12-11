@@ -38,12 +38,10 @@ export class CartPage {
 
     await expect(this.page.getByText(verify.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(verify.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
-    
-    this.applyDiscountButton = this.page.getByRole('button', { name: selectors.cart.applyDiscountCodeLabel });
   }
 
   async removeProduct(name: string){
-    let removeButton = this.page.getByLabel(`${selectors.cart.remove} ${name}`);
+    let removeButton = this.page.getByLabel(`${selectors.cart.cancelCouponButtonLabel} ${name}`);
     await removeButton.click();
     await expect(removeButton,`Button to remove product is no longer visible`).toBeHidden();
   }
