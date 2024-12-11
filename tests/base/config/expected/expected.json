@@ -28,5 +28,8 @@
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
+  },
+  "homePage": {
+    "firstProductName": "Aim Analog Watch"
   }
 }

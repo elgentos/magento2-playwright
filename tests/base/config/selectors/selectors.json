@@ -3,7 +3,8 @@
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "genericPriceLabel": "Price",
-    "genericPriceSymbol": "$"
+    "genericPriceSymbol": "$",
+    "addToCartLabel": "Add to Cart"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
@@ -63,7 +64,9 @@
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
-    "cartQuantityLabel": "Qty"
+    "cartQuantityLabel": "Qty",
+    "applyDiscountCodeLabel": "Apply Discount Code",
+    "remove": "Remove"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
