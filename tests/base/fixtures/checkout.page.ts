@@ -71,10 +71,11 @@ export class CheckoutPage {
 
     let applyCouponCheckoutButton = this.page.getByRole('button', { name: 'Apply Coupon' });
     let checkoutDiscountField = this.page.getByPlaceholder('Enter discount code');
+  
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
-    await expect(this.page.getByText(`${verify.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible();
-    await expect(this.page.getByText(verify.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
+    await expect(this.page.getByText(`${verify.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
+    await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
   }
 }

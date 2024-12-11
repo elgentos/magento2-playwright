@@ -32,7 +32,8 @@
     "productQuantityChangedConfirmation": "was updated in your shopping cart"
   },
   "checkout": {
-    "couponAppliedNotification": "Your coupon was succesfully applied"
+    "couponAppliedNotification": "Your coupon was successfully applied",
+    "checkoutPriceReducedSymbol": "-$"
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
