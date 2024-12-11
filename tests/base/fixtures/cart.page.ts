@@ -27,6 +27,22 @@ export class CartPage {
     await expect(this.page.getByText(verify.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
   }
 
+  async enterWrongCouponCode(code: string){
+    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open.
+      await this.showDiscountButton.click();
+    }
+
+    let applyDiscoundButton = this.page.getByRole('button', {name: selectors.cart.applyDiscountButtonLabel, exact:true});
+    let discountField = this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel);
+    await discountField.fill(code);
+    await applyDiscoundButton.click();
+
+    let incorrectNotification = `${verify.cart.incorrectCouponCodeNotificationOne} "${code}" ${verify.cart.incorrectCouponCodeNotificationTwo}`;
+
+    await expect(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+  }
+
   async removeDiscountCode(){
     if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
