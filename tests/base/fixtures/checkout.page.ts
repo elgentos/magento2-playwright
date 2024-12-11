@@ -63,8 +63,12 @@ export class CheckoutPage {
       await this.showDiscountFormButton.click();
     }
 
-    //TODO: Add check here: if user is logged in and code has already been applied, then it carries over into the checkout.
-    // This happens to all cart actions when user logs in before running the test.
+    if(await this.page.getByText(verify.cart.priceReducedSymbols).isVisible()){
+      // discount is already active.
+      let cancelCouponButton = this.page.getByRole('button', { name: 'Cancel Coupon' });
+      await cancelCouponButton.click();
+    }
+
     let applyCouponCheckoutButton = this.page.getByRole('button', { name: 'Apply Coupon' });
     let checkoutDiscountField = this.page.getByPlaceholder('Enter discount code');
     await checkoutDiscountField.fill(code);
