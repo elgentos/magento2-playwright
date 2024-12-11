@@ -34,9 +34,6 @@ test.describe('Cart functionalities', () => {
     await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
 
-  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
-    
-  });
 });
 
 //TODO: Write test to add coupon
