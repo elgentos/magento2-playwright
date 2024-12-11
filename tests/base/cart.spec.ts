@@ -31,10 +31,6 @@ test.describe('Cart functionalities', () => {
     await page.goto(slugs.cartSlug);
   });
 
-  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
-    
-  });
-
   /**
    * @feature Remove product from cart
    * @scenario User has added a product and wants to remove it from the cart page
