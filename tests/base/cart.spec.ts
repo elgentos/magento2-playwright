@@ -31,14 +31,6 @@ test.describe('Cart functionalities', () => {
     await page.goto(slugs.cartSlug);
   });
 
-  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
-    //TODO: Write test to add coupon
-  });
-
-  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
-    //TODO: Write test to remove coupon
-  });
-
   /**
    * @feature Product permanence after login
    * @scenario A product added to the cart should still be there after user has logged in
