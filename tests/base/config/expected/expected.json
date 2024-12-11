@@ -33,6 +33,7 @@
   },
   "checkout": {
     "couponAppliedNotification": "Your coupon was successfully applied",
+    "couponRemovedNotification": "Your coupon was successfully removed",
     "checkoutPriceReducedSymbol": "-$"
   },
   "contactPage": {

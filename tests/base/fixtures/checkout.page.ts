@@ -15,11 +15,11 @@ export class CheckoutPage {
 
   constructor(page: Page){
     this.page = page;
-    this.shippingMethodOptionFixed = this.page.getByLabel('Fixed');
-    this.paymentMethodOptionCheck = this.page.getByLabel('Check / Money order Free');
-    this.showDiscountFormButton = this.page.getByRole('button', {name: 'Apply Discount Code'});
-    this.placeOrderButton = this.page.getByRole('button', { name: 'Place Order' });
-    this.continueShoppingButton = this.page.getByRole('link', { name: 'Continue Shopping' });
+    this.shippingMethodOptionFixed = this.page.getByLabel(selectors.checkout.shippingMethodFixedLabel);
+    this.paymentMethodOptionCheck = this.page.getByLabel(selectors.checkout.paymentOptionCheckLabel);
+    this.showDiscountFormButton = this.page.getByRole('button', {name: selectors.checkout.openDiscountFormLabel});
+    this.placeOrderButton = this.page.getByRole('button', { name: selectors.checkout.placeOrderButtonLabel });
+    this.continueShoppingButton = this.page.getByRole('link', { name: selectors.checkout.continueShoppingLabel });
   }
 
   async placeOrder(){
@@ -65,17 +65,30 @@ export class CheckoutPage {
 
     if(await this.page.getByText(verify.cart.priceReducedSymbols).isVisible()){
       // discount is already active.
-      let cancelCouponButton = this.page.getByRole('button', { name: 'Cancel Coupon' });
+      let cancelCouponButton = this.page.getByRole('button', { name: selectors.checkout.cancelDiscountButtonLabel });
       await cancelCouponButton.click();
     }
 
-    let applyCouponCheckoutButton = this.page.getByRole('button', { name: 'Apply Coupon' });
-    let checkoutDiscountField = this.page.getByPlaceholder('Enter discount code');
+    let applyCouponCheckoutButton = this.page.getByRole('button', { name: selectors.checkout.applyDiscountButtonLabel });
+    let checkoutDiscountField = this.page.getByPlaceholder(selectors.checkout.discountInputFieldLabel);
   
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
     await expect(this.page.getByText(`${verify.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
     await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
+  }
+
+  async removeDiscountCode(){
+    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open.
+      await this.showDiscountFormButton.click();
+    }
+  
+    let cancelCouponButton = this.page.getByRole('button', {name: selectors.cart.cancelCouponButtonLabel});
+    await cancelCouponButton.click();
+
+    await expect(this.page.getByText(verify.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
+    await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
   }
 }
