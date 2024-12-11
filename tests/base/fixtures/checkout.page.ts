@@ -79,6 +79,20 @@ export class CheckoutPage {
     await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
   }
 
+  async enterWrongCouponCode(code: string){
+    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open.
+      await this.showDiscountFormButton.click();
+    }
+
+    let applyCouponCheckoutButton = this.page.getByRole('button', { name: selectors.checkout.applyDiscountButtonLabel });
+    let checkoutDiscountField = this.page.getByPlaceholder(selectors.checkout.discountInputFieldLabel);
+    await checkoutDiscountField.fill(code);
+    await applyCouponCheckoutButton.click();
+
+    await expect(this.page.getByText(verify.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
+  }
+
   async removeDiscountCode(){
     if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.

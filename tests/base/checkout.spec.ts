@@ -111,5 +111,21 @@ test.describe('Checkout (guest)', () => {
     await checkout.applyDiscountCodeCheckout(discountCode);
     await checkout.removeDiscountCode();
   });
+
+  /**
+   * @feature Incorrect discount code check
+   * @scenario The user provides an incorrect discount code, the system should reflect that
+   * @given I have a product in my cart
+   * @and I am on the cart page
+   * @when I enter a wrong discount code
+   * @then I should get a notification that the code did not work.
+   */
+
+  test('Using an invalid discountcode should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
+    const checkout = new CheckoutPage(page);
+    let wrongDiscountCode = "incorrect discount code";
+    
+    await checkout.enterWrongCouponCode(wrongDiscountCode);
+  });
 });
 

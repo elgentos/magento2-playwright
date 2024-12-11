@@ -36,7 +36,8 @@
   "checkout": {
     "couponAppliedNotification": "Your coupon was successfully applied",
     "couponRemovedNotification": "Your coupon was successfully removed",
-    "checkoutPriceReducedSymbol": "-$"
+    "checkoutPriceReducedSymbol": "-$",
+    "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again."
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
