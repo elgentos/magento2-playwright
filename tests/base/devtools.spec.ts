@@ -6,15 +6,15 @@ import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
 base.describe('Price checking tests', () => {
-  base('product pricing is consistent and correct', async ({page}) => {
+  base('product input to cart is consistent from PDP to checkout', async ({page}) => {
     const productPage = new ProductPage(page);
-
     await page.goto(slugs.productpage.simpleProductSlug);
-    // value = $45.00
-    let productPagePrice = await page.locator(selectors.productPage.simpleProductPrice).innerText();
+
+    var productPagePrice = await page.locator(selectors.productPage.simpleProductPrice).innerText(); // value = $45.00
+    var productPageAmount = await page.getByLabel('Quantity').inputValue(); // value = 1
+    
     await productPage.addSimpleProductToCart();
     await page.goto(slugs.checkoutSlug);
-
     //get itemcount in cart from minicart bubble
     let cartItems = await page.locator('#menu-cart-icon > span').innerText();
     
@@ -26,7 +26,10 @@ base.describe('Price checking tests', () => {
 
     const simpleProductInCheckout = page.locator('#checkout-cart-details div').filter({ hasText: 'Push It Messenger Bag' }).nth(1);
     const productPriceInCheckout = await simpleProductInCheckout.getByText('$').innerText();
+    const simpleProductImage = page.locator('#checkout-cart-details div').filter({ has: page.getByRole('img', { name: 'Push It Messenger Bag' }) });
+    const productQuantityInCheckout = await simpleProductImage.locator('> span').innerText();
 
     expect(productPagePrice,`Price on PDP (${productPagePrice}) equals price in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
+    expect(productPageAmount,`Amount on PDP (${productPageAmount}) equals amount in checkout (${productQuantityInCheckout})`).toEqual(productQuantityInCheckout);
   });
 });
