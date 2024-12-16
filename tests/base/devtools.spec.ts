@@ -11,17 +11,19 @@ base.describe('Price checking tests', () => {
     const productPage = new ProductPage(page);
     await page.goto(slugs.productpage.simpleProductSlug);
 
-    var productPagePrice = await page.locator(selectors.productPage.simpleProductPrice).innerText(); // value = $45.00
-    var productPageAmount = await page.getByLabel('Quantity').inputValue(); // value = 1
+    // await page.getByLabel('Quantity').fill('2');
+
+    var productPagePrice = await page.locator(selectors.productPage.simpleProductPrice).innerText();
+    var productPageAmount = await page.getByLabel('Quantity').inputValue();
     await productPage.addSimpleProductToCart();
     await page.goto(slugs.checkoutSlug);
     
     //get itemcount in cart from minicart bubble
-    let cartItems = await page.locator('#menu-cart-icon > span').innerText();
-    if(cartItems == "1") {
+    let cartItemAmount = await page.locator('#menu-cart-icon > span').count();
+    if(cartItemAmount == 1) {
       await page.getByLabel(`Cart 1 item`).click();
     } else {
-      await page.getByLabel(`Cart ${cartItems} items`).click();
+      await page.getByLabel(`Cart ${cartItemAmount} items`).click();
     }
 
     // Get values from checkout page
@@ -30,19 +32,13 @@ base.describe('Price checking tests', () => {
     let simpleProductImage = page.locator('#checkout-cart-details div').filter({ has: page.getByRole('img', { name: 'Push It Messenger Bag' }) });
     let productQuantityInCheckout = await simpleProductImage.locator('> span').innerText();
 
-    expect(productPagePrice,`Price on PDP (${productPagePrice}) equals price in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
-    expect(productPageAmount,`Amount on PDP (${productPageAmount}) equals amount in checkout (${productQuantityInCheckout})`).toEqual(productQuantityInCheckout);
-
-    // convert text to number for calculation
+    // perform magic to calculate price * amount and mold it into the correct form again
     productPagePrice = productPagePrice.replace('$','');
-    let pricePDPInt = Number.parseFloat(Number.parseFloat(productPagePrice).toFixed(2));
+    let pricePDPInt = Number(productPagePrice);
     let quantityPDPInt = +productPageAmount;
-    // calculate price * quantity, keeping two decimals
-    let calculatedPricePDP = (pricePDPInt * quantityPDPInt).toFixed(2);
-  
-    // Back to string for comparison
-    let calcPriceString = "$" + calculatedPricePDP.toString(); 
+    let calculatedPricePDP = "$" + (pricePDPInt * quantityPDPInt).toFixed(2);
 
-    expect(calcPriceString, `Price * qty on PDP (${calcPriceString}) equals price * qty in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
+    expect(productPageAmount,`Amount on PDP (${productPageAmount}) equals amount in checkout (${productQuantityInCheckout})`).toEqual(productQuantityInCheckout);
+    expect(calculatedPricePDP, `Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
   });
 });
