@@ -73,10 +73,10 @@ test.describe('Cart functionalities', () => {
    */
   test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
     const cart = new CartPage(page);
-    let discountCode = process.env.DISCOUNT_CODE;
+    let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
-      throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     await cart.applyDiscountCode(discountCode);
@@ -97,7 +97,7 @@ test.describe('Cart functionalities', () => {
    */
   test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
     const cart = new CartPage(page);
-    let discountCode = process.env.DISCOUNT_CODE;
+    let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
       throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
@@ -118,7 +118,7 @@ test.describe('Cart functionalities', () => {
    * @then I should get a notification that the code did not work.
    */
 
-  test('Using an invalid discountcode should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
+  test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
     const cart = new CartPage(page);
     let wrongDiscountCode = "incorrect discount code";
     

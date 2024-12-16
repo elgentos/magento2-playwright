@@ -76,7 +76,7 @@ test.describe('Checkout (guest)', () => {
     test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page}) => {
       //TODO: Write tests to ensure code also works if user is NOT logged in.
       const checkout = new CheckoutPage(page);
-      let discountCode = process.env.DISCOUNT_CODE;
+      let discountCode = process.env.MAGENTO_COUPON_CODE;
   
       if(!discountCode) {
         throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
@@ -101,7 +101,7 @@ test.describe('Checkout (guest)', () => {
 
   test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page}) => {
     const checkout = new CheckoutPage(page);
-    let discountCode = process.env.DISCOUNT_CODE;
+    let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
       throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
@@ -121,11 +121,9 @@ test.describe('Checkout (guest)', () => {
    * @then I should get a notification that the code did not work.
    */
 
-  test('Using an invalid discountcode should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
+  test('Using an invalid coupon code should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
     const checkout = new CheckoutPage(page);
-    let wrongDiscountCode = "incorrect discount code";
-    
-    await checkout.enterWrongCouponCode(wrongDiscountCode);
+    await checkout.enterWrongCouponCode("incorrect discount code");
   });
 });
 
