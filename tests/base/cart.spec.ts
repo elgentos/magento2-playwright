@@ -7,7 +7,7 @@ import slugs from './config/slugs.json';
 import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
-test.describe('Cart functionalities', () => {
+test.describe('Cart functionalities (guest)', () => {
   /**
    * @feature BeforeEach runs before each test in this group.
    * @scenario Add a product to the cart and confirm it's there.
@@ -65,7 +65,7 @@ test.describe('Cart functionalities', () => {
    */
   test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
     const cart = new CartPage(page);
-    let discountCode = process.env.DISCOUNT_CODE;
+    let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
       throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
@@ -89,7 +89,7 @@ test.describe('Cart functionalities', () => {
    */
   test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
     const cart = new CartPage(page);
-    let discountCode = process.env.DISCOUNT_CODE;
+    let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
       throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
