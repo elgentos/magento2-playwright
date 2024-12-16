@@ -32,6 +32,11 @@ test.describe('Cart functionalities', () => {
     await page.goto(slugs.cartSlug);
   });
 
+
+  test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
+    await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+  });
+  
   /**
    * @feature Product permanence after login
    * @scenario A product added to the cart should still be there after user has logged in
@@ -75,5 +80,4 @@ test.describe('Cart functionalities', () => {
     const cart = new CartPage(page);
     await cart.removeProduct(selectors.productPage.simpleProductTitle);
   });
-
 });
