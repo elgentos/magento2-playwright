@@ -33,17 +33,16 @@ base.describe('Price checking tests', () => {
     expect(productPagePrice,`Price on PDP (${productPagePrice}) equals price in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
     expect(productPageAmount,`Amount on PDP (${productPageAmount}) equals amount in checkout (${productQuantityInCheckout})`).toEqual(productQuantityInCheckout);
 
-    // Check pricing * quantity
+    // convert text to number for calculation
     productPagePrice = productPagePrice.replace('$','');
-    let pricePDPInt = +productPagePrice;
+    let pricePDPInt = Number.parseFloat(Number.parseFloat(productPagePrice).toFixed(2));
     let quantityPDPInt = +productPageAmount;
-    let calculatedPricePDP = pricePDPInt * quantityPDPInt;
+    // calculate price * quantity, keeping two decimals
+    let calculatedPricePDP = (pricePDPInt * quantityPDPInt).toFixed(2);
+  
+    // Back to string for comparison
+    let calcPriceString = "$" + calculatedPricePDP.toString(); 
 
-    productPriceInCheckout = productPriceInCheckout.replace('$','');
-    let priceCheckoutInt = +productPriceInCheckout;
-    let quantityCheckoutInt = +productPageAmount;
-    let calculatedPriceCheckout = priceCheckoutInt * quantityCheckoutInt;
-
-    expect(calculatedPricePDP, `Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${calculatedPriceCheckout})`).toEqual(calculatedPriceCheckout);
+    expect(calcPriceString, `Price * qty on PDP (${calcPriceString}) equals price * qty in checkout (${productPriceInCheckout})`).toEqual(productPriceInCheckout);
   });
 });
