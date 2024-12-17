@@ -23,7 +23,8 @@ export class LoginPage {
     await this.page.goto(slugs.account.loginSlug);
     await this.loginEmailField.fill(email);
     await this.loginPasswordField.fill(password);
-    await this.loginButton.click();
+    // usage of .press("Enter") to prevent webkit issues with button.click();
+    await this.loginButton.press("Enter");
 
     // this element cannot be defined in the constructor, since the sign out button only appears after logging in.
     // Using a selector rather than expected, since it's we're locating a button rather than an expected notification.

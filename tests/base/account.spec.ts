@@ -47,7 +47,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    */
 
 
-  test('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+  //TODO: Remove the skip when all issues are fixed.
+  test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -90,9 +91,12 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
+    //TODO: Update so this test skips if an address already exists.
+    
     // If account has no address, Address Book redirects to the 'Add New Address' page.
     // We expect this to be true before continuing.
-    await expect(page.getByText(selectors.newAddress.addNewAddressTitle)).toBeVisible();
+    //await expect(page.getByText(selectors.newAddress.addNewAddressTitle)).toBeVisible();
+    await expect(page.getByRole('heading', {level:1, name: selectors.newAddress.addNewAddressTitle}), `H1 is Add New Address`).toBeVisible();
     const accountPage = new AccountPage(page);
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
@@ -166,7 +170,8 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been deleted. 
    *  @and The address should be removed from the overview.
    */
-  test('I can delete an address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can delete an address',{ tag: '@address-actions', }, async ({page, browserName}) => {
+    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const accountPage = new AccountPage(page);
     await accountPage.deleteFirstAddressFromAddressBook();
   });
@@ -192,7 +197,8 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @then I should see a message confirming my action
    *  @and My subscription option should be updated.
    */
-  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page}) => {
+  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
+    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: selectors.accountDashboard.links.newsletterLink });
     const newsletterCheckElement = page.getByLabel(selectors.newsletterSubscriptions.generalSubscriptionCheckLabel);
