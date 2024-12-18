@@ -24,6 +24,7 @@ base.describe.serial('Price checking tests', () => {
 
     await base.step('Step: Go to checkout, get values', async () =>{
       await page.goto(slugs.checkoutSlug);
+      await page.waitForLoadState();
 
       //get itemcount in cart from minicart bubble
       let cartItemAmount = await page.locator(selectors.miniCart.minicartAmountBubbleLocator).count();
@@ -36,6 +37,7 @@ base.describe.serial('Price checking tests', () => {
       // Get values from checkout page
       let simpleProductInCheckout = page.locator(selectors.checkout.cartDetailsLocator).filter({ hasText: selectors.productPage.simpleProductTitle }).nth(1);
       productPriceInCheckout = await simpleProductInCheckout.getByText(selectors.general.genericPriceSymbol).innerText();
+      productPriceInCheckout = productPriceInCheckout.trim();
       let simpleProductImage = page.locator(selectors.checkout.cartDetailsLocator)
                                     .filter({ has: page.getByRole('img', { name: selectors.productPage.simpleProductTitle })});
       productQuantityInCheckout = await simpleProductImage.locator('> span').innerText();
