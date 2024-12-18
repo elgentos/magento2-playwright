@@ -3,7 +3,6 @@ import {ProductPage} from './fixtures/product.page';
 
 import slugs from './config/slugs.json';
 import selectors from './config/selectors/selectors.json';
-import verify from './config/expected/expected.json';
 
 base.describe.serial('Price checking tests', () => {
   base('product input to cart is consistent from PDP to checkout', async ({page}) => {
