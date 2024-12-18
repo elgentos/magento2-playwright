@@ -32,7 +32,6 @@ test.describe('Cart functionalities (guest)', () => {
     await page.goto(slugs.cartSlug);
   });
 
-
   test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
@@ -118,7 +117,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see a notification the discount has been removed
    * @and the discount should no longer be visible.
    */
-  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
+  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
     const cart = new CartPage(page);
     let discountCode = process.env.MAGENTO_COUPON_CODE;
 
@@ -130,4 +129,18 @@ test.describe('Cart functionalities (guest)', () => {
     await cart.applyDiscountCode(discountCode);
     await cart.removeDiscountCode();
   });
-});
+
+  /**
+   * @feature Incorrect discount code check
+   * @scenario The user provides an incorrect discount code, the system should reflect that
+   * @given I have a product in my cart
+   * @and I am on the cart page
+   * @when I enter a wrong discount code
+   * @then I should get a notification that the code did not work.
+   */
+
+  test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
+    const cart = new CartPage(page);    
+    await cart.enterWrongCouponCode("Incorrect Couon Code");
+  });
+})

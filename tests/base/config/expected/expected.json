@@ -22,7 +22,9 @@
   "cart": {
     "discountAppliedNotification": "You used coupon code",
     "discountRemovedNotification": "You canceled the coupon code.",
-    "priceReducedSymbols": "- $"
+    "priceReducedSymbols": "- $",
+    "incorrectCouponCodeNotificationOne": "The coupon code",
+    "incorrectCouponCodeNotificationTwo": "is not valid."
   },
   "miniCart": {
     "miniCartTitle": "My Cart",
@@ -34,7 +36,8 @@
   "checkout": {
     "couponAppliedNotification": "Your coupon was successfully applied",
     "couponRemovedNotification": "Your coupon was successfully removed",
-    "checkoutPriceReducedSymbol": "-$"
+    "checkoutPriceReducedSymbol": "-$",
+    "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again."
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
