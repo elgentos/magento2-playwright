@@ -7,7 +7,7 @@ import slugs from './config/slugs.json';
 import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
-test.describe('Cart functionalities', () => {
+test.describe('Cart functionalities (guest)', () => {
   /**
    * @feature BeforeEach runs before each test in this group.
    * @scenario Add a product to the cart and confirm it's there.
@@ -30,15 +30,6 @@ test.describe('Cart functionalities', () => {
     await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
     await page.goto(slugs.cartSlug);
   });
-
-  /** 
-   *  @feature Remove product from cart
-   *  @scenario User has added a product and wants to remove it from the cart page
-   *  @given I have added a product to my cart
-   *    @and I am on the cart page
-   *  @when I click the delete button
-   *  @then I should see a notification that the product has been removed from my cart
-   */
 
   test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
