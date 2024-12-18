@@ -52,7 +52,7 @@ test.describe('Cart functionalities (guest)', () => {
     });
 
     await test.step('Log in with account', async () =>{
-      const login = new LoginPage(page);
+      const loginPage = new LoginPage(page);
       let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
       let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
@@ -60,7 +60,7 @@ test.describe('Cart functionalities (guest)', () => {
         throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
       }
 
-      await login.login(emailInputValue, passwordInputValue);
+      await loginPage.login(emailInputValue, passwordInputValue);
     });
 
     await page.goto(slugs.cartSlug);

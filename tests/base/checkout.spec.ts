@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
 
   //TODO: Use a storagestate or API call to add product to the cart so shorten test time
   await page.goto(slugs.productpage.simpleProductSlug);
-  await productPage.addSimpleProductToCart();
+  await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   await page.goto(slugs.checkoutSlug);    
 });
 
