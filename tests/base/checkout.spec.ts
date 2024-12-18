@@ -79,7 +79,7 @@ test.describe('Checkout (guest)', () => {
       let discountCode = process.env.MAGENTO_COUPON_CODE;
   
       if(!discountCode) {
-        throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+        throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
       }
   
       await checkout.applyDiscountCodeCheckout(discountCode);
@@ -104,7 +104,7 @@ test.describe('Checkout (guest)', () => {
     let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
-      throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     // TODO: create API call to quickly add discount code rather than run a test again.

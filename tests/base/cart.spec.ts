@@ -100,7 +100,7 @@ test.describe('Cart functionalities', () => {
     let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
-      throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     // TODO: create API call to quickly add discount code rather than run a test again.
@@ -119,9 +119,7 @@ test.describe('Cart functionalities', () => {
    */
 
   test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
-    const cart = new CartPage(page);
-    let wrongDiscountCode = "incorrect discount code";
-    
-    await cart.enterWrongCouponCode(wrongDiscountCode);
+    const cart = new CartPage(page);    
+    await cart.enterWrongCouponCode("Incorrect Couon Code");
   });
 })
