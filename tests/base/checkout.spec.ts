@@ -40,7 +40,7 @@ test.describe('Checkout (login required)', () => {
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
     if(!emailInputValue || !passwordInputValue) {
-      throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
     }
 
     const loginPage = new LoginPage(page);
@@ -79,7 +79,7 @@ test.describe('Checkout (guest)', () => {
       let discountCode = process.env.MAGENTO_COUPON_CODE;
   
       if(!discountCode) {
-        throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+        throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
       }
   
       await checkout.applyDiscountCodeCheckout(discountCode);
@@ -104,7 +104,7 @@ test.describe('Checkout (guest)', () => {
     let discountCode = process.env.MAGENTO_COUPON_CODE;
 
     if(!discountCode) {
-      throw new Error(`discountCode appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     // TODO: create API call to quickly add discount code rather than run a test again.

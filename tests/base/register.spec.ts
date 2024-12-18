@@ -29,7 +29,7 @@ test('User can register an account', async ({page}) => {
   const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
 
   if(!existingAccountPassword){
-    throw new Error("Password variable not defined in .env");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_PASSWORD has not been defined in the .env file.");
   }
 
   // password is retrieved from .env file in createNewAccount() function
