@@ -65,6 +65,20 @@
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
     "cartQuantityLabel": "Qty",
+    "showDiscountFormButtonLabel": "Apply Discount Code",
+    "discountInputFieldLabel": "Enter discount code",
+    "applyDiscountButtonLabel": "Apply Discount",
+    "cancelCouponButtonLabel": "Cancel Coupon"
+  },
+  "checkout": {
+    "shippingMethodFixedLabel": "Fixed",
+    "paymentOptionCheckLabel": "Check / Money order Free",
+    "openDiscountFormLabel": "Apply Discount Code",
+    "placeOrderButtonLabel": "Place Order",
+    "cancelDiscountButtonLabel": "Cancel Coupon",
+    "applyDiscountButtonLabel": "Apply Coupon",
+    "discountInputFieldLabel": "Enter discount code",
+    "continueShoppingLabel": "Continue Shopping",
     "applyDiscountCodeLabel": "Apply Discount Code",
     "remove": "Remove"
   },

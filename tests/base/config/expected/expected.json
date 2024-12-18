@@ -19,12 +19,22 @@
   "productPage": {
     "simpleProductAddedNotification": "You added"
   },
+  "cart": {
+    "discountAppliedNotification": "You used coupon code",
+    "discountRemovedNotification": "You canceled the coupon code.",
+    "priceReducedSymbols": "- $"
+  },
   "miniCart": {
     "miniCartTitle": "My Cart",
     "simpleProductInCartTitle": "x Push It Messenger Bag",
     "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
     "productRemovedConfirmation": "You removed the item.",
     "productQuantityChangedConfirmation": "was updated in your shopping cart"
+  },
+  "checkout": {
+    "couponAppliedNotification": "Your coupon was successfully applied",
+    "couponRemovedNotification": "Your coupon was successfully removed",
+    "checkoutPriceReducedSymbol": "-$"
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"

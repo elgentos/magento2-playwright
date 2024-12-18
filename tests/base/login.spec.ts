@@ -24,7 +24,7 @@ base('User can log in with valid credentials', async ({page}) => {
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
   if(!emailInputValue || !passwordInputValue) {
-    throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
   }
 
   const loginPage = new LoginPage(page);
