@@ -105,7 +105,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 
   });
 
-  /**NewsletterSubscriptionPage
+  /**
    * @given I am logged in
    *  @and I am on the account dashboard page
    * @when I go to the page where I can add another address
