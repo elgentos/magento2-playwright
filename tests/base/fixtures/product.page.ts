@@ -36,7 +36,6 @@ export class ProductPage {
     }
 
     await this.simpleProductAddToCartButon.click();
+    //TODO: add notification check to ensure product has been added.
   }
 }
-
-// await expect(page.getByRole('heading', { name: 'Push It Messenger Bag', exact: true }).locator('span')).toBeVisible();

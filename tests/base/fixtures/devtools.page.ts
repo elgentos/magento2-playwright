@@ -13,7 +13,7 @@ export class DevTools{
     this.page = page;
   }
 
-  async getCheckoutValues(pricePDP:string, amountPDP:string){
+  async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
     // Open minicart based on amount of products in cart
     let cartItemAmount = await this.page.locator(selectors.miniCart.minicartAmountBubbleLocator).count();
     if(cartItemAmount == 1) {
@@ -23,12 +23,28 @@ export class DevTools{
     }
 
     // Get values from checkout page
-    let simpleProductInCheckout = this.page.locator(selectors.checkout.cartDetailsLocator).filter({ hasText: selectors.productPage.simpleProductTitle }).nth(1);
-    this.productPriceInCheckout = await simpleProductInCheckout.getByText(selectors.general.genericPriceSymbol).innerText();
+    let productInCheckout = this.page.locator(selectors.checkout.cartDetailsLocator).filter({ hasText: productName }).nth(1);
+    this.productPriceInCheckout = await productInCheckout.getByText(selectors.general.genericPriceSymbol).innerText();
     this.productPriceInCheckout = this.productPriceInCheckout.trim();
-    let simpleProductImage = this.page.locator(selectors.checkout.cartDetailsLocator)
-    .filter({ has: this.page.getByRole('img', { name: selectors.productPage.simpleProductTitle })});
-    this.productQuantityInCheckout = await simpleProductImage.locator('> span').innerText();
+    let productImage = this.page.locator(selectors.checkout.cartDetailsLocator)
+    .filter({ has: this.page.getByRole('img', { name: productName })});
+    this.productQuantityInCheckout = await productImage.locator('> span').innerText();
+
+    // if(simpleProduct){
+    //   let simpleProductInCheckout = this.page.locator(selectors.checkout.cartDetailsLocator).filter({ hasText: selectors.productPage.simpleProductTitle }).nth(1);
+    //   this.productPriceInCheckout = await simpleProductInCheckout.getByText(selectors.general.genericPriceSymbol).innerText();
+    //   this.productPriceInCheckout = this.productPriceInCheckout.trim();
+    //   let simpleProductImage = this.page.locator(selectors.checkout.cartDetailsLocator)
+    //   .filter({ has: this.page.getByRole('img', { name: selectors.productPage.simpleProductTitle })});
+    //   this.productQuantityInCheckout = await simpleProductImage.locator('> span').innerText();
+    // } else {
+    //   let confProductInCheckout = this.page.locator(selectors.checkout.cartDetailsLocator).filter({ hasText: selectors.productPage.configurableProductTitle }).nth(1);
+    //   this.productPriceInCheckout = await confProductInCheckout.getByText(selectors.general.genericPriceSymbol).innerText();
+    //   this.productPriceInCheckout = this.productPriceInCheckout.trim();
+    //   let confProductImage = this.page.locator(selectors.checkout.cartDetailsLocator)
+    //   .filter({ has: this.page.getByRole('img', { name: selectors.productPage.configurableProductTitle })});
+    //   this.productQuantityInCheckout = await confProductImage.locator('> span').innerText();
+    // }
 
     return [this.productPriceInCheckout, this.productQuantityInCheckout];
   }
