@@ -35,5 +35,12 @@
     "editZipCodeValue": "00151",
     "editCityValue": "Pallet Town",
     "editStateValue": "Kansas"
+  },
+  "coupon": {
+    "couponCodeRuleName": "Test coupon",
+    "couponType": "Specific Coupon"
+  },
+  "captcha": {
+    "captchaDisabled": "No"
   }
 }

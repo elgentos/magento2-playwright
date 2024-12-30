@@ -2,6 +2,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 
 import selectors from '../config/selectors/selectors.json';
 import verify from '../config/expected/expected.json';
+import slugs from '../config/slugs.json';
 
 export class AccountPage {
   readonly page: Page;
@@ -13,7 +14,7 @@ export class AccountPage {
   readonly zipCodeField: Locator;
   readonly cityField: Locator;
   readonly countrySelectorField: Locator;
-  readonly stateSelectorField: Locator; 
+  readonly stateSelectorField: Locator;
   readonly saveAddressButton: Locator;
   readonly addNewAddressButton: Locator;
   readonly deleteAddressButton: Locator;
@@ -23,6 +24,12 @@ export class AccountPage {
   readonly newPasswordField: Locator;
   readonly confirmNewPasswordField: Locator;
   readonly genericSaveButton: Locator;
+  readonly accountCreationFirstNameField: Locator;
+  readonly accountCreationLastNameField: Locator;
+  readonly accountCreationEmailField: Locator;
+  readonly accountCreationPasswordField: Locator;
+  readonly accountCreationPasswordRepeatField: Locator;
+  readonly accountCreationConfirmButton: Locator;
 
   // fields below are not required when adding an address.
   /*
@@ -58,6 +65,13 @@ export class AccountPage {
     this.confirmNewPasswordField = page.getByLabel('Confirm New Password')
     this.genericSaveButton = page.getByRole('button', { name: selectors.general.genericSaveButtonLabel });
 
+    // Account Creation elements
+    this.accountCreationFirstNameField = page.getByLabel(selectors.personalInformation.firstNameLabel);
+    this.accountCreationLastNameField = page.getByLabel(selectors.personalInformation.lastNameLabel);
+    this.accountCreationEmailField = page.getByLabel(selectors.credentials.emailFieldLabel, { exact: true});
+    this.accountCreationPasswordField = page.getByLabel(selectors.credentials.passwordFieldLabel, { exact: true });
+    this.accountCreationPasswordRepeatField = page.getByLabel(selectors.credentials.passwordConfirmFieldLabel);
+    this.accountCreationConfirmButton = page.getByRole('button', {name: selectors.accountCreation.createAccountButtonLabel});
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
@@ -68,7 +82,7 @@ export class AccountPage {
   //TODO: Add ability to choose different country other than US
   async addNewAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
     let addressAddedNotification = verify.address.newAddressAddedNotifcation;
-    
+
 
     // Name should be filled in automatically.
     await expect(this.firstNameField).not.toBeEmpty();
@@ -90,7 +104,7 @@ export class AccountPage {
     let addressModifiedNotification = verify.address.newAddressAddedNotifcation;
 
     await this.editAddressButton.click();
-    
+
     // Name should be filled in automatically, but editable.
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
@@ -123,7 +137,6 @@ export class AccountPage {
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
   }
 
-
   async updatePassword(currentPassword:string, newPassword: string){
     let passwordUpdatedNotification = verify.account.changedPasswordNotificationText;
     await this.changePasswordCheck.check();
@@ -136,5 +149,16 @@ export class AccountPage {
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
     console.log(`Password has been changed! Please update your .env file password with "${newPassword}"`);
+  }
+
+  async create(firstName: string, lastName: string, email: string, password: string){
+    await this.page.goto(slugs.account.createAccountSlug);
+
+    await this.accountCreationFirstNameField.fill(firstName);
+    await this.accountCreationLastNameField.fill(lastName);
+    await this.accountCreationEmailField.fill(email);
+    await this.accountCreationPasswordField.fill(password);
+    await this.accountCreationPasswordRepeatField.fill(password);
+    await this.accountCreationConfirmButton.click();
   }
 }
