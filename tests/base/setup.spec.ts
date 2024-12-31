@@ -34,7 +34,6 @@ if(!process.env.SETUP_COMPLETE) {
     await accountPage.create(values.accountCreation.firstNameValue, values.accountCreation.lastNameValue, process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL, process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD);
 
     const envPath = path.resolve(__dirname, '../../.env');
-    console.log(envPath)
     if (fs.existsSync(envPath)) {
       const envContent = fs.readFileSync(envPath, 'utf-8');
       if (!envContent.includes('SETUP_COMPLETE=true')) {

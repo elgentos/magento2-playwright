@@ -71,7 +71,7 @@ export class MagentoAdminPage {
     await this.page.getByRole('link', { name: selectors.configurationPage.customerConfigurationTabLabel }).click();
 
     if (!await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).isVisible()) {
-        await this.page.getByRole('link', { name: /${selectors.configurationPage.captchaSectionLabel}/ }).click();
+      await this.page.getByRole('link', { name: new RegExp(selectors.configurationPage.captchaSectionLabel) }).click();
     }
 
     await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).uncheck();
