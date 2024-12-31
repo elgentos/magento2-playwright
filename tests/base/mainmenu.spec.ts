@@ -6,12 +6,13 @@ import {MainMenuPage} from './fixtures/mainmenu.page';
 
 // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 // Before each test, log in
-test.beforeEach(async ({ page }) => {
-  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+test.beforeEach(async ({ page, browserName }) => {
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
   if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
   }
 
   const loginPage = new LoginPage(page);

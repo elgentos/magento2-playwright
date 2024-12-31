@@ -92,5 +92,42 @@
   },
   "contactPage": {
     "messageFieldLabel": "What’s on your mind?"
+  },
+  "magentoAdminPage": {
+    "usernameFieldLabel": "Username",
+    "passwordFieldLabel": "Password",
+    "loginButtonLabel": "Sign In",
+    "navigation": {
+      "marketingButtonLabel": "Marketing",
+      "storesButtonLabel": "Stores"
+    },
+    "subNavigation": {
+      "cartPriceRulesButtonLabel": "Cart Price Rules",
+      "configurationButtonLabel": "Configuration"
+    }
+  },
+  "cartPriceRulesPage": {
+    "addCartPriceRuleButtonLabel": "Add New Rule",
+    "ruleNameFieldLabel": "Rule Name",
+    "websitesSelectLabel": "Websites",
+    "customerGroupsSelectLabel": "Customer Groups",
+    "couponTypeSelectField": "select[name='coupon_type']",
+    "couponCodeFieldLabel": "Coupon Code",
+    "actionsSubtitleLabel": "Actions",
+    "discountAmountFieldLabel": "Discount Amount",
+    "saveRuleButtonLabel": "Save"
+  },
+  "configurationPage": {
+    "customersTabLabel": "Customers",
+    "customerConfigurationTabLabel": "Customer Configuration",
+    "advancedTabLabel": "Advanced",
+    "advancedAdministrationTabLabel": "Admin",
+    "securitySectionLabel": "Security",
+    "allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
+    "allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
+    "captchaSectionLabel": "CAPTCHA",
+    "captchaSettingSelectField": "#customer_captcha_enable",
+    "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
+    "saveConfigButtonLabel": "Save Config"
   }
 }

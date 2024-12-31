@@ -6,7 +6,7 @@ const test = base.extend<{ loginPage:LoginPage }>({
  loginPage: async ({ page }, use) => {
   const loginPage = new LoginPage(page);
   await loginPage.login();
- } 
+ }
 });
 */
 
@@ -19,12 +19,13 @@ const test = base.extend<{ loginPage:LoginPage }>({
 // Reset storageState to ensure we're not logged in before running these tests.
 base.use({ storageState: { cookies: [], origins: [] } });
 
-base('User can log in with valid credentials', async ({page}) => {
-  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+base('User can log in with valid credentials', async ({page, browserName}) => {
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
   if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
   }
 
   const loginPage = new LoginPage(page);
