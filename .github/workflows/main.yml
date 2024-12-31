@@ -1,0 +1,69 @@
+name: Magento 2 BDD E2E Testing Suite Self Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      BASE_URL: https://hyva-demo.elgentos.io/
+      PRODUCTION_URL: https://hyva-demo.elgentos.io/
+      STAGING_URL: https://hyva-demo.elgentos.io/
+
+      MAGENTO_ADMIN_SLUG: ${{ secrets.MAGENTO_ADMIN_SLUG }}
+      MAGENTO_ADMIN_USERNAME: ${{ secrets.MAGENTO_ADMIN_USERNAME }}
+      MAGENTO_ADMIN_PASSWORD: ${{ secrets.MAGENTO_ADMIN_PASSWORD }}
+
+      MAGENTO_NEW_ACCOUNT_PASSWORD: ${{ secrets.MAGENTO_NEW_ACCOUNT_PASSWORD }}
+      MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM: ${{ secrets.MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM }}
+      MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX: ${{ secrets.MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX }}
+      MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT: ${{ secrets.MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT }}
+      MAGENTO_EXISTING_ACCOUNT_PASSWORD: ${{ secrets.MAGENTO_EXISTING_ACCOUNT_PASSWORD }}
+      MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: ${{ secrets.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD }}
+
+      MAGENTO_COUPON_CODE_CHROMIUM: ${{ secrets.MAGENTO_COUPON_CODE_CHROMIUM }}
+      MAGENTO_COUPON_CODE_FIREFOX: ${{ secrets.MAGENTO_COUPON_CODE_FIREFOX }}
+      MAGENTO_COUPON_CODE_WEBKIT: ${{ secrets.MAGENTO_COUPON_CODE_WEBKIT }}
+
+      CAPTCHA_BYPASS: true
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      - name: Install Playwright dependencies
+        run: npx playwright install-deps
+
+
+      - name: Copy config files
+        run: |
+          cp playwright.config.example.ts playwright.config.ts
+          cp bypass-captcha.config.example.ts bypass-captcha.config.ts
+
+      - name: Run Playwright setup test
+        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
+        env:
+          CI: true
+
+      - name: Run Playwright tests
+        run: npx playwright test --reporter=line --workers=4 --exclude=tests/base/setup.spec.ts
+        env:
+          CI: true
