@@ -63,6 +63,11 @@ if (!process.env.SETUP_COMPLETE) {
       accountPassword
     );
 
+    if (process.env.CI === 'true') {
+      console.log("Running in CI environment. Skipping .env update.");
+      process.exit(0);
+    }
+
     const envPath = path.resolve(__dirname, '../../.env');
     try {
       if (fs.existsSync(envPath)) {
