@@ -35,7 +35,7 @@ test.describe('Cart functionalities (guest)', () => {
   test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: selectors.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
-  
+
   /**
    * @feature Product permanence after login
    * @scenario A product added to the cart should still be there after user has logged in
@@ -43,7 +43,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @when I log in
    * @then I should still have that product in my cart
    */
-  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account']}, async ({page}) => {
+  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account']}, async ({page, browserName}) => {
     await test.step('Add another product to cart', async () =>{
       const productpage = new ProductPage(page);
       await page.goto(slugs.productpage.secondSimpleProductSlug);
@@ -51,12 +51,13 @@ test.describe('Cart functionalities (guest)', () => {
     });
 
     await test.step('Log in with account', async () =>{
+      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const loginPage = new LoginPage(page);
-      let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+      let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
       let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
       if(!emailInputValue || !passwordInputValue) {
-        throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+        throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
       }
 
       await loginPage.login(emailInputValue, passwordInputValue);
@@ -93,12 +94,13 @@ test.describe('Cart functionalities (guest)', () => {
    *  @and the code should be visible in the cart
    *  @and a discount should be applied to the product
    */
-  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page}) => {
+  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page, browserName}) => {
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
-    let discountCode = process.env.MAGENTO_COUPON_CODE;
+    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
 
     if(!discountCode) {
-      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     await cart.applyDiscountCode(discountCode);
@@ -117,12 +119,13 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see a notification the discount has been removed
    * @and the discount should no longer be visible.
    */
-  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
+  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code'] }, async ({page, browserName}) => {
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
-    let discountCode = process.env.MAGENTO_COUPON_CODE;
+    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
 
     if(!discountCode) {
-      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
+      throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
     // TODO: create API call to quickly add discount code rather than run a test again.
@@ -140,7 +143,7 @@ test.describe('Cart functionalities (guest)', () => {
    */
 
   test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
-    const cart = new CartPage(page);    
+    const cart = new CartPage(page);
     await cart.enterWrongCouponCode("Incorrect Couon Code");
   });
 })

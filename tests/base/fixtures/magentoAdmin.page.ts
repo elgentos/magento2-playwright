@@ -3,8 +3,6 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import selectors from '../config/selectors/selectors.json';
 import values from '../config/input-values/input-values.json';
 
-import account from '../fixtures/account.page';
-
 export class MagentoAdminPage {
   readonly page: Page;
   readonly adminLoginEmailField: Locator;
@@ -30,11 +28,12 @@ export class MagentoAdminPage {
   }
 
   async addCartPriceRule(magentoCouponCode: string){
-    if(!process.env.MAGENTO_COUPON_CODE) {
-      throw new Error("MAGENTO_COUPON_CODE is not defined in your .env file.");
+    if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
+      throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
     }
-
-    await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click();
+    await this.page.waitForLoadState('networkidle');
+    await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click({ force: true });
+    await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
     await this.page.getByRole('button', {name: selectors.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
     await this.page.getByLabel(selectors.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
@@ -64,7 +63,23 @@ export class MagentoAdminPage {
     await this.page.getByRole('button', { name: 'Save', exact: true }).click();
   }
 
+  async enableMultipleAdminLogins() {
+    await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
+    await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    await this.page.getByRole('tab', { name: selectors.configurationPage.advancedTabLabel }).click();
+    await this.page.getByRole('link', { name: selectors.configurationPage.advancedAdministrationTabLabel, exact: true }).click();
+
+    if (!await this.page.locator(selectors.configurationPage.allowMultipleLoginsSystemCheckbox).isVisible()) {
+      await this.page.getByRole('link', { name: selectors.configurationPage.securitySectionLabel }).click();
+    }
+
+    await this.page.locator(selectors.configurationPage.allowMultipleLoginsSystemCheckbox).uncheck();
+    await this.page.locator(selectors.configurationPage.allowMultipleLoginsSelectField).selectOption({ label: values.adminLogins.allowMultipleLogins });
+    await this.page.getByRole('button', { name: selectors.configurationPage.saveConfigButtonLabel }).click();
+  }
+
   async disableLoginCaptcha() {
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
     await this.page.getByRole('tab', { name: selectors.configurationPage.customersTabLabel }).click();

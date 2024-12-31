@@ -1,23 +1,24 @@
 import { test as setup, expect } from '@playwright/test';
 import path from 'path';
-import slugs from './refactor/config/slugs.json';
-import selectors from './refactor/config/selectors/selectors.json';
+import slugs from './base/config/slugs.json';
+import selectors from './base/config/selectors/selectors.json';
 
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
-setup('authenticate', async ({ page }) => {
-  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+setup('authenticate', async ({ page, browserName }) => {
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
   if(!emailInputValue || !passwordInputValue) {
-    throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
   }
 
   // Perform authentication steps. Replace these actions with your own.
   await page.goto(slugs.account.loginSlug);
-  await page.getByLabel(selectors.login.emailFieldLabel, {exact: true}).fill(emailInputValue);
-  await page.getByLabel(selectors.login.PasswordFieldLabel, {exact: true}).fill(passwordInputValue);
-  await page.getByRole('button', { name: selectors.login.loginButtonLabel }).click();
+  await page.getByLabel(selectors.credentials.emailFieldLabel, {exact: true}).fill(emailInputValue);
+  await page.getByLabel(selectors.credentials.passwordFieldLabel, {exact: true}).fill(passwordInputValue);
+  await page.getByRole('button', { name: selectors.credentials.loginButtonLabel }).click();
   // Wait until the page receives the cookies.
   //
   // Sometimes login flow sets cookies in the process of several redirects.

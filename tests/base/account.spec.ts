@@ -13,12 +13,13 @@ import verify from './config/expected/expected.json';
 
 
 // Before each test, log in
-test.beforeEach(async ({ page }) => {
-  let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+test.beforeEach(async ({ page, browserName }) => {
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
   if(!emailInputValue || !passwordInputValue) {
-    throw new Error("Your password variable and/or your email variable have not defined in the .env file, or the account hasn't been created yet.");
+    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
   }
 
   const loginPage = new LoginPage(page);
@@ -26,7 +27,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
-  
+
   test.beforeEach(async ({page}) => {
     await page.goto(slugs.account.accountOverviewSlug);
   });
@@ -85,7 +86,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    *   @and I haven't added an address yet
    * @when I fill in the required information
    *   @and I click the save button
-   * @then I should see a notification my address has been updated. 
+   * @then I should see a notification my address has been updated.
    *  @and The new address should be selected as default and shipping address
    */
 
@@ -111,7 +112,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @when I go to the page where I can add another address
    * @when I fill in the required information
    *   @and I click the save button
-   * @then I should see a notification my address has been updated. 
+   * @then I should see a notification my address has been updated.
    *  @and The new address should be listed
    */
   test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
@@ -138,7 +139,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @when I click on the button to edit the address
    *   @and I fill in the required information correctly
    *   @then I click the save button
-   * @then I should see a notification my address has been updated. 
+   * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
   test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
@@ -149,7 +150,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let newZipCode = inputvalues.editedAddress.editZipCodeValue;
     let newCity = inputvalues.editedAddress.editCityValue;
     let newState = inputvalues.editedAddress.editStateValue;
-    
+
     await page.goto(slugs.account.addressBookSlug);
     await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
 
@@ -163,7 +164,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @when I go to the page where I can see my address(es)
    * @when I click the trash button for the address I want to delete
    *   @and I click the confirmation button
-   * @then I should see a notification my address has been deleted. 
+   * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
   test('I can delete an address',{ tag: '@address-actions', }, async ({page}) => {
@@ -178,7 +179,7 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
     // go to the Dashboard page
     await page.goto(slugs.account.accountOverviewSlug);
   });
-  
+
   // TODO: What if website offers multiple subscriptions?
 
   /**
@@ -205,9 +206,9 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
     await newsletterLink.click();
 
     if(updateSubscription){
-      await expect(newsletterCheckElement).toBeChecked();  
+      await expect(newsletterCheckElement).toBeChecked();
     } else {
-      await expect(newsletterCheckElement).not.toBeChecked();  
+      await expect(newsletterCheckElement).not.toBeChecked();
     }
   });
 

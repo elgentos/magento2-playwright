@@ -120,6 +120,11 @@
   "configurationPage": {
     "customersTabLabel": "Customers",
     "customerConfigurationTabLabel": "Customer Configuration",
+    "advancedTabLabel": "Advanced",
+    "advancedAdministrationTabLabel": "Admin",
+    "securitySectionLabel": "Security",
+    "allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
+    "allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
     "captchaSectionLabel": "CAPTCHA",
     "captchaSettingSelectField": "#customer_captcha_enable",
     "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",

@@ -28,19 +28,20 @@ test.beforeEach(async ({ page }) => {
   //TODO: Use a storagestate or API call to add product to the cart so shorten test time
   await page.goto(slugs.productpage.simpleProductSlug);
   await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-  await page.goto(slugs.checkoutSlug);    
+  await page.goto(slugs.checkoutSlug);
 });
 
 
 test.describe('Checkout (login required)', () => {
   // Before each test, log in
   // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
-  test.beforeEach(async ({ page }) => {
-    let emailInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_EMAIL;
+  test.beforeEach(async ({ page, browserName }) => {
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
     if(!emailInputValue || !passwordInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
     }
 
     const loginPage = new LoginPage(page);
@@ -53,7 +54,7 @@ test.describe('Checkout (login required)', () => {
     await checkoutPage.placeOrder();
   });
 
-  
+
 
 });
 
@@ -77,11 +78,11 @@ test.describe('Checkout (guest)', () => {
       //TODO: Write tests to ensure code also works if user is NOT logged in.
       const checkout = new CheckoutPage(page);
       let discountCode = process.env.MAGENTO_COUPON_CODE;
-  
+
       if(!discountCode) {
         throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
       }
-  
+
       await checkout.applyDiscountCodeCheckout(discountCode);
     });
 
