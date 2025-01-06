@@ -65,6 +65,7 @@ export class MagentoAdminPage {
   }
 
   async enableMultipleAdminLogins() {
+    await this.page.waitForLoadState();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
     await this.page.getByRole('tab', { name: selectors.configurationPage.advancedTabLabel }).click();
