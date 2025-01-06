@@ -32,11 +32,13 @@ export class MagentoAdminPage {
     if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
       throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
     }
-    await this.page.waitForLoadState();
+
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click();
+    await this.page.waitForLoadState();
     //await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
     await expect(this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
+    await this.page.waitForLoadState();
     await this.page.getByRole('button', {name: selectors.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
     await this.page.getByLabel(selectors.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
 
