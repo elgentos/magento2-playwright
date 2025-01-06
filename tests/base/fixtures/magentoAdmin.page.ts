@@ -34,12 +34,12 @@ export class MagentoAdminPage {
     }
     await this.page.waitForLoadState();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click();
-    await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
+    //await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
     await this.page.getByRole('button', {name: selectors.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
     await this.page.getByLabel(selectors.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
 
-    const websiteSelector = await this.page.getByLabel(selectors.cartPriceRulesPage.websitesSelectLabel);
+    const websiteSelector = this.page.getByLabel(selectors.cartPriceRulesPage.websitesSelectLabel);
     await websiteSelector.evaluate(select => {
         for (const option of select.options) {
             option.selected = true;
