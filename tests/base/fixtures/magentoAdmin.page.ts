@@ -22,6 +22,7 @@ export class MagentoAdminPage {
     }
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
+    await this.page.waitForLoadState();
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
@@ -31,7 +32,7 @@ export class MagentoAdminPage {
     if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
       throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
     }
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click({ force: true });
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
@@ -79,7 +80,7 @@ export class MagentoAdminPage {
   }
 
   async disableLoginCaptcha() {
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
     await this.page.getByRole('tab', { name: selectors.configurationPage.customersTabLabel }).click();
