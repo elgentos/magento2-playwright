@@ -153,6 +153,7 @@ export class AccountPage {
 
   async create(firstName: string, lastName: string, email: string, password: string){
     await this.page.goto(slugs.account.createAccountSlug);
+    await this.page.waitForLoadState();
 
     await this.accountCreationFirstNameField.fill(firstName);
     await this.accountCreationLastNameField.fill(lastName);

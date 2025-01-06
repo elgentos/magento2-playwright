@@ -84,7 +84,9 @@ export class MagentoAdminPage {
     await this.page.waitForLoadState();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    await this.page.getByRole('tab', { name: selectors.configurationPage.customersTabLabel }).click();
+    await this.page.waitForLoadState();
+    await this.page.getByRole('link', { name: selectors.configurationPage.customersTabLabel }).click();
+    await this.page.waitForLoadState();
     await this.page.getByRole('link', { name: selectors.configurationPage.customerConfigurationTabLabel }).click();
 
     if (!await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).isVisible()) {
