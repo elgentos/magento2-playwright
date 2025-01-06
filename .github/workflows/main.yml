@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - gitlab-92
   pull_request:
     branches:
       - main
