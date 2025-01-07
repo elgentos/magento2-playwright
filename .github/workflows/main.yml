@@ -65,6 +65,6 @@ jobs:
           CI: true
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=line --workers=4 --exclude=tests/base/setup.spec.ts
+        run: npx playwright test --reporter=line --workers=4 --grep-invert @setup
         env:
           CI: true

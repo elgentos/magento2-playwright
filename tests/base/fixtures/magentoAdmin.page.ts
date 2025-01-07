@@ -22,11 +22,11 @@ export class MagentoAdminPage {
     }
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
   }
 
   async addCartPriceRule(magentoCouponCode: string){
@@ -35,11 +35,11 @@ export class MagentoAdminPage {
     }
 
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click();
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     //await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
     await expect(this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('button', {name: selectors.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
     await this.page.getByLabel(selectors.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
 
@@ -69,7 +69,7 @@ export class MagentoAdminPage {
   }
 
   async enableMultipleAdminLogins() {
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
     await this.page.getByRole('tab', { name: selectors.configurationPage.advancedTabLabel }).click();
@@ -85,13 +85,13 @@ export class MagentoAdminPage {
   }
 
   async disableLoginCaptcha() {
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('tab', { name: selectors.configurationPage.customersTabLabel }).click();
     await this.page.getByRole('link', { name: selectors.configurationPage.customerConfigurationTabLabel }).click();
-    await this.page.waitForLoadState();
+    await this.page.waitForLoadState('networkidle');
 
     if (!await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).isVisible()) {
       // await this.page.getByRole('link', { name: new RegExp(selectors.configurationPage.captchaSectionLabel) }).click();

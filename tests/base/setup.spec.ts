@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 
 if (!process.env.SETUP_COMPLETE) {
-  base('Enable multiple Magento admin logins', async ({ page, browserName }) => {
+  base('Enable multiple Magento admin logins', {tag: '@setup',}, async ({ page, browserName }) => {
     const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
     const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
 
@@ -25,7 +25,7 @@ if (!process.env.SETUP_COMPLETE) {
     }
   });
 
-  base('Setup Magento environment for tests', async ({ page, browserName }) => {
+  base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, browserName }) => {
     await base.step(`Step 1: Perform actions`, async() =>{
       const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
       const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
@@ -68,7 +68,8 @@ if (!process.env.SETUP_COMPLETE) {
     await base.step(`Step 2: (optional) Update env file`, async() =>{
       if (process.env.CI === 'true') {
         console.log("Running in CI environment. Skipping .env update.");
-        process.exit(0);
+        //process.exit(0);
+        base.skip();
       }
   
       const envPath = path.resolve(__dirname, '../../.env');
