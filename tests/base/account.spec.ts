@@ -10,7 +10,6 @@ import verify from './config/expected/expected.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
-// 
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
@@ -30,6 +29,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
   test.beforeEach(async ({page}) => {
     await page.goto(slugs.account.accountOverviewSlug);
+    await page.waitForLoadState();
   });
 
   // TODO: add test to update e-mail address
