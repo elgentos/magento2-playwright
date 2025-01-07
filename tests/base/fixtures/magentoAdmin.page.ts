@@ -26,6 +26,7 @@ export class MagentoAdminPage {
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
+    await this.page.waitForLoadState();
   }
 
   async addCartPriceRule(magentoCouponCode: string){
