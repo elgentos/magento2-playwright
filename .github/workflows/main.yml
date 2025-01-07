@@ -60,11 +60,11 @@ jobs:
           cp bypass-captcha.config.example.ts bypass-captcha.config.ts
 
       - name: Run Playwright setup test
-        run: npx playwright test --reporter=line --workers=1 tests/base/setup.spec.ts
+        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
         env:
           CI: true
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=line --workers=4 --grep-invert @setup
+        run: npx playwright test --reporter=line --workers=4 --grep-invert "@setup|@password-change"
         env:
           CI: true

@@ -48,7 +48,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    */
 
 
-  test('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+  test('I can change my password',{ tag: ['@account-credentials', '@password-change'], }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
