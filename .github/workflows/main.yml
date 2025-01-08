@@ -71,6 +71,6 @@ jobs:
       #    CI: true
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=line --workers=4 --grep-invert "@setup|@password-change" --debug
+        run: npx playwright test --reporter=line --workers=4 --grep-invert "@setup"
         env:
           CI: true
