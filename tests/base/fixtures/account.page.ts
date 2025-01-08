@@ -94,6 +94,7 @@ export class AccountPage {
     await this.cityField.fill(cityName);
     await this.stateSelectorField.selectOption(state);
     await this.saveAddressButton.click();
+    await this.page.waitForLoadState();
 
     await expect(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
@@ -116,6 +117,7 @@ export class AccountPage {
     await this.cityField.fill(cityName);
     await this.stateSelectorField.selectOption(state);
     await this.saveAddressButton.click();
+    await this.page.waitForLoadState();
 
     await expect(this.page.getByText(addressModifiedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
@@ -134,6 +136,7 @@ export class AccountPage {
     });
 
     await this.deleteAddressButton.click();
+    await this.page.waitForLoadState();
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
   }
 
@@ -146,6 +149,7 @@ export class AccountPage {
     await this.confirmNewPasswordField.fill(newPassword);
 
     await this.genericSaveButton.click();
+    await this.page.waitForLoadState();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
     console.log(`Password has been changed! Please update your .env file password with "${newPassword}"`);

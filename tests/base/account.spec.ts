@@ -74,7 +74,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
-
+    await page.waitForLoadState();
   });
 
   /**
