@@ -101,5 +101,6 @@ export class MagentoAdminPage {
     await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).uncheck();
     await this.page.locator(selectors.configurationPage.captchaSettingSelectField).selectOption({ label: values.captcha.captchaDisabled });
     await this.page.getByRole('button', { name: selectors.configurationPage.saveConfigButtonLabel }).click();
+    await this.page.waitForLoadState('networkidle');
   }
 }
