@@ -26,6 +26,8 @@ export class CartPage {
     
     await expect(this.page.getByText(`${verify.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
     await expect(this.page.getByText(verify.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
+    //Close message to prevent difficulties with other tests.
+    await this.page.getByLabel(selectors.general.closeMessageLabel).click();
   }
 
   async enterWrongCouponCode(code: string){

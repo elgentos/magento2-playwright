@@ -34,5 +34,6 @@ export class ProductPage {
     }
 
     await this.simpleProductAddToCartButon.click();
+    await this.page.waitForLoadState();
   }
 }

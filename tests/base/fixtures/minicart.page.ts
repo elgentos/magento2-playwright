@@ -59,7 +59,7 @@ export class MiniCartPage {
   }
 
   async checkPriceWithProductPage() {
-    const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).innerText();
+    const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).first().innerText();
     const productTitle = await this.page.getByRole('heading', { level : 1}).innerText();
     const productListing =  this.page.locator('div').filter({hasText: productTitle});
     const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().innerText();
