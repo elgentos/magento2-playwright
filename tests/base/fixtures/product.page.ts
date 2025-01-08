@@ -14,10 +14,11 @@ export class ProductPage {
   }
 
   async addSimpleProductToCart(product: string, url: string){
-    await this.page.goto(url);
-    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${verify.productPage.simpleProductAddedNotification} ${product}`;
 
+    await this.page.goto(url);
+    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
 
     await this.simpleProductAddToCartButon.click();
@@ -25,11 +26,6 @@ export class ProductPage {
   }
 
   async addConfigurableProductToCart(){
-    /*"configurableProductSizeLabel": "Size",
-    "configurableProductColorLabel": "Color",
-    "configurableProductOptionForm": "#product_addtocart_form",
-    "configurableProductOptionValue": ".product-option-value-label"*/
-
     const productOptions = this.page.locator(selectors.productPage.configurableProductOptionForm);
 
     // loop through each radiogroup (product option) within the form
@@ -40,5 +36,3 @@ export class ProductPage {
     await this.simpleProductAddToCartButon.click();
   }
 }
-
-// await expect(page.getByRole('heading', { name: 'Push It Messenger Bag', exact: true }).locator('span')).toBeVisible();

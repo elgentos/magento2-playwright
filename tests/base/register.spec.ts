@@ -15,7 +15,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
-test('User can register an account', async ({page}) => {
+test('User can register an account', { tag: '@setup', }, async ({page}) => {
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file

@@ -2,6 +2,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 
 import selectors from '../config/selectors/selectors.json';
 import verify from '../config/expected/expected.json';
+import slugs from '../config/slugs.json';
 
 export class CheckoutPage {
 
@@ -24,6 +25,7 @@ export class CheckoutPage {
 
   async placeOrder(){
     let orderPlacedNotification = "Thank you for your purchase!";
+    await this.page.goto(slugs.checkoutSlug);
 
     await this.shippingMethodOptionFixed.check();
     // Loader pops up, wait for this to be done.

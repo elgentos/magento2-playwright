@@ -74,13 +74,14 @@ test.describe('Checkout (guest)', () => {
    *  @and the code should be visible in the cart
    *  @and a discount should be applied to the product
    */
-    test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page}) => {
+    test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
       //TODO: Write tests to ensure code also works if user is NOT logged in.
       const checkout = new CheckoutPage(page);
-      let discountCode = process.env.MAGENTO_COUPON_CODE;
+      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+      let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
 
       if(!discountCode) {
-        throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
+        throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
       }
 
       await checkout.applyDiscountCodeCheckout(discountCode);

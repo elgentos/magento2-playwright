@@ -60,7 +60,8 @@ export class CartPage {
   }
 
   async removeProduct(name: string){
-    let removeButton = this.page.getByLabel(`${selectors.cart.cancelCouponButtonLabel} ${name}`);
+    //let removeButton = this.page.getByLabel(`${selectors.cart.cancelCouponButtonLabel} ${name}`);
+    let removeButton = this.page.getByLabel(`Remove ${name}`);
     await removeButton.click();
     await this.page.waitForLoadState();
     await expect(removeButton,`Button to remove product is no longer visible`).toBeHidden();

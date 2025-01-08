@@ -33,7 +33,24 @@ export class MainMenuPage {
   }
 
   async openMiniCart() {
-    await this.mainMenuMiniCartButton.click();
+    if(await this.page.locator('#menu-cart-icon > span').isVisible()){
+      // there are items in the cart
+      let miniCartItemCount = await this.page.locator('#menu-cart-icon > span').innerText();
+      
+      if(miniCartItemCount == "1") {
+        await this.page.getByLabel("Toggle minicart, 1 item").click();
+      } else {
+        await this.page.getByLabel(`Toggle minicart, ${miniCartItemCount} items`).click();
+      }
+    } else {
+      // there are no items in the cart
+      await this.page.getByLabel("Toggle minicart, Cart is empty").click();
+    }
+    
+   // await this.page.locator('#menu-cart-icon > span').innerText();
+    //if(miniCartItemCount = "0")
+    
+    // await this.mainMenuMiniCartButton.click();
     await expect(this.page.getByText(expected.miniCart.miniCartTitle)).toBeVisible();
   }
 
