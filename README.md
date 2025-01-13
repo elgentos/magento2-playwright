@@ -59,7 +59,6 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 - **Node.js**: Ensure you have Node.js installed (version 14 or higher).
 - **Magento 2 instance**: A running instance of Magento 2 for testing purposes. Elgentos sponsors a [Hyvä demo website](https://hyva-demo.elgentos.io/) for this project.
 - **Git**: Version control system to clone the repository.
-- **Playwright**: after cloning the repository, install playwright using the [instructions on their website](https://playwright.dev/docs/intro).
 
 
 
