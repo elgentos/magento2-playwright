@@ -15,7 +15,8 @@ test.use({ storageState: { cookies: [], origins: [] } });
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
-test('User can register an account', async ({page}) => {
+// TODO: remove the 'skip' when done. We don't always want to create accounts. 
+test.skip('User can register an account', async ({page}) => {
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file
@@ -37,7 +38,7 @@ test('User can register an account', async ({page}) => {
 });
 
 
-test('Account creation fails if required fields are not filled in', { tag: '@error-checker', }, async ({page}) => {
+test.skip('Account creation fails if required fields are not filled in', { tag: '@error-checker', }, async ({page}) => {
   // TODO: registration should not work if mistakes are made, and proper messages should be displayed.
   // These tests should have a specific "error checker" tag.
   test.fixme(true,'Skipped, test will be created later');

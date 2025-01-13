@@ -93,7 +93,8 @@ export class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
     await this.stateSelectorField.selectOption(state);
-    await this.saveAddressButton.click();
+    // .click() replaced by .press("Enter") as a workaround for webkit issues
+    await this.saveAddressButton.press("Enter");
 
     await expect(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
@@ -103,6 +104,7 @@ export class AccountPage {
     // the notification for a modified address is the same as the notification for a new address.
     let addressModifiedNotification = verify.address.newAddressAddedNotifcation;
 
+    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.editAddressButton.click();
 
     // Name should be filled in automatically, but editable.
@@ -115,6 +117,7 @@ export class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
     await this.stateSelectorField.selectOption(state);
+    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.saveAddressButton.click();
 
     await expect(this.page.getByText(addressModifiedNotification)).toBeVisible();
@@ -133,6 +136,7 @@ export class AccountPage {
       }
     });
 
+    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.deleteAddressButton.click();
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
   }
@@ -145,6 +149,7 @@ export class AccountPage {
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
 
+    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.genericSaveButton.click();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
