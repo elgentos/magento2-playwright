@@ -174,11 +174,11 @@ test.describe('Price checking tests', () => {
       const productPage = new ProductPage(page);
       await page.goto(slugs.productpage.simpleProductSlug);
       // set quantity to 2 so we can see that the math works
-      await page.getByLabel('Quantity').fill('2');
+      await page.getByLabel(selectors.productPage.quantityFieldLabel).fill('2');
   
       productPagePrice = await page.locator(selectors.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(selectors.productPage.quantityFieldLabel).inputValue();
-      await productPage.addSimpleProductToCart();
+      await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, '2');
 
     });
 
