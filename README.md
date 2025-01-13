@@ -184,12 +184,12 @@ Below are some example tests to illustrate how to write and structure your tests
 
 ```javascript
 /**
- * @feature Product Checkout
- *   @scenario User completes a purchase
- *     @given I have a product in my cart
- *     @when I proceed to checkout
- *     @and I complete the checkout process
- *     @then I should receive an order confirmation
+ * @feature User Registration
+ *   @scenario User successfully registers on the website
+ *     @given I am on the registration page
+ *     @when I fill in the registration form with valid data
+ *     @and I submit the form
+ *     @then I should see a confirmation message
  */
 test('User can register an account', async ({ page }) => {
   // Implementation details
@@ -200,12 +200,12 @@ test('User can register an account', async ({ page }) => {
 
 ```javascript
 /**
- * @feature User Registration
- *   @scenario User successfully registers on the website
- *     @given I am on the registration page
- *     @when I fill in the registration form with valid data
- *     @and I submit the form
- *     @then I should see a confirmation message
+ * @feature Product Checkout
+ *   @scenario User completes a purchase
+ *     @given I have a product in my cart
+ *     @when I proceed to checkout
+ *     @and I complete the checkout process
+ *     @then I should receive an order confirmation
  */
 test('User can complete the checkout process', async ({ page }) => {
   // Implementation details
