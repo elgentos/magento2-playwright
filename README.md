@@ -92,7 +92,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
 
-5. **Update files in the `config` folder
+5. **Update files in the `config` folder**
 
 	Input variables, slugs, selectors and expected text are all stored in files within the `config` folder. To ensure the Testing Suite runs on your own website, these need to be updated. All `test` and `page` files use these variables, so adjusting the config folder to suit your website should be enough to run these tests on the website of your choosing.
 
