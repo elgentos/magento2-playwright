@@ -1,6 +1,7 @@
 # Magento 2 BDD E2E testing suite
+A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.
 
-A Behavior Driven Development (BDD) End-To-End (E2E) testing suite for Magento 2 using Gherkin syntax in JSDoc and Playwright.
+Or with more jargon: a Behavior Driven Development (BDD) End-To-End (E2E) testing suite for Magento 2 using Gherkin syntax in JSDoc and Playwright.
 
 ## Table of Contents
 
@@ -8,24 +9,26 @@ A Behavior Driven Development (BDD) End-To-End (E2E) testing suite for Magento 2
 - [Why BDD and Gherkin in JSDoc for Magento 2](#why-bdd-and-gherkin-in-jsdoc-for-magento-2)
 - [Features](#features)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-- [Usage](#usage)
-  - [Writing Tests](#writing-tests)
-  - [Running Tests](#running-tests)
+	- [Prerequisites](#prerequisites)
+	- [Installation](#installation)
+	- [Before you run](#before-you-run)
+- [How to use](#how-to-use)
+	- [Running tests](#running-tests)
+	- [Skipping specific tests](#skipping-specific-tests)
+	- [Tags and Annotations](#tags-and-annotations)
 - [Examples](#examples)
 - [Contributing](#contributing)
+	- [Writing tests](#writing-tests)
 - [License](#license)
 - [Contact](#contact)
+- [Known issues](#known-issues)
 
 ## Introduction
-
-Welcome to the Magento 2 BDD E2E Testing Suite! This project is an open-source initiative aimed at simplifying and enhancing the way developers write and maintain end-to-end tests for Magento 2 applications.
+Welcome to the Magento 2 BDD E2E Testing Suite! This project, referred to as “Testing Suite” from here on out, is an open-source initiative aimed at supporting developers in (end-to-end) testing their Magento 2 applications. 
 
 By combining the power of Behavior Driven Development (BDD) with the flexibility of Playwright and the clarity of Gherkin syntax embedded in JSDoc comments, we aim to make testing more accessible, readable, and maintainable for both developers and non-technical stakeholders.
 
 ## Why BDD and Gherkin in JSDoc for Magento 2
-
 Testing in Magento 2 can be complex due to its extensive functionality and customizable nature. Traditional testing methods often result in tests that are hard to read and maintain, especially as the application grows.
 
 **Behavior Driven Development (BDD)** focuses on the behavior of the application from the user's perspective. It encourages collaboration between developers, QA engineers, and business stakeholders by using a shared language to describe application behavior.
@@ -42,32 +45,25 @@ Testing in Magento 2 can be complex due to its extensive functionality and custo
 By integrating these technologies, this testing suite provides a robust framework that simplifies the process of writing, running, and maintaining end-to-end tests for Magento 2.
 
 ## Features
-
 - **Gherkin Syntax in JSDoc**: write human-readable test steps directly in your code comments.
 - **Playwright integration**: utilize Playwright's powerful automation capabilities for testing across different browsers.
 - **Magento 2 specific utilities**: predefined steps and helpers tailored for Magento 2's unique features.
 - **Collaborative testing**: enable collaboration between technical and non-technical team members.
 - **Extensible architecture**: easily extend and customize to fit your project's needs.
 
-## Folder structure for fixtures
-Organizing your fixture folder structure into ``before, during, and verify`` creates a clear chronological flow for your tests. This approach enhances readability and maintains a structured separation of concerns:
-
-- ``before``: contains setup data like slugs to prepare the test environment.
-- ``during``: holds selectors and input values needed during the test execution.
-- ``verify``: includes expected results or assertions to validate test outcomes.
-
-By naming the folders this way, they naturally sort in the desired order, making the test workflow intuitive and easy to follow.
 
 ## Getting Started
+Please note that this Testing Suite is currently in alpha testing. If you are having problems setting up the Testing Suite for your website, feel free to open a ticket in Github.
 
 ### Prerequisites
-
 - **Node.js**: Ensure you have Node.js installed (version 14 or higher).
 - **Magento 2 instance**: A running instance of Magento 2 for testing purposes. Elgentos sponsors a [Hyvä demo website](https://hyva-demo.elgentos.io/) for this project.
 - **Git**: Version control system to clone the repository.
+- **Playwright**: after cloning the repository, install playwright using the [instructions on their website](https://playwright.dev/docs/intro).
+
+
 
 ### Installation
-
 1. **Clone the repository**
 
    ```bash
@@ -93,35 +89,39 @@ By naming the folders this way, they naturally sort in the desired order, making
    ```bash
    cp .env.example .env
    cp playwright.config.example.ts playwright.config.ts
-   cp tests/base/test-toggles.example.json tests/base/test-toggles.json
    ```
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
 
-## Usage
+5. **Update files in the `config` folder
 
-### Writing tests
+	Input variables, slugs, selectors and expected text are all stored in files within the `config` folder. To ensure the Testing Suite runs on your own website, these need to be updated. All `test` and `page` files use these variables, so adjusting the config folder to suit your website should be enough to run these tests on the website of your choosing.
 
-Tests are written in JavaScript using the Gherkin syntax within JSDoc comments. This approach keeps the test descriptions close to the implementation, making it easier to maintain and understand.
+### Before you run
+Before you run our Testing Suite, you will need to perform a few steps to set-up your environment. Note that we are working on an update to automate these steps. Check out the [Contributing](#contributing) section if you want to help!
 
-Here's an example of how to write a test:
-
-```javascript
-/**
- * @feature Magento 2 Product Search
- *   @scenario User searches for a product on the Magento 2 homepage
- *     @given I am on the Magento 2 homepage
- *     @when I search for "Example Product"
- *     @then I should see "Example Product" in the search results
- */
-test('User can search for a product', async ({ page }) => {
-  // Test implementation using Playwright
-});
+1. Create an account (and set up environment)
+	
+	The testing suite contains a test to ensure account creation is possible. Once again, due to the nature of running tests, it’s necessary to create an account before the other tests can be run. You can choose to run `register.spec.ts` to create an account or do it by hand, then update your `.env` variable to ensure tests can use an existing account. You can also run the following command, which will run `register.spec.ts` as well as `setup.spec.ts`:
+	
+	```bash
+	npx playwright test --grep @setup
 ```
+2. Create a coupon code in your Magento 2 environment and/or set an existing coupon code in the `.env` file.
+
+	The Testing Suite offers multiple tests to ensure the proper functionality of coupon codes. To do this, you will need to either set an existing coupon code in your `.env` file, or create one and add it.
+
+3. Note that the test “I can change my password” is set to `skip`. 
+
+	This is because updating your password in the middle of running tests will invalidate any subsequent test that requires a password. To test this functionality, change the line from `test.skip('I can change my password')` to `test.only('I can change my password')`. This will ensure *only* this test will be performed. Don’t forget to set it back to `test.skip()` after ensuring this functionality works. This issue is known and will be fixed in the future.
+
+
+## How to use
+The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit. 
 
 ### Running tests
-
-To execute the tests, run:
+To run ALL tests, run the following command.
+**Note that this will currently not work. Please add `–-grep-invert @setup` to the command below to skip certain tests.** You can learn more about this in the following section.
 
 ```bash
 npx playwright test
@@ -135,16 +135,47 @@ You can also run a specific test file:
 npx playwright test tests/example.test.js
 ```
 
-### Custom tests
+The above commands will run your tests, then offer a report. You can also use [the UI mode](https://playwright.dev/docs/running-tests#debug-tests-in-ui-mode) to see what the tests are doing, which is helpful for debugging. To open up UI mode, run this command:
 
-The Playwright installation contains a number of tests that work with a default
-Magento 2 webshop with Hyvä. However, your own webshop might not have the exact
-same structure. For that reason you can override default tests in the `custom`
-folder. Tests that exist in both `base` and `custom` will use the `custom` version
-of the file.
+```bash
+npx playwright test --ui
+```
 
-Files that exist only in `base` will use that test and if a file only exists in
-`custom` that file will be used.
+Playwright also offers a trace view. While using the UI mode is seen as the default for developing and debugging tests, you may want to run the tests and collect a trace instead. This can be done with the following command:
+
+```bash
+npx playwright test --trace on
+```
+
+### Skipping specific tests
+Certain `spec` files and specific tests are used as a setup. For example, all setup tests (such as creating an account and setting a coupon code in your Magento 2 environment) have the tag ‘@setup’. Since these only have to be used once (or in the case of our demo website every 24 hours), most of the time you can skip these. These means most of the time, using the following command is best. This command skips both the `user can register an account` test, as well as the whole of `base/setup.spec.ts`.
+
+```bash
+npx playwright test –-grep-invert @setup
+```
+
+
+### Tags and Annotations
+Most tests have been provided with a tag. This allows the user to run specific groups of tests, or skip specific tests. For example, tests that check the functionality of coupon codes are provided with the tag ‘@coupon-code’. To run only these tests, use:
+
+```bash
+npx playwright test –-grep @coupon-code
+```
+
+You can also run multiple tags with logic operators:
+
+```bash
+npx playwright test –-grep ”@coupon-code|@cart”
+```
+
+
+Use `--grep-invert` to run all tests **except** the tests with the specified test. Playwright docs offer more information: [Playwright: Tag Annotations](https://playwright.dev/docs/test-annotations#tag-tests). The following command, for example, skips all tests with the tag ‘@coupon-code’.
+
+
+```bash
+npx playwright test –-grep-invert @coupon-code
+```
+
 
 ## Examples
 
@@ -221,3 +252,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contact
 
 If you have any questions, suggestions, or feedback, please open an issue on GitHub.
+
+## Known issues
+Running Playwright/the Testing Suite on Ubuntu has known issues with the Webkit browser engine (especially in headless mode). Please see [31615](https://github.com/microsoft/playwright/issues/31615), [13060](https://github.com/microsoft/playwright/issues/13060), [4235](https://github.com/microsoft/playwright/issues/4236), [Stack Overflow article](https://stackoverflow.com/questions/71589815/in-playwright-cant-use-page-goto-with-headless-webkit) for more information.
+
+**A temporary (sort of) workaround**: if functions like `page.goto()` or `locator.click()` give issues, it can sometimes be fixed by deleting playwright, then reinstalling with dependencies (see below). Also note that you should not use a built-in terminal (like the one in VS Code), but rather run the tests using a separate terminal.
+
+```bash
+npx playwright uninstall
+npx playwright install --with-deps 
+```
