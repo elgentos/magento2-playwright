@@ -105,7 +105,7 @@ Before you run our Testing Suite, you will need to perform a few steps to set-up
 	
 	```bash
 	npx playwright test --grep @setup
-```
+    ```
 2. Create a coupon code in your Magento 2 environment and/or set an existing coupon code in the `.env` file.
 
 	The Testing Suite offers multiple tests to ensure the proper functionality of coupon codes. To do this, you will need to either set an existing coupon code in your `.env` file, or create one and add it.
@@ -233,7 +233,7 @@ We welcome contributions to enhance this project! Here's how you can get involve
 4. **Commit your changes**
 
    ```bash
-   git commit -am 'Add a new feature'
+   git commit -m 'Add a new feature'
    ```
 
 5. **Push to your fork**
