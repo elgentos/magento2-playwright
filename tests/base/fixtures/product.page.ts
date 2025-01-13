@@ -5,17 +5,19 @@ import verify from '../config/expected/expected.json';
 
 export class ProductPage {
   readonly page: Page;
-  readonly simpleProductTitle: Locator;
-  readonly simpleProductAddToCartButon: Locator;
+  simpleProductTitle: Locator;
+  simpleProductAddToCartButon: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.simpleProductTitle = page.getByRole('heading', {name: selectors.productPage.simpleProductTitle, exact:true});
     this.simpleProductAddToCartButon = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
   }
 
-  async addSimpleProductToCart(){
-    let productAddedNotification = verify.productPage.simpleProductAddedNotification;
+  async addSimpleProductToCart(product: string, url: string){
+    await this.page.goto(url);
+    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    let productAddedNotification = `${verify.productPage.simpleProductAddedNotification} ${product}`;
+
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
 
     await this.simpleProductAddToCartButon.click();
