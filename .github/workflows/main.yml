@@ -71,7 +71,7 @@ jobs:
       #    CI: true
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=line --workers=4 --grep-invert "@setup"
+        run: npx playwright test --workers=4 --grep-invert "@setup"
         env:
           CI: true
       - uses: actions/upload-artifact@v4
