@@ -74,10 +74,9 @@ jobs:
         run: npx playwright test --reporter=line --workers=4 --grep-invert "@setup"
         env:
           CI: true
-      
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: /playwright-report/
+          path: playwright-report/
           retention-days: 30
