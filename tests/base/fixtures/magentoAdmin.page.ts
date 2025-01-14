@@ -51,7 +51,7 @@ export class MagentoAdminPage {
         select.dispatchEvent(new Event('change'));
     });
 
-    const customerGroupsSelector = await this.page.getByLabel(selectors.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
+    const customerGroupsSelector = this.page.getByLabel(selectors.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
     await customerGroupsSelector.evaluate(select => {
         for (const option of select.options) {
             option.selected = true;
