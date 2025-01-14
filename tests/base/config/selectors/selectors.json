@@ -60,7 +60,8 @@
     "configurableProductSizeLabel": "Size",
     "configurableProductColorLabel": "Color",
     "configurableProductOptionForm": "#product_addtocart_form",
-    "configurableProductOptionValue": ".product-option-value-label"
+    "configurableProductOptionValue": ".product-option-value-label",
+    "quantityFieldLabel": "Quantity"
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
@@ -80,7 +81,11 @@
     "discountInputFieldLabel": "Enter discount code",
     "continueShoppingLabel": "Continue Shopping",
     "applyDiscountCodeLabel": "Apply Discount Code",
-    "remove": "Remove"
+    "remove": "Remove",
+    "openCartButtonLabel": "Cart",
+    "openCartButtonLabelCont": "item",
+    "openCartButtonLabelContMultiple": "items",
+    "cartDetailsLocator": "#checkout-cart-details div"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
@@ -88,7 +93,8 @@
     "editProductIconLabel": "Edit product",
     "productQuantityFieldLabel": "Quantity",
     "removeProductIconLabel": "Remove product",
-    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price"
+    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
+    "minicartAmountBubbleLocator": "#menu-cart-icon > span"
   },
   "contactPage": {
     "messageFieldLabel": "What’s on your mind?"

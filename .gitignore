@@ -8,11 +8,6 @@ node_modules/
 playwright.config.ts
 bypass-captcha.config.ts
 package-lock.json
-/tests/base/config/test-toggles.json
-/tests/custom/config/test-toggles.json
-/tests/base/updated-account.spec.ts
-/tests/base/utils/AccountPage.ts
 .env
 .vscode
-/tests/base/devtools.spec.ts
 /tests/.auth/

@@ -13,12 +13,17 @@ export class ProductPage {
     this.simpleProductAddToCartButon = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
   }
 
-  async addSimpleProductToCart(product: string, url: string){
+  async addSimpleProductToCart(product: string, url: string, quantity?: string) {
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${verify.productPage.simpleProductAddedNotification} ${product}`;
 
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
+    
+    if(quantity){
+      // set quantity
+      await this.page.getByLabel(selectors.productPage.quantityFieldLabel).fill('2');
+    }
 
     await this.simpleProductAddToCartButon.click();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
@@ -38,7 +43,6 @@ export class ProductPage {
     }
 
     await this.simpleProductAddToCartButon.click();
+    //TODO: add notification check to ensure product has been added.
   }
 }
-
-// await expect(page.getByRole('heading', { name: 'Push It Messenger Bag', exact: true }).locator('span')).toBeVisible();
