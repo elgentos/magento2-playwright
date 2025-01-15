@@ -97,8 +97,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const miniCart = new MiniCartPage(page);
     // priceSection: this section is only used for debugging. Remove when this test works in Webkit
     const productTitle = await page.getByRole('heading', { level : 1}).innerText();
-    const productListing =  page.locator('div').filter({hasText: productTitle});
-    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().innerText();
+    const productListing = page.locator('div').filter({hasText: productTitle});
+    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().textContent();
     // END OF PRICE SECTION
 
     testInfo.annotations.push({ type: 'retrieved priceInMinicart', description: `${priceInMinicart}` });

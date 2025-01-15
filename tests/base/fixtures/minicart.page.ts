@@ -62,7 +62,7 @@ export class MiniCartPage {
     const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).first().innerText();
     const productTitle = await this.page.getByRole('heading', { level : 1}).innerText();
     const productListing =  this.page.locator('div').filter({hasText: productTitle});
-    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().innerText();
+    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().textContent();
     //expect(priceOnPage).toBe(priceInMinicart);
     expect(priceOnPage, `Expect these prices to be the same: priceOnpage: ${priceOnPage} and priceInMinicart: ${priceInMinicart}`).toBe(priceInMinicart);
   }
