@@ -39,7 +39,11 @@ test('User can register an account', { tag: '@setup', }, async ({page, browserNa
   
   //TODO: Once setup script works, remove this section (browserNameEmailSection) and use uniqueEmail from above
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+  let randomNumber = Math.floor(Math.random() * 100);
+  let emailHandle = inputvalues.accountCreation.emailHandleValue;
+  let emailHost = inputvalues.accountCreation.emailHostValue;
+  const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`; 
+  //const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
   if (!accountEmail || !existingAccountPassword) {
     throw new Error(

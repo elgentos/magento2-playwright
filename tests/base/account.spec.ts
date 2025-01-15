@@ -90,10 +90,12 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    *  @and The new address should be selected as default and shipping address
    */
 
-  test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     // If account has no address, Address Book redirects to the 'Add New Address' page.
     // We expect this to be true before continuing.
-    await expect(page.getByText(selectors.newAddress.addNewAddressTitle)).toBeVisible();
+    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, meaning an address has already been added.`);
+
     const accountPage = new AccountPage(page);
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
@@ -106,7 +108,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 
   });
 
-  /**NewsletterSubscriptionPage
+  /**
    * @given I am logged in
    *  @and I am on the account dashboard page
    * @when I go to the page where I can add another address
@@ -151,6 +153,12 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let newCity = inputvalues.editedAddress.editCityValue;
     let newState = inputvalues.editedAddress.editStateValue;
 
+    let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
+
+    if(!editAddressButton.isVisible()){
+      throw new Error("No address has been added yet.");
+    }
+
     await page.goto(slugs.account.addressBookSlug);
     await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
 
@@ -169,6 +177,13 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
   test('I can delete an address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
+
+    let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
+
+    if(!deleteAddressButton.isVisible()){
+      throw new Error("No address has been added yet.");
+    }
+
     await accountPage.deleteFirstAddressFromAddressBook();
   });
 });
