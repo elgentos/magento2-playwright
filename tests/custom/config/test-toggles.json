@@ -1,0 +1,20 @@
+{
+  "testForPageErrors": false,
+  "account": {
+    "testAccountCreation": false,
+    "testAccountLogin": true,
+    "testAccountPasswordChange": true,
+    "testAccountPageTitles": {
+      "all": true,
+      "ProductReviewsTest": false
+    },
+    "testAccountOrders": true
+  },
+  "minicart": {
+    "testCheckoutButton": true,
+    "testMiniCartCheckoutButton": true,
+    "testMiniCartLink": true,
+    "testMiniCartQuantity": true,
+    "testMiniCartDeletion": true
+  }
+}

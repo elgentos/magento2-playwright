@@ -1,16 +1,12 @@
 name: Magento 2 BDD E2E Testing Suite Self Test
 
 on:
-  push:
-    branches:
-      - main
-      - gitlab-92
   pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  build-and-selftest:
     runs-on: windows-latest
 
     env:
