@@ -101,9 +101,10 @@ test.describe('Checkout (guest)', () => {
    * @and the discount should no longer be visible.
    */
 
-  test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page}) => {
+  test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
     const checkout = new CheckoutPage(page);
-    let discountCode = process.env.MAGENTO_COUPON_CODE;
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
 
     if(!discountCode) {
       throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
