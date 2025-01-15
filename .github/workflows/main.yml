@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - gitlab-98
 
 jobs:
   build-and-selftest:
