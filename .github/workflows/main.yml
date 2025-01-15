@@ -48,27 +48,17 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install
-
-      - name: Install Playwright dependencies
-        run: npx playwright install-deps
-
+        run: npx playwright install --with-deps
 
       - name: Copy config files
         run: |
           cp playwright.config.example.ts playwright.config.ts
           cp bypass-captcha.config.example.ts bypass-captcha.config.ts
 
-      # - name: upload setup logs
-      #  uses: actions/upload-artifact@v3
-      #  with:
-      #    name: test-logs
-      #    path: logs
-
-      # - name: Run Playwright setup test
-      #  run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
-      #  env:
-      #    CI: true
+      - name: Run Playwright setup test
+        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
+        env:
+          CI: true
 
       - name: Run Playwright tests
         run: npx playwright test --workers=4 --grep-invert "@setup"
