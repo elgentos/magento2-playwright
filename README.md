@@ -28,7 +28,7 @@ Welcome to the Magento 2 BDD E2E Testing Suite! This project, referred to as “
 
 By combining the power of Behavior Driven Development (BDD) with the flexibility of Playwright and the clarity of Gherkin syntax embedded in JSDoc comments, we aim to make testing more accessible, readable, and maintainable for both developers and non-technical stakeholders.
 
-> Please note: this Testing Suite should only be run in a testing environment.
+<mark> Please note: this Testing Suite should only be run in a testing environment. </mark>
 
 ## Why BDD and Gherkin in JSDoc for Magento 2
 Testing in Magento 2 can be complex due to its extensive functionality and customizable nature. Traditional testing methods often result in tests that are hard to read and maintain, especially as the application grows.
