@@ -94,7 +94,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     // If account has no address, Address Book redirects to the 'Add New Address' page.
     // We expect this to be true before continuing.
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
-    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, meaning an address has already been added.`);
+    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
 
     const accountPage = new AccountPage(page);
 
@@ -144,7 +144,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
     let newFirstName = inputvalues.editedAddress.editfirstNameValue;
     let newLastName = inputvalues.editedAddress.editLastNameValue;
@@ -154,10 +154,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let newState = inputvalues.editedAddress.editStateValue;
 
     let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
-
-    if(!editAddressButton.isVisible()){
-      throw new Error("No address has been added yet.");
-    }
+    testInfo.skip(await editAddressButton.isHidden(), `Button to edit Address is not found, please check if an address has been added.`);
 
     await page.goto(slugs.account.addressBookSlug);
     await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
@@ -175,14 +172,11 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('I can delete an address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
-
-    if(!deleteAddressButton.isVisible()){
-      throw new Error("No address has been added yet.");
-    }
+    testInfo.skip(await deleteAddressButton.isHidden(), `Button to delete Address is not found, please check if an address has been added.`);
 
     await accountPage.deleteFirstAddressFromAddressBook();
   });
