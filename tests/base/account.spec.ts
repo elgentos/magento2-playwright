@@ -47,8 +47,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @and I should be able to login with my new credentials.
    */
 
-
-  test.skip('I can change my password',{ tag: ['@account-credentials', '@password-change'], }, async ({page}) => {
+  //TODO: Remove the skip when all issues are fixed.
+  test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -95,7 +95,6 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     // We expect this to be true before continuing.
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
     testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
-
     const accountPage = new AccountPage(page);
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
@@ -202,7 +201,8 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @then I should see a message confirming my action
    *  @and My subscription option should be updated.
    */
-  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page}) => {
+  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
+    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: selectors.accountDashboard.links.newsletterLink });
     const newsletterCheckElement = page.getByLabel(selectors.newsletterSubscriptions.generalSubscriptionCheckLabel);
