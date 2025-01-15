@@ -98,7 +98,7 @@
     "miniCartToggleLabelPrefix": "Toggle minicart,",
     "miniCartToggleLabelEmpty": "Cart is empty",
     "miniCartToggleLabelOneItem": "1 item",
-    "miniCartToggleLabelMultiItem": "items"
+    "miniCartToggleLabelMultiItem": "items",
     "minicartAmountBubbleLocator": "#menu-cart-icon > span"
   },
   "contactPage": {
