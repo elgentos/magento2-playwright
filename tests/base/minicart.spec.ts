@@ -93,8 +93,16 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    * @given I have added a (simple) product to the cart and opened the minicart
    * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
-  test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}, testInfo) => {
     const miniCart = new MiniCartPage(page);
+    // priceSection: this section is only used for debugging. Remove when this test works in Webkit
+    const productTitle = await page.getByRole('heading', { level : 1}).innerText();
+    const productListing =  page.locator('div').filter({hasText: productTitle});
+    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().innerText();
+    // END OF PRICE SECTION
+
+    testInfo.annotations.push({ type: 'retrieved priceInMinicart', description: `${priceInMinicart}` });
+
     await miniCart.checkPriceWithProductPage();
   });
 });
