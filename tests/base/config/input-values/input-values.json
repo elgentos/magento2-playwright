@@ -12,7 +12,7 @@
   "firstAddress": {
     "firstCompanyNameValue": "ACME Company",
     "firstPhoneNumberValue": "0622000000",
-    "firstStreetAddressValue": "Teststraat 1",
+    "firstStreetAddressValue": "Testingstreet 1",
     "firstZipCodeValue": "12345",
     "firstCityValue": "Testing Valley",
     "firstNonDefaultCountry": "Netherlands",

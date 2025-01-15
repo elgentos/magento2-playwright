@@ -1,16 +1,13 @@
 name: Magento 2 BDD E2E Testing Suite Self Test
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  build-and-selftest:
+    runs-on: windows-latest
 
     env:
       BASE_URL: https://hyva-demo.elgentos.io/
@@ -47,11 +44,7 @@ jobs:
         run: npm install
 
       - name: Install Playwright browsers
-        run: npx playwright install
-
-      - name: Install Playwright dependencies
-        run: npx playwright install-deps
-
+        run: npx playwright install --with-deps
 
       - name: Copy config files
         run: |
@@ -64,6 +57,12 @@ jobs:
           CI: true
 
       - name: Run Playwright tests
-        run: npx playwright test --reporter=line --workers=4 --exclude=tests/base/setup.spec.ts
+        run: npx playwright test --workers=4 --grep-invert "@setup"
         env:
           CI: true
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30

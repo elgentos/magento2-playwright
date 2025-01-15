@@ -18,6 +18,9 @@ export class ProductPage {
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${verify.productPage.simpleProductAddedNotification} ${product}`;
 
+    await this.page.goto(url);
+    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
     
     if(quantity){
@@ -30,11 +33,6 @@ export class ProductPage {
   }
 
   async addConfigurableProductToCart(){
-    /*"configurableProductSizeLabel": "Size",
-    "configurableProductColorLabel": "Color",
-    "configurableProductOptionForm": "#product_addtocart_form",
-    "configurableProductOptionValue": ".product-option-value-label"*/
-
     const productOptions = this.page.locator(selectors.productPage.configurableProductOptionForm);
 
     // loop through each radiogroup (product option) within the form
@@ -43,6 +41,7 @@ export class ProductPage {
     }
 
     await this.simpleProductAddToCartButon.click();
+    await this.page.waitForLoadState();
     //TODO: add notification check to ensure product has been added.
   }
 }

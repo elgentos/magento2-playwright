@@ -15,26 +15,47 @@ test.use({ storageState: { cookies: [], origins: [] } });
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
+test('User can register an account', { tag: '@setup', }, async ({page, browserName}) => {
 // TODO: remove the 'skip' when done. We don't always want to create accounts. 
-test.skip('User can register an account', async ({page}) => {
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
   var firstName = inputvalues.accountCreation.firstNameValue;
   var lastName = inputvalues.accountCreation.lastNameValue;
+
+  
+  // TODO: Once setup script works, uncomment this section (uniqueEmailSection) and remove the one below
   //Create unique email with custom handle and host, adding a number between 0 - 100
-  let randomNumber = Math.floor(Math.random() * 100);
+  /* let randomNumber = Math.floor(Math.random() * 100);
   let emailHandle = inputvalues.accountCreation.emailHandleValue;
   let emailHost = inputvalues.accountCreation.emailHostValue;
-  const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`;
+  const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`; 
 
   if(!existingAccountPassword){
     throw new Error("MAGENTO_EXISTING_ACCOUNT_PASSWORD has not been defined in the .env file.");
+  } */
+  // end of uniqueEmailSection
+  
+  
+  //TODO: Once setup script works, remove this section (browserNameEmailSection) and use uniqueEmail from above
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let randomNumber = Math.floor(Math.random() * 100);
+  let emailHandle = inputvalues.accountCreation.emailHandleValue;
+  let emailHost = inputvalues.accountCreation.emailHostValue;
+  const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`; 
+  //const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+
+  if (!accountEmail || !existingAccountPassword) {
+    throw new Error(
+      `MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} or MAGENTO_EXISTING_ACCOUNT_PASSWORD is not defined in your .env file.`
+    );
   }
+  // end of browserNameEmailSection
+
 
   // password is retrieved from .env file in createNewAccount() function
-  await registerPage.createNewAccount(firstName, lastName, uniqueEmail, existingAccountPassword);
+  await registerPage.createNewAccount(firstName, lastName, accountEmail, existingAccountPassword);
 });
 
 

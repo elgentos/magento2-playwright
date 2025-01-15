@@ -22,23 +22,28 @@ export class MagentoAdminPage {
     }
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
+    await this.page.waitForLoadState('networkidle');
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
+    await this.page.waitForLoadState('networkidle');
   }
 
   async addCartPriceRule(magentoCouponCode: string){
     if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
       throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
     }
+
+    await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click();
     await this.page.waitForLoadState('networkidle');
-    await this.page.getByRole('link', {name: selectors.magentoAdminPage.navigation.marketingButtonLabel}).click({ force: true });
-    await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
+    //await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
+    await expect(this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
     await this.page.getByRole('link', {name: selectors.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('button', {name: selectors.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
     await this.page.getByLabel(selectors.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
 
-    const websiteSelector = await this.page.getByLabel(selectors.cartPriceRulesPage.websitesSelectLabel);
+    const websiteSelector = this.page.getByLabel(selectors.cartPriceRulesPage.websitesSelectLabel);
     await websiteSelector.evaluate(select => {
         for (const option of select.options) {
             option.selected = true;
@@ -46,7 +51,7 @@ export class MagentoAdminPage {
         select.dispatchEvent(new Event('change'));
     });
 
-    const customerGroupsSelector = await this.page.getByLabel(selectors.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
+    const customerGroupsSelector = this.page.getByLabel(selectors.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
     await customerGroupsSelector.evaluate(select => {
         for (const option of select.options) {
             option.selected = true;
@@ -64,6 +69,7 @@ export class MagentoAdminPage {
   }
 
   async enableMultipleAdminLogins() {
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
     await this.page.getByRole('tab', { name: selectors.configurationPage.advancedTabLabel }).click();
@@ -82,15 +88,19 @@ export class MagentoAdminPage {
     await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.navigation.storesButtonLabel }).click();
     await this.page.getByRole('link', { name: selectors.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('tab', { name: selectors.configurationPage.customersTabLabel }).click();
     await this.page.getByRole('link', { name: selectors.configurationPage.customerConfigurationTabLabel }).click();
+    await this.page.waitForLoadState('networkidle');
 
     if (!await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).isVisible()) {
-      await this.page.getByRole('link', { name: new RegExp(selectors.configurationPage.captchaSectionLabel) }).click();
+      // await this.page.getByRole('link', { name: new RegExp(selectors.configurationPage.captchaSectionLabel) }).click();
+      await this.page.getByRole('link', { name: selectors.configurationPage.captchaSectionLabel }).click();
     }
 
     await this.page.locator(selectors.configurationPage.captchaSettingSystemCheckbox).uncheck();
     await this.page.locator(selectors.configurationPage.captchaSettingSelectField).selectOption({ label: values.captcha.captchaDisabled });
     await this.page.getByRole('button', { name: selectors.configurationPage.saveConfigButtonLabel }).click();
+    await this.page.waitForLoadState('networkidle');
   }
 }

@@ -143,7 +143,7 @@ test.describe('Cart functionalities (guest)', () => {
 
   test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
     const cart = new CartPage(page);
-    await cart.enterWrongCouponCode("Incorrect Couon Code");
+    await cart.enterWrongCouponCode("Incorrect Coupon Code");
   });
 })
 

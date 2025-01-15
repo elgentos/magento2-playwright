@@ -11,7 +11,6 @@ import verify from './config/expected/expected.json';
 // no resetting storageState, mainmenu has more functionalities when logged in.
 // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 
-
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
@@ -30,6 +29,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
   test.beforeEach(async ({page}) => {
     await page.goto(slugs.account.accountOverviewSlug);
+    await page.waitForLoadState();
   });
 
   // TODO: add test to update e-mail address
@@ -46,7 +46,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-
 
   //TODO: Remove the skip when all issues are fixed.
   test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
@@ -75,7 +74,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
-
+    await page.waitForLoadState();
   });
 
   /**
@@ -91,13 +90,11 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    *  @and The new address should be selected as default and shipping address
    */
 
-  test('I can add my first address',{ tag: '@address-actions', }, async ({page}) => {
-    //TODO: Update so this test skips if an address already exists.
-    
+  test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     // If account has no address, Address Book redirects to the 'Add New Address' page.
     // We expect this to be true before continuing.
-    //await expect(page.getByText(selectors.newAddress.addNewAddressTitle)).toBeVisible();
-    await expect(page.getByRole('heading', {level:1, name: selectors.newAddress.addNewAddressTitle}), `H1 is Add New Address`).toBeVisible();
+    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
     const accountPage = new AccountPage(page);
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
@@ -146,7 +143,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
     let newFirstName = inputvalues.editedAddress.editfirstNameValue;
     let newLastName = inputvalues.editedAddress.editLastNameValue;
@@ -154,6 +151,9 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let newZipCode = inputvalues.editedAddress.editZipCodeValue;
     let newCity = inputvalues.editedAddress.editCityValue;
     let newState = inputvalues.editedAddress.editStateValue;
+
+    let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
+    testInfo.skip(await editAddressButton.isHidden(), `Button to edit Address is not found, please check if an address has been added.`);
 
     await page.goto(slugs.account.addressBookSlug);
     await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
@@ -171,9 +171,12 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('I can delete an address',{ tag: '@address-actions', }, async ({page, browserName}) => {
-    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
+  test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
+
+    let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
+    testInfo.skip(await deleteAddressButton.isHidden(), `Button to delete Address is not found, please check if an address has been added.`);
+
     await accountPage.deleteFirstAddressFromAddressBook();
   });
 });

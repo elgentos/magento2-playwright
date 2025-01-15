@@ -4,7 +4,8 @@
     "genericSubmitButtonLabel": "Submit",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
-    "addToCartLabel": "Add to Cart"
+    "addToCartLabel": "Add to Cart",
+    "closeMessageLabel": "Close message"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
@@ -94,6 +95,10 @@
     "productQuantityFieldLabel": "Quantity",
     "removeProductIconLabel": "Remove product",
     "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
+    "miniCartToggleLabelPrefix": "Toggle minicart,",
+    "miniCartToggleLabelEmpty": "Cart is empty",
+    "miniCartToggleLabelOneItem": "1 item",
+    "miniCartToggleLabelMultiItem": "items"
     "minicartAmountBubbleLocator": "#menu-cart-icon > span"
   },
   "contactPage": {
