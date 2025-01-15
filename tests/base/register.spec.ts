@@ -17,7 +17,6 @@ test.use({ storageState: { cookies: [], origins: [] } });
  */
 test('User can register an account', { tag: '@setup', }, async ({page, browserName}) => {
 // TODO: remove the 'skip' when done. We don't always want to create accounts. 
-test.skip('User can register an account', async ({page}) => {
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file
