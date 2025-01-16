@@ -11,6 +11,8 @@ import verify from './config/expected/expected.json';
 // no resetting storageState, mainmenu has more functionalities when logged in.
 // TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 
+let testLock = false;
+
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
@@ -67,12 +69,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
   });
 });
 
-
-// TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
-// TODO: Add tests to check address can't be deleted if it's the last/only one.
-test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
+test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
   test.beforeEach(async ({page}) => {
-    // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
     await page.waitForLoadState();
   });
@@ -91,11 +89,15 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
-    // If account has no address, Address Book redirects to the 'Add New Address' page.
-    // We expect this to be true before continuing.
-    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
-    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
     const accountPage = new AccountPage(page);
+
+    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    if(await addNewAddressTitle.isHidden()) {
+      testLock = true;
+      await accountPage.deleteAllAddresses();
+      await page.goto(slugs.account.addressNewSlug);
+      testLock = false;
+    }
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
     let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
@@ -104,7 +106,6 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let stateValue = inputvalues.firstAddress.firstProvinceValue;
 
     await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
-
   });
 
   /**
@@ -128,7 +129,6 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let stateValue = inputvalues.secondAddress.secondProvinceValue;
 
     await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
-
   });
 
   /**
@@ -153,11 +153,12 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     let newState = inputvalues.editedAddress.editStateValue;
 
     let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
-    testInfo.skip(await editAddressButton.isHidden(), `Button to edit Address is not found, please check if an address has been added.`);
+    if(await editAddressButton.isHidden()) {
+      await page.goto(slugs.account.addressNewSlug);
+      await accountPage.addNewAddress(inputvalues.firstAddress.firstPhoneNumberValue, inputvalues.firstAddress.firstStreetAddressValue, inputvalues.firstAddress.firstZipCodeValue, inputvalues.firstAddress.firstCityValue, inputvalues.firstAddress.firstProvinceValue);
+    }
 
-    await page.goto(slugs.account.addressBookSlug);
     await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
-
   });
 
   /**
@@ -175,8 +176,11 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
-    testInfo.skip(await deleteAddressButton.isHidden(), `Button to delete Address is not found, please check if an address has been added.`);
 
+    if(await deleteAddressButton.isHidden()) {
+      await page.goto(slugs.account.addressNewSlug);
+      await accountPage.addNewAddress(inputvalues.firstAddress.firstPhoneNumberValue, inputvalues.firstAddress.firstStreetAddressValue, inputvalues.firstAddress.firstZipCodeValue, inputvalues.firstAddress.firstCityValue, inputvalues.firstAddress.firstProvinceValue);
+    }
     await accountPage.deleteFirstAddressFromAddressBook();
   });
 });
@@ -184,7 +188,6 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
 // TODO: move this to new spec file.
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
   test.beforeEach(async ({page}) => {
-    // go to the Dashboard page
     await page.goto(slugs.account.accountOverviewSlug);
   });
 
@@ -220,6 +223,4 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
       await expect(newsletterCheckElement).not.toBeChecked();
     }
   });
-
 });
-
