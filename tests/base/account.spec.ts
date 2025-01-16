@@ -91,10 +91,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
     if(await addNewAddressTitle.isHidden()) {
-      testLock = true;
       await accountPage.deleteAllAddresses();
       await page.goto(slugs.account.addressNewSlug);
-      testLock = false;
     }
 
     let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
