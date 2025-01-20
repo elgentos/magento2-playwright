@@ -8,9 +8,6 @@ import inputvalues from './config/input-values/input-values.json';
 import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
 
-// no resetting storageState, mainmenu has more functionalities when logged in.
-// TODO: remove this beforeEach() once authentication as project set-up/fixture works.
-
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
@@ -32,8 +29,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await page.waitForLoadState();
   });
 
-  // TODO: add test to update e-mail address
-
   /**
    * @feature Magento 2 Change Password
    * @scenario User changes their password
@@ -46,8 +41,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-
-  //TODO: Remove the skip when all issues are fixed.
   test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
@@ -68,8 +61,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 });
 
 
-// TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
-// TODO: Add tests to check address can't be deleted if it's the last/only one.
 test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
   test.beforeEach(async ({page}) => {
     // go to the Adress Book page
@@ -181,14 +172,11 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   });
 });
 
-// TODO: move this to new spec file.
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
   test.beforeEach(async ({page}) => {
     // go to the Dashboard page
     await page.goto(slugs.account.accountOverviewSlug);
   });
-
-  // TODO: What if website offers multiple subscriptions?
 
   /**
    * @feature Magento 2 newsletter subscriptions

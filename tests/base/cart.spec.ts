@@ -24,7 +24,6 @@ test.describe('Cart functionalities (guest)', () => {
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
     await page.goto(slugs.productpage.simpleProductSlug);
     await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     await mainMenu.openMiniCart();
@@ -127,7 +126,6 @@ test.describe('Cart functionalities (guest)', () => {
       throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
     }
 
-    // TODO: create API call to quickly add discount code rather than run a test again.
     await cart.applyDiscountCode(discountCode);
     await cart.removeDiscountCode();
   });
