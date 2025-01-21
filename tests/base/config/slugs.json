@@ -5,7 +5,8 @@
     "createAccountSlug": "/customer/account/create",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
-    "addressNewSlug": "customer/address/new"
+    "addressNewSlug": "customer/address/new",
+    "changePasswordSlug": "/customer/account/edit/changepass/1/"
   },
   "productpage": {
     "simpleProductSlug": "/push-it-messenger-bag.html",
