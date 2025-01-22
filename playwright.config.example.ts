@@ -5,20 +5,41 @@ import fs from "node:fs";
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 function getTestFiles(baseDir: string, customDir: string): string[] {
-  const baseFiles = new Set(fs.readdirSync(baseDir));
-  const customFiles = fs.readdirSync(customDir);
   const testFiles = new Set<string>();
 
-  for (const file of baseFiles) {
-    const baseFilePath = path.join(baseDir, file);
-    const customFilePath = path.join(customDir, file);
-
-    testFiles.add(fs.existsSync(customFilePath) ? customFilePath : baseFilePath);
+  function getAllFiles(dir: string): string[] {
+    const files = fs.readdirSync(dir, { withFileTypes: true });
+    const allFiles: string[] = [];
+    for (const file of files) {
+      const fullPath = path.join(dir, file.name);
+      if (file.isDirectory()) {
+        allFiles.push(...getAllFiles(fullPath));
+      } else {
+        allFiles.push(fullPath);
+      }
+    }
+    return allFiles;
   }
 
-  for (const file of customFiles) {
-    if (!baseFiles.has(file)) {
-      testFiles.add(path.join(customDir, file));
+  const baseFiles = getAllFiles(baseDir);
+  const customFiles = getAllFiles(customDir);
+
+  const baseRelativePaths = new Map(
+    baseFiles.map((file) => [path.relative(baseDir, file), file])
+  );
+
+  const customRelativePaths = new Map(
+    customFiles.map((file) => [path.relative(customDir, file), file])
+  );
+
+  for (const [relativePath, baseFilePath] of baseRelativePaths.entries()) {
+    const customFilePath = customRelativePaths.get(relativePath);
+    testFiles.add(customFilePath || baseFilePath);
+  }
+
+  for (const [relativePath, customFilePath] of customRelativePaths.entries()) {
+    if (!baseRelativePaths.has(relativePath)) {
+      testFiles.add(customFilePath);
     }
   }
 
