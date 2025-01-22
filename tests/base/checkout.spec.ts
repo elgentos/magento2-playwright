@@ -1,13 +1,13 @@
 import {test, expect} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
-import {MainMenuPage} from './fixtures/mainmenu.page';
 import {ProductPage} from './fixtures/product.page';
+import {AccountPage} from './fixtures/account.page';
+import { CheckoutPage } from './fixtures/checkout.page';
 
 import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
 import selectors from './config/selectors/selectors.json';
-import verify from './config/expected/expected.json';
-import { CheckoutPage } from './fixtures/checkout.page';
+
 
 /**
  * @feature BeforeEach runs before each test in this group.
@@ -42,6 +42,44 @@ test.describe('Checkout (login required)', () => {
 
     const loginPage = new LoginPage(page);
     await loginPage.login(emailInputValue, passwordInputValue);
+  });
+  
+  /**
+   * @feature Automatically fill in certain data in checkout (if user is logged in)
+   * @scenario When the user navigates to the checkout (with a product), their name and address should be filled in.
+   * @given I am logged in
+   *  @and I have a product in my cart
+   *  @and I have navigated to the checkout page
+   * @then My name and address should already be filled in
+   */
+  test('My address should be already filled in at the checkout',{ tag: '@checkout',}, async ({page}) => {
+    let signInLink = page.getByRole('link', { name: selectors.credentials.loginButtonLabel });
+    let addressField = page.getByLabel(selectors.newAddress.streetAddressLabel);
+    let addressAlreadyAdded = false;
+
+    if(await signInLink.isVisible()) {
+      throw new Error(`Sign in link found, user is not logged in. Please check the test setup.`);
+    }
+
+    // name field should NOT be on the page
+    await expect(page.getByLabel(selectors.personalInformation.firstNameLabel)).toBeHidden();
+
+    if(await addressField.isVisible()) {
+      if(!addressAlreadyAdded){
+      // Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
+      const accountPage = new AccountPage(page);
+
+      let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
+      let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
+      let zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
+      let cityNameValue = inputvalues.firstAddress.firstCityValue;
+      let stateValue = inputvalues.firstAddress.firstProvinceValue;
+  
+      await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+      } else {
+        throw new Error(`Address field is visible even though an address has been added to the account.`);
+      }
+    }
   });
 
 

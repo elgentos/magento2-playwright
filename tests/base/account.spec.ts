@@ -1,5 +1,7 @@
 import {test, expect} from '@playwright/test';
+import {MainMenuPage} from './fixtures/mainmenu.page';
 import {LoginPage} from './fixtures/login.page';
+import {RegisterPage} from './fixtures/register.page';
 import {AccountPage} from './fixtures/account.page';
 import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
 
@@ -41,22 +43,47 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-  test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
-    const accountPage = new AccountPage(page);
-    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+  test('I can change my password',{ tag: '@account-credentials', }, async ({page, browserName}) => {
 
+    // Create instances and set variables
+    const mainMenu = new MainMenuPage(page);
+    const registerPage = new RegisterPage(page);
+    const accountPage = new AccountPage(page);
+    const loginPage = new LoginPage(page);
+
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let emailPasswordUpdatevalue = `passwordupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+
+    // Log out of current account
+    if(await page.getByRole('link', { name: selectors.mainMenu.myAccountLogoutItem }).isVisible()){
+      await mainMenu.logout();
+    }
+
+    // Create account
     if(!changedPasswordValue || !passwordInputValue) {
       throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
     }
 
-    // Navigate to Account Information, confirm by checking heading above sidebar
-    const sidebarAccountInfoLink = page.getByRole('link', { name: 'Account Information' });
-    sidebarAccountInfoLink.click();
-    await expect(page.getByRole('heading', { name: 'Account Information' }).locator('span')).toBeVisible();
+    await registerPage.createNewAccount(inputvalues.accountCreation.firstNameValue, inputvalues.accountCreation.lastNameValue, emailPasswordUpdatevalue, passwordInputValue);
 
+    // Update password    
+    await page.goto(slugs.account.changePasswordSlug);
+    await page.waitForLoadState();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
+    // If login with changePasswordValue is possible, then password change was succesful.
+    await loginPage.login(emailPasswordUpdatevalue, changedPasswordValue);
+
+    // Logout again, login with original account
+    await mainMenu.logout();
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    if(!emailInputValue) {
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    }
+    await loginPage.login(emailInputValue, passwordInputValue);
   });
 });
 
