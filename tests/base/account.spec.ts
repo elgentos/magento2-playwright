@@ -97,14 +97,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
     const accountPage = new AccountPage(page);
 
-    let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
-    let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
-    let zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
-    let cityNameValue = inputvalues.firstAddress.firstCityValue;
-    let stateValue = inputvalues.firstAddress.firstProvinceValue;
-
-    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
-
+    await accountPage.addNewAddress();
   });
 
   /**
@@ -118,17 +111,8 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
   test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
-
     const accountPage = new AccountPage(page);
-
-    let phoneNumberValue = inputvalues.secondAddress.secondPhoneNumberValue;
-    let addressValue = inputvalues.secondAddress.secondStreetAddressValue;
-    let zipCodeValue = inputvalues.secondAddress.secondZipCodeValue;
-    let cityNameValue = inputvalues.secondAddress.secondCityValue;
-    let stateValue = inputvalues.secondAddress.secondProvinceValue;
-
-    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
-
+    await accountPage.addNewAddress();
   });
 
   /**
@@ -143,21 +127,18 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    let newFirstName = inputvalues.editedAddress.editfirstNameValue;
-    let newLastName = inputvalues.editedAddress.editLastNameValue;
-    let newStreet = inputvalues.editedAddress.editStreetAddressValue;
-    let newZipCode = inputvalues.editedAddress.editZipCodeValue;
-    let newCity = inputvalues.editedAddress.editCityValue;
-    let newState = inputvalues.editedAddress.editStateValue;
-
+    await page.goto(slugs.account.addressNewSlug);
     let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
-    testInfo.skip(await editAddressButton.isHidden(), `Button to edit Address is not found, please check if an address has been added.`);
+
+    if(await editAddressButton.isHidden()){
+      // The edit address button was not found, add another address first.
+      await accountPage.addNewAddress();
+    }
 
     await page.goto(slugs.account.addressBookSlug);
-    await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
-
+    await accountPage.editExistingAddress();
   });
 
   /**

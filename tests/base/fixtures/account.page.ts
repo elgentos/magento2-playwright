@@ -1,4 +1,5 @@
 import {expect, type Locator, type Page} from '@playwright/test';
+import {faker} from '@faker-js/faker';
 
 import selectors from '../config/selectors/selectors.json';
 import verify from '../config/expected/expected.json';
@@ -39,7 +40,7 @@ export class AccountPage {
   */
 
   // TODO: Update these functionalities to be able to take in non-required fields.
-
+  
   constructor(page: Page){
     this.page = page;
     this.accountDashboardTitle = page.getByRole('heading', { name: selectors.accountDashboard.accountDashboardTitleLabel });
@@ -79,49 +80,49 @@ export class AccountPage {
     this.editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
   }
 
-  //TODO: Add ability to choose different country other than US
-  async addNewAddress(phonenumber: string,streetName: string, zipCode: string, cityName: string, state: string){
+  async addNewAddress(){
     let addressAddedNotification = verify.address.newAddressAddedNotifcation;
-
+    let streetName = faker.location.streetAddress();
 
     // Name should be filled in automatically.
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
 
-    await this.phoneNumberField.fill(phonenumber);
+    await this.phoneNumberField.fill(faker.phone.number());
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(zipCode);
-    await this.cityField.fill(cityName);
-    await this.stateSelectorField.selectOption(state);
+    await this.zipCodeField.fill(faker.location.zipCode());
+    await this.cityField.fill(faker.location.city());
+    await this.stateSelectorField.selectOption(faker.location.state());
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
-    await expect(this.page.getByText(addressAddedNotification)).toBeVisible();
+    await expect.soft(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
+  
 
-  async editExistingAddress(firstName: string, lastName: string, streetName: string, zipCode: string, cityName: string, state: string){
+  async editExistingAddress(){
     // the notification for a modified address is the same as the notification for a new address.
     let addressModifiedNotification = verify.address.newAddressAddedNotifcation;
+    let streetName = faker.location.streetAddress();
 
-    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.editAddressButton.click();
 
     // Name should be filled in automatically, but editable.
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
 
-    await this.firstNameField.fill(firstName);
-    await this.lastNameField.fill(lastName);
+    await this.firstNameField.fill(faker.person.firstName());
+    await this.lastNameField.fill(faker.person.lastName());
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(zipCode);
-    await this.cityField.fill(cityName);
-    await this.stateSelectorField.selectOption(state);
-    // .click() replaced by .press("Enter") as a workaround for webkit issues
+    await this.zipCodeField.fill(faker.location.zipCode());
+    await this.cityField.fill(faker.location.city());
+    await this.stateSelectorField.selectOption(faker.location.state());
+
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
-    await expect(this.page.getByText(addressModifiedNotification)).toBeVisible();
+    await expect.soft(this.page.getByText(addressModifiedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
 
