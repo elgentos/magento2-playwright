@@ -25,7 +25,6 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
     await page.goto(slugs.productpage.simpleProductSlug);
     await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     await mainMenu.openMiniCart();
@@ -115,7 +114,6 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    //TODO: Use a storagestate or API call to add product to the cart so shorten test time
     await page.goto(slugs.productpage.configurableProductSlug);
     await productPage.addConfigurableProductToCart();
     await mainMenu.openMiniCart();

@@ -42,6 +42,5 @@ export class ProductPage {
 
     await this.simpleProductAddToCartButon.click();
     await this.page.waitForLoadState();
-    //TODO: add notification check to ensure product has been added.
   }
 }

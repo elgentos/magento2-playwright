@@ -13,8 +13,6 @@ export class NewsletterSubscriptionPage {
     this.saveSubscriptionsButton = page.getByRole('button', {name:selectors.newsletterSubscriptions.saveSubscriptionsButton});
   }
 
-  //TODO: the text of the notification can differ sometimes. Update this function to take this into account.
-  // newsletterRemovedNotification should sometimes be newsletterUpdatedNotification. 
   async updateNewsletterSubscription(){
     
     if(await this.newsletterCheckElement.isChecked()) {
