@@ -4,7 +4,6 @@ import {MainMenuPage} from './fixtures/mainmenu.page';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
-// TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";

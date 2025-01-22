@@ -8,7 +8,6 @@ test('Add product on homepage to cart',{ tag: '@homepage',}, async ({page}) => {
   const homepage = new HomePage(page);
   const mainmenu = new MainMenuPage(page);
 
-  // TODO: rework adding product to cart into API call function to reduce test time
   await page.goto('');
   await homepage.addHomepageProductToCart();
   await mainmenu.openMiniCart();
