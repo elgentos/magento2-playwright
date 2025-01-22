@@ -16,7 +16,6 @@ function getTestFiles(baseDir: string, customDir: string): string[] {
     testFiles.add(fs.existsSync(customFilePath) ? customFilePath : baseFilePath);
   }
 
-  // Add custom files that aren't in base
   for (const file of customFiles) {
     if (!baseFiles.has(file)) {
       testFiles.add(path.join(customDir, file));
