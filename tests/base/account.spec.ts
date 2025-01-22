@@ -92,6 +92,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
     if(await addNewAddressTitle.isHidden()) {
       await accountPage.deleteAllAddresses();
+      testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
       await page.goto(slugs.account.addressNewSlug);
     }
 

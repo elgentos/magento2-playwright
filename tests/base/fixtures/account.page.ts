@@ -174,22 +174,17 @@ export class AccountPage {
   async deleteAllAddresses() {
     let addressDeletedNotification = verify.address.addressDeletedNotification;
 
-    // Handle the confirmation dialog for deleting addresses
     this.page.on('dialog', async (dialog) => {
       if (dialog.type() === 'confirm') {
         await dialog.accept();
       }
     });
 
-    // Continuously attempt to delete addresses until none are left
     while (await this.deleteAddressButton.isVisible()) {
       await this.deleteAddressButton.click();
       await this.page.waitForLoadState();
 
-      // Verify the notification for address deletion
       await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
     }
-
-    console.log("All addresses have been deleted.");
   }
 }
