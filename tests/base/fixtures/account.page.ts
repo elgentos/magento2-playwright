@@ -150,4 +150,21 @@ export class AccountPage {
     await this.accountCreationPasswordRepeatField.fill(password);
     await this.accountCreationConfirmButton.click();
   }
+
+  async deleteAllAddresses() {
+    let addressDeletedNotification = verify.address.addressDeletedNotification;
+
+    this.page.on('dialog', async (dialog) => {
+      if (dialog.type() === 'confirm') {
+        await dialog.accept();
+      }
+    });
+
+    while (await this.deleteAddressButton.isVisible()) {
+      await this.deleteAddressButton.click();
+      await this.page.waitForLoadState();
+
+      await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+    }
+  }
 }
