@@ -37,7 +37,5 @@ test('User can register an account', { tag: '@setup', }, async ({page, browserNa
   }
   // end of browserNameEmailSection
 
-
-  // password is retrieved from .env file in createNewAccount() function
   await registerPage.createNewAccount(firstName, lastName, accountEmail, existingAccountPassword);
 });

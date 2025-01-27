@@ -108,21 +108,15 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
-
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    
     if(await addNewAddressTitle.isHidden()) {
       await accountPage.deleteAllAddresses();
       testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
       await page.goto(slugs.account.addressNewSlug);
     }
 
-    let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
-    let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
-    let zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
-    let cityNameValue = inputvalues.firstAddress.firstCityValue;
-    let stateValue = inputvalues.firstAddress.firstProvinceValue;
-
-    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+    await accountPage.addNewAddress();
   });
 
   /**
@@ -136,16 +130,9 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    */
   test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
-
     const accountPage = new AccountPage(page);
-
-    let phoneNumberValue = inputvalues.secondAddress.secondPhoneNumberValue;
-    let addressValue = inputvalues.secondAddress.secondStreetAddressValue;
-    let zipCodeValue = inputvalues.secondAddress.secondZipCodeValue;
-    let cityNameValue = inputvalues.secondAddress.secondCityValue;
-    let stateValue = inputvalues.secondAddress.secondProvinceValue;
-
-    await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+    
+    await accountPage.addNewAddress();
   });
 
   /**
@@ -160,22 +147,18 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    let newFirstName = inputvalues.editedAddress.editfirstNameValue;
-    let newLastName = inputvalues.editedAddress.editLastNameValue;
-    let newStreet = inputvalues.editedAddress.editStreetAddressValue;
-    let newZipCode = inputvalues.editedAddress.editZipCodeValue;
-    let newCity = inputvalues.editedAddress.editCityValue;
-    let newState = inputvalues.editedAddress.editStateValue;
-
+    await page.goto(slugs.account.addressNewSlug);
     let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
-    if(await editAddressButton.isHidden()) {
-      await page.goto(slugs.account.addressNewSlug);
-      await accountPage.addNewAddress(inputvalues.firstAddress.firstPhoneNumberValue, inputvalues.firstAddress.firstStreetAddressValue, inputvalues.firstAddress.firstZipCodeValue, inputvalues.firstAddress.firstCityValue, inputvalues.firstAddress.firstProvinceValue);
+
+    if(await editAddressButton.isHidden()){
+      // The edit address button was not found, add another address first.
+      await accountPage.addNewAddress();
     }
 
-    await accountPage.editExistingAddress(newFirstName, newLastName, newStreet, newZipCode, newCity, newState);
+    await page.goto(slugs.account.addressBookSlug);
+    await accountPage.editExistingAddress();
   });
 
   /**

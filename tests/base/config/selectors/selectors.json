@@ -89,7 +89,8 @@
     "openCartButtonLabel": "Cart",
     "openCartButtonLabelCont": "item",
     "openCartButtonLabelContMultiple": "items",
-    "cartDetailsLocator": "#checkout-cart-details div"
+    "cartDetailsLocator": "#checkout-cart-details div",
+    "shippingAddressRadioLocator": "#shipping-details input[type='radio']"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",

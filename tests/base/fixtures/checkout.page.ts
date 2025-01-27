@@ -23,7 +23,7 @@ export class CheckoutPage {
   }
 
   async placeOrder(){
-    let orderPlacedNotification = "Thank you for your purchase!";
+    let orderPlacedNotification = verify.checkout.orderPlacedNotification;
     await this.page.goto(slugs.checkoutSlug);
 
     await this.shippingMethodOptionFixed.check();
@@ -49,10 +49,12 @@ export class CheckoutPage {
     });
 
     await expect(this.page.getByText(orderPlacedNotification)).toBeVisible();
-    let orderNumber = await this.page.locator('p').filter({ hasText: 'Your order number is:' }).getByRole('link').innerText();
+    let orderNumber = await this.page.locator('p').filter({ hasText: verify.checkout.orderPlacedNumberText }).getByRole('link').innerText();
     console.log(`Your ordernumer is: ${orderNumber}`);
 
-    await expect(this.continueShoppingButton, `Your order number is: ${orderNumber}`).toBeVisible();
+    // This await only exists to report order number to the HTML reporter.
+    // TODO: replace this with a proper way to write something to the HTML reporter.
+    await expect(this.continueShoppingButton, `${verify.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
     return orderNumber;
   }
 
