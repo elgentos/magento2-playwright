@@ -29,7 +29,7 @@ export class MainMenuPage {
   }
 
   async gotoAddressBook() {
-    // TODO: create function to navigate to Address Book through the header menu links
+    // create function to navigate to Address Book through the header menu links
   }
 
   async openMiniCart() {

@@ -1,5 +1,7 @@
 import {test, expect} from '@playwright/test';
+import {MainMenuPage} from './fixtures/mainmenu.page';
 import {LoginPage} from './fixtures/login.page';
+import {RegisterPage} from './fixtures/register.page';
 import {AccountPage} from './fixtures/account.page';
 import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
 
@@ -7,9 +9,6 @@ import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
 import selectors from './config/selectors/selectors.json';
 import verify from './config/expected/expected.json';
-
-// no resetting storageState, mainmenu has more functionalities when logged in.
-// TODO: remove this beforeEach() once authentication as project set-up/fixture works.
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
@@ -32,8 +31,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await page.waitForLoadState();
   });
 
-  // TODO: add test to update e-mail address
-
   /**
    * @feature Magento 2 Change Password
    * @scenario User changes their password
@@ -46,33 +43,52 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
+  test('I can change my password',{ tag: '@account-credentials', }, async ({page, browserName}) => {
 
-  //TODO: Remove the skip when all issues are fixed.
-  test.skip('I can change my password',{ tag: '@account-credentials', }, async ({page}) => {
+    // Create instances and set variables
+    const mainMenu = new MainMenuPage(page);
+    const registerPage = new RegisterPage(page);
     const accountPage = new AccountPage(page);
-    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    const loginPage = new LoginPage(page);
 
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let emailPasswordUpdatevalue = `passwordupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+
+    // Log out of current account
+    if(await page.getByRole('link', { name: selectors.mainMenu.myAccountLogoutItem }).isVisible()){
+      await mainMenu.logout();
+    }
+
+    // Create account
     if(!changedPasswordValue || !passwordInputValue) {
       throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
     }
 
-    // Navigate to Account Information, confirm by checking heading above sidebar
-    const sidebarAccountInfoLink = page.getByRole('link', { name: 'Account Information' });
-    sidebarAccountInfoLink.click();
-    await expect(page.getByRole('heading', { name: 'Account Information' }).locator('span')).toBeVisible();
+    await registerPage.createNewAccount(inputvalues.accountCreation.firstNameValue, inputvalues.accountCreation.lastNameValue, emailPasswordUpdatevalue, passwordInputValue);
 
+    // Update password    
+    await page.goto(slugs.account.changePasswordSlug);
+    await page.waitForLoadState();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
+    // If login with changePasswordValue is possible, then password change was succesful.
+    await loginPage.login(emailPasswordUpdatevalue, changedPasswordValue);
+
+    // Logout again, login with original account
+    await mainMenu.logout();
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    if(!emailInputValue) {
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    }
+    await loginPage.login(emailInputValue, passwordInputValue);
   });
 });
 
-
-// TODO: Add tests to check address can't be added/updated if the supplied information is incorrect
-// TODO: Add tests to check address can't be deleted if it's the last/only one.
-test.describe('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
+test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
   test.beforeEach(async ({page}) => {
-    // go to the Adress Book page
     await page.goto(slugs.account.addressBookSlug);
     await page.waitForLoadState();
   });
@@ -91,11 +107,14 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
    */
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
-    // If account has no address, Address Book redirects to the 'Add New Address' page.
-    // We expect this to be true before continuing.
-    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
-    testInfo.skip(await addNewAddressTitle.isHidden(), `Heading "Add New Addres" is not found, please check if an address has already been added.`);
     const accountPage = new AccountPage(page);
+    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    
+    if(await addNewAddressTitle.isHidden()) {
+      await accountPage.deleteAllAddresses();
+      testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
+      await page.goto(slugs.account.addressNewSlug);
+    }
 
     await accountPage.addNewAddress();
   });
@@ -112,6 +131,7 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
   test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
+    
     await accountPage.addNewAddress();
   });
 
@@ -156,20 +176,19 @@ test.describe('Account address book actions', { annotation: {type: 'Account Dash
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
-    testInfo.skip(await deleteAddressButton.isHidden(), `Button to delete Address is not found, please check if an address has been added.`);
 
+    if(await deleteAddressButton.isHidden()) {
+      await page.goto(slugs.account.addressNewSlug);
+      await accountPage.addNewAddress(inputvalues.firstAddress.firstPhoneNumberValue, inputvalues.firstAddress.firstStreetAddressValue, inputvalues.firstAddress.firstZipCodeValue, inputvalues.firstAddress.firstCityValue, inputvalues.firstAddress.firstProvinceValue);
+    }
     await accountPage.deleteFirstAddressFromAddressBook();
   });
 });
 
-// TODO: move this to new spec file.
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
   test.beforeEach(async ({page}) => {
-    // go to the Dashboard page
     await page.goto(slugs.account.accountOverviewSlug);
   });
-
-  // TODO: What if website offers multiple subscriptions?
 
   /**
    * @feature Magento 2 newsletter subscriptions
@@ -201,6 +220,4 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
       await expect(newsletterCheckElement).not.toBeChecked();
     }
   });
-
 });
-

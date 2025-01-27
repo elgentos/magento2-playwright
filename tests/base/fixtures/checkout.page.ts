@@ -6,7 +6,6 @@ import slugs from '../config/slugs.json';
 
 export class CheckoutPage {
 
-  //TODO: Expand with fields for when user is not logged in or has not provided an address
   readonly page: Page;
   readonly shippingMethodOptionFixed: Locator;
   readonly paymentMethodOptionCheck: Locator;

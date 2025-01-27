@@ -3,7 +3,6 @@
  * It will set the global cookie to bypass CAPTCHA for Magento 2.
  * See: https://github.com/elgentos/magento2-bypass-captcha-cookie
  * 
- * //TODO The extension is WIP. Currently being developed.
  */
 import { FullConfig } from '@playwright/test';
 import * as playwright from 'playwright';

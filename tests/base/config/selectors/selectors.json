@@ -16,8 +16,11 @@
     "nameFieldLabel": "Name",
     "emailFieldLabel": "Email",
     "passwordFieldLabel": "Password",
+    "newPasswordFieldLabel": "New Password",
     "passwordConfirmFieldLabel": "Confirm Password",
-    "loginButtonLabel": "Sign In"
+    "newPasswordConfirmFieldLabel": "Confirm New Password",
+    "loginButtonLabel": "Sign In",
+    "currentPasswordFieldLabel": "Current Password"
   },
   "personalInformation": {
     "firstNameLabel": "First Name",

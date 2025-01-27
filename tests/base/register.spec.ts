@@ -16,29 +16,13 @@ test.use({ storageState: { cookies: [], origins: [] } });
  *  @then I should see a messsage confirming my account was created
  */
 test('User can register an account', { tag: '@setup', }, async ({page, browserName}) => {
-// TODO: remove the 'skip' when done. We don't always want to create accounts. 
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
   var firstName = inputvalues.accountCreation.firstNameValue;
   var lastName = inputvalues.accountCreation.lastNameValue;
-
   
-  // TODO: Once setup script works, uncomment this section (uniqueEmailSection) and remove the one below
-  //Create unique email with custom handle and host, adding a number between 0 - 100
-  /* let randomNumber = Math.floor(Math.random() * 100);
-  let emailHandle = inputvalues.accountCreation.emailHandleValue;
-  let emailHost = inputvalues.accountCreation.emailHostValue;
-  const uniqueEmail = `${emailHandle}${randomNumber}@${emailHost}`; 
-
-  if(!existingAccountPassword){
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_PASSWORD has not been defined in the .env file.");
-  } */
-  // end of uniqueEmailSection
-  
-  
-  //TODO: Once setup script works, remove this section (browserNameEmailSection) and use uniqueEmail from above
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let randomNumber = Math.floor(Math.random() * 100);
   let emailHandle = inputvalues.accountCreation.emailHandleValue;
@@ -54,11 +38,4 @@ test('User can register an account', { tag: '@setup', }, async ({page, browserNa
   // end of browserNameEmailSection
 
   await registerPage.createNewAccount(firstName, lastName, accountEmail, existingAccountPassword);
-});
-
-
-test.skip('Account creation fails if required fields are not filled in', { tag: '@error-checker', }, async ({page}) => {
-  // TODO: registration should not work if mistakes are made, and proper messages should be displayed.
-  // These tests should have a specific "error checker" tag.
-  test.fixme(true,'Skipped, test will be created later');
 });

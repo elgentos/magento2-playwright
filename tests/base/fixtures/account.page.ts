@@ -32,15 +32,7 @@ export class AccountPage {
   readonly accountCreationPasswordRepeatField: Locator;
   readonly accountCreationConfirmButton: Locator;
 
-  // fields below are not required when adding an address.
-  /*
-  readonly companyField: Locator;
-  readonly streetAddressFieldTwo: Locator;
-  readonly streetAddressFieldThree: Locator;
-  */
 
-  // TODO: Update these functionalities to be able to take in non-required fields.
-  
   constructor(page: Page){
     this.page = page;
     this.accountDashboardTitle = page.getByRole('heading', { name: selectors.accountDashboard.accountDashboardTitleLabel });
@@ -50,20 +42,15 @@ export class AccountPage {
     this.streetAddressField = page.getByLabel(selectors.newAddress.streetAddressLabel, {exact:true});
     this.zipCodeField = page.getByLabel(selectors.newAddress.zipCodeLabel);
     this.cityField = page.getByLabel(selectors.newAddress.cityNameLabel);
-    //TODO: countrySelect is used to change the country so it's not US.
-    //TODO: provinceSelect should be provinceField if country is, for example, Netherlands.
     this.countrySelectorField = page.getByLabel(selectors.newAddress.countryLabel);
     this.stateSelectorField = page.getByLabel(selectors.newAddress.provinceSelectLabel).filter({hasText: selectors.newAddress.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: selectors.newAddress.saveAdressButton});
-    //unrequired fields
-    // this.companyField = page.getByLabel(selectors.newAddress.companyNameLabel);
 
     // Account Information elements
     this.changePasswordCheck = page.getByRole('checkbox', {name: selectors.personalInformation.changePasswordCheckLabel});
-    //TODO: Fix these once I can log in again
-    this.currentPasswordField = page.getByLabel('Current Password');
-    this.newPasswordField = page.getByLabel('New Password', {exact:true});
-    this.confirmNewPasswordField = page.getByLabel('Confirm New Password')
+    this.currentPasswordField = page.getByLabel(selectors.credentials.currentPasswordFieldLabel);
+    this.newPasswordField = page.getByLabel(selectors.credentials.newPasswordFieldLabel, {exact:true});
+    this.confirmNewPasswordField = page.getByLabel(selectors.credentials.newPasswordConfirmFieldLabel);
     this.genericSaveButton = page.getByRole('button', { name: selectors.general.genericSaveButtonLabel });
 
     // Account Creation elements
@@ -127,8 +114,6 @@ export class AccountPage {
   }
 
 
-  // TODO: Update function to remove random address from address book?
-  // deleteAddressButton is currently the first instance it finds.
   async deleteFirstAddressFromAddressBook(){
     let addressDeletedNotification = verify.address.addressDeletedNotification;
     // Dialog function to click confirm
@@ -138,7 +123,6 @@ export class AccountPage {
       }
     });
 
-    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.deleteAddressButton.click();
     await this.page.waitForLoadState();
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
@@ -152,7 +136,6 @@ export class AccountPage {
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
 
-    // .click() replaced by .press("Enter") as a workaround for webkit issues
     await this.genericSaveButton.click();
     await this.page.waitForLoadState();
 
@@ -170,5 +153,22 @@ export class AccountPage {
     await this.accountCreationPasswordField.fill(password);
     await this.accountCreationPasswordRepeatField.fill(password);
     await this.accountCreationConfirmButton.click();
+  }
+
+  async deleteAllAddresses() {
+    let addressDeletedNotification = verify.address.addressDeletedNotification;
+
+    this.page.on('dialog', async (dialog) => {
+      if (dialog.type() === 'confirm') {
+        await dialog.accept();
+      }
+    });
+
+    while (await this.deleteAddressButton.isVisible()) {
+      await this.deleteAddressButton.click();
+      await this.page.waitForLoadState();
+
+      await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+    }
   }
 }
