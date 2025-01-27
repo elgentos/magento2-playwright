@@ -1,9 +1,6 @@
 import {test, expect} from '@playwright/test';
 import { ContactPage } from './fixtures/contact.page';
 
-import slugs from './config/slugs.json';
-import inputvalues from './config/input-values/input-values.json';
-
 /**
  * @feature Magento 2 Contact Form
  * @scenario User fills in the contact form and sends a message
@@ -16,10 +13,5 @@ import inputvalues from './config/input-values/input-values.json';
  */
 test('I can send a message through the contact form',{ tag: '@contact-form',}, async ({page}) => {
   const contactPage = new ContactPage(page);
-  let formName = inputvalues.accountCreation.firstNameValue;
-  let formEmail = inputvalues.contact.contactFormEmailValue;
-  let message = inputvalues.contact.contactFormMessage;
-
-  await page.goto(slugs.contact);
-  await contactPage.fillOutForm(formName,formEmail,message);
+  await contactPage.fillOutForm();
 });

@@ -1,6 +1,9 @@
 import {expect, type Locator, type Page} from '@playwright/test';
+import {faker} from '@faker-js/faker';
+
 import selectors from '../config/selectors/selectors.json';
 import verify from '../config/expected/expected.json';
+import slugs from '../config/slugs.json';
 
 export class ContactPage {
   readonly page: Page;
@@ -17,11 +20,12 @@ export class ContactPage {
     this.sendFormButton = this.page.getByRole('button', { name: selectors.general.genericSubmitButtonLabel });
   }
 
-  async fillOutForm(name: string, email: string, message: string){
+  async fillOutForm(){
+    await this.page.goto(slugs.contact);
     let messageSentConfirmationText = verify.contactPage.messageSentConfirmationText;
-    await this.nameField.fill(name);
-    await this.emailField.fill(email);
-    await this.messageField.fill(message);
+    await this.nameField.fill(faker.person.firstName());
+    await this.emailField.fill(faker.internet.email());
+    await this.messageField.fill(faker.lorem.paragraph());
     await this.sendFormButton.click();
     
     await expect(this.page.getByText(messageSentConfirmationText)).toBeVisible();

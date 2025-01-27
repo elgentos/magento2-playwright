@@ -46,6 +46,7 @@ test.describe('Checkout (login required)', () => {
 
     const loginPage = new LoginPage(page);
     await loginPage.login(emailInputValue, passwordInputValue);
+    await page.goto(slugs.checkoutSlug);
   });
   
   /**
@@ -72,28 +73,35 @@ test.describe('Checkout (login required)', () => {
       if(!addressAlreadyAdded){
       // Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
       const accountPage = new AccountPage(page);
-
-      let phoneNumberValue = inputvalues.firstAddress.firstPhoneNumberValue;
-      let addressValue = inputvalues.firstAddress.firstStreetAddressValue;
-      let zipCodeValue = inputvalues.firstAddress.firstZipCodeValue;
-      let cityNameValue = inputvalues.firstAddress.firstCityValue;
-      let stateValue = inputvalues.firstAddress.firstProvinceValue;
-  
-      await accountPage.addNewAddress(phoneNumberValue, addressValue, zipCodeValue, cityNameValue, stateValue);
+      await accountPage.addNewAddress();
       } else {
         throw new Error(`Address field is visible even though an address has been added to the account.`);
       }
     }
+
+    // expect to see radio button to select existing address
+    let shippingRadioButton = page.locator(selectors.checkout.shippingAddressRadioLocator).first();
+    await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
+
   });
 
-  //TODO: Add Gherkin feature description
-  test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}) => {
+
+  /**
+   * @feature Place order for simple product
+   * @scenario User places an order for a simple product
+   * @given I have a product in my cart
+   *  @and I am on any page
+   * @when I navigate to the checkout
+   *  @and I fill in the required fields
+   *  @and I click the button to place my order
+   * @then I should see a confirmation that my order has been placed
+   *  @and a order number should be created and show to me
+   */
+  test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}, testInfo) => {
     const checkoutPage = new CheckoutPage(page);
-    await checkoutPage.placeOrder();
+    let orderNumber = await checkoutPage.placeOrder();
+    testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
   });
-
-
-
 });
 
 test.describe('Checkout (guest)', () => {
