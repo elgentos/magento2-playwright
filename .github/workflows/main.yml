@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-  push:
-    branches:
-      - github-actions-test
 
 jobs:
   build-and-selftest:
