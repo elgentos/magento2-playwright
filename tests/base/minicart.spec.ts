@@ -4,9 +4,8 @@ import {ProductPage} from './fixtures/product.page';
 import { MiniCartPage } from './fixtures/minicart.page';
 
 import slugs from './config/slugs.json';
-import inputvalues from './config/input-values/input-values.json';
-import selectors from './config/selectors/selectors.json';
-import verify from './config/expected/expected.json';
+import UIReference from './config/element-identifiers/element-identifiers.json';
+import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
   
@@ -26,9 +25,9 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const productPage = new ProductPage(page);
 
     await page.goto(slugs.productpage.simpleProductSlug);
-    await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     await mainMenu.openMiniCart();
-    await expect(page.getByText(verify.miniCart.simpleProductInCartTitle)).toBeVisible();
+    await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
   });
 
   /**
@@ -117,7 +116,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     await page.goto(slugs.productpage.configurableProductSlug);
     await productPage.addConfigurableProductToCart();
     await mainMenu.openMiniCart();
-    await expect(page.getByText(verify.miniCart.configurableProductMinicartTitle)).toBeVisible();
+    await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();
   });
 
   /**

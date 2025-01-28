@@ -1,6 +1,6 @@
 import {type Locator, type Page} from '@playwright/test';
 
-import selectors from '../config/selectors/selectors.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
 
 export class HomePage {
 
@@ -12,7 +12,7 @@ export class HomePage {
   }
   
   async addHomepageProductToCart(){
-    let buyProductButton = this.page.getByRole('button').filter({hasText: selectors.general.addToCartLabel}).first();
+    let buyProductButton = this.page.getByRole('button').filter({hasText: UIReference.general.addToCartLabel}).first();
     
     if(await buyProductButton.isVisible()) {
       await buyProductButton.click();

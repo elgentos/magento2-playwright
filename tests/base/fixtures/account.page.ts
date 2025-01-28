@@ -1,8 +1,8 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import selectors from '../config/selectors/selectors.json';
-import verify from '../config/expected/expected.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
+import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
 export class AccountPage {
@@ -35,40 +35,40 @@ export class AccountPage {
 
   constructor(page: Page){
     this.page = page;
-    this.accountDashboardTitle = page.getByRole('heading', { name: selectors.accountDashboard.accountDashboardTitleLabel });
-    this.firstNameField = page.getByLabel(selectors.personalInformation.firstNameLabel);
-    this.lastNameField = page.getByLabel(selectors.personalInformation.lastNameLabel);
-    this.phoneNumberField = page.getByLabel(selectors.newAddress.phoneNumberLabel);
-    this.streetAddressField = page.getByLabel(selectors.newAddress.streetAddressLabel, {exact:true});
-    this.zipCodeField = page.getByLabel(selectors.newAddress.zipCodeLabel);
-    this.cityField = page.getByLabel(selectors.newAddress.cityNameLabel);
-    this.countrySelectorField = page.getByLabel(selectors.newAddress.countryLabel);
-    this.stateSelectorField = page.getByLabel(selectors.newAddress.provinceSelectLabel).filter({hasText: selectors.newAddress.provinceSelectFilterLabel});
-    this.saveAddressButton = page.getByRole('button',{name: selectors.newAddress.saveAdressButton});
+    this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
+    this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
+    this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
+    this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
+    this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, {exact:true});
+    this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
+    this.cityField = page.getByLabel(UIReference.newAddress.cityNameLabel);
+    this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
+    this.stateSelectorField = page.getByLabel(UIReference.newAddress.provinceSelectLabel).filter({hasText: UIReference.newAddress.provinceSelectFilterLabel});
+    this.saveAddressButton = page.getByRole('button',{name: UIReference.newAddress.saveAdressButton});
 
     // Account Information elements
-    this.changePasswordCheck = page.getByRole('checkbox', {name: selectors.personalInformation.changePasswordCheckLabel});
-    this.currentPasswordField = page.getByLabel(selectors.credentials.currentPasswordFieldLabel);
-    this.newPasswordField = page.getByLabel(selectors.credentials.newPasswordFieldLabel, {exact:true});
-    this.confirmNewPasswordField = page.getByLabel(selectors.credentials.newPasswordConfirmFieldLabel);
-    this.genericSaveButton = page.getByRole('button', { name: selectors.general.genericSaveButtonLabel });
+    this.changePasswordCheck = page.getByRole('checkbox', {name: UIReference.personalInformation.changePasswordCheckLabel});
+    this.currentPasswordField = page.getByLabel(UIReference.credentials.currentPasswordFieldLabel);
+    this.newPasswordField = page.getByLabel(UIReference.credentials.newPasswordFieldLabel, {exact:true});
+    this.confirmNewPasswordField = page.getByLabel(UIReference.credentials.newPasswordConfirmFieldLabel);
+    this.genericSaveButton = page.getByRole('button', { name: UIReference.general.genericSaveButtonLabel });
 
     // Account Creation elements
-    this.accountCreationFirstNameField = page.getByLabel(selectors.personalInformation.firstNameLabel);
-    this.accountCreationLastNameField = page.getByLabel(selectors.personalInformation.lastNameLabel);
-    this.accountCreationEmailField = page.getByLabel(selectors.credentials.emailFieldLabel, { exact: true});
-    this.accountCreationPasswordField = page.getByLabel(selectors.credentials.passwordFieldLabel, { exact: true });
-    this.accountCreationPasswordRepeatField = page.getByLabel(selectors.credentials.passwordConfirmFieldLabel);
-    this.accountCreationConfirmButton = page.getByRole('button', {name: selectors.accountCreation.createAccountButtonLabel});
+    this.accountCreationFirstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
+    this.accountCreationLastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
+    this.accountCreationEmailField = page.getByLabel(UIReference.credentials.emailFieldLabel, { exact: true});
+    this.accountCreationPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, { exact: true });
+    this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.credentials.passwordConfirmFieldLabel);
+    this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.accountCreation.createAccountButtonLabel});
 
     // Address Book elements
-    this.addNewAddressButton = page.getByRole('button',{name: selectors.accountDashboard.addAddressButtonLabel});
-    this.deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
-    this.editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
+    this.addNewAddressButton = page.getByRole('button',{name: UIReference.accountDashboard.addAddressButtonLabel});
+    this.deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
+    this.editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
   }
 
   async addNewAddress(){
-    let addressAddedNotification = verify.address.newAddressAddedNotifcation;
+    let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
     let streetName = faker.location.streetAddress();
 
     // Name should be filled in automatically.
@@ -90,7 +90,7 @@ export class AccountPage {
 
   async editExistingAddress(){
     // the notification for a modified address is the same as the notification for a new address.
-    let addressModifiedNotification = verify.address.newAddressAddedNotifcation;
+    let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
     let streetName = faker.location.streetAddress();
 
     await this.editAddressButton.click();
@@ -115,7 +115,7 @@ export class AccountPage {
 
 
   async deleteFirstAddressFromAddressBook(){
-    let addressDeletedNotification = verify.address.addressDeletedNotification;
+    let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
     // Dialog function to click confirm
     this.page.on('dialog', async (dialog) => {
       if (dialog.type() === 'confirm') {
@@ -129,7 +129,7 @@ export class AccountPage {
   }
 
   async updatePassword(currentPassword:string, newPassword: string){
-    let passwordUpdatedNotification = verify.account.changedPasswordNotificationText;
+    let passwordUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
     await this.changePasswordCheck.check();
 
     await this.currentPasswordField.fill(currentPassword);
@@ -140,7 +140,6 @@ export class AccountPage {
     await this.page.waitForLoadState();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
-    console.log(`Password has been changed! Please update your .env file password with "${newPassword}"`);
   }
 
   async create(firstName: string, lastName: string, email: string, password: string){
@@ -156,7 +155,7 @@ export class AccountPage {
   }
 
   async deleteAllAddresses() {
-    let addressDeletedNotification = verify.address.addressDeletedNotification;
+    let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
 
     this.page.on('dialog', async (dialog) => {
       if (dialog.type() === 'confirm') {

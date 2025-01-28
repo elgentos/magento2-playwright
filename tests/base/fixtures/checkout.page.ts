@@ -1,7 +1,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import selectors from '../config/selectors/selectors.json';
-import verify from '../config/expected/expected.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
+import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
 export class CheckoutPage {
@@ -15,15 +15,15 @@ export class CheckoutPage {
 
   constructor(page: Page){
     this.page = page;
-    this.shippingMethodOptionFixed = this.page.getByLabel(selectors.checkout.shippingMethodFixedLabel);
-    this.paymentMethodOptionCheck = this.page.getByLabel(selectors.checkout.paymentOptionCheckLabel);
-    this.showDiscountFormButton = this.page.getByRole('button', {name: selectors.checkout.openDiscountFormLabel});
-    this.placeOrderButton = this.page.getByRole('button', { name: selectors.checkout.placeOrderButtonLabel });
-    this.continueShoppingButton = this.page.getByRole('link', { name: selectors.checkout.continueShoppingLabel });
+    this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
+    this.paymentMethodOptionCheck = this.page.getByLabel(UIReference.checkout.paymentOptionCheckLabel);
+    this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
+    this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
+    this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
   }
 
   async placeOrder(){
-    let orderPlacedNotification = verify.checkout.orderPlacedNotification;
+    let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
     await this.page.goto(slugs.checkoutSlug);
 
     await this.shippingMethodOptionFixed.check();
@@ -49,61 +49,61 @@ export class CheckoutPage {
     });
 
     await expect(this.page.getByText(orderPlacedNotification)).toBeVisible();
-    let orderNumber = await this.page.locator('p').filter({ hasText: verify.checkout.orderPlacedNumberText }).getByRole('link').innerText();
-    console.log(`Your ordernumer is: ${orderNumber}`);
+    let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText }).getByRole('link').innerText();
+    // console.log(`Your ordernumer is: ${orderNumber}`);
 
     // This await only exists to report order number to the HTML reporter.
     // TODO: replace this with a proper way to write something to the HTML reporter.
-    await expect(this.continueShoppingButton, `${verify.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
+    await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
     return orderNumber;
   }
 
   async applyDiscountCodeCheckout(code: string){
-    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
     }
 
-    if(await this.page.getByText(verify.cart.priceReducedSymbols).isVisible()){
+    if(await this.page.getByText(outcomeMarker.cart.priceReducedSymbols).isVisible()){
       // discount is already active.
-      let cancelCouponButton = this.page.getByRole('button', { name: selectors.checkout.cancelDiscountButtonLabel });
+      let cancelCouponButton = this.page.getByRole('button', { name: UIReference.checkout.cancelDiscountButtonLabel });
       await cancelCouponButton.click();
     }
 
-    let applyCouponCheckoutButton = this.page.getByRole('button', { name: selectors.checkout.applyDiscountButtonLabel });
-    let checkoutDiscountField = this.page.getByPlaceholder(selectors.checkout.discountInputFieldLabel);
+    let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
+    let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
   
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
-    await expect(this.page.getByText(`${verify.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
-    await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
+    await expect(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
+    await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
   }
 
   async enterWrongCouponCode(code: string){
-    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
     }
 
-    let applyCouponCheckoutButton = this.page.getByRole('button', { name: selectors.checkout.applyDiscountButtonLabel });
-    let checkoutDiscountField = this.page.getByPlaceholder(selectors.checkout.discountInputFieldLabel);
+    let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
+    let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
-    await expect(this.page.getByText(verify.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
+    await expect(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
   }
 
   async removeDiscountCode(){
-    if(await this.page.getByPlaceholder(selectors.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
     }
   
-    let cancelCouponButton = this.page.getByRole('button', {name: selectors.cart.cancelCouponButtonLabel});
+    let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
     await cancelCouponButton.click();
 
-    await expect(this.page.getByText(verify.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
-    await expect(this.page.getByText(verify.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
+    await expect(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
+    await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
   }
 }

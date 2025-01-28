@@ -1,8 +1,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
 import slugs from '../config/slugs.json';
-import selectors from '../config/selectors/selectors.json';
-import expected from '../config/expected/expected.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
 
 export class LoginPage {
   readonly page: Page;
@@ -12,9 +11,9 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.loginEmailField = page.getByLabel(selectors.credentials.emailFieldLabel, {exact: true});
-    this.loginPasswordField = page.getByLabel(selectors.credentials.passwordFieldLabel, {exact: true});
-    this.loginButton = page.getByRole('button', { name: selectors.credentials.loginButtonLabel });
+    this.loginEmailField = page.getByLabel(UIReference.credentials.emailFieldLabel, {exact: true});
+    this.loginPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, {exact: true});
+    this.loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
   }
 
   async login(email: string, password: string){
@@ -24,6 +23,6 @@ export class LoginPage {
     // usage of .press("Enter") to prevent webkit issues with button.click();
     await this.loginButton.press("Enter");
 
-    await expect(this.page.getByRole('link', { name: selectors.mainMenu.myAccountLogoutItem })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem })).toBeVisible();
   }
 }

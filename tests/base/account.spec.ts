@@ -7,8 +7,8 @@ import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
 
 import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
-import selectors from './config/selectors/selectors.json';
-import verify from './config/expected/expected.json';
+import UIReference from './config/element-identifiers/element-identifiers.json';
+import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
@@ -43,7 +43,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-  test('I can change my password',{ tag: '@account-credentials', }, async ({page, browserName}) => {
+  test('I can change my password',{ tag: '@account-credentials', }, async ({page, browserName}, testInfo) => {
 
     // Create instances and set variables
     const mainMenu = new MainMenuPage(page);
@@ -58,7 +58,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
 
     // Log out of current account
-    if(await page.getByRole('link', { name: selectors.mainMenu.myAccountLogoutItem }).isVisible()){
+    if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()){
       await mainMenu.logout();
     }
 
@@ -108,7 +108,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
-    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: selectors.newAddress.addNewAddressTitle});
+    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
     
     if(await addNewAddressTitle.isHidden()) {
       await accountPage.deleteAllAddresses();
@@ -150,7 +150,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressNewSlug);
-    let editAddressButton = page.getByRole('link', {name: selectors.accountDashboard.editAddressIconButton}).first();
+    let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
 
     if(await editAddressButton.isHidden()){
       // The edit address button was not found, add another address first.
@@ -175,11 +175,11 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
 
-    let deleteAddressButton = page.getByRole('link', {name: selectors.accountDashboard.addressDeleteIconButton}).first();
+    let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
 
     if(await deleteAddressButton.isHidden()) {
       await page.goto(slugs.account.addressNewSlug);
-      await accountPage.addNewAddress(inputvalues.firstAddress.firstPhoneNumberValue, inputvalues.firstAddress.firstStreetAddressValue, inputvalues.firstAddress.firstZipCodeValue, inputvalues.firstAddress.firstCityValue, inputvalues.firstAddress.firstProvinceValue);
+      await accountPage.addNewAddress();
     }
     await accountPage.deleteFirstAddressFromAddressBook();
   });
@@ -204,11 +204,11 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
   test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
     test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
-    let newsletterLink = page.getByRole('link', { name: selectors.accountDashboard.links.newsletterLink });
-    const newsletterCheckElement = page.getByLabel(selectors.newsletterSubscriptions.generalSubscriptionCheckLabel);
+    let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
+    const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
 
     await newsletterLink.click();
-    await expect(page.getByText(verify.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
+    await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
 
     let updateSubscription = await newsletterPage.updateNewsletterSubscription();
 
