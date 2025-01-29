@@ -5,8 +5,7 @@ import {AccountPage} from './fixtures/account.page';
 import { CheckoutPage } from './fixtures/checkout.page';
 
 import slugs from './config/slugs.json';
-import inputvalues from './config/input-values/input-values.json';
-import selectors from './config/selectors/selectors.json';
+import UIReference from './config/element-identifiers/element-identifiers.json';
 
 
 /**
@@ -24,7 +23,7 @@ test.beforeEach(async ({ page }) => {
   const productPage = new ProductPage(page);
 
   await page.goto(slugs.productpage.simpleProductSlug);
-  await productPage.addSimpleProductToCart(selectors.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   await page.goto(slugs.checkoutSlug);
 });
 
@@ -54,8 +53,8 @@ test.describe('Checkout (login required)', () => {
    * @then My name and address should already be filled in
    */
   test('My address should be already filled in at the checkout',{ tag: '@checkout',}, async ({page}) => {
-    let signInLink = page.getByRole('link', { name: selectors.credentials.loginButtonLabel });
-    let addressField = page.getByLabel(selectors.newAddress.streetAddressLabel);
+    let signInLink = page.getByRole('link', { name: UIReference.credentials.loginButtonLabel });
+    let addressField = page.getByLabel(UIReference.newAddress.streetAddressLabel);
     let addressAlreadyAdded = false;
 
     if(await signInLink.isVisible()) {
@@ -63,7 +62,7 @@ test.describe('Checkout (login required)', () => {
     }
 
     // name field should NOT be on the page
-    await expect(page.getByLabel(selectors.personalInformation.firstNameLabel)).toBeHidden();
+    await expect(page.getByLabel(UIReference.personalInformation.firstNameLabel)).toBeHidden();
 
     if(await addressField.isVisible()) {
       if(!addressAlreadyAdded){
@@ -76,7 +75,7 @@ test.describe('Checkout (login required)', () => {
     }
 
     // expect to see radio button to select existing address
-    let shippingRadioButton = page.locator(selectors.checkout.shippingAddressRadioLocator).first();
+    let shippingRadioButton = page.locator(UIReference.checkout.shippingAddressRadioLocator).first();
     await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
 
   });

@@ -1,7 +1,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import selectors from '../config/selectors/selectors.json';
-import verify from '../config/expected/expected.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
+import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
 export class ProductPage {
   readonly page: Page;
@@ -16,7 +16,7 @@ export class ProductPage {
   async addSimpleProductToCart(product: string, url: string, quantity?: string) {
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
-    let productAddedNotification = `${verify.productPage.simpleProductAddedNotification} ${product}`;
+    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
 
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
@@ -25,7 +25,7 @@ export class ProductPage {
     
     if(quantity){
       // set quantity
-      await this.page.getByLabel(selectors.productPage.quantityFieldLabel).fill('2');
+      await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
     }
 
     await this.simpleProductAddToCartButon.click();
@@ -33,11 +33,11 @@ export class ProductPage {
   }
 
   async addConfigurableProductToCart(){
-    const productOptions = this.page.locator(selectors.productPage.configurableProductOptionForm);
+    const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
 
     // loop through each radiogroup (product option) within the form
     for (const option of await productOptions.getByRole('radiogroup').all()) {
-        await option.locator(selectors.productPage.configurableProductOptionValue).first().check();
+        await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
     }
 
     await this.simpleProductAddToCartButon.click();

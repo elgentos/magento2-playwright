@@ -1,7 +1,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import selectors from '../config/selectors/selectors.json';
-import verify from '../config/expected/expected.json';
+import UIReference from '../config/element-identifiers/element-identifiers.json';
+import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
 export class MiniCartPage {
@@ -18,14 +18,14 @@ export class MiniCartPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.toCheckoutButton = page.getByRole('link', { name: selectors.miniCart.checkOutButtonLabel });
-    this.toCartButton = page.getByRole('link', { name: selectors.miniCart.toCartLinkLabel });
-    this.editProductButton = page.getByLabel(selectors.miniCart.editProductIconLabel);
-    this.productQuantityField = page.getByLabel(selectors.miniCart.productQuantityFieldLabel);
-    this.updateItemButton = page.getByRole('button', { name: selectors.cart.updateItemButtonLabel });
-    this.removeProductMiniCartButton = page.getByLabel(selectors.miniCart.removeProductIconLabel).first();
-    this.priceOnPDP = page.getByLabel(selectors.general.genericPriceLabel).getByText(selectors.general.genericPriceSymbol);
-    this.priceInMinicart = page.getByText(selectors.general.genericPriceSymbol).first();
+    this.toCheckoutButton = page.getByRole('link', { name: UIReference.miniCart.checkOutButtonLabel });
+    this.toCartButton = page.getByRole('link', { name: UIReference.miniCart.toCartLinkLabel });
+    this.editProductButton = page.getByLabel(UIReference.miniCart.editProductIconLabel);
+    this.productQuantityField = page.getByLabel(UIReference.miniCart.productQuantityFieldLabel);
+    this.updateItemButton = page.getByRole('button', { name: UIReference.cart.updateItemButtonLabel });
+    this.removeProductMiniCartButton = page.getByLabel(UIReference.miniCart.removeProductIconLabel).first();
+    this.priceOnPDP = page.getByLabel(UIReference.general.genericPriceLabel).getByText(UIReference.general.genericPriceSymbol);
+    this.priceInMinicart = page.getByText(UIReference.general.genericPriceSymbol).first();
   }
   
   async goToCheckout(){
@@ -39,13 +39,13 @@ export class MiniCartPage {
   }
 
   async removeProductFromMinicart() {
-    let productRemovedNotification = verify.miniCart.productRemovedConfirmation;
+    let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
     await this.removeProductMiniCartButton.click();
     await expect(this.page.getByText(productRemovedNotification)).toBeVisible();
   }
 
   async updateProduct(amount: string){
-    let productQuantityChangedNotification = verify.miniCart.productQuantityChangedConfirmation;
+    let productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
     await this.editProductButton.click();
     await expect(this.page).toHaveURL(new RegExp(`${slugs.cartProductChangeSlug}.*`));
 
@@ -53,16 +53,16 @@ export class MiniCartPage {
     await this.updateItemButton.click();
     await expect(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
-    let productQuantityInCart = await this.page.getByLabel(selectors.cart.cartQuantityLabel).first().inputValue();
-    console.log(productQuantityInCart);
+    let productQuantityInCart = await this.page.getByLabel(UIReference.cart.cartQuantityLabel).first().inputValue();
+    // console.log(productQuantityInCart);
     expect(productQuantityInCart).toBe(amount);
   }
 
   async checkPriceWithProductPage() {
-    const priceOnPage = await this.page.locator(selectors.productPage.simpleProductPrice).first().innerText();
+    const priceOnPage = await this.page.locator(UIReference.productPage.simpleProductPrice).first().innerText();
     const productTitle = await this.page.getByRole('heading', { level : 1}).innerText();
     const productListing =  this.page.locator('div').filter({hasText: productTitle});
-    const priceInMinicart = await productListing.locator(selectors.miniCart.minicartPriceFieldClass).first().textContent();
+    const priceInMinicart = await productListing.locator(UIReference.miniCart.minicartPriceFieldClass).first().textContent();
     //expect(priceOnPage).toBe(priceInMinicart);
     expect(priceOnPage, `Expect these prices to be the same: priceOnpage: ${priceOnPage} and priceInMinicart: ${priceInMinicart}`).toBe(priceInMinicart);
   }
