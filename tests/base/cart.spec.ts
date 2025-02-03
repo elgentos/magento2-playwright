@@ -31,6 +31,13 @@ test.describe('Cart functionalities (guest)', () => {
     await page.goto(slugs.cartSlug);
   });
 
+  /**
+   * @feature Product can be added to cart
+   * @scenario User adds a product to their cart
+   * @given I have added a product to my cart
+   *  @and I am on the cart page
+   * @then I should see the name of the product in my cart
+   */
   test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
