@@ -1,6 +1,10 @@
 import {test} from '@playwright/test';
 import {LoginPage} from './fixtures/login.page';
 import {MainMenuPage} from './fixtures/mainmenu.page';
+import { ProductPage } from './fixtures/product.page';
+
+import UIReference from './config/element-identifiers/element-identifiers.json';
+import slugs from './config/slugs.json';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
@@ -36,4 +40,19 @@ test('User can log out', { tag: '@mainmenu', }, async ({page}) => {
 test('Navigate to account page', { tag: '@mainmenu', }, async ({page}) => {
   const mainMenu = new MainMenuPage(page);
   await mainMenu.gotoMyAccount();
+});
+
+test('Open the minicart', { tag: '@mainmenu', }, async ({page}) => {
+  const mainMenu = new MainMenuPage(page);
+  let productInCart = await mainMenu.openMiniCart();
+
+  if(!productInCart){
+    // No product in cart: aria-disabled="true" prevents Playwright from clicking the button.
+    // Add product, then try again.
+    const productPage = new ProductPage(page);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    //navigate to any page to ensure minicart bubble is visible
+    await page.goto('/');
+    await mainMenu.openMiniCart();
+  }
 });

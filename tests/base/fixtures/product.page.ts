@@ -18,7 +18,6 @@ export class ProductPage {
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
 
-    await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
