@@ -17,6 +17,23 @@ export class CartPage {
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
   }
 
+  // ==============================================
+  // Product-related methods
+  // ==============================================
+
+  async removeProduct(productTitle: string){
+    let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
+    await removeButton.click();
+    await this.page.waitForLoadState();
+    await expect(removeButton,`Button to remove specified product is not visible in the cart`).toBeHidden();
+    
+    // Expect product to no longer be visible in the cart
+    await expect (this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
+  }
+
+  // ==============================================
+  // Discount-related methods
+  // ==============================================
   async applyDiscountCode(code: string){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
@@ -35,23 +52,6 @@ export class CartPage {
     await this.page.getByLabel(UIReference.general.closeMessageLabel).click();
   }
 
-  async enterWrongCouponCode(code: string){
-    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
-      // discount field is not open.
-      await this.showDiscountButton.click();
-    }
-
-    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.cart.applyDiscountButtonLabel, exact:true});
-    let discountField = this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel);
-    await discountField.fill(code);
-    await applyDiscoundButton.click();
-    await this.page.waitForLoadState();
-
-    let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
-
-    await expect(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
-  }
-
   async removeDiscountCode(){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
@@ -66,13 +66,29 @@ export class CartPage {
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
   }
 
-  async removeProduct(name: string){
-    //let removeButton = this.page.getByLabel(`${UIReference.cart.cancelCouponButtonLabel} ${name}`);
-    let removeButton = this.page.getByLabel(`Remove ${name}`);
-    await removeButton.click();
+  async enterWrongCouponCode(code: string){
+    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open.
+      await this.showDiscountButton.click();
+    }
+
+    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.cart.applyDiscountButtonLabel, exact:true});
+    let discountField = this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel);
+    await discountField.fill(code);
+    await applyDiscoundButton.click();
     await this.page.waitForLoadState();
-    await expect(removeButton,`Button to remove product is no longer visible`).toBeHidden();
+
+    let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
+
+    //Assertions: notification that code was incorrect & discount code field is still editable
+    await expect(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    await expect(discountField).toBeEditable();
   }
+
+
+  // ==============================================
+  // Additional methods
+  // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
     // Open minicart based on amount of products in cart

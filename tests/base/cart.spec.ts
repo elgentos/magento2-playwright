@@ -21,14 +21,13 @@ test.describe('Cart functionalities (guest)', () => {
    *  @and I should see the product in the minicart
    */
   test.beforeEach(async ({ page }) => {
-    const mainMenu = new MainMenuPage(page);
+    // const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
     await page.goto(slugs.productpage.simpleProductSlug);
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    await mainMenu.openMiniCart();
-    await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
     await page.goto(slugs.cartSlug);
+    await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} is in the cart`).toBeVisible();
   });
 
   /**
