@@ -22,6 +22,10 @@ export class CheckoutPage {
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
   }
 
+  // ==============================================
+  // Order-related methods
+  // ==============================================
+
   async placeOrder(){
     let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
     await this.page.goto(slugs.checkoutSlug);
@@ -50,13 +54,15 @@ export class CheckoutPage {
 
     await expect(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText }).getByRole('link').innerText();
-    // console.log(`Your ordernumer is: ${orderNumber}`);
 
-    // This await only exists to report order number to the HTML reporter.
-    // TODO: replace this with a proper way to write something to the HTML reporter.
     await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
     return orderNumber;
   }
+
+
+  // ==============================================
+  // Discount-related methods
+  // ==============================================
 
   async applyDiscountCodeCheckout(code: string){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
