@@ -60,6 +60,8 @@ export class MainMenuPage {
     await this.mainMenuAccountButton.click();
     await this.mainMenuLogoutItem.click();
 
+    //assertions: notification that user is logged out & logout button no longer visible
     await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true })).toBeVisible();
+    await expect(this.mainMenuLogoutItem).toBeHidden();
   }
 }
