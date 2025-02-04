@@ -54,7 +54,7 @@ export class CartPage {
 
   async removeDiscountCode(){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
-      // discount field is not open.
+      // discount field is not open. 
       await this.showDiscountButton.click();
     }
   
