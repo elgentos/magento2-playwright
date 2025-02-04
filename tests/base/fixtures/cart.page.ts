@@ -46,7 +46,7 @@ export class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
     
-    await expect(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
+    await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
     await this.page.getByLabel(UIReference.general.closeMessageLabel).click();
@@ -62,7 +62,7 @@ export class CartPage {
     await cancelCouponButton.click();
     await this.page.waitForLoadState();
 
-    await expect(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
+    await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
   }
 
@@ -81,7 +81,7 @@ export class CartPage {
     let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
     //Assertions: notification that code was incorrect & discount code field is still editable
-    await expect(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
     await expect(discountField).toBeEditable();
   }
 

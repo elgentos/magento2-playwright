@@ -176,7 +176,7 @@ export class AccountPage {
       await this.deleteAddressButton.click();
       await this.page.waitForLoadState();
 
-      await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+      await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
     }
   }
 }
