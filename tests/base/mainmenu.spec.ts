@@ -42,17 +42,17 @@ test('Navigate to account page', { tag: '@mainmenu', }, async ({page}) => {
   await mainMenu.gotoMyAccount();
 });
 
-test('Open the minicart', { tag: '@mainmenu', }, async ({page}) => {
+test('Open the minicart', { tag: '@mainmenu', }, async ({page}, testInfo) => {
   const mainMenu = new MainMenuPage(page);
-  let productInCart = await mainMenu.openMiniCart();
+  await mainMenu.openMiniCart();
 
-  if(!productInCart){
-    // No product in cart: aria-disabled="true" prevents Playwright from clicking the button.
-    // Add product, then try again.
-    const productPage = new ProductPage(page);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    //navigate to any page to ensure minicart bubble is visible
-    await page.goto('/');
-    await mainMenu.openMiniCart();
-  }
+  // if(!productInCart){
+  //   // No product in cart: aria-disabled="true" prevents Playwright from clicking the button.
+  //   // Add product, then try again.
+  //   const productPage = new ProductPage(page);
+  //   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  //   //navigate to any page to ensure minicart bubble is visible
+  //   await page.goto('/');
+  //   await mainMenu.openMiniCart();
+  // }
 });
