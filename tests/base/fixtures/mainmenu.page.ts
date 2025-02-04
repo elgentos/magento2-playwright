@@ -33,38 +33,13 @@ export class MainMenuPage {
   }
 
   async openMiniCart() {
+    await this.page.reload();
+    // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
     await this.mainMenuMiniCartButton.waitFor();
     await this.mainMenuMiniCartButton.click();
     
-    // if(await this.page.locator('#menu-cart-icon > span').isVisible()){
-    //   console.log("Cart is not empty");
-    //   // there are items in the cart
-    //   let miniCartItemCount = await this.page.locator('#menu-cart-icon > span').innerText();
-      
-    //   if(miniCartItemCount == "1") {
-    //     await this.page.getByLabel(`Toggle minicart, ${miniCartItemCount} item`).click();
-    //     // await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${UIReference.miniCart.miniCartToggleLabelOneItem}`).click();
-    //     await expect(this.page.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
-    //     return true;
-    //   } else {
-    //     await this.page.getByLabel(`Toggle minicart, ${miniCartItemCount} items`).click();
-    //     await expect(this.page.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
-    //     // await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${miniCartItemCount} ${UIReference.miniCart.miniCartToggleLabelMultiItem}`).click();
-    //     return true;
-    //   }
-    // } else {
-    //   console.log("No products found");
-    //   // there are no items in the cart
-    //   // await this.page.getByLabel(`Toggle minicart,\n Cart is empty`).click();
-    //   //await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${UIReference.miniCart.miniCartToggleLabelEmpty}`).click();
-    //   return false;
-    // }
-  
-   // await this.page.locator('#menu-cart-icon > span').innerText();
-    //if(miniCartItemCount = "0")
-    
-    // await this.mainMenuMiniCartButton.click();
-    
+    let miniCartDrawer = this.page.locator("#cart-drawer-title");
+    await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
   }
 
   async logout(){

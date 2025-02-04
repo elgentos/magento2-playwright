@@ -26,7 +26,6 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
 
     await page.goto(slugs.productpage.simpleProductSlug);
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    await page.reload();
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
   });
@@ -81,7 +80,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @then The product should not be in my cart anymore
    *  @and I should see a notification that the product was removed
    */
-  test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}, testInfo) => {
+    testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`});
     const miniCart = new MiniCartPage(page);
     await miniCart.removeProductFromMinicart(UIReference.productPage.simpleProductTitle);
   });
