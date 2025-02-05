@@ -17,6 +17,31 @@ export class CartPage {
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
   }
 
+  async changeProductQuantity(amount: string){
+    const productRow = this.page.getByRole('row', {name: UIReference.productPage.simpleProductTitle});
+    let currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+
+    if(currentQuantity == amount){
+      // quantity is the same as amount, therefore we change amount to ensure test can continue.
+      amount = '3'; 
+    }
+
+    await productRow.getByLabel(UIReference.cart.cartQuantityLabel).fill(amount);
+    let subTotalBeforeUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
+  
+    await this.page.getByRole('button', { name: UIReference.cart.updateShoppingCartButtonLabel }).click();
+    await this.page.reload();
+    
+    currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+
+    // Last $ to get the Subtotal
+    let subTotalAfterUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
+
+    // Assertions: subtotals are different, and quantity field is still the new amount.
+    expect(subTotalAfterUpdate, `Subtotals should not be the same`).not.toEqual(subTotalBeforeUpdate);
+    expect(currentQuantity, `quantity should be the new value`).toEqual(amount);
+  }
+
   async applyDiscountCode(code: string){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.

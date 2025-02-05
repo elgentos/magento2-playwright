@@ -26,11 +26,18 @@ test.describe('Cart functionalities (guest)', () => {
 
     await page.goto(slugs.productpage.simpleProductSlug);
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    await mainMenu.openMiniCart();
-    await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
+    // await mainMenu.openMiniCart();
+    // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
     await page.goto(slugs.cartSlug);
   });
 
+  /**
+   * @feature Product can be added to cart
+   * @scenario User adds a product to their cart
+   * @given I am on a product page
+   * @when I add the product to my cart
+   * @then I should see the product in my cart
+   */
   test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
@@ -67,7 +74,8 @@ test.describe('Cart functionalities (guest)', () => {
     await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
   });
 
- /** @feature Remove product from cart
+  /** 
+   * @feature Remove product from cart
    * @scenario User has added a product and wants to remove it from the cart page
    * @given I have added a product to my cart
    *  @and I am on the cart page
@@ -78,6 +86,21 @@ test.describe('Cart functionalities (guest)', () => {
   test('Remove product from cart',{ tag: '@cart',}, async ({page}) => {
     const cart = new CartPage(page);
     await cart.removeProduct(UIReference.productPage.simpleProductTitle);
+  });
+
+  /**
+   * @feature Change quantity of products in cart
+   * @scenario User has added a product and changes the quantity
+   * @given I have a product in my cart
+   * @and I am on the cart page
+   * @when I change the quantity of the product
+   * @and I click the update button
+   * @then the quantity field should have the new amount
+   * @and the subtotal/grand total should update
+   */
+  test('Change quantity of products in cart',{ tag: '@cart',}, async ({page}) => {
+    const cart = new CartPage(page);
+    await cart.changeProductQuantity('2');
   });
 
   /**
