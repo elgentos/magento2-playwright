@@ -75,7 +75,8 @@
     "showDiscountFormButtonLabel": "Apply Discount Code",
     "discountInputFieldLabel": "Enter discount code",
     "applyDiscountButtonLabel": "Apply Discount",
-    "cancelCouponButtonLabel": "Cancel Coupon"
+    "cancelCouponButtonLabel": "Cancel Coupon",
+    "updateShoppingCartButtonLabel": "Update Shopping Cart"
   },
   "checkout": {
     "shippingMethodFixedLabel": "Fixed",
