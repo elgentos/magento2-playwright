@@ -1,5 +1,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
+import slugs from '../config/slugs.json';
+
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
@@ -18,7 +20,6 @@ export class ProductPage {
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
 
-    await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();

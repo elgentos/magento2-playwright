@@ -116,6 +116,8 @@ export class AccountPage {
 
   async deleteFirstAddressFromAddressBook(){
     let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
+    let addressBookSection = this.page.locator(UIReference.accountDashboard.addressBookArea);
+
     // Dialog function to click confirm
     this.page.on('dialog', async (dialog) => {
       if (dialog.type() === 'confirm') {
@@ -123,9 +125,16 @@ export class AccountPage {
       }
     });
 
+    // Grab addresses from the address book, split the string and grab the address to be deleted.
+    let addressBookArray = await addressBookSection.allInnerTexts();
+    let arraySplit = addressBookArray[0].split('\n');
+    let addressToBeDeleted = arraySplit[7];
+    
     await this.deleteAddressButton.click();
     await this.page.waitForLoadState();
+
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+    await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
   }
 
   async updatePassword(currentPassword:string, newPassword: string){
@@ -167,7 +176,7 @@ export class AccountPage {
       await this.deleteAddressButton.click();
       await this.page.waitForLoadState();
 
-      await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+      await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
     }
   }
 }

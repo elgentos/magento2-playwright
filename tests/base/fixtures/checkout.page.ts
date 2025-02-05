@@ -22,6 +22,10 @@ export class CheckoutPage {
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
   }
 
+  // ==============================================
+  // Order-related methods
+  // ==============================================
+
   async placeOrder(){
     let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
     await this.page.goto(slugs.checkoutSlug);
@@ -48,15 +52,17 @@ export class CheckoutPage {
       return element && getComputedStyle(element).height === '0px';
     });
 
-    await expect(this.page.getByText(orderPlacedNotification)).toBeVisible();
+    await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText }).getByRole('link').innerText();
-    // console.log(`Your ordernumer is: ${orderNumber}`);
 
-    // This await only exists to report order number to the HTML reporter.
-    // TODO: replace this with a proper way to write something to the HTML reporter.
     await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
     return orderNumber;
   }
+
+
+  // ==============================================
+  // Discount-related methods
+  // ==============================================
 
   async applyDiscountCodeCheckout(code: string){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
@@ -76,7 +82,7 @@ export class CheckoutPage {
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
-    await expect(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
+    await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
     await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
   }
 
@@ -91,7 +97,8 @@ export class CheckoutPage {
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
-    await expect(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
+    await expect.soft(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
+    await expect(checkoutDiscountField).toBeEditable();
   }
 
   async removeDiscountCode(){
@@ -103,7 +110,10 @@ export class CheckoutPage {
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
     await cancelCouponButton.click();
 
-    await expect(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
+    await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
+
+    let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
+    await expect(checkoutDiscountField).toBeEditable();
   }
 }

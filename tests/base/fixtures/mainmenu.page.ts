@@ -33,26 +33,13 @@ export class MainMenuPage {
   }
 
   async openMiniCart() {
-    /*if(await this.page.locator('#menu-cart-icon > span').isVisible()){
-      // there are items in the cart
-      let miniCartItemCount = await this.page.locator('#menu-cart-icon > span').innerText();
-      
-      if(miniCartItemCount == "1") {
-        //await this.page.getByLabel("Toggle minicart, 1 item").click();
-        await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${UIReference.miniCart.miniCartToggleLabelOneItem}`).click();
-      } else {
-        await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${miniCartItemCount} ${UIReference.miniCart.miniCartToggleLabelMultiItem}`).click();
-      }
-    } else {
-      // there are no items in the cart
-      await this.page.getByLabel(`${UIReference.miniCart.miniCartToggleLabelPrefix} ${UIReference.miniCart.miniCartToggleLabelEmpty}`).click();
-    }
-    */
-   // await this.page.locator('#menu-cart-icon > span').innerText();
-    //if(miniCartItemCount = "0")
-    
+    await this.page.reload();
+    // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
+    await this.mainMenuMiniCartButton.waitFor();
     await this.mainMenuMiniCartButton.click();
-    await expect(this.page.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+    
+    let miniCartDrawer = this.page.locator("#cart-drawer-title");
+    await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
   }
 
   async logout(){
@@ -60,6 +47,8 @@ export class MainMenuPage {
     await this.mainMenuAccountButton.click();
     await this.mainMenuLogoutItem.click();
 
+    //assertions: notification that user is logged out & logout button no longer visible
     await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true })).toBeVisible();
+    await expect(this.mainMenuLogoutItem).toBeHidden();
   }
 }
