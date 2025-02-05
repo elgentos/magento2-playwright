@@ -9,7 +9,8 @@ import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add product to compare', async ({page}) => {
-    test.fixme('To be added', async ({ page }) => {});
+    const productPage = new ProductPage(page);
+    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
 });
 
