@@ -17,6 +17,23 @@ export class CartPage {
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
   }
 
+  // ==============================================
+  // Product-related methods
+  // ==============================================
+
+  async removeProduct(productTitle: string){
+    let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
+    await removeButton.click();
+    await this.page.waitForLoadState();
+    await expect(removeButton,`Button to remove specified product is not visible in the cart`).toBeHidden();
+    
+    // Expect product to no longer be visible in the cart
+    await expect (this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
+  }
+
+  // ==============================================
+  // Discount-related methods
+  // ==============================================
   async applyDiscountCode(code: string){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
@@ -29,10 +46,24 @@ export class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
     
-    await expect(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
+    await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
     await this.page.getByLabel(UIReference.general.closeMessageLabel).click();
+  }
+
+  async removeDiscountCode(){
+    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+      // discount field is not open. 
+      await this.showDiscountButton.click();
+    }
+  
+    let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
+    await cancelCouponButton.click();
+    await this.page.waitForLoadState();
+
+    await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
+    await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
   }
 
   async enterWrongCouponCode(code: string){
@@ -49,30 +80,15 @@ export class CartPage {
 
     let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
-    await expect(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    //Assertions: notification that code was incorrect & discount code field is still editable
+    await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    await expect(discountField).toBeEditable();
   }
 
-  async removeDiscountCode(){
-    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
-      // discount field is not open.
-      await this.showDiscountButton.click();
-    }
-  
-    let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
-    await cancelCouponButton.click();
-    await this.page.waitForLoadState();
 
-    await expect(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
-    await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
-  }
-
-  async removeProduct(name: string){
-    //let removeButton = this.page.getByLabel(`${UIReference.cart.cancelCouponButtonLabel} ${name}`);
-    let removeButton = this.page.getByLabel(`Remove ${name}`);
-    await removeButton.click();
-    await this.page.waitForLoadState();
-    await expect(removeButton,`Button to remove product is no longer visible`).toBeHidden();
-  }
+  // ==============================================
+  // Additional methods
+  // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
     // Open minicart based on amount of products in cart

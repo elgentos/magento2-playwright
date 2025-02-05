@@ -5,7 +5,8 @@
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "addToCartLabel": "Add to Cart",
-    "closeMessageLabel": "Close message"
+    "closeMessageLabel": "Close message",
+    "removeLabel": "Remove"
   },
   "mainMenu": {
     "myAccountButtonLabel": "My Account",
@@ -36,6 +37,7 @@
     "addAddressButtonLabel": "ADD NEW ADDRESS",
     "addressDeleteIconButton": "trash",
     "editAddressIconButton": "pencil-alt",
+    "addressBookArea": ".block-addresses-list",
     "links": {
       "newsletterLink": "Newsletter Subscriptions"
     }
