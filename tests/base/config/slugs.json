@@ -17,5 +17,6 @@
   "checkoutSlug": "/checkout/",
   "cartSlug": "/checkout/cart/",
   "cartProductChangeSlug": "/cart/configure/",
-  "contact": "/contact"
+  "contact": "/contact",
+  "wishListRegex": ".*wishlist.*"
 }

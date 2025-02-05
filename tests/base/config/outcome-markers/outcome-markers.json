@@ -46,5 +46,8 @@
   },
   "homePage": {
     "firstProductName": "Aim Analog Watch"
+  },
+  "wishListPage": {
+    "wishListAddedNotification": "has been added to your Wish List."
   }
 }

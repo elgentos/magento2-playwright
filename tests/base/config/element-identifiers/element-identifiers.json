@@ -144,5 +144,8 @@
     "captchaSettingSelectField": "#customer_captcha_enable",
     "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
     "saveConfigButtonLabel": "Save Config"
+  },
+  "wishListPage": {
+    "wishListItemGridLabel": "#wishlist-view-form"
   }
 }

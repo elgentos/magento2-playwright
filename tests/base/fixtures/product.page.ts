@@ -10,11 +10,13 @@ export class ProductPage {
   simpleProductTitle: Locator;
   simpleProductAddToCartButon: Locator;
   addToCompareButton: Locator;
+  addToWishlistButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.simpleProductAddToCartButon = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
     this.addToCompareButton = page.getByLabel('Add to Compare', { exact: true });
+    this.addToWishlistButton = page.getByLabel('Add to Wish List', { exact: true });
   }
 
   // ==============================================
@@ -31,6 +33,20 @@ export class ProductPage {
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
     await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
+  }
+
+  async addProductToWishlist(product:string, url: string){
+    let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
+    await this.page.goto(url);
+    await this.addToWishlistButton.click();
+
+    await this.page.waitForLoadState();
+
+    let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.wishListRegex));
+    await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
+    await expect(productNameInWishlist).toContainText(product);
   }
   
 
