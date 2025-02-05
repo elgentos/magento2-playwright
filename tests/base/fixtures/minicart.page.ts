@@ -40,7 +40,7 @@ export class MiniCartPage {
     let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
     let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.miniCart.removeProductIconLabel} "${UIReference.productPage.simpleProductTitle}"`);
     await removeProductMiniCartButton.click();
-    await expect(this.page.getByText(productRemovedNotification)).toBeVisible();
+    await expect.soft(this.page.getByText(productRemovedNotification)).toBeVisible();
     await expect(removeProductMiniCartButton).toBeHidden();
   }
 
@@ -51,7 +51,7 @@ export class MiniCartPage {
 
     await this.productQuantityField.fill(amount);
     await this.updateItemButton.click();
-    await expect(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
+    await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
     let productQuantityInCart = await this.page.getByLabel(UIReference.cart.cartQuantityLabel).first().inputValue();
     expect(productQuantityInCart).toBe(amount);
