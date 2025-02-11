@@ -33,6 +33,12 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
       await productPage.addProductToWishlist(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     });
   });
+
+
+  test.fixme('Leave a product review (Test currently fails due to error on website)', async ({page}) => {
+    // const productPage = new ProductPage(page);
+    // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  });
 });
 
 test.describe('Simple product tests',{ tag: '@simple-product',}, () => {

@@ -48,7 +48,25 @@ export class ProductPage {
     await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     await expect(productNameInWishlist).toContainText(product);
   }
-  
+
+  async leaveProductReview(product:string, url: string){
+    await this.page.goto(url);
+
+    //TODO: Uncomment this and fix test once website is fixed
+    /*
+      await page.locator('#Rating_5_label path').click();
+      await page.getByPlaceholder('Nickname*').click();
+      await page.getByPlaceholder('Nickname*').fill('John');
+      await page.getByPlaceholder('Nickname*').press('Tab');
+      await page.getByPlaceholder('Summary*').click();
+      await page.getByPlaceholder('Summary*').fill('A short paragraph');
+      await page.getByPlaceholder('Review*').click();
+      await page.getByPlaceholder('Review*').fill('Review message!');
+      await page.getByRole('button', { name: 'Submit Review' }).click();
+      await page.getByRole('img', { name: 'loader' }).click();
+    */
+  }
+
 
   // ==============================================
   // Cart-related methods
