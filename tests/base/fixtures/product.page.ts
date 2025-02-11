@@ -67,6 +67,26 @@ export class ProductPage {
     */
   }
 
+  async openLightboxAndScrollThrough(url: string){
+    await this.page.goto(url);
+    let fullScreenOpener = this.page.getByLabel(UIReference.productPage.fullScreenOpenLabel);
+    let fullScreenCloser = this.page.getByLabel(UIReference.productPage.fullScreenCloseLabel);
+    let thumbnails = this.page.getByRole('button', {name: UIReference.productPage.thumbnailImageLabel});
+
+    await fullScreenOpener.click();
+    await expect(fullScreenCloser).toBeVisible();
+
+    for (const img of await thumbnails.all()) {
+      await img.click();
+      // wait for transition animation
+      await this.page.waitForTimeout(500);
+      await expect(img, `CSS class 'border-primary' appended to button`).toHaveClass(new RegExp(outcomeMarker.productPage.borderClassRegex));
+    }
+
+    await fullScreenCloser.click();
+    await expect(fullScreenCloser).toBeHidden();
+
+  }
 
   // ==============================================
   // Cart-related methods

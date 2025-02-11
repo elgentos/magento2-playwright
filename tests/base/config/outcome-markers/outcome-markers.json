@@ -17,7 +17,8 @@
     "logoutConfirmationText": "You have signed out"
   } ,
   "productPage": {
-    "simpleProductAddedNotification": "You added"
+    "simpleProductAddedNotification": "You added",
+    "borderClassRegex": ".* border-primary$"
   },
   "cart": {
     "discountAppliedNotification": "You used coupon code",

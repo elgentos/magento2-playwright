@@ -39,6 +39,12 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     // const productPage = new ProductPage(page);
     // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
+
+  test('Open pictures in lightbox and scroll through', async ({page}) => {
+    const productPage = new ProductPage(page);
+    await productPage.openLightboxAndScrollThrough(slugs.productpage.configurableProductSlug);
+  });
+  
 });
 
 test.describe('Simple product tests',{ tag: '@simple-product',}, () => {
