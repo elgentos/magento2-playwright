@@ -67,7 +67,10 @@
     "configurableProductColorLabel": "Color",
     "configurableProductOptionForm": "#product_addtocart_form",
     "configurableProductOptionValue": ".product-option-value-label",
-    "quantityFieldLabel": "Quantity"
+    "quantityFieldLabel": "Quantity",
+    "fullScreenOpenLabel": "Click to view image in",
+    "fullScreenCloseLabel": "Close fullscreen",
+    "thumbnailImageLabel": "View larger image"
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
@@ -147,5 +150,8 @@
     "captchaSettingSelectField": "#customer_captcha_enable",
     "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
     "saveConfigButtonLabel": "Save Config"
+  },
+  "wishListPage": {
+    "wishListItemGridLabel": "#wishlist-view-form"
   }
 }
