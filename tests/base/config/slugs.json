@@ -15,6 +15,7 @@
     "productComparisonSlug": "/catalog/product_compare/index/"
   },
   "checkoutSlug": "/checkout/",
+  "successSlug": "/checkout/onepage/success/",
   "cartSlug": "/checkout/cart/",
   "cartProductChangeSlug": "/cart/configure/",
   "contact": "/contact",

@@ -23,6 +23,13 @@ export class CheckoutPage {
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
   }
 
+  async waitForHyvaToasts() {
+    await this.page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+  }
+
   // ==============================================
   // Order-related methods
   // ==============================================
@@ -35,18 +42,11 @@ export class CheckoutPage {
 
     await this.selectPaymentMethod('check');
     // Loader pops up, wait for this to be done.
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
-
+    await this.waitForHyvaToasts();
 
     await this.placeOrderButton.click();
     // Loader pops up, wait for this to be done.
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+    await this.waitForHyvaToasts();
 
     await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText }).getByRole('link').innerText();
@@ -58,10 +58,7 @@ export class CheckoutPage {
   async selectShipmentMethod() {
     await this.shippingMethodOptionFixed.check();
     // Wait for shipping method to be applied
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+    await this.waitForHyvaToasts();
   }
 
   async selectPaymentMethod(method: 'check') {
@@ -74,10 +71,7 @@ export class CheckoutPage {
     }
 
     // Wait for payment method to be applied
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+    await this.waitForHyvaToasts();
   }
 
   // ==============================================

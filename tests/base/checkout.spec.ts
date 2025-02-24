@@ -165,26 +165,19 @@ test.describe('Checkout (guest)', () => {
     const checkout = new CheckoutPage(page);
     await checkout.enterWrongCouponCode("incorrect discount code");
   });
-});
 
-/**
- * @feature Guest Checkout Payment Methods
- * @scenario Guest user can complete checkout with different payment methods
- * @given I have a product in my cart
- * @when I proceed to checkout as guest
- *  @and I select a payment method
- *  @and I complete the checkout process
- * @then I should receive an order confirmation
- *  @and the correct payment method should be applied
- */
-test.describe('Guest checkout payment methods', () => {
-  test.beforeEach(async ({ page }) => {
-    const productPage = new ProductPage(page);
-    await page.goto(slugs.productpage.simpleProductSlug);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-  });
-
-  test('Complete checkout with Check/Money Order payment', { tag: '@guest-checkout-payment' }, async ({ page }, testInfo) => {
+  /**
+   * @feature Place order for simple product
+   * @scenario User places an order for a simple product
+   * @given I have a product in my cart
+   *  @and I am on any page
+   * @when I navigate to the checkout
+   *  @and I fill in the required fields
+   *  @and I click the button to place my order
+   * @then I should see a confirmation that my order has been placed
+   *  @and a order number should be created and show to me
+   */
+  test('Complete checkout with Check/Money Order payment', { tag: ['@checkout', '@guest'] }, async ({ page }, testInfo) => {
     const checkoutPage = new CheckoutPage(page);
 
     await page.goto(slugs.checkoutSlug);
@@ -194,20 +187,23 @@ test.describe('Guest checkout payment methods', () => {
     // Fixes bug where state is not unselected after shipment method selection.
     await checkoutPage.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
 
+    // Select payment method
     await checkoutPage.selectPaymentMethod('check');
-
-    await page.waitForTimeout(4000);
     await checkoutPage.placeOrderButton.click();
-    await page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+    await checkoutPage.waitForHyvaToasts();
+
+    // Wait for redirect to success page and verify we're there
+    await expect(page).toHaveURL(new RegExp(slugs.successSlug));
 
     // Verify order placement
     await expect.soft(page.getByText(outcomeMarker.checkout.orderPlacedNotification)).toBeVisible();
+
+    // Verify order placement on success page
+    await expect(page.getByText(outcomeMarker.checkout.orderPlacedNotification)).toBeVisible();
+
     // Fetch order number after placing order
     const orderNumber = await page.locator('p').getByText('Your order # is:').innerText();
-    await expect.soft(page.getByText(orderNumber)).toBeVisible();
+    await expect(page.getByText(orderNumber)).toBeVisible();
 
     // Verify success page elements
     await expect(checkoutPage.continueShoppingButton).toBeVisible();
@@ -216,3 +212,5 @@ test.describe('Guest checkout payment methods', () => {
     testInfo.annotations.push({ type: 'Order created with Check / Money Order payment', description: orderNumber.replace('Your order # is:', '') });
   });
 });
+
+
