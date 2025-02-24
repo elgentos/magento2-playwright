@@ -24,7 +24,7 @@ Or with more jargon: a Behavior Driven Development (BDD) End-To-End (E2E) testin
 - [Known issues](#known-issues)
 
 ## Introduction
-Welcome to the Magento 2 BDD E2E Testing Suite! This project, referred to as “Testing Suite” from here on out, is an open-source initiative aimed at supporting developers in (end-to-end) testing their Magento 2 applications. 
+Welcome to the Magento 2 BDD E2E Testing Suite! This project, referred to as “Testing Suite” from here on out, is an open-source initiative aimed at supporting developers in (end-to-end) testing their Magento 2 applications.
 
 By combining the power of Behavior Driven Development (BDD) with the flexibility of Playwright and the clarity of Gherkin syntax embedded in JSDoc comments, we aim to make testing more accessible, readable, and maintainable for both developers and non-technical stakeholders.
 
@@ -65,6 +65,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 
 
 ### Installation
+
 1. **Clone the repository**
 
    ```bash
@@ -77,34 +78,49 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
    cd magento2-bdd-e2e-testing-suite
    ```
 
-3. **Install dependencies**
+3. **Required Dependencies**
+
+   The project requires the following npm packages:
+   - @playwright/test (^1.47.2) - Core Playwright testing framework
+   - @faker-js/faker (^9.4.0) - For generating test data
+   - @types/node (^22.7.4) - TypeScript definitions for Node.js
+   - dotenv (^16.4.5) - For environment variable management
+
+4. **Install all dependencies**
 
    ```bash
    npm install
    ```
 
-4. **Configure environment**
+5. **Install Playwright browsers**
 
-   Copy the example environment file and update it with your configuration.
+   ```bash
+   npx playwright install --with-deps
+   ```
+
+6. **Configure environment**
+
+   Copy the example environment files and update them with your configuration:
 
    ```bash
    cp .env.example .env
    cp playwright.config.example.ts playwright.config.ts
+   cp bypass-captcha.config.example.ts bypass-captcha.config.ts
    ```
 
    Update `.env` with your Magento 2 instance URL and other necessary settings.
 
-5. **Update files in the `config` folder**
+7. **Update files in the `config` folder**
 
-	Input variables, slugs, selectors and expected text are all stored in files within the `config` folder. To ensure the Testing Suite runs on your own website, these need to be updated. All `test` and `page` files use these variables, so adjusting the config folder to suit your website should be enough to run these tests on the website of your choosing.
+   Input variables, slugs, selectors and expected text are stored in files within the `config` folder. Update these to match your website's configuration.
 
 ### Before you run
 Before you run our Testing Suite, you will need to perform a few steps to set-up your environment. Note that we are working on an update to automate these steps. Check out the [Contributing](#contributing) section if you want to help!
 
 1. Create an account (and set up environment)
-	
+
 	The testing suite contains a test to ensure account creation is possible. Once again, due to the nature of running tests, it’s necessary to create an account before the other tests can be run. You can choose to run `register.spec.ts` to create an account or do it by hand, then update your `.env` variable to ensure tests can use an existing account. You can also run the following command, which will run `register.spec.ts` as well as `setup.spec.ts`:
-	
+
 	```bash
 	npx playwright test --grep @setup
     ```
@@ -112,13 +128,13 @@ Before you run our Testing Suite, you will need to perform a few steps to set-up
 
 	The Testing Suite offers multiple tests to ensure the proper functionality of coupon codes. To do this, you will need to either set an existing coupon code in your `.env` file, or create one and add it.
 
-3. Note that the test “I can change my password” is set to `skip`. 
+3. Note that the test “I can change my password” is set to `skip`.
 
 	This is because updating your password in the middle of running tests will invalidate any subsequent test that requires a password. To test this functionality, change the line from `test.skip('I can change my password')` to `test.only('I can change my password')`. This will ensure *only* this test will be performed. Don’t forget to set it back to `test.skip()` after ensuring this functionality works. This issue is known and will be fixed in the future.
 
 
 ## How to use
-The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit. 
+The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit.
 
 ### Running tests
 To run ALL tests, run the following command.
@@ -261,5 +277,5 @@ Running Playwright/the Testing Suite on Ubuntu has known issues with the Webkit 
 
 ```bash
 npx playwright uninstall
-npx playwright install --with-deps 
+npx playwright install --with-deps
 ```
