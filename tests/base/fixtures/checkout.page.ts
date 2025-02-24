@@ -1,4 +1,5 @@
 import {expect, type Locator, type Page} from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
@@ -30,14 +31,9 @@ export class CheckoutPage {
     let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
     await this.page.goto(slugs.checkoutSlug);
 
-    await this.shippingMethodOptionFixed.check();
-    // Loader pops up, wait for this to be done.
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+    await this.selectShipmentMethod();
 
-    await this.paymentMethodOptionCheck.check();
+    await this.selectPaymentMethod('check');
     // Loader pops up, wait for this to be done.
     await this.page.waitForFunction(() => {
       const element = document.querySelector('.magewire\\.messenger');
@@ -59,6 +55,30 @@ export class CheckoutPage {
     return orderNumber;
   }
 
+  async selectShipmentMethod() {
+    await this.shippingMethodOptionFixed.check();
+    // Wait for shipping method to be applied
+    await this.page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+  }
+
+  async selectPaymentMethod(method: 'check') {
+    switch (method) {
+      case 'check':
+        await this.paymentMethodOptionCheck.check();
+        break;
+      default:
+        throw new Error(`Payment method ${method} is not supported`);
+    }
+
+    // Wait for payment method to be applied
+    await this.page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+  }
 
   // ==============================================
   // Discount-related methods
@@ -78,7 +98,7 @@ export class CheckoutPage {
 
     let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
     let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
-  
+
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
 
@@ -106,7 +126,7 @@ export class CheckoutPage {
       // discount field is not open.
       await this.showDiscountFormButton.click();
     }
-  
+
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
     await cancelCouponButton.click();
 
@@ -115,5 +135,20 @@ export class CheckoutPage {
 
     let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
     await expect(checkoutDiscountField).toBeEditable();
+  }
+
+  async fillGuestAddress() {
+    // Fill in guest information
+    await this.page.getByLabel('Email address', { exact: true }).fill(faker.internet.email());
+    await this.page.getByLabel(UIReference.personalInformation.firstNameLabel).fill(faker.person.firstName());
+    await this.page.getByLabel(UIReference.personalInformation.lastNameLabel).fill(faker.person.lastName());
+
+    // Fill in address information
+    await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).fill(`${faker.location.streetAddress()} Street`);
+    await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.location.zipCode('#####'));
+    await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
+    await this.page.getByLabel(UIReference.newAddress.countryLabel).selectOption('US');
+    await this.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
+    await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number('##########'));
   }
 }

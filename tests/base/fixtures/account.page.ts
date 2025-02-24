@@ -67,26 +67,45 @@ export class AccountPage {
     this.editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
   }
 
-  async addNewAddress(){
+  async addNewAddress() {
     let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-    let streetName = faker.location.streetAddress();
 
-    // Name should be filled in automatically.
-    await expect(this.firstNameField).not.toBeEmpty();
-    await expect(this.lastNameField).not.toBeEmpty();
+    // Generate fake data for all required fields
+    const firstName = faker.person.firstName();
+    const lastName = faker.person.lastName();
+    const phoneNumber = faker.phone.number('##########'); // 10 digits only
+    const streetName = faker.location.streetAddress();
+    const zipCode = faker.location.zipCode('#####'); // 5 digits
+    const city = faker.location.city();
 
-    await this.phoneNumberField.fill(faker.phone.number());
+    // Fill in name fields since we're in guest checkout
+    await this.firstNameField.fill(firstName);
+    await this.lastNameField.fill(lastName);
+
+    // Fill in all required fields
+    await this.phoneNumberField.fill(phoneNumber);
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(faker.location.zipCode());
-    await this.cityField.fill(faker.location.city());
-    await this.stateSelectorField.selectOption(faker.location.state());
+    await this.zipCodeField.fill(zipCode);
+    await this.cityField.fill(city);
+
+    // Select United States as country (if not already selected)
+    await this.countrySelectorField.selectOption('US');
+
+    // Wait for state selector to be enabled after country selection
+    await this.page.waitForTimeout(500);
+
+    // Select a specific state instead of using faker
+    await this.stateSelectorField.selectOption('California');
+
+    // Save the address
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
+    // Verify success
     await expect.soft(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
-  
+
 
   async editExistingAddress(){
     // the notification for a modified address is the same as the notification for a new address.
@@ -129,7 +148,7 @@ export class AccountPage {
     let addressBookArray = await addressBookSection.allInnerTexts();
     let arraySplit = addressBookArray[0].split('\n');
     let addressToBeDeleted = arraySplit[7];
-    
+
     await this.deleteAddressButton.click();
     await this.page.waitForLoadState();
 

@@ -40,7 +40,10 @@
     "checkoutPriceReducedSymbol": "-$",
     "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again.",
     "orderPlacedNotification": "Thank you for your purchase!",
-    "orderPlacedNumberText": "Your order number is:"
+    "orderPlacedNumberText": "Your order # is:",
+    "paymentMethod": {
+      "checkMoneyOrder": "Check / Money Order payment was successfully applied"
+    }
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"

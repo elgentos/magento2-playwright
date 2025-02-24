@@ -52,7 +52,9 @@
     "countryLabel": "Country",
     "provinceSelectLabel": "State/Province",
     "provinceSelectFilterLabel": "Please select a region, state or province.",
-    "saveAdressButton": "Save Address"
+    "saveAdressButton": "Save Address",
+    "defaultCountry": "US",
+    "defaultState": "Alabama"
   },
   "newsletterSubscriptions": {
     "generalSubscriptionCheckLabel": "General Subscription",
@@ -84,19 +86,15 @@
   "checkout": {
     "shippingMethodFixedLabel": "Fixed",
     "paymentOptionCheckLabel": "Check / Money order Free",
-    "openDiscountFormLabel": "Apply Discount Code",
     "placeOrderButtonLabel": "Place Order",
-    "cancelDiscountButtonLabel": "Cancel Coupon",
-    "applyDiscountButtonLabel": "Apply Coupon",
-    "discountInputFieldLabel": "Enter discount code",
     "continueShoppingLabel": "Continue Shopping",
-    "applyDiscountCodeLabel": "Apply Discount Code",
-    "remove": "Remove",
-    "openCartButtonLabel": "Cart",
-    "openCartButtonLabelCont": "item",
-    "openCartButtonLabelContMultiple": "items",
-    "cartDetailsLocator": "#checkout-cart-details div",
-    "shippingAddressRadioLocator": "#shipping-details input[type='radio']"
+    "guestCheckoutEmailLabel": "Email Address",
+    "shippingAddressRadioLocator": "[name='shipping_address_id']",
+    "paymentMethods": {
+      "checkMoneyOrder": "Check / Money order Free",
+      "cashOnDelivery": "Cash On Delivery",
+      "bankTransfer": "Bank Transfer Payment"
+    }
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",

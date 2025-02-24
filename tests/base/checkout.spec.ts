@@ -3,10 +3,11 @@ import {LoginPage} from './fixtures/login.page';
 import {ProductPage} from './fixtures/product.page';
 import {AccountPage} from './fixtures/account.page';
 import { CheckoutPage } from './fixtures/checkout.page';
+import {faker} from '@faker-js/faker';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
-
+import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 /**
  * @feature BeforeEach runs before each test in this group.
@@ -43,7 +44,7 @@ test.describe('Checkout (login required)', () => {
     await loginPage.login(emailInputValue, passwordInputValue);
     await page.goto(slugs.checkoutSlug);
   });
-  
+
   /**
    * @feature Automatically fill in certain data in checkout (if user is logged in)
    * @scenario When the user navigates to the checkout (with a product), their name and address should be filled in.
@@ -166,3 +167,52 @@ test.describe('Checkout (guest)', () => {
   });
 });
 
+/**
+ * @feature Guest Checkout Payment Methods
+ * @scenario Guest user can complete checkout with different payment methods
+ * @given I have a product in my cart
+ * @when I proceed to checkout as guest
+ *  @and I select a payment method
+ *  @and I complete the checkout process
+ * @then I should receive an order confirmation
+ *  @and the correct payment method should be applied
+ */
+test.describe('Guest checkout payment methods', () => {
+  test.beforeEach(async ({ page }) => {
+    const productPage = new ProductPage(page);
+    await page.goto(slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  });
+
+  test('Complete checkout with Check/Money Order payment', { tag: '@guest-checkout-payment' }, async ({ page }, testInfo) => {
+    const checkoutPage = new CheckoutPage(page);
+
+    await page.goto(slugs.checkoutSlug);
+    await checkoutPage.fillGuestAddress();
+    await checkoutPage.selectShipmentMethod();
+
+    // Fixes bug where state is not unselected after shipment method selection.
+    await checkoutPage.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
+
+    await checkoutPage.selectPaymentMethod('check');
+
+    await page.waitForTimeout(4000);
+    await checkoutPage.placeOrderButton.click();
+    await page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+
+    // Verify order placement
+    await expect.soft(page.getByText(outcomeMarker.checkout.orderPlacedNotification)).toBeVisible();
+    // Fetch order number after placing order
+    const orderNumber = await page.locator('p').getByText('Your order # is:').innerText();
+    await expect.soft(page.getByText(orderNumber)).toBeVisible();
+
+    // Verify success page elements
+    await expect(checkoutPage.continueShoppingButton).toBeVisible();
+
+    // Add order number to test info
+    testInfo.annotations.push({ type: 'Order created with Check / Money Order payment', description: orderNumber.replace('Your order # is:', '') });
+  });
+});
