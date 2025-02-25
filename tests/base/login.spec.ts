@@ -1,5 +1,5 @@
 import {test as base} from '@playwright/test';
-import {LoginPage} from './fixtures/login.page';
+import {LoginPage} from './poms/login.page';
 
 base('User can log in with valid credentials', async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";

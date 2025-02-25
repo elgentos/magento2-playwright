@@ -1,12 +1,24 @@
 import { test, expect } from '@playwright/test';
-import { ProductPage } from './fixtures/product.page';
-import { MainMenuPage } from './fixtures/mainmenu.page';
-import {LoginPage} from './fixtures/login.page';
-import { CartPage } from './fixtures/cart.page';
+import {productTest} from './fixtures/fixtures';
+import {ProductPage} from './poms/product.page';
+import {LoginPage} from './poms/login.page';
+import {CartPage} from './poms/cart.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
-import outcomeMarker from './config/outcome-markers/outcome-markers.json';
+
+productTest('Fixture test', async ({productPage}) => {
+  const page = productPage.page;
+  await page.goto(slugs.cartSlug);
+  await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+});
+
+productTest('Other fixture test', async ({userProductPage, page}) => {
+  const { loginPage, productPage } = userProductPage;
+  await page.goto(slugs.cartSlug);
+  await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+});
+
 
 test.describe('Cart functionalities (guest)', () => {
   /**

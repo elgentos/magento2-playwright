@@ -1,12 +1,15 @@
 import { test as base } from '@playwright/test';
-import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
-import { AccountPage } from './fixtures/account.page';
+import { MagentoAdminPage } from './poms/magentoAdmin.page';
+import { AccountPage } from './poms/account.page';
 
 import values from './config/input-values/input-values.json';
 import fs from 'fs';
 import path from 'path';
 
 base('Enable multiple Magento admin logins', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
+  // mark test as slow to double timeout
+  base.slow();
+
   const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
   const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
 
@@ -29,11 +32,13 @@ base('Enable multiple Magento admin logins', {tag: '@setup',}, async ({ page, br
 });
 
 base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
+
   if (process.env[`SETUP_COMPLETE_${browserName?.toUpperCase()}`]) {
     testInfo.skip(true, `Skipping because configuration is only needed once.`);
   }
 
   await base.step(`Step 1: Perform actions`, async() =>{
+    // Login to admin page
     const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
     const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
 
@@ -44,17 +49,19 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
     const magentoAdminPage = new MagentoAdminPage(page);
     await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
 
+    // Add coupon code
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-
     const couponCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
     if (!couponCode) {
       throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} is not defined in your .env file.`);
     }
     await magentoAdminPage.addCartPriceRule(couponCode);
+
+    // Disable login Captcha
     await magentoAdminPage.disableLoginCaptcha();
 
+    // Create account
     const accountPage = new AccountPage(page);
-
     const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
     const accountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 

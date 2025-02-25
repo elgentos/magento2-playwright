@@ -1,5 +1,5 @@
 import {test} from '@playwright/test';
-import {RegisterPage} from './fixtures/register.page';
+import {RegisterPage} from './poms/register.page';
 
 import inputvalues from './config/input-values/input-values.json';
 

@@ -1,9 +1,9 @@
 import {test, expect} from '@playwright/test';
-import {MainMenuPage} from './fixtures/mainmenu.page';
-import {LoginPage} from './fixtures/login.page';
-import {RegisterPage} from './fixtures/register.page';
-import {AccountPage} from './fixtures/account.page';
-import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
+import {MainMenuPage} from './poms/mainmenu.page';
+import {LoginPage} from './poms/login.page';
+import {RegisterPage} from './poms/register.page';
+import {AccountPage} from './poms/account.page';
+import {NewsletterSubscriptionPage} from './poms/newsletter.page';
 
 import slugs from './config/slugs.json';
 import inputvalues from './config/input-values/input-values.json';
