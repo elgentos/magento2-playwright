@@ -1,5 +1,6 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
+import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
@@ -16,6 +17,10 @@ export class CartPage {
     this.page = page;
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
   }
+
+  // ==============================================
+  // Product-related methods
+  // ==============================================
 
   async changeProductQuantity(amount: string){
     const productRow = this.page.getByRole('row', {name: UIReference.productPage.simpleProductTitle});
@@ -38,15 +43,16 @@ export class CartPage {
     let subTotalAfterUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
 
     // Assertions: subtotals are different, and quantity field is still the new amount.
-    expect(subTotalAfterUpdate, `Subtotals should not be the same`).not.toEqual(subTotalBeforeUpdate);
-    expect(currentQuantity, `quantity should be the new value`).toEqual(amount);
+    expect(subTotalAfterUpdate, `Subtotal before (${subTotalBeforeUpdate}) should not be the same as after update (${subTotalAfterUpdate}).`).not.toEqual(subTotalBeforeUpdate);
+    expect(currentQuantity, `Current quantity (${currentQuantity}) should not be the same as before (${amount}).`).toEqual(amount);
   }
 
-  // ==============================================
-  // Product-related methods
-  // ==============================================
-
   async removeProduct(productTitle: string){
+    // Ensure we are on the cart page
+    if(this.page.url() !== slugs.cartSlug){
+      await this.page.goto(slugs.cartSlug);
+    };
+
     let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
     await removeButton.click();
     await this.page.waitForLoadState();

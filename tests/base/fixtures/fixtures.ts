@@ -9,7 +9,7 @@ import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
 type CustomFixtures = {
-  productPage: ProductPage;
+  productPage: any;
   userProductPage: any;
 }
 
@@ -17,13 +17,13 @@ export const productTest = base.extend<CustomFixtures>({
   productPage: async ({page}, use) => {
     // Setup the fixture
     const productPage = new ProductPage(page);
+    const cartPage = new CartPage(page);
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
 
     // Use step (where the actual test takes place)
-    await use(productPage);
+    await use({productPage, cartPage, page});
 
     // Teardown & Cleanup
-    const cartPage = new CartPage(page);
     await cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
   },
 
@@ -43,7 +43,7 @@ export const productTest = base.extend<CustomFixtures>({
 
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     // Use step (where the actual test takes place)
-    await use({productPage, loginPage});
+    await use({productPage, loginPage, page});
 
     // Teardown & Cleanup
     const cartPage = new CartPage(page);

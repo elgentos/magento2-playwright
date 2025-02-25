@@ -13,11 +13,84 @@ productTest('Fixture test', async ({productPage}) => {
   await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
 });
 
-productTest('Other fixture test', async ({userProductPage, page}) => {
-  const { loginPage, productPage } = userProductPage;
+productTest('Other fixture test', async ({userProductPage}) => {
+  await userProductPage.page.goto(slugs.cartSlug);
+  await expect(userProductPage.page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+});
+
+/**
+ * @feature Add product to cart
+ * @scenario User adds a product to their cart
+ * @given I am on any page
+ * @when I navigate to a (simple) product page
+ * @and I click the 'add to cart' button
+ * @then I should see a notification the product has been added
+ * @and when I navigate to the cart
+ * @then I should see the product in my cart
+ */
+test('Add_simple_product_to_cart', {tag: '@cart'}, async ({page}) => {
+  const productPage = new ProductPage(page);
+  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   await page.goto(slugs.cartSlug);
   await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
 });
+
+/** 
+ * @feature Remove product from cart
+ * @scenario User adds a product to their cart, then deletes it
+ * @given I add a product to my cart
+ * @when I navigate to the cart page
+ * @and I click the delete button
+ * @then I should see a notification that the product has been removed from my cart
+ *  @and I should no longer see the product in my cart
+ */
+productTest('Remove_simple_product_from_cart', async ({productPage}) => {
+  const cartPage = new CartPage(productPage.page);
+  await cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
+  // Add product again for the teardown
+  // TODO: Create fix so that the product does not have to be added again
+  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+});
+
+/**
+ * @feature Change quantity of products in cart
+ * @scenario User has added a product and changes the quantity
+ * @given I have a product in my cart
+ * @and I am on the cart page
+ * @when I change the quantity of the product
+ * @and I click the update button
+ * @then the quantity field should have the new amount
+ * @and the subtotal/grand total should update
+ */
+productTest('Change_quantity_of_product_in_cart', async ({productPage}) => {
+  await productPage.page.goto(slugs.cartSlug);
+  await productPage.cartPage.changeProductQuantity('2');
+});
+
+/**
+ * @feature Discount Code (cart)
+ * @scenario User adds a discount code to their cart
+ * @given I have a product in my cart
+ *  @and I am on my cart page
+ * @when I click on the 'add discount code' button
+ * @then I fill in a code
+ *  @and I click on 'apply code'
+ * @then I should see a confirmation that my code has been added
+ *  @and the code should be visible in the cart
+ *  @and a discount should be applied to the product
+ */
+productTest('Add_coupon_code_in_cart', async ({productPage, browserName}) => {
+  await productPage.page.goto(slugs.cartSlug);
+
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
+  if(!discountCode) {
+    throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
+  }
+
+  await productPage.cartPage.applyDiscountCode(discountCode);
+});
+
 
 
 test.describe('Cart functionalities (guest)', () => {
