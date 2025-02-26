@@ -125,6 +125,10 @@ export class CheckoutPage {
     await expect(checkoutDiscountField).toBeEditable();
   }
 
+  // ==============================================
+  // Price summary methods
+  // ==============================================
+
   async getPriceValue(element: Locator): Promise<number> {
     const priceText = await element.innerText();
     // Extract just the price part after the $ symbol
@@ -140,11 +144,10 @@ export class CheckoutPage {
 
     const calculatedTotal = +(subtotal + shipping + tax).toFixed(2);
 
-    console.log(`subtotal: ${subtotal}, shipping: ${shipping}, tax: ${tax}, grandTotal: ${grandTotal}, calculatedTotal: ${calculatedTotal}`);
-
-    expect(subtotal).toBeGreaterThan(0);
-    expect(shipping).toBeGreaterThan(0);
-    //expect(tax).toBeGreaterThan(0);
-    expect(grandTotal).toBe(calculatedTotal);
+    expect(subtotal, `Subtotal (${subtotal}) should be greater than 0`).toBeGreaterThan(0);
+    expect(shipping, `Shipping cost (${shipping}) should be greater than 0`).toBeGreaterThan(0);
+    // Enable when tax settings are set.
+    //expect(tax, `Tax (${tax}) should be greater than 0`).toBeGreaterThan(0);
+    expect(grandTotal, `Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`).toBe(calculatedTotal);
   }
 }
