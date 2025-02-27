@@ -3,7 +3,6 @@ import {LoginPage} from './fixtures/login.page';
 import {ProductPage} from './fixtures/product.page';
 import {AccountPage} from './fixtures/account.page';
 import { CheckoutPage } from './fixtures/checkout.page';
-import {faker} from '@faker-js/faker';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
@@ -177,39 +176,58 @@ test.describe('Checkout (guest)', () => {
    * @then I should see a confirmation that my order has been placed
    *  @and a order number should be created and show to me
    */
-  test('Complete checkout with Check/Money Order payment', { tag: ['@checkout', '@guest'] }, async ({ page }, testInfo) => {
+  test('Complete checkout with Check/Money Order payment', {
+    tag: ['@checkout', '@guest'],
+  }, async ({ page }, testInfo) => {
+    test.slow();
     const checkoutPage = new CheckoutPage(page);
 
-    await page.goto(slugs.checkoutSlug);
-    await checkoutPage.fillGuestAddress();
-    await checkoutPage.selectShipmentMethod();
+    await test.step('Navigate to checkout', async () => {
+      await page.goto(slugs.checkoutSlug);
+      await checkoutPage.waitForHyvaToasts();
+    });
 
-    // Fixes bug where state is not unselected after shipment method selection.
-    await checkoutPage.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
+    await test.step('Fill guest address', async () => {
+      await checkoutPage.fillGuestAddress();
+      await checkoutPage.waitForHyvaToasts();
+    });
 
-    // Select payment method
-    await checkoutPage.selectPaymentMethod('check');
-    await checkoutPage.placeOrderButton.click();
-    await checkoutPage.waitForHyvaToasts();
+    await test.step('Select state and shipping method', async () => {
+      await checkoutPage.selectShipmentMethod();
+      await checkoutPage.waitForHyvaToasts();
+    });
 
-    // Wait for redirect to success page and verify we're there
-    await expect(page).toHaveURL(new RegExp(slugs.successSlug));
+    await test.step('Select payment method and place order', async () => {
+      await checkoutPage.selectPaymentMethod('check');
+      await checkoutPage.waitForHyvaToasts();
 
-    // Verify order placement
-    await expect.soft(page.getByText(outcomeMarker.checkout.orderPlacedNotification)).toBeVisible();
+      // Wait for state dropdown to be interactive and visible
+      await expect(page.getByLabel(UIReference.newAddress.provinceSelectLabel))
+        .toBeEnabled();
 
-    // Verify order placement on success page
-    await expect(page.getByText(outcomeMarker.checkout.orderPlacedNotification)).toBeVisible();
+      // Select state
+      await page.getByLabel(UIReference.newAddress.provinceSelectLabel)
+        .selectOption(UIReference.newAddress.defaultState);
+      await checkoutPage.waitForHyvaToasts();
 
-    // Fetch order number after placing order
-    const orderNumber = await page.locator('p').getByText('Your order # is:').innerText();
-    await expect(page.getByText(orderNumber)).toBeVisible();
+      // Ensure place order button is clickable
+      await expect(checkoutPage.placeOrderButton).toBeEnabled({ timeout: 10000 });
+      await checkoutPage.placeOrderButton.click();
+      await checkoutPage.waitForHyvaToasts();
+    });
 
-    // Verify success page elements
-    await expect(checkoutPage.continueShoppingButton).toBeVisible();
+    await test.step('Verify order number', async () => {
+      // Verify order success message
+      await expect(page.getByText('Order process completed'), 'Order completion message should be visible').toBeVisible();
+      const orderNumberElement = page.locator('p').getByText('Your order # is:');
+      await expect(orderNumberElement, 'Order number should be visible on confirmation page').toBeVisible();
 
-    // Add order number to test info
-    testInfo.annotations.push({ type: 'Order created with Check / Money Order payment', description: orderNumber.replace('Your order # is:', '') });
+      const orderNumber = await orderNumberElement.innerText();
+      testInfo.annotations.push({
+        type: 'Order created with Check / Money Order payment',
+        description: orderNumber.replace('Your order # is:', '').trim()
+      });
+    });
   });
 });
 

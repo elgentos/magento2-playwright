@@ -24,10 +24,16 @@ export class CheckoutPage {
   }
 
   async waitForHyvaToasts() {
+    // Wait for toast to appear and disappear
     await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    });
+      const elements = document.querySelectorAll('.magewire\\.messenger');
+      return Array.from(elements).every(element =>
+        !element || getComputedStyle(element).height === '0px' || element.classList.contains('hidden')
+      );
+    }, { timeout: 10000 });
+
+    // Additional safety delay
+    await this.page.waitForTimeout(500);
   }
 
   // ==============================================
@@ -131,6 +137,10 @@ export class CheckoutPage {
     await expect(checkoutDiscountField).toBeEditable();
   }
 
+  // ==============================================
+  // Address-related methods
+  // ==============================================
+
   async fillGuestAddress() {
     // Fill in guest information
     await this.page.getByLabel('Email address', { exact: true }).fill(faker.internet.email());
@@ -139,10 +149,13 @@ export class CheckoutPage {
 
     // Fill in address information
     await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).fill(`${faker.location.streetAddress()} Street`);
+    await this.page.getByLabel(UIReference.newAddress.countryLabel).selectOption('US');
+    await this.waitForHyvaToasts();
+    await this.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
+    await this.waitForHyvaToasts();
     await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.location.zipCode('#####'));
     await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
-    await this.page.getByLabel(UIReference.newAddress.countryLabel).selectOption('US');
-    await this.page.getByLabel(UIReference.newAddress.provinceSelectLabel).selectOption('Alabama');
     await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number('##########'));
+    await this.waitForHyvaToasts();
   }
 }
