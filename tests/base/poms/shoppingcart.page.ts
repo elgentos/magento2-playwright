@@ -60,6 +60,7 @@ export class CartPage {
     
     // Expect product to no longer be visible in the cart
     await expect (this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
+    return;
   }
 
   // ==============================================
@@ -90,9 +91,13 @@ export class CartPage {
     }
   
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
+    // Firefox specifc fix: wait for element to be visible.
+    await cancelCouponButton.waitFor();
     await cancelCouponButton.click();
     await this.page.waitForLoadState();
 
+    // Wait for notification to become visible
+    await this.page.getByText(outcomeMarker.cart.discountRemovedNotification).waitFor();
     await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
   }

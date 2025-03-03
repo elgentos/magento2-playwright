@@ -1,6 +1,6 @@
 import {test as base} from '@playwright/test';
 import {ProductPage} from '../poms/product.page';
-import { CartPage } from '../poms/cart.page';
+import { CartPage } from '../poms/shoppingcart.page';
 import { LoginPage } from '../poms/login.page';
 import {MainMenuPage} from '../poms/mainmenu.page';
 
