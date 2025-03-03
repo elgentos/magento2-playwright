@@ -29,7 +29,11 @@ base('Enable multiple Magento admin logins', {tag: '@setup',}, async ({ page, br
 });
 
 base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
-  if (process.env[`SETUP_COMPLETE_${browserName?.toUpperCase()}`]) {
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  const setupCompleteVar = `SETUP_COMPLETE_${browserEngine}`;
+  const isSetupComplete = process.env[setupCompleteVar];
+
+  if(isSetupComplete === 'DONE') {
     testInfo.skip(true, `Skipping because configuration is only needed once.`);
   }
 
@@ -83,10 +87,14 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       if (fs.existsSync(envPath)) {
         const envContent = fs.readFileSync(envPath, 'utf-8');
         const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-        if (!envContent.includes(`SETUP_COMPLETE_${browserEngine}=true`)) {
-          fs.appendFileSync(envPath, `\nSETUP_COMPLETE_${browserEngine}=true`);
-          console.log(`Environment setup completed successfully. 'SETUP_COMPLETE_${browserEngine}=true' added to .env file.`);
+        if (!envContent.includes(`SETUP_COMPLETE_${browserEngine}='DONE'`)) {
+          fs.appendFileSync(envPath, `\nSETUP_COMPLETE_${browserEngine}='DONE'`);
+          console.log(`Environment setup completed successfully. 'SETUP_COMPLETE_${browserEngine}='DONE'' added to .env file.`);
         }
+        // if (!envContent.includes(`SETUP_COMPLETE_${browserEngine}=true`)) {
+        //   fs.appendFileSync(envPath, `\nSETUP_COMPLETE_${browserEngine}=true`);
+        //   console.log(`Environment setup completed successfully. 'SETUP_COMPLETE_${browserEngine}=true' added to .env file.`);
+        // }
       } else {
         throw new Error('.env file not found. Please ensure it exists in the root directory.');
       }
