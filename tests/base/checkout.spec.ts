@@ -1,12 +1,40 @@
 import {test, expect} from '@playwright/test';
+import {productTest} from './fixtures/fixtures';
 import {LoginPage} from './poms/login.page';
-import {ProductPage} from './poms/product.page';
 import {AccountPage} from './poms/account.page';
 import { CheckoutPage } from './poms/checkout.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
 
+/**
+ * @feature User address data automatically filled in checkout
+ * @scenario When the user navigates to the checkout (with a product), their name and address should be filled in.
+ * @given I am logged in
+ *  @and I have a product in my cart
+ *  @and I have navigated to the checkout page
+ * @then My name and address should already be filled in
+ */
+productTest('Address_is_filled_in_checkout', {tag: '@checkout'}, async ({userProductPage}) => {
+  await userProductPage.page.goto(slugs.checkoutSlug);
+  let addressField = userProductPage.page.getByLabel(UIReference.newAddress.streetAddressLabel);
+
+  if(await addressField.isVisible()) {
+    // Add an address field is visible
+    await userProductPage.page.goto(slugs.account.addressBookSlug);
+    // Check if the button 'Change billing address' is visible.
+    if(await userProductPage.page.getByRole('link', { name: 'Change Billing Address arrow-' }).isVisible()) {
+      throw new Error(`Address has seemingly been added, but is not filled in.`);
+    } else {
+      const accountPage = new AccountPage(userProductPage.page);
+      await accountPage.addNewAddress();
+      await userProductPage.page.goto(slugs.checkoutSlug);
+    }
+  }
+
+  let shippingRadioButton = userProductPage.page.locator(UIReference.checkout.shippingAddressRadioLocator).first();
+  await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
+});
 
 /**
  * @feature BeforeEach runs before each test in this group.
@@ -19,13 +47,13 @@ import UIReference from './config/element-identifiers/element-identifiers.json';
  *  @then the checkout page should be shown
  *  @and I should see the product in the minicart
  */
-test.beforeEach(async ({ page }) => {
-  const productPage = new ProductPage(page);
+// test.beforeEach(async ({ page }) => {
+//   const productPage = new ProductPage(page);
 
-  await page.goto(slugs.productpage.simpleProductSlug);
-  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-  await page.goto(slugs.checkoutSlug);
-});
+//   await page.goto(slugs.productpage.simpleProductSlug);
+//   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+//   await page.goto(slugs.checkoutSlug);
+// });
 
 
 test.describe('Checkout (login required)', () => {
