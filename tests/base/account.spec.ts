@@ -13,7 +13,7 @@ import UIReference from './config/element-identifiers/element-identifiers.json';
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 /**
- * @feature Magento 2 newsletter subscriptions
+ * @feature Newsletter subscriptions
  * @scenario User (un)subscribes from a newsletter
  * @given I am logged in
  *  @and I am on the account dashboard page
@@ -32,7 +32,7 @@ productTest('Update_newsletter_subscription', {tag: ['@fixture', '@newsletter']}
 });
 
 /**
- * @feature Magento 2 Add First Address to Account
+ * @feature Add First Address to Account
  * @scenario User adds a first address to their account
  * @given I am logged in
  *  @and I am on the account dashboard page
@@ -60,6 +60,7 @@ productTest('Add_the_first_address', {tag: ['@fixture', '@address']}, async ({us
 });
 
 /**
+ * @feature Add another address
  * @given I am logged in
  *  @and I am on the account dashboard page
  * @when I go to the page where I can add another address
@@ -68,19 +69,73 @@ productTest('Add_the_first_address', {tag: ['@fixture', '@address']}, async ({us
  * @then I should see a notification my address has been updated.
  *  @and The new address should be listed
  */
-productTest('Add_another_address', {tag: ['@fixture', '@address']}, async ({userPage}, testInfo) => {
+productTest('Add_another_address', {tag: ['@fixture', '@address']}, async ({userPage}) => {
   await userPage.page.goto(slugs.account.addressNewSlug);
   const accountPage = new AccountPage(userPage.page);
   
   await accountPage.addNewAddress();
 });
-// test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
-//   await page.goto(slugs.account.addressNewSlug);
+
+/**
+ * @feature Update Address in Account
+ * @scenario User updates an existing address to their account
+ * @given I am logged in
+ *  @and I am on the account dashboard page
+ * @when I go to the page where I can see my address(es)
+ * @when I click on the button to edit the address
+ *   @and I fill in the required information correctly
+ *   @then I click the save button
+ * @then I should see a notification my address has been updated.
+ *  @and The updated address should be visible in the addres book page.
+ */
+productTest('Update_existing_address', {tag: ['@fixture', '@address']}, async ({userPage}) => {
+  const accountPage = new AccountPage(userPage.page);
+  await userPage.page.goto(slugs.account.addressBookSlug);
+  let editAddressButton = userPage.page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
+  if(await editAddressButton.isHidden()){
+    // The edit address button was not found, add another address first.
+    await accountPage.addNewAddress();
+  }
+  await accountPage.editExistingAddress();
+});
+
+
+// test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
 //   const accountPage = new AccountPage(page);
-  
-//   await accountPage.addNewAddress();
+//   await page.goto(slugs.account.addressNewSlug);
+//   let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
+
+//   if(await editAddressButton.isHidden()){
+//     // The edit address button was not found, add another address first.
+//     await accountPage.addNewAddress();
+//   }
+
+//   await page.goto(slugs.account.addressBookSlug);
+//   await accountPage.editExistingAddress();
 // });
 
+/**
+ * @feature Magento 2 Delete Address from account
+ * @scenario User removes an address from their account
+ * @given I am logged in
+ *  @and I am on the account dashboard page
+ * @when I go to the page where I can see my address(es)
+ * @when I click the trash button for the address I want to delete
+ *   @and I click the confirmation button
+ * @then I should see a notification my address has been deleted.
+ *  @and The address should be removed from the overview.
+ */
+test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  const accountPage = new AccountPage(page);
+
+  let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
+
+  if(await deleteAddressButton.isHidden()) {
+    await page.goto(slugs.account.addressNewSlug);
+    await accountPage.addNewAddress();
+  }
+  await accountPage.deleteFirstAddressFromAddressBook();
+});
 
 
 
