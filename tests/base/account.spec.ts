@@ -1,4 +1,5 @@
 import {test, expect} from '@playwright/test';
+import {faker} from '@faker-js/faker';
 import {productTest} from './fixtures/fixtures';
 
 import {MainMenuPage} from './poms/mainmenu.page';
@@ -120,18 +121,49 @@ productTest('Delete_existing_address', {tag: ['@fixture', '@address']}, async ({
   }
   await accountPage.deleteFirstAddressFromAddressBook();
 });
-// test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
-//   const accountPage = new AccountPage(page);
 
-//   let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
+/**
+ * @feature Magento 2 Change Password
+ * @scenario User changes their password
+ * @given I am logged in
+ * @and I am on the Account Dashboard page
+ * @when I navigate to the Account Information page
+ * @and I check the 'change password' option
+ * @when I fill in the new credentials
+ * @and I click Save
+ * @then I should see a notification that my password has been updated
+ * @and I should be able to login with my new credentials.
+ */
+test('Password_change',{ tag: '@password',}, async ({page, browserName}, testInfo) => {
+  // Create instances and set variables
+  const registerPage = new RegisterPage(page);
+  const accountPage = new AccountPage(page);
+  const loginPage = new LoginPage(page);
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let emailInputValue = `passwordupdate-${browserEngine}@example.com`;
+  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+  let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
 
-//   if(await deleteAddressButton.isHidden()) {
-//     await page.goto(slugs.account.addressNewSlug);
-//     await accountPage.addNewAddress();
-//   }
-//   await accountPage.deleteFirstAddressFromAddressBook();
-// });
+  if(!changedPasswordValue || !passwordInputValue) {
+    throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
+  }
 
+  await test.step('Create a throwaway account', async () =>{
+    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailInputValue, passwordInputValue);
+  });
+
+  await test.step('Update the password', async () =>{
+    await page.goto(slugs.account.changePasswordSlug);
+    await page.waitForLoadState();
+    await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
+  });
+
+  await test.step('Login with updated password', async () =>{
+    await loginPage.login(emailInputValue, changedPasswordValue);
+    await loginPage.logout();
+  });
+
+});
 
 
 // // Before each test, log in
