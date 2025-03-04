@@ -8,12 +8,16 @@ export class LoginPage {
   readonly loginEmailField: Locator;
   readonly loginPasswordField: Locator;
   readonly loginButton: Locator;
+  readonly mainMenuAccountButton: Locator;
+  readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.loginEmailField = page.getByLabel(UIReference.credentials.emailFieldLabel, {exact: true});
     this.loginPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, {exact: true});
     this.loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
+    this.mainMenuAccountButton = page.getByLabel(UIReference.mainMenu.myAccountButtonLabel);
+    this.mainMenuLogoutItem = page.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
   }
 
   async login(email: string, password: string){
@@ -24,5 +28,10 @@ export class LoginPage {
     await this.loginButton.press("Enter");
 
     await expect(this.page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem })).toBeVisible();
+  }
+
+  async logout(){
+    await this.mainMenuAccountButton.click();
+    await this.mainMenuLogoutItem.click();
   }
 }

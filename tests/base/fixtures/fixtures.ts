@@ -10,6 +10,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 
 type CustomFixtures = {
   productPage: any;
+  userPage: any;
   userProductPage: any;
 }
 
@@ -25,6 +26,26 @@ export const productTest = base.extend<CustomFixtures>({
 
     // Teardown & Cleanup
     await cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
+  },
+
+  userPage: async({page, browserName}, use) => {
+    // Setup the fixture
+    const loggedInPage = new LoginPage(page);
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(!emailInputValue || !passwordInputValue) {
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    }
+    await loggedInPage.login(emailInputValue, passwordInputValue);
+
+    // Use step (where the actual test takes place)
+    await use({loggedInPage, page});
+
+    // Teardown & Cleanup
+    await loggedInPage.logout();
+
   },
 
   userProductPage: async ({page, browserName}, use) => {

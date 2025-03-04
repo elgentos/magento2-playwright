@@ -6,7 +6,8 @@
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
     "addressNewSlug": "customer/address/new",
-    "changePasswordSlug": "/customer/account/edit/changepass/1/"
+    "changePasswordSlug": "/customer/account/edit/changepass/1/",
+    "newsLetterSlug": "newsletter/manage/"
   },
   "productpage": {
     "simpleProductSlug": "/push-it-messenger-bag.html",

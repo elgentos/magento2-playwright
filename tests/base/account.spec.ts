@@ -1,4 +1,6 @@
 import {test, expect} from '@playwright/test';
+import {productTest} from './fixtures/fixtures';
+
 import {MainMenuPage} from './poms/mainmenu.page';
 import {LoginPage} from './poms/login.page';
 import {RegisterPage} from './poms/register.page';
@@ -10,19 +12,65 @@ import inputvalues from './config/input-values/input-values.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
-// Before each test, log in
-test.beforeEach(async ({ page, browserName }) => {
-  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+/**
+ * @feature Magento 2 newsletter subscriptions
+ * @scenario User (un)subscribes from a newsletter
+ * @given I am logged in
+ *  @and I am on the account dashboard page
+ * @when I click on the newsletter link in the sidebar
+ *  @then I should navigate to the newsletter subscription page
+ * @when I (un)check the subscription button
+ *  @then I should see a message confirming my action
+ *  @and My subscription option should be updated.
+ */
+productTest('Update_newsletter_subscription', {tag: ['@fixture', '@newsletter']}, async ({userPage, browserName}) => {
+  test.skip(browserName === 'webkit', '.click() does not work, will be fixed later');
+  const newsLetterPage = new NewsletterSubscriptionPage(userPage.page);
+  await newsLetterPage.page.goto(slugs.account.newsLetterSlug);
 
-  if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+  await newsLetterPage.updateNewsletterSubscription();
+});
+
+/**
+ * @feature Magento 2 Add First Address to Account
+ * @scenario User adds a first address to their account
+ * @given I am logged in
+ *  @and I am on the account dashboard page
+ * @when I go to the page where I can add my address
+ *   @and I haven't added an address yet
+ * @when I fill in the required information
+ *   @and I click the save button
+ * @then I should see a notification my address has been updated.
+ *  @and The new address should be selected as default and shipping address
+ */
+
+test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  const accountPage = new AccountPage(page);
+  let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
+
+  if(await addNewAddressTitle.isHidden()) {
+    await accountPage.deleteAllAddresses();
+    testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
+    await page.goto(slugs.account.addressNewSlug);
   }
 
-  const loginPage = new LoginPage(page);
-  await loginPage.login(emailInputValue, passwordInputValue);
+  await accountPage.addNewAddress();
 });
+
+
+// // Before each test, log in
+// test.beforeEach(async ({ page, browserName }) => {
+//   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+//   let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+//   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+//   if(!emailInputValue || !passwordInputValue) {
+//     throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+//   }
+
+//   const loginPage = new LoginPage(page);
+//   await loginPage.login(emailInputValue, passwordInputValue);
+// });
 
 test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
 
@@ -190,34 +238,34 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
     await page.goto(slugs.account.accountOverviewSlug);
   });
 
-  /**
-   * @feature Magento 2 newsletter subscriptions
-   * @scenario User (un)subscribes from a newsletter
-   * @given I am logged in
-   *  @and I am on the account dashboard page
-   * @when I click on the newsletter link in the sidebar
-   *  @then I should navigate to the newsletter subscription page
-   * @when I (un)check the subscription button
-   *  @then I should see a message confirming my action
-   *  @and My subscription option should be updated.
-   */
-  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
-    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
-    const newsletterPage = new NewsletterSubscriptionPage(page);
-    let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
-    const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
+  // /**
+  //  * @feature Magento 2 newsletter subscriptions
+  //  * @scenario User (un)subscribes from a newsletter
+  //  * @given I am logged in
+  //  *  @and I am on the account dashboard page
+  //  * @when I click on the newsletter link in the sidebar
+  //  *  @then I should navigate to the newsletter subscription page
+  //  * @when I (un)check the subscription button
+  //  *  @then I should see a message confirming my action
+  //  *  @and My subscription option should be updated.
+  //  */
+  // test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
+  //   test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
+  //   const newsletterPage = new NewsletterSubscriptionPage(page);
+  //   let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
+  //   const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
 
-    await newsletterLink.click();
-    await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
+  //   await newsletterLink.click();
+  //   await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
 
-    let updateSubscription = await newsletterPage.updateNewsletterSubscription();
+  //   let updateSubscription = await newsletterPage.updateNewsletterSubscription();
 
-    await newsletterLink.click();
+  //   await newsletterLink.click();
 
-    if(updateSubscription){
-      await expect(newsletterCheckElement).toBeChecked();
-    } else {
-      await expect(newsletterCheckElement).not.toBeChecked();
-    }
-  });
+  //   if(updateSubscription){
+  //     await expect(newsletterCheckElement).toBeChecked();
+  //   } else {
+  //     await expect(newsletterCheckElement).not.toBeChecked();
+  //   }
+  // });
 });
