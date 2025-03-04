@@ -53,6 +53,11 @@ export class CartPage {
       await this.page.goto(slugs.cartSlug);
     };
 
+    // If cart is already empty, return
+    if(await this.page.getByText(UIReference.cart.cartEmptyLabel).isVisible()){
+      return;
+    }
+
     let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
     await removeButton.click();
     await this.page.waitForLoadState();

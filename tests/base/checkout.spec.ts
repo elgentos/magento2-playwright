@@ -15,7 +15,7 @@ import UIReference from './config/element-identifiers/element-identifiers.json';
  *  @and I have navigated to the checkout page
  * @then My name and address should already be filled in
  */
-productTest('Address_is_filled_in_checkout', {tag: '@checkout'}, async ({userProductPage}) => {
+productTest('Address_is_filled_in_at_checkout_for_user', {tag: '@checkout'}, async ({userProductPage}) => {
   await userProductPage.page.goto(slugs.checkoutSlug);
   let addressField = userProductPage.page.getByLabel(UIReference.newAddress.streetAddressLabel);
 
@@ -35,6 +35,29 @@ productTest('Address_is_filled_in_checkout', {tag: '@checkout'}, async ({userPro
   let shippingRadioButton = userProductPage.page.locator(UIReference.checkout.shippingAddressRadioLocator).first();
   await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
 });
+
+/**
+ * @feature Place order for simple product
+ * @scenario User places an order for a simple product
+ * @given I have a product in my cart
+ *  @and I am on any page
+ * @when I navigate to the checkout
+ *  @and I fill in the required fields
+ *  @and I click the button to place my order
+ * @then I should see a confirmation that my order has been placed
+ *  @and a order number should be created and show to me
+ */
+productTest('Place_order_for_simple_product', {tag: '@checkout'}, async ({userProductPage}, testInfo) => {
+  const checkoutPage = new CheckoutPage(userProductPage.page);
+  let orderNumber = await checkoutPage.placeOrder();
+  testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
+});
+
+// test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}, testInfo) => {
+//   const checkoutPage = new CheckoutPage(page);
+//   let orderNumber = await checkoutPage.placeOrder();
+//   testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
+// });
 
 /**
  * @feature BeforeEach runs before each test in this group.

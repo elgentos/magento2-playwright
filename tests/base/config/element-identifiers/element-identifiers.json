@@ -80,7 +80,8 @@
     "discountInputFieldLabel": "Enter discount code",
     "applyDiscountButtonLabel": "Apply Discount",
     "cancelCouponButtonLabel": "Cancel Coupon",
-    "updateShoppingCartButtonLabel": "Update Shopping Cart"
+    "updateShoppingCartButtonLabel": "Update Shopping Cart",
+    "cartEmptyLabel": "You have no items in your shopping cart."
   },
   "checkout": {
     "shippingMethodFixedLabel": "Fixed",
