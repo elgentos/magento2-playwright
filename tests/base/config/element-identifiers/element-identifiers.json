@@ -35,6 +35,7 @@
     "accountDashboardTitleLabel": "Account Information",
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
+    "defaultAddressNotSetLabel": "You have not set a default billing address.",
     "addressDeleteIconButton": "trash",
     "editAddressIconButton": "pencil-alt",
     "addressBookArea": ".block-addresses-list",

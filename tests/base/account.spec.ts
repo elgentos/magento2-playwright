@@ -47,7 +47,7 @@ productTest('Add_the_first_address', {tag: ['@fixture', '@address']}, async ({us
   const accountPage = new AccountPage(userPage.page);
   await userPage.page.goto(slugs.account.accountOverviewSlug);
 
-  let defaultBillingAddressSet = userPage.page.getByText("You have not set a default billing address.");
+  let defaultBillingAddressSet = userPage.page.getByText(UIReference.accountDashboard.defaultAddressNotSetLabel);
 
   if(await defaultBillingAddressSet.isVisible()) {
     // No default address set, so no address has been added yet.
