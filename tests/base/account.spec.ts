@@ -43,19 +43,34 @@ productTest('Update_newsletter_subscription', {tag: ['@fixture', '@newsletter']}
  * @then I should see a notification my address has been updated.
  *  @and The new address should be selected as default and shipping address
  */
+productTest('Add_the_first_address', {tag: ['@fixture', '@address']}, async ({userPage}, testInfo) => {
+  const accountPage = new AccountPage(userPage.page);
+  await userPage.page.goto(slugs.account.accountOverviewSlug);
 
-test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
-  const accountPage = new AccountPage(page);
-  let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
+  let defaultBillingAddressSet = userPage.page.getByText("You have not set a default billing address.");
 
-  if(await addNewAddressTitle.isHidden()) {
-    await accountPage.deleteAllAddresses();
-    testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
-    await page.goto(slugs.account.addressNewSlug);
+  if(await defaultBillingAddressSet.isVisible()) {
+    // No default address set, so no address has been added yet.
+    await userPage.page.goto(slugs.account.addressNewSlug);
+    await accountPage.addNewAddress();
+  } else {
+    testInfo.annotations.push({ type: 'Test skipped', description: `A default address has been set, adding a first address has already been done.`});
+    test.skip(true,'Default billing address found.');
   }
-
-  await accountPage.addNewAddress();
 });
+
+// test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+//   const accountPage = new AccountPage(page);
+//   let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
+
+//   if(await addNewAddressTitle.isHidden()) {
+//     await accountPage.deleteAllAddresses();
+//     testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
+//     await page.goto(slugs.account.addressNewSlug);
+//   }
+
+//   await accountPage.addNewAddress();
+// });
 
 
 // // Before each test, log in
