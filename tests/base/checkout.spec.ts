@@ -6,6 +6,7 @@ import { CheckoutPage } from './poms/checkout.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
+import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 /**
  * @feature User address data automatically filled in checkout
@@ -53,11 +54,76 @@ productTest('Place_order_for_simple_product', {tag: '@checkout'}, async ({userPr
   testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
 });
 
-// test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}, testInfo) => {
-//   const checkoutPage = new CheckoutPage(page);
-//   let orderNumber = await checkoutPage.placeOrder();
-//   testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
+/**
+ * @feature Discount Code
+ * @scenario User adds a discount code to their cart
+ * @given I have a product in my cart
+ *  @and I am on my cart page
+ * @when I click on the 'add discount code' button
+ * @then I fill in a code
+ *  @and I click on 'apply code'
+ * @then I should see a confirmation that my code has been added
+ *  @and the code should be visible in the cart
+ *  @and a discount should be applied to the product
+ */
+productTest('Add_coupon_code_in_checkout', {tag: ['@checkout', '@coupon-code']}, async ({productPage, browserName}) => {
+  await productPage.page.goto(slugs.checkoutSlug);
+  const checkout = new CheckoutPage(productPage.page);
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
+  if(!discountCode) {
+    throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
+  }
+
+  await checkout.applyDiscountCodeCheckout(discountCode);
+});
+
+/**
+ * @feature Remove discount code from checkout
+ * @scenario User has added a discount code, then removes it
+ * @given I have a product in my cart
+ * @and I am on the checkout page
+ * @when I add a discount code
+ * @then I should see a notification
+ * @and the code should be visible in the cart
+ * @and a discount should be applied to a product
+ * @when I click the 'cancel coupon' button
+ * @then I should see a notification the discount has been removed
+ * @and the discount should no longer be visible.
+ */
+productTest('Remove_coupon_code_in_checkout', {tag: ['@checkout', '@coupon-code']}, async ({productPage, browserName}) => {
+  await productPage.page.goto(slugs.checkoutSlug);
+  const checkout = new CheckoutPage(productPage.page);
+  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+  let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
+  if(!discountCode) {
+    throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
+  }
+
+  // Check if coupon code has somehow been added already
+  if(await productPage.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol).isVisible()){
+    await checkout.removeDiscountCode();
+  } else {
+    await checkout.applyDiscountCodeCheckout(discountCode);
+    await checkout.removeDiscountCode();
+  }
+});
+
+// test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
+//   const checkout = new CheckoutPage(page);
+//   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+//   let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
+
+//   if(!discountCode) {
+//     throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
+//   }
+
+//   await checkout.applyDiscountCodeCheckout(discountCode);
+//   await checkout.removeDiscountCode();
 // });
+
+
+
 
 /**
  * @feature BeforeEach runs before each test in this group.
