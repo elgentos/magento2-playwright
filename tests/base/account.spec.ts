@@ -99,21 +99,6 @@ productTest('Update_existing_address', {tag: ['@fixture', '@address']}, async ({
   await accountPage.editExistingAddress();
 });
 
-
-// test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
-//   const accountPage = new AccountPage(page);
-//   await page.goto(slugs.account.addressNewSlug);
-//   let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
-
-//   if(await editAddressButton.isHidden()){
-//     // The edit address button was not found, add another address first.
-//     await accountPage.addNewAddress();
-//   }
-
-//   await page.goto(slugs.account.addressBookSlug);
-//   await accountPage.editExistingAddress();
-// });
-
 /**
  * @feature Magento 2 Delete Address from account
  * @scenario User removes an address from their account
@@ -125,17 +110,27 @@ productTest('Update_existing_address', {tag: ['@fixture', '@address']}, async ({
  * @then I should see a notification my address has been deleted.
  *  @and The address should be removed from the overview.
  */
-test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
-  const accountPage = new AccountPage(page);
-
-  let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
-
+productTest('Delete_existing_address', {tag: ['@fixture', '@address']}, async ({userPage}) => {
+  const accountPage = new AccountPage(userPage.page);
+  await userPage.page.goto(slugs.account.addressBookSlug);
+  let deleteAddressButton = userPage.page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
   if(await deleteAddressButton.isHidden()) {
-    await page.goto(slugs.account.addressNewSlug);
+    await userPage.page.goto(slugs.account.addressNewSlug);
     await accountPage.addNewAddress();
   }
   await accountPage.deleteFirstAddressFromAddressBook();
 });
+// test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+//   const accountPage = new AccountPage(page);
+
+//   let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
+
+//   if(await deleteAddressButton.isHidden()) {
+//     await page.goto(slugs.account.addressNewSlug);
+//     await accountPage.addNewAddress();
+//   }
+//   await accountPage.deleteFirstAddressFromAddressBook();
+// });
 
 
 
