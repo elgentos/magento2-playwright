@@ -2,6 +2,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 
 import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
+import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
 export class LoginPage {
   readonly page: Page;
@@ -33,5 +34,6 @@ export class LoginPage {
   async logout(){
     await this.mainMenuAccountButton.click();
     await this.mainMenuLogoutItem.click();
+    await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true })).toBeVisible();
   }
 }

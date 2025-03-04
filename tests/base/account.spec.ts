@@ -59,18 +59,29 @@ productTest('Add_the_first_address', {tag: ['@fixture', '@address']}, async ({us
   }
 });
 
-// test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+/**
+ * @given I am logged in
+ *  @and I am on the account dashboard page
+ * @when I go to the page where I can add another address
+ * @when I fill in the required information
+ *   @and I click the save button
+ * @then I should see a notification my address has been updated.
+ *  @and The new address should be listed
+ */
+productTest('Add_another_address', {tag: ['@fixture', '@address']}, async ({userPage}, testInfo) => {
+  await userPage.page.goto(slugs.account.addressNewSlug);
+  const accountPage = new AccountPage(userPage.page);
+  
+  await accountPage.addNewAddress();
+});
+// test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
+//   await page.goto(slugs.account.addressNewSlug);
 //   const accountPage = new AccountPage(page);
-//   let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
-
-//   if(await addNewAddressTitle.isHidden()) {
-//     await accountPage.deleteAllAddresses();
-//     testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
-//     await page.goto(slugs.account.addressNewSlug);
-//   }
-
+  
 //   await accountPage.addNewAddress();
 // });
+
+
 
 
 // // Before each test, log in
