@@ -109,21 +109,20 @@ productTest('Remove_coupon_code_in_checkout', {tag: ['@checkout', '@coupon-code'
   }
 });
 
-// test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
-//   const checkout = new CheckoutPage(page);
-//   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-//   let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-
-//   if(!discountCode) {
-//     throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
-//   }
-
-//   await checkout.applyDiscountCodeCheckout(discountCode);
-//   await checkout.removeDiscountCode();
-// });
-
-
-
+/**
+ * @feature Incorrect discount code check
+ * @scenario The user provides an incorrect discount code, the system should reflect that
+ * @given I have a product in my cart
+ * @and I am on the cart page
+ * @when I enter a wrong discount code
+ * @then I should get a notification that the code did not work.
+ */
+productTest('Invalid_coupon_code_in_checkout_is_rejected', {tag: ['@checkout', '@coupon-code']}, async ({productPage, browserName}) => {
+// test('Using an invalid coupon code should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
+  await productPage.page.goto(slugs.checkoutSlug);  
+  const checkout = new CheckoutPage(productPage.page);
+  await checkout.enterWrongCouponCode("incorrect discount code");
+});
 
 /**
  * @feature BeforeEach runs before each test in this group.

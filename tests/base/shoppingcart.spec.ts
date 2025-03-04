@@ -147,7 +147,7 @@ test.describe('Coupon in cart tests', {tag: '@cart-coupon-group'}, () => {
    * @when I enter a wrong discount code
    * @then I should get a notification that the code did not work.
    */
-  productTest('Invalid_coupon_code_is_rejected', {tag: ['@cart']}, async ({productPage}) => {
+  productTest('Invalid_coupon_code_in_cart_is_rejected', {tag: ['@cart']}, async ({productPage}) => {
     await productPage.page.goto(slugs.cartSlug);
     await productPage.cartPage.enterWrongCouponCode("Incorrect Coupon Code");
   });
