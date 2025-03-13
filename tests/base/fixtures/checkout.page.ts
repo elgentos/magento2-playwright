@@ -158,4 +158,18 @@ export class CheckoutPage {
     await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number('##########'));
     await this.waitForHyvaToasts();
   }
+
+  // ==============================================
+  // Price-related methods
+  // ==============================================
+
+  async getPriceValue(element: Locator): Promise<number> {
+    const priceText = await element.innerText();
+    // Extract just the price part after the $ symbol
+    const match = priceText.match(/\$\s*([\d.]+)/);
+    if (match && match[1]) {
+      return parseFloat(match[1]);
+    }
+    throw new Error(`Could not extract price from text: ${priceText}`);
+  }
 }
