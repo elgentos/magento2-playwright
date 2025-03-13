@@ -24,7 +24,7 @@ export class RegisterPage {
   }
 
 
-  async createNewAccount(firstName: string, lastName: string, email: string, password: string){
+  async createNewAccount(firstName: string, lastName: string, email: string, password: string, muted: boolean = false){
     let accountInformationField = this.page.locator('.column > div > div > .flex').first();
     await this.page.goto(slugs.account.createAccountSlug);
 
@@ -35,10 +35,12 @@ export class RegisterPage {
     await this.accountCreationPasswordRepeatField.fill(password);
     await this.accountCreationConfirmButton.click();
 
-    // Assertions: Account created notification, navigated to account page, email visible on page
-    await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText)).toBeVisible();
-    await expect(this.page).toHaveURL(slugs.account.accountOverviewSlug);
-    await expect(accountInformationField).toContainText(email);
+    if(!muted) {
+      // Assertions: Account created notification, navigated to account page, email visible on page
+      await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText)).toBeVisible();
+      await expect(this.page).toHaveURL(slugs.account.accountOverviewSlug);
+      await expect(accountInformationField).toContainText(email);
+    }
 
     // log credentials to console to add to .env file
     //console.log(`Account created with credentials: email address "${email}" and password "${password}"`);
