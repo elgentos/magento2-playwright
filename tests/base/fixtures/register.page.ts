@@ -35,7 +35,7 @@ export class RegisterPage {
     await this.accountCreationPasswordRepeatField.fill(password);
     await this.accountCreationConfirmButton.click();
 
-    if(muted) {
+    if(!muted) {
       // Assertions: Account created notification, navigated to account page, email visible on page
       await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText)).toBeVisible();
       await expect(this.page).toHaveURL(slugs.account.accountOverviewSlug);
