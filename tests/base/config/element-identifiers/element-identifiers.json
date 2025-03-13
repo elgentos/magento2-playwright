@@ -64,7 +64,7 @@
     "securitySectionLabel": "Security"
   },
   "contactPage": {
-    "messageFieldLabel": "What's on your mind?"
+    "messageFieldSelector": "#comment"
   },
   "credentials": {
     "currentPasswordFieldLabel": "Current Password",
