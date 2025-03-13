@@ -16,6 +16,7 @@
   "credentials": {
     "nameFieldLabel": "Name",
     "emailFieldLabel": "Email",
+    "emailCheckoutLabel": "Email address",
     "passwordFieldLabel": "Password",
     "newPasswordFieldLabel": "New Password",
     "passwordConfirmFieldLabel": "Confirm Password",

@@ -3,6 +3,7 @@ import {LoginPage} from './fixtures/login.page';
 import {ProductPage} from './fixtures/product.page';
 import {AccountPage} from './fixtures/account.page';
 import { CheckoutPage } from './fixtures/checkout.page';
+import {faker} from '@faker-js/faker';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
@@ -184,5 +185,50 @@ test.describe('Checkout (guest)', () => {
   test('Using an invalid coupon code should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
     const checkout = new CheckoutPage(page);
     await checkout.enterWrongCouponCode("incorrect discount code");
+  });
+
+  /**
+   * @feature Payment Method Selection
+   * @scenario Guest user selects and uses different payment methods
+   * @given I have a product in my cart
+   *  @and I am on the checkout page as a guest
+   * @when I select a payment method
+   *  @and I complete the checkout process
+   * @then I should be able to place my order successfully
+   *  @and I should see order confirmation
+   */
+  test('Guest can select and use payment methods', { tag: ['@checkout', '@payment-methods'] }, async ({ page }) => {
+    const checkoutPage = new CheckoutPage(page);
+
+    // Fill all required fields
+    await checkoutPage.fillRequiredFields();
+
+    // Wait for form to be processed
+    await page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+
+    // Select shipping method first
+    await checkoutPage.shippingMethodOptionFixed.check();
+
+    // Wait for totals to update
+    await page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+
+    // Select payment method
+    await checkoutPage.paymentMethodOptionCheck.check();
+
+    // Wait for payment method to be processed
+    await page.waitForFunction(() => {
+      const element = document.querySelector('.magewire\\.messenger');
+      return element && getComputedStyle(element).height === '0px';
+    });
+
+    // Place order and verify success
+    let orderNumber = await checkoutPage.placeOrder();
+    expect(orderNumber).toBeTruthy();
   });
 });

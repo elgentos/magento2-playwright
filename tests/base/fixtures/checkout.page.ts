@@ -3,6 +3,8 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
+import {faker} from '@faker-js/faker';
+
 
 export class CheckoutPage {
 
@@ -149,5 +151,25 @@ export class CheckoutPage {
     // Enable when tax settings are set.
     //expect(tax, `Tax (${tax}) should be greater than 0`).toBeGreaterThan(0);
     expect(grandTotal, `Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`).toBe(calculatedTotal);
+  }
+
+  async fillRequiredFields() {
+    // Fill in personal information with Faker
+    await this.page.getByLabel(UIReference.personalInformation.firstNameLabel).fill(faker.person.firstName());
+    await this.page.getByLabel(UIReference.personalInformation.lastNameLabel).fill(faker.person.lastName());
+    await this.page.getByLabel(UIReference.credentials.emailCheckoutLabel, { exact: true }).fill(faker.internet.email());
+
+    // Fill in shipping address
+    await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).fill(faker.location.streetAddress());
+    await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
+    await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.string.numeric(5));
+    await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number());
+
+    // Wait for state field to be enabled
+    await this.page.waitForTimeout(500);
+
+    // Select state
+    const stateSelect = this.page.getByLabel(UIReference.newAddress.provinceSelectLabel);
+    await stateSelect.selectOption('California');
   }
 }
