@@ -180,6 +180,7 @@ test.describe('Checkout (guest)', () => {
     tag: ['@checkout', '@guest'],
   }, async ({ page }, testInfo) => {
     test.slow();
+
     const checkoutPage = new CheckoutPage(page);
 
     await test.step('Navigate to checkout', async () => {
