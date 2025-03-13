@@ -22,13 +22,13 @@ export class ProductPage {
   // ==============================================
   // Productpage-related methods
   // ==============================================
-  
+
   async addProductToCompare(product:string, url: string){
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
     await this.page.goto(url);
-    await this.addToCompareButton.click(); 
+    await this.addToCompareButton.click();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
-    
+
     await this.page.goto(slugs.productpage.productComparisonSlug);
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
@@ -88,6 +88,35 @@ export class ProductPage {
 
   }
 
+  async changeReviewCountAndVerify(url: string) {
+    await this.page.goto(url);
+
+    // Get the default review count from URL or UI
+    const initialUrl = this.page.url();
+
+    // Find and click the review count selector
+    const reviewCountSelector = this.page.getByLabel('Show items per page');
+    await expect(reviewCountSelector).toBeVisible();
+
+    // Select 20 reviews per page
+    await reviewCountSelector.selectOption('20');
+    await this.page.waitForURL(/.*limit=20.*/);
+
+    // Verify URL contains the new limit
+    const urlAfterFirstChange = this.page.url();
+    expect(urlAfterFirstChange).toContain('limit=20');
+    expect(urlAfterFirstChange).not.toEqual(initialUrl);
+
+    // Select 50 reviews per page
+    await reviewCountSelector.selectOption('50');
+    await this.page.waitForURL(/.*limit=50.*/);
+
+    // Verify URL contains the new limit
+    const urlAfterSecondChange = this.page.url();
+    expect(urlAfterSecondChange).toContain('limit=50');
+    expect(urlAfterSecondChange).not.toEqual(urlAfterFirstChange);
+  }
+
   // ==============================================
   // Cart-related methods
   // ==============================================
@@ -100,7 +129,7 @@ export class ProductPage {
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
-    
+
     if(quantity){
       // set quantity
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
