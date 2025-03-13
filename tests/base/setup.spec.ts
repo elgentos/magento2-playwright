@@ -72,7 +72,8 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       faker.person.firstName(),
       faker.person.lastName(),
       accountEmail,
-      accountPassword
+      accountPassword,
+      true
     );
   });
 
