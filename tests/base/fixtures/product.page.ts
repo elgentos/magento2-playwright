@@ -22,13 +22,13 @@ export class ProductPage {
   // ==============================================
   // Productpage-related methods
   // ==============================================
-  
+
   async addProductToCompare(product:string, url: string){
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
     await this.page.goto(url);
-    await this.addToCompareButton.click(); 
+    await this.addToCompareButton.click();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
-    
+
     await this.page.goto(slugs.productpage.productComparisonSlug);
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
@@ -44,7 +44,7 @@ export class ProductPage {
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 
-    await expect(this.page).toHaveURL(new RegExp(slugs.wishListRegex));
+    await expect(this.page).toHaveURL(new RegExp(slugs.wishlist.wishListRegex));
     await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     await expect(productNameInWishlist).toContainText(product);
   }
@@ -100,7 +100,7 @@ export class ProductPage {
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
-    
+
     if(quantity){
       // set quantity
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');

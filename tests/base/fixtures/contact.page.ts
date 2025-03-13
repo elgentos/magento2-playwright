@@ -21,13 +21,13 @@ export class ContactPage {
   }
 
   async fillOutForm(){
-    await this.page.goto(slugs.contact);
+    await this.page.goto(slugs.contact.contactSlug);
     let messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
     await this.nameField.fill(faker.person.firstName());
     await this.emailField.fill(faker.internet.email());
     await this.messageField.fill(faker.lorem.paragraph());
     await this.sendFormButton.click();
-    
+
     await expect(this.page.getByText(messageSentConfirmationText)).toBeVisible();
     await expect(this.nameField, 'name should be empty now').toBeEmpty();
     await expect(this.emailField, 'email should be empty now').toBeEmpty();

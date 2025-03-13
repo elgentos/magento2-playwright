@@ -23,15 +23,15 @@ export class CartPage {
 
     if(currentQuantity == amount){
       // quantity is the same as amount, therefore we change amount to ensure test can continue.
-      amount = '3'; 
+      amount = '3';
     }
 
     await productRow.getByLabel(UIReference.cart.cartQuantityLabel).fill(amount);
     let subTotalBeforeUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
-  
+
     await this.page.getByRole('button', { name: UIReference.cart.updateShoppingCartButtonLabel }).click();
     await this.page.reload();
-    
+
     currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
 
     // Last $ to get the Subtotal
@@ -51,7 +51,7 @@ export class CartPage {
     await removeButton.click();
     await this.page.waitForLoadState();
     await expect(removeButton,`Button to remove specified product is not visible in the cart`).toBeHidden();
-    
+
     // Expect product to no longer be visible in the cart
     await expect (this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
   }
@@ -64,13 +64,13 @@ export class CartPage {
       // discount field is not open.
       await this.showDiscountButton.click();
     }
-    
+
     let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.cart.applyDiscountButtonLabel, exact:true});
     let discountField = this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel);
     await discountField.fill(code);
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
-    
+
     await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
@@ -79,10 +79,10 @@ export class CartPage {
 
   async removeDiscountCode(){
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
-      // discount field is not open. 
+      // discount field is not open.
       await this.showDiscountButton.click();
     }
-  
+
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
     await cancelCouponButton.click();
     await this.page.waitForLoadState();

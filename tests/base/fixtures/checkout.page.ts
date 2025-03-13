@@ -36,7 +36,7 @@ export class CheckoutPage {
 
   async placeOrder(){
     let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
-    await this.page.goto(slugs.checkoutSlug);
+    await this.page.goto(slugs.checkout.checkoutSlug);
 
     await this.shippingMethodOptionFixed.check();
     // Loader pops up, wait for this to be done.

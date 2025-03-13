@@ -46,8 +46,8 @@ test('Open the minicart', { tag: '@mainmenu', }, async ({page}, testInfo) => {
   testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`});
 
   const mainMenu = new MainMenuPage(page);
-  const productPage = new ProductPage(page); 
-  
+  const productPage = new ProductPage(page);
+
   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   await mainMenu.openMiniCart();
 });
