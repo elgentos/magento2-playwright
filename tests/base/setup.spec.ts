@@ -1,8 +1,8 @@
 import { test as base } from '@playwright/test';
 import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
-import { AccountPage } from './fixtures/account.page';
+import { RegisterPage } from './fixtures/register.page';
+import {faker} from '@faker-js/faker';
 
-import values from './config/input-values/input-values.json';
 import fs from 'fs';
 import path from 'path';
 
@@ -57,7 +57,7 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
     await magentoAdminPage.addCartPriceRule(couponCode);
     await magentoAdminPage.disableLoginCaptcha();
 
-    const accountPage = new AccountPage(page);
+    const registerPage = new RegisterPage(page);
 
     const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
     const accountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
@@ -68,9 +68,9 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       );
     }
 
-    await accountPage.create(
-      values.accountCreation.firstNameValue,
-      values.accountCreation.lastNameValue,
+    await registerPage.createNewAccount(
+      faker.person.firstName(),
+      faker.person.lastName(),
       accountEmail,
       accountPassword
     );

@@ -1,7 +1,5 @@
 {
   "accountCreation": {
-    "firstNameValue": "John",
-    "lastNameValue": "Doe",
     "emailHandleValue":"test-user",
     "emailHostValue": "gmail.com"
   },

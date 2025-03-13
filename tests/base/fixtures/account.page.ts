@@ -86,7 +86,7 @@ export class AccountPage {
     await expect.soft(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
-  
+
 
   async editExistingAddress(){
     // the notification for a modified address is the same as the notification for a new address.
@@ -129,7 +129,7 @@ export class AccountPage {
     let addressBookArray = await addressBookSection.allInnerTexts();
     let arraySplit = addressBookArray[0].split('\n');
     let addressToBeDeleted = arraySplit[7];
-    
+
     await this.deleteAddressButton.click();
     await this.page.waitForLoadState();
 
@@ -149,18 +149,6 @@ export class AccountPage {
     await this.page.waitForLoadState();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
-  }
-
-  async create(firstName: string, lastName: string, email: string, password: string){
-    await this.page.goto(slugs.account.createAccountSlug);
-    await this.page.waitForLoadState();
-
-    await this.accountCreationFirstNameField.fill(firstName);
-    await this.accountCreationLastNameField.fill(lastName);
-    await this.accountCreationEmailField.fill(email);
-    await this.accountCreationPasswordField.fill(password);
-    await this.accountCreationPasswordRepeatField.fill(password);
-    await this.accountCreationConfirmButton.click();
   }
 
   async deleteAllAddresses() {
