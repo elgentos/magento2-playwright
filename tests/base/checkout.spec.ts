@@ -124,6 +124,27 @@ test.describe('Checkout (guest)', () => {
       await checkout.applyDiscountCodeCheckout(discountCode);
     });
 
+    test('Verify price calculations in checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
+      const productPage = new ProductPage(page);
+      const checkoutPage = new CheckoutPage(page);
+
+      // Add product to cart and go to checkout
+      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+      await page.goto(slugs.checkoutSlug);
+
+      // Select shipping method to trigger price calculations
+      await checkoutPage.shippingMethodOptionFixed.check();
+
+      // Wait for totals to update
+      await page.waitForFunction(() => {
+        const element = document.querySelector('.magewire\\.messenger');
+        return element && getComputedStyle(element).height === '0px';
+      });
+
+      // Get all price components using the verifyPriceCalculations method from the CheckoutPage fixture
+      await checkoutPage.verifyPriceCalculations();
+    });
+
   /**
    * @feature Remove discount code from checkout
    * @scenario User has added a discount code, then removes it
@@ -231,5 +252,3 @@ test.describe('Checkout (guest)', () => {
     });
   });
 });
-
-

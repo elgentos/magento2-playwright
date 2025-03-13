@@ -13,6 +13,10 @@ export class CheckoutPage {
   readonly showDiscountFormButton: Locator;
   readonly placeOrderButton: Locator;
   readonly continueShoppingButton: Locator;
+  readonly subtotalElement: Locator;
+  readonly shippingElement: Locator;
+  readonly taxElement: Locator;
+  readonly grandTotalElement: Locator;
 
   constructor(page: Page){
     this.page = page;
@@ -21,6 +25,10 @@ export class CheckoutPage {
     this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
     this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
+    this.subtotalElement = page.getByText('Subtotal $');
+    this.shippingElement = page.getByText('Shipping & Handling (Flat Rate - Fixed) $');
+    this.taxElement = page.getByText('Tax $');
+    this.grandTotalElement = page.getByText('Grand Total $');
   }
 
   async waitForHyvaToasts() {
@@ -157,6 +165,29 @@ export class CheckoutPage {
     await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
     await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number('##########'));
     await this.waitForHyvaToasts();
+  // Price summary methods
+  // ==============================================
+
+  async getPriceValue(element: Locator): Promise<number> {
+    const priceText = await element.innerText();
+    // Extract just the price part after the $ symbol
+    const match = priceText.match(/\$\s*([\d.]+)/);
+    return match ? parseFloat(match[1]) : 0;
+  }
+
+  async verifyPriceCalculations() {
+    const subtotal = await this.getPriceValue(this.subtotalElement);
+    const shipping = await this.getPriceValue(this.shippingElement);
+    const tax = await this.getPriceValue(this.taxElement);
+    const grandTotal = await this.getPriceValue(this.grandTotalElement);
+
+    const calculatedTotal = +(subtotal + shipping + tax).toFixed(2);
+
+    expect(subtotal, `Subtotal (${subtotal}) should be greater than 0`).toBeGreaterThan(0);
+    expect(shipping, `Shipping cost (${shipping}) should be greater than 0`).toBeGreaterThan(0);
+    // Enable when tax settings are set.
+    //expect(tax, `Tax (${tax}) should be greater than 0`).toBeGreaterThan(0);
+    expect(grandTotal, `Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`).toBe(calculatedTotal);
   }
 
   // ==============================================
