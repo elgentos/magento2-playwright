@@ -25,7 +25,7 @@ export class RegisterPage {
 
 
   async createNewAccount(firstName: string, lastName: string, email: string, password: string, muted: boolean = false){
-    let accountInformationField = this.page.locator('.column > div > div > .flex').first();
+    let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
     await this.page.goto(slugs.account.createAccountSlug);
 
     await this.accountCreationFirstNameField.fill(firstName);
