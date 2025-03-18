@@ -1,22 +1,30 @@
 {
   "account": {
     "accountOverviewSlug": "/customer/account/",
-    "loginSlug": "/customer/account/login",
-    "createAccountSlug": "/customer/account/create",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
     "addressNewSlug": "customer/address/new",
-    "changePasswordSlug": "/customer/account/edit/changepass/1/"
+    "changePasswordSlug": "/customer/account/edit/changepass/1/",
+    "createAccountSlug": "/customer/account/create",
+    "loginSlug": "/customer/account/login"
+  },
+  "cart": {
+    "cartProductChangeSlug": "/cart/configure/",
+    "cartSlug": "/checkout/cart/"
+  },
+  "checkout": {
+    "checkoutSlug": "/checkout/"
+  },
+  "contact": {
+    "contactSlug": "/contact"
   },
   "productpage": {
-    "simpleProductSlug": "/push-it-messenger-bag.html",
-    "secondSimpleProductSlug": "/aim-analog-watch.html",
     "configurableProductSlug": "/inez-full-zip-jacket.html",
-    "productComparisonSlug": "/catalog/product_compare/index/"
+    "productComparisonSlug": "/catalog/product_compare/index/",
+    "secondSimpleProductSlug": "/aim-analog-watch.html",
+    "simpleProductSlug": "/push-it-messenger-bag.html"
   },
-  "checkoutSlug": "/checkout/",
-  "cartSlug": "/checkout/cart/",
-  "cartProductChangeSlug": "/cart/configure/",
-  "contact": "/contact",
-  "wishListRegex": ".*wishlist.*"
+  "wishlist": {
+    "wishListRegex": ".*wishlist.*"
+  }
 }
