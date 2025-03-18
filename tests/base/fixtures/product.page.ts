@@ -95,7 +95,7 @@ export class ProductPage {
     const initialUrl = this.page.url();
 
     // Find and click the review count selector
-    const reviewCountSelector = this.page.getByLabel('Show items per page');
+    const reviewCountSelector = this.page.getByLabel(UIReference.productPage.reviewCountLabel);
     await expect(reviewCountSelector).toBeVisible();
 
     // Select 20 reviews per page
@@ -104,8 +104,8 @@ export class ProductPage {
 
     // Verify URL contains the new limit
     const urlAfterFirstChange = this.page.url();
-    expect(urlAfterFirstChange).toContain('limit=20');
-    expect(urlAfterFirstChange).not.toEqual(initialUrl);
+    expect(urlAfterFirstChange, 'URL should contain limit=20 parameter').toContain('limit=20');
+    expect(urlAfterFirstChange, 'URL should have changed after selecting 20 items per page').not.toEqual(initialUrl);
 
     // Select 50 reviews per page
     await reviewCountSelector.selectOption('50');
@@ -113,8 +113,8 @@ export class ProductPage {
 
     // Verify URL contains the new limit
     const urlAfterSecondChange = this.page.url();
-    expect(urlAfterSecondChange).toContain('limit=50');
-    expect(urlAfterSecondChange).not.toEqual(urlAfterFirstChange);
+    expect(urlAfterSecondChange, 'URL should contain limit=50 parameter').toContain('limit=50');
+    expect(urlAfterSecondChange, 'URL should have changed after selecting 50 items per page').not.toEqual(urlAfterFirstChange);
   }
 
   // ==============================================

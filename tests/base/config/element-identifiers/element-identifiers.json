@@ -70,7 +70,8 @@
     "quantityFieldLabel": "Quantity",
     "fullScreenOpenLabel": "Click to view image in",
     "fullScreenCloseLabel": "Close fullscreen",
-    "thumbnailImageLabel": "View larger image"
+    "thumbnailImageLabel": "View larger image",
+    "reviewCountLabel": "Show items per page"
   },
   "cart": {
     "updateItemButtonLabel": "shopping-cart Update item",
