@@ -25,7 +25,7 @@ test.describe('Cart functionalities (guest)', () => {
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     // await mainMenu.openMiniCart();
     // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
-    await page.goto(slugs.cartSlug);
+    await page.goto(slugs.cart.cartSlug);
   });
 
   /**
@@ -66,12 +66,12 @@ test.describe('Cart functionalities (guest)', () => {
       await loginPage.login(emailInputValue, passwordInputValue);
     });
 
-    await page.goto(slugs.cartSlug);
+    await page.goto(slugs.cart.cartSlug);
     await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
     await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
   });
 
-  /** 
+  /**
    * @feature Remove product from cart
    * @scenario User has added a product and wants to remove it from the cart page
    * @given I have added a product to my cart
@@ -166,7 +166,7 @@ test.describe('Cart functionalities (guest)', () => {
 })
 
 test.describe('Price checking tests', () => {
-  
+
   // Test: Configurable Product Input check from PDP to checkout
   // test.step: add configurable product to cart, return priceOnPDP and productAmount as variables
   // test.step: call function retrieveCheckoutPrices() to go to checkout, retrieve values
@@ -193,7 +193,7 @@ test.describe('Price checking tests', () => {
       await page.goto(slugs.productpage.simpleProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
-  
+
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, '2');
@@ -201,7 +201,7 @@ test.describe('Price checking tests', () => {
     });
 
     await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkoutSlug);
+      await page.goto(slugs.checkout.checkoutSlug);
       await page.waitForLoadState();
 
       // returns productPriceInCheckout and productQuantityInCheckout
@@ -211,7 +211,7 @@ test.describe('Price checking tests', () => {
     await test.step('Step: Calculate and check expectations', async () =>{
       await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
     });
-    
+
   });
 
   /**
@@ -235,7 +235,7 @@ test.describe('Price checking tests', () => {
       await page.goto(slugs.productpage.configurableProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel('Quantity').fill('2');
-  
+
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
       await productPage.addConfigurableProductToCart();
@@ -243,7 +243,7 @@ test.describe('Price checking tests', () => {
     });
 
     await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkoutSlug);
+      await page.goto(slugs.checkout.checkoutSlug);
       await page.waitForLoadState();
 
       // returns productPriceInCheckout and productQuantityInCheckout
@@ -253,6 +253,6 @@ test.describe('Price checking tests', () => {
     await test.step('Step: Calculate and check expectations', async () =>{
       await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
     });
-    
+
   });
 });

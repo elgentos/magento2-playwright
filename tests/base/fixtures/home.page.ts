@@ -6,14 +6,14 @@ export class HomePage {
 
   readonly page: Page;
   buyProductButton: Locator;
-  
+
   constructor(page: Page) {
     this.page = page;
   }
-  
+
   async addHomepageProductToCart(){
     let buyProductButton = this.page.getByRole('button').filter({hasText: UIReference.general.addToCartLabel}).first();
-    
+
     if(await buyProductButton.isVisible()) {
       await buyProductButton.click();
     } else {

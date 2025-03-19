@@ -2,46 +2,50 @@
   "accountCreation": {
     "emailHandleValue":"test-user",
     "emailHostValue": "gmail.com"
+    "emailHandleValue": "test-user",
+    "emailHostValue": "gmail.com",
+    "firstNameValue": "John",
+    "lastNameValue": "Doe"
+  },
+  "adminLogins": {
+    "allowMultipleLogins": "Yes"
+  },
+  "captcha": {
+    "captchaDisabled": "No"
   },
   "contact": {
     "contactFormEmailValue": "robertbaratheon@gameofthrones.com",
     "contactFormMessage": "Hello! I am filling out this form as a test only. Feel free to ignore this message."
   },
-  "firstAddress": {
-    "firstCompanyNameValue": "ACME Company",
-    "firstPhoneNumberValue": "0622000000",
-    "firstStreetAddressValue": "Testingstreet 1",
-    "firstZipCodeValue": "12345",
-    "firstCityValue": "Testing Valley",
-    "firstNonDefaultCountry": "Netherlands",
-    "firstProvinceValue": "Idaho"
-  },
-  "secondAddress": {
-    "secondCompanyNameValue": "Hogwarts",
-    "secondPhoneNumberValue": "0620081998",
-    "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
-    "secondZipCodeValue": "67890",
-    "secondCityValue": "Little Whinging",
-    "secondNonDefaultCountry": "United Kingdom",
-    "secondProvinceValue": "South Dakota"
-  },
-  "editedAddress": {
-    "editfirstNameValue": "Ash",
-    "editLastNameValue": "Ketchum",
-    "editCompanyNameValue": "Pokémon",
-    "editStreetAddressValue": "House on the left",
-    "editZipCodeValue": "00151",
-    "editCityValue": "Pallet Town",
-    "editStateValue": "Kansas"
-  },
   "coupon": {
     "couponCodeRuleName": "Test coupon",
     "couponType": "Specific Coupon"
   },
-  "captcha": {
-    "captchaDisabled": "No"
+  "editedAddress": {
+    "editCityValue": "Pallet Town",
+    "editCompanyNameValue": "Pokémon",
+    "editfirstNameValue": "Ash",
+    "editLastNameValue": "Ketchum",
+    "editStateValue": "Kansas",
+    "editStreetAddressValue": "House on the left",
+    "editZipCodeValue": "00151"
   },
-  "adminLogins": {
-    "allowMultipleLogins": "Yes"
+  "firstAddress": {
+    "firstCityValue": "Testing Valley",
+    "firstCompanyNameValue": "ACME Company",
+    "firstNonDefaultCountry": "Netherlands",
+    "firstPhoneNumberValue": "0622000000",
+    "firstProvinceValue": "Idaho",
+    "firstStreetAddressValue": "Testingstreet 1",
+    "firstZipCodeValue": "12345"
+  },
+  "secondAddress": {
+    "secondCityValue": "Little Whinging",
+    "secondCompanyNameValue": "Hogwarts",
+    "secondNonDefaultCountry": "United Kingdom",
+    "secondPhoneNumberValue": "0620081998",
+    "secondProvinceValue": "South Dakota",
+    "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
+    "secondZipCodeValue": "67890"
   }
 }
