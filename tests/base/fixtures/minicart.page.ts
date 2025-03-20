@@ -25,15 +25,15 @@ export class MiniCartPage {
     this.priceOnPDP = page.getByLabel(UIReference.general.genericPriceLabel).getByText(UIReference.general.genericPriceSymbol);
     this.priceInMinicart = page.getByText(UIReference.general.genericPriceSymbol).first();
   }
-  
+
   async goToCheckout(){
     await this.toCheckoutButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.checkoutSlug}.*`));
+    await expect(this.page).toHaveURL(new RegExp(`${slugs.checkout.checkoutSlug}.*`));
   }
 
   async goToCart(){
     await this.toCartButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.cartSlug}.*`));
+    await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartSlug}.*`));
   }
 
   async removeProductFromMinicart(product: string) {
@@ -47,7 +47,7 @@ export class MiniCartPage {
   async updateProduct(amount: string){
     let productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
     await this.editProductButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.cartProductChangeSlug}.*`));
+    await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartProductChangeSlug}.*`));
 
     await this.productQuantityField.fill(amount);
     await this.updateItemButton.click();
@@ -65,4 +65,4 @@ export class MiniCartPage {
     //expect(priceOnPage).toBe(priceInMinicart);
     expect(priceOnPage, `Expect these prices to be the same: priceOnpage: ${priceOnPage} and priceInMinicart: ${priceInMinicart}`).toBe(priceInMinicart);
   }
-} 
+}

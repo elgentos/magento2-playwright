@@ -37,7 +37,7 @@ export class MainMenuPage {
     // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
     await this.mainMenuMiniCartButton.waitFor();
     await this.mainMenuMiniCartButton.click();
-    
+
     let miniCartDrawer = this.page.locator("#cart-drawer-title");
     await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
   }
