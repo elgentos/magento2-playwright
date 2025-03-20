@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
   await page.goto(slugs.productpage.simpleProductSlug);
   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-  await page.goto(slugs.checkoutSlug);
+  await page.goto(slugs.checkout.checkoutSlug);
 });
 
 
@@ -41,7 +41,7 @@ test.describe('Checkout (login required)', () => {
 
     const loginPage = new LoginPage(page);
     await loginPage.login(emailInputValue, passwordInputValue);
-    await page.goto(slugs.checkoutSlug);
+    await page.goto(slugs.checkout.checkoutSlug);
   });
 
   /**
@@ -130,7 +130,7 @@ test.describe('Checkout (guest)', () => {
 
       // Add product to cart and go to checkout
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-      await page.goto(slugs.checkoutSlug);
+      await page.goto(slugs.checkout.checkoutSlug);
 
       // Select shipping method to trigger price calculations
       await checkoutPage.shippingMethodOptionFixed.check();

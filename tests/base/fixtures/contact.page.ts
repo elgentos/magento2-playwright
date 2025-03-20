@@ -21,7 +21,7 @@ export class ContactPage {
   }
 
   async fillOutForm(){
-    await this.page.goto(slugs.contact);
+    await this.page.goto(slugs.contact.contactSlug);
     let messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
 
     // Add a wait for the form to be visible

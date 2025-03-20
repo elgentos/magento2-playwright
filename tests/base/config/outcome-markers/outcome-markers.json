@@ -1,43 +1,29 @@
 {
   "account": {
-    "accountPageTitle": "Account Information",
     "accountCreatedNotificationText": "Thank you for registering with Main Website Store.",
+    "accountPageTitle": "Account Information",
     "addressBookTitle": "Customer Address",
     "changedPasswordNotificationText": "You saved the account",
-    "newsletterSubscriptionTitle": "Newsletter Subscription",
+    "newsletterRemovedNotification": "We have removed your newsletter subscription.",
     "newsletterSavedNotification": "We have saved your subscription.",
-    "newsletterUpdatedNotification": "We have updated your subscription.",
-    "newsletterRemovedNotification": "We have removed your newsletter subscription."
+    "newsletterSubscriptionTitle": "Newsletter Subscription",
+    "newsletterUpdatedNotification": "We have updated your subscription."
   },
   "address": {
-    "newAddressAddedNotifcation": "You saved the address.",
-    "addressDeletedNotification": "You deleted the address."
-  },
-  "logout": {
-    "logoutConfirmationText": "You have signed out"
-  } ,
-  "productPage": {
-    "simpleProductAddedNotification": "You added",
-    "borderClassRegex": ".* border-primary$"
+    "addressDeletedNotification": "You deleted the address.",
+    "newAddressAddedNotifcation": "You saved the address."
   },
   "cart": {
     "discountAppliedNotification": "You used coupon code",
     "discountRemovedNotification": "You canceled the coupon code.",
-    "priceReducedSymbols": "- $",
     "incorrectCouponCodeNotificationOne": "The coupon code",
-    "incorrectCouponCodeNotificationTwo": "is not valid."
-  },
-  "miniCart": {
-    "miniCartTitle": "My Cart",
-    "simpleProductInCartTitle": "x Push It Messenger Bag",
-    "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
-    "productRemovedConfirmation": "You removed the item.",
-    "productQuantityChangedConfirmation": "was updated in your shopping cart"
+    "incorrectCouponCodeNotificationTwo": "is not valid.",
+    "priceReducedSymbols": "- $"
   },
   "checkout": {
+    "checkoutPriceReducedSymbol": "-$",
     "couponAppliedNotification": "Your coupon was successfully applied",
     "couponRemovedNotification": "Your coupon was successfully removed",
-    "checkoutPriceReducedSymbol": "-$",
     "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again.",
     "orderPlacedNotification": "Thank you for your purchase!",
     "orderPlacedNumberText": "Your order number is:"
@@ -47,6 +33,20 @@
   },
   "homePage": {
     "firstProductName": "Aim Analog Watch"
+  },
+  "logout": {
+    "logoutConfirmationText": "You have signed out"
+  },
+  "miniCart": {
+    "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
+    "miniCartTitle": "My Cart",
+    "productQuantityChangedConfirmation": "was updated in your shopping cart",
+    "productRemovedConfirmation": "You removed the item.",
+    "simpleProductInCartTitle": "x Push It Messenger Bag"
+  },
+  "productPage": {
+    "borderClassRegex": ".* border-primary$",
+    "simpleProductAddedNotification": "You added"
   },
   "wishListPage": {
     "wishListAddedNotification": "has been added to your Wish List."
