@@ -14,7 +14,7 @@ base('User can log in with valid credentials', async ({page, browserName}) => {
 
   const loginPage = new LoginPage(page)
   await loginPage.login(emailInputValue, passwordInputValue);
-  await page.waitForLoadState();
+  await page.waitForLoadState('networkidle');
 
   // Check customer section data in localStorage and verify name
   const customerData = await page.evaluate(() => {
