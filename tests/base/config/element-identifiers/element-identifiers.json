@@ -1,33 +1,4 @@
 {
-  "general": {
-    "genericSaveButtonLabel": "Save",
-    "genericSubmitButtonLabel": "Submit",
-    "genericPriceLabel": "Price",
-    "genericPriceSymbol": "$",
-    "addToCartLabel": "Add to Cart",
-    "closeMessageLabel": "Close message",
-    "removeLabel": "Remove"
-  },
-  "mainMenu": {
-    "myAccountButtonLabel": "My Account",
-    "myAccountLogoutItem": "Sign Out",
-    "miniCartLabel": "Toggle minicart"
-  },
-  "credentials": {
-    "nameFieldLabel": "Name",
-    "emailFieldLabel": "Email",
-    "passwordFieldLabel": "Password",
-    "newPasswordFieldLabel": "New Password",
-    "passwordConfirmFieldLabel": "Confirm Password",
-    "newPasswordConfirmFieldLabel": "Confirm New Password",
-    "loginButtonLabel": "Sign In",
-    "currentPasswordFieldLabel": "Current Password"
-  },
-  "personalInformation": {
-    "firstNameLabel": "First Name",
-    "lastNameLabel": "Last Name",
-    "changePasswordCheckLabel": "Change Password"
-  },
   "accountCreation": {
     "createAccountButtonLabel": "Create an Account"
   },
@@ -35,9 +6,9 @@
     "accountDashboardTitleLabel": "Account Information",
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
+    "addressBookArea": ".block-addresses-list",
     "addressDeleteIconButton": "trash",
     "editAddressIconButton": "pencil-alt",
-    "addressBookArea": ".block-addresses-list",
     "links": {
       "newsletterLink": "Newsletter Subscriptions"
     }
@@ -74,83 +45,142 @@
     "reviewCountLabel": "Show items per page"
   },
   "cart": {
-    "updateItemButtonLabel": "shopping-cart Update item",
-    "cartQuantityLabel": "Qty",
-    "showDiscountFormButtonLabel": "Apply Discount Code",
-    "discountInputFieldLabel": "Enter discount code",
     "applyDiscountButtonLabel": "Apply Discount",
     "cancelCouponButtonLabel": "Cancel Coupon",
+    "cartQuantityLabel": "Qty",
+    "discountInputFieldLabel": "Enter discount code",
+    "showDiscountFormButtonLabel": "Apply Discount Code",
+    "updateItemButtonLabel": "shopping-cart Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"
   },
+  "cartPriceRulesPage": {
+    "actionsSubtitleLabel": "Actions",
+    "addCartPriceRuleButtonLabel": "Add New Rule",
+    "couponCodeFieldLabel": "Coupon Code",
+    "couponTypeSelectField": "select[name='coupon_type']",
+    "customerGroupsSelectLabel": "Customer Groups",
+    "discountAmountFieldLabel": "Discount Amount",
+    "ruleNameFieldLabel": "Rule Name",
+    "saveRuleButtonLabel": "Save",
+    "websitesSelectLabel": "Websites"
+  },
   "checkout": {
-    "shippingMethodFixedLabel": "Fixed",
-    "paymentOptionCheckLabel": "Check / Money order Free",
-    "openDiscountFormLabel": "Apply Discount Code",
-    "placeOrderButtonLabel": "Place Order",
-    "cancelDiscountButtonLabel": "Cancel Coupon",
     "applyDiscountButtonLabel": "Apply Coupon",
-    "discountInputFieldLabel": "Enter discount code",
-    "continueShoppingLabel": "Continue Shopping",
     "applyDiscountCodeLabel": "Apply Discount Code",
-    "remove": "Remove",
+    "cancelDiscountButtonLabel": "Cancel Coupon",
+    "cartDetailsLocator": "#checkout-cart-details div",
+    "continueShoppingLabel": "Continue Shopping",
+    "discountInputFieldLabel": "Enter discount code",
     "openCartButtonLabel": "Cart",
     "openCartButtonLabelCont": "item",
     "openCartButtonLabelContMultiple": "items",
-    "cartDetailsLocator": "#checkout-cart-details div",
-    "shippingAddressRadioLocator": "#shipping-details input[type='radio']"
+    "openDiscountFormLabel": "Apply Discount Code",
+    "paymentOptionCheckLabel": "Check / Money order Free",
+    "placeOrderButtonLabel": "Place Order",
+    "remove": "Remove",
+    "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
+    "shippingMethodFixedLabel": "Fixed"
   },
-  "miniCart": {
-    "checkOutButtonLabel": "Checkout",
-    "toCartLinkLabel": "View and Edit Cart",
-    "editProductIconLabel": "Edit product",
-    "productQuantityFieldLabel": "Quantity",
-    "removeProductIconLabel": "Remove product",
-    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
-    "miniCartToggleLabelPrefix": "Toggle minicart,",
-    "miniCartToggleLabelEmpty": "Cart is empty",
-    "miniCartToggleLabelOneItem": "1 item",
-    "miniCartToggleLabelMultiItem": "items",
-    "minicartAmountBubbleLocator": "#menu-cart-icon > span"
+  "configurationPage": {
+    "advancedAdministrationTabLabel": "Admin",
+    "advancedTabLabel": "Advanced",
+    "allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
+    "allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
+    "captchaSettingSelectField": "#customer_captcha_enable",
+    "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
+    "captchaSectionLabel": "CAPTCHA",
+    "customerConfigurationTabLabel": "Customer Configuration",
+    "customersTabLabel": "Customers",
+    "saveConfigButtonLabel": "Save Config",
+    "securitySectionLabel": "Security"
   },
   "contactPage": {
-    "messageFieldLabel": "What’s on your mind?"
+    "messageFieldSelector": "#comment"
+  },
+  "credentials": {
+    "currentPasswordFieldLabel": "Current Password",
+    "emailFieldLabel": "Email",
+    "loginButtonLabel": "Sign In",
+    "nameFieldLabel": "Name",
+    "newPasswordConfirmFieldLabel": "Confirm New Password",
+    "newPasswordFieldLabel": "New Password",
+    "passwordConfirmFieldLabel": "Confirm Password",
+    "passwordFieldLabel": "Password"
+  },
+  "general": {
+    "addToCartLabel": "Add to Cart",
+    "closeMessageLabel": "Close message",
+    "genericPriceLabel": "Price",
+    "genericPriceSymbol": "$",
+    "genericSaveButtonLabel": "Save",
+    "genericSubmitButtonLabel": "Submit",
+    "removeLabel": "Remove"
   },
   "magentoAdminPage": {
-    "usernameFieldLabel": "Username",
-    "passwordFieldLabel": "Password",
     "loginButtonLabel": "Sign In",
     "navigation": {
       "marketingButtonLabel": "Marketing",
       "storesButtonLabel": "Stores"
     },
+    "passwordFieldLabel": "Password",
     "subNavigation": {
       "cartPriceRulesButtonLabel": "Cart Price Rules",
       "configurationButtonLabel": "Configuration"
-    }
+    },
+    "usernameFieldLabel": "Username"
   },
-  "cartPriceRulesPage": {
-    "addCartPriceRuleButtonLabel": "Add New Rule",
-    "ruleNameFieldLabel": "Rule Name",
-    "websitesSelectLabel": "Websites",
-    "customerGroupsSelectLabel": "Customer Groups",
-    "couponTypeSelectField": "select[name='coupon_type']",
-    "couponCodeFieldLabel": "Coupon Code",
-    "actionsSubtitleLabel": "Actions",
-    "discountAmountFieldLabel": "Discount Amount",
-    "saveRuleButtonLabel": "Save"
+  "mainMenu": {
+    "miniCartLabel": "Toggle minicart",
+    "myAccountButtonLabel": "My Account",
+    "myAccountLogoutItem": "Sign Out"
   },
-  "configurationPage": {
-    "customersTabLabel": "Customers",
-    "customerConfigurationTabLabel": "Customer Configuration",
-    "advancedTabLabel": "Advanced",
-    "advancedAdministrationTabLabel": "Admin",
-    "securitySectionLabel": "Security",
-    "allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
-    "allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
-    "captchaSectionLabel": "CAPTCHA",
-    "captchaSettingSelectField": "#customer_captcha_enable",
-    "captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
-    "saveConfigButtonLabel": "Save Config"
+  "miniCart": {
+    "checkOutButtonLabel": "Checkout",
+    "editProductIconLabel": "Edit product",
+    "minicartAmountBubbleLocator": "#menu-cart-icon > span",
+    "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
+    "miniCartToggleLabelEmpty": "Cart is empty",
+    "miniCartToggleLabelMultiItem": "items",
+    "miniCartToggleLabelOneItem": "1 item",
+    "miniCartToggleLabelPrefix": "Toggle minicart,",
+    "productQuantityFieldLabel": "Quantity",
+    "removeProductIconLabel": "Remove product",
+    "toCartLinkLabel": "View and Edit Cart"
+  },
+  "newAddress": {
+    "addNewAddressTitle": "Add New Address",
+    "cityNameLabel": "City",
+    "companyNameLabel": "Company",
+    "countryLabel": "Country",
+    "phoneNumberLabel": "Phone Number",
+    "provinceSelectFilterLabel": "Please select a region, state or province.",
+    "provinceSelectLabel": "State/Province",
+    "saveAdressButton": "Save Address",
+    "streetAddressLabel": "Street Address",
+    "zipCodeLabel": "Zip/Postal Code"
+  },
+  "newsletterSubscriptions": {
+    "generalSubscriptionCheckLabel": "General Subscription",
+    "saveSubscriptionsButton": "Save"
+  },
+  "personalInformation": {
+    "changePasswordCheckLabel": "Change Password",
+    "firstNameLabel": "First Name",
+    "lastNameLabel": "Last Name"
+  },
+  "productPage": {
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label",
+    "configurableProductSizeLabel": "Size",
+    "configurableProductTitle": "Inez Full Zip Jacket",
+    "fullScreenCloseLabel": "Close fullscreen",
+    "fullScreenOpenLabel": "Click to view image in",
+    "quantityFieldLabel": "Quantity",
+    "secondSimpleProducTitle": "Aim Analog Watch",
+    "simpleProductPrice": ".final-price .price-wrapper .price",
+    "simpleProductTitle": "Push It Messenger Bag",
+    "thumbnailImageLabel": "View larger image"
   },
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form"

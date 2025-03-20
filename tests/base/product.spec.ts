@@ -49,7 +49,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     const productPage = new ProductPage(page);
     await productPage.changeReviewCountAndVerify(slugs.productpage.simpleProductSlug);
   });
-
+  
 });
 
 test.describe('Simple product tests',{ tag: '@simple-product',}, () => {
