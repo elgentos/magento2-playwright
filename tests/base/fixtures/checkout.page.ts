@@ -62,13 +62,8 @@ export class CheckoutPage extends BasePage {
       await this.waitForMagewireRequests();
     }
 
-    // If payment method is not selected, select default (check)
-    if (!(await this.paymentMethodOptionCheck.isChecked()) &&
-        !(await this.paymentMethodOptionCreditCard.isChecked?.()) &&
-        !(await this.paymentMethodOptionPaypal.isChecked?.())) {
-      await this.paymentMethodOptionCheck.check();
-      await this.waitForMagewireRequests();
-    }
+    await this.paymentMethodOptionCheck.check();
+    await this.waitForMagewireRequests();
 
     await this.placeOrderButton.click();
     await this.waitForMagewireRequests();
@@ -194,7 +189,7 @@ export class CheckoutPage extends BasePage {
 
   async fillShippingAddress() {
     // Fill required shipping address fields
-    await this.page.getByLabel(UIReference.credentials.emailFieldLabel, { exact: true }).fill(faker.internet.email());
+    await this.page.getByLabel(UIReference.credentials.emailCheckoutFieldLabel, { exact: true }).fill(faker.internet.email());
     await this.page.getByLabel(UIReference.personalInformation.firstNameLabel).fill(faker.person.firstName());
     await this.page.getByLabel(UIReference.personalInformation.lastNameLabel).fill(faker.person.lastName());
     await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).first().fill(faker.location.streetAddress());
