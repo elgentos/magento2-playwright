@@ -64,16 +64,11 @@ test.describe('Product in cart tests', {tag: '@cart-product-group'}, () => {
    * @when I log in
    * @then I should still have that product in my cart
    */
-  test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account']}, async ({page, browserName}) => {
-    await test.step('Add product to cart', async () =>{
-      const productpage = new ProductPage(page);
-      await page.goto(slugs.productpage.simpleProductSlug);
-      await productpage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    });
+  productTest('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account']}, async ({page, productPage, browserName}) => {
+    const loginPage = new LoginPage(productPage.page);
 
     await test.step('Log in with account', async () =>{
-      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-      const loginPage = new LoginPage(page);
+      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";  
       let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
       let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
 
@@ -84,8 +79,16 @@ test.describe('Product in cart tests', {tag: '@cart-product-group'}, () => {
       await loginPage.login(emailInputValue, passwordInputValue);
     });
 
-    await page.goto(slugs.cartSlug);
-    await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
+    await test.step('Check product it still in cart', async () =>{
+      await productPage.page.goto(slugs.cartSlug);
+      await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
+    });
+
+    await test.step('Remove product, then Log out', async () =>{
+      await productPage.cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
+      await loginPage.logout();
+    });
+
   });
 }); // End of product in cart group
 

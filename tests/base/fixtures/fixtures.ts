@@ -57,7 +57,7 @@ export const productTest = base.extend<CustomFixtures>({
     let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
     let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
     if(!emailInputValue || !passwordInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+      throw new Error(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.`);
     }
     await loginPage.login(emailInputValue, passwordInputValue);
 
