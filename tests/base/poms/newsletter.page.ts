@@ -38,7 +38,7 @@ export class NewsletterSubscriptionPage {
     await this.page.getByText(subscriptionUpdatedNotification).waitFor();
     await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
 
-    // Navigate to newsletter page, because saving the subscription refreshes to the account page
+    // Navigate to newsletter page, because saving the subscription redirects to the account page
     await this.page.goto(slugs.account.newsLetterSlug);
 
     if(subscribed){

@@ -24,7 +24,7 @@ productTest('Address_is_filled_in_at_checkout_for_user', {tag: ['@checkout', '@u
     // Add an address field is visible
     await userProductPage.page.goto(slugs.account.addressBookSlug);
     // Check if the button 'Change billing address' is visible.
-    if(await userProductPage.page.getByRole('link', { name: 'Change Billing Address arrow-' }).isVisible()) {
+    if(await userProductPage.page.getByRole('link', { name: UIReference.checkout.changeBillingAddressArrowLocator }).isVisible()) {
       throw new Error(`Address has seemingly been added, but is not filled in.`);
     } else {
       const accountPage = new AccountPage(userProductPage.page);

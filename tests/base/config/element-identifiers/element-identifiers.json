@@ -98,7 +98,8 @@
     "openCartButtonLabelCont": "item",
     "openCartButtonLabelContMultiple": "items",
     "cartDetailsLocator": "#checkout-cart-details div",
-    "shippingAddressRadioLocator": "#shipping-details input[type='radio']"
+    "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
+    "changeBillingAddressArrowLocator": "Change Billing Address arrow-"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
