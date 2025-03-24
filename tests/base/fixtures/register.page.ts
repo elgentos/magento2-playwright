@@ -37,12 +37,9 @@ export class RegisterPage {
 
     if(!muted) {
       // Assertions: Account created notification, navigated to account page, email visible on page
-      await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText)).toBeVisible();
-      await expect(this.page).toHaveURL(slugs.account.accountOverviewSlug);
-      await expect(accountInformationField).toContainText(email);
+      await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText), 'Account creation notification should be visible').toBeVisible();
+      await expect(this.page, 'Should be redirected to account overview page').toHaveURL(slugs.account.accountOverviewSlug);
+      await expect(accountInformationField, `Account information should contain email: ${email}`).toContainText(email);
     }
-
-    // log credentials to console to add to .env file
-    //console.log(`Account created with credentials: email address "${email}" and password "${password}"`);
   }
 }
