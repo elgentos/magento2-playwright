@@ -147,41 +147,10 @@
     "removeProductIconLabel": "Remove product",
     "toCartLinkLabel": "View and Edit Cart"
   },
-  "newAddress": {
-    "addNewAddressTitle": "Add New Address",
-    "cityNameLabel": "City",
-    "companyNameLabel": "Company",
-    "countryLabel": "Country",
-    "phoneNumberLabel": "Phone Number",
-    "provinceSelectFilterLabel": "Please select a region, state or province.",
-    "provinceSelectLabel": "State/Province",
-    "saveAdressButton": "Save Address",
-    "streetAddressLabel": "Street Address",
-    "zipCodeLabel": "Zip/Postal Code"
-  },
-  "newsletterSubscriptions": {
-    "generalSubscriptionCheckLabel": "General Subscription",
-    "saveSubscriptionsButton": "Save"
-  },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
     "firstNameLabel": "First Name",
     "lastNameLabel": "Last Name"
-  },
-  "productPage": {
-    "configurableProductColorLabel": "Color",
-    "configurableProductOptionForm": "#product_addtocart_form",
-    "configurableProductOptionValue": ".product-option-value-label",
-    "configurableProductSizeLabel": "Size",
-    "configurableProductTitle": "Inez Full Zip Jacket",
-    "fullScreenCloseLabel": "Close fullscreen",
-    "fullScreenOpenLabel": "Click to view image in",
-    "quantityFieldLabel": "Quantity",
-    "reviewCountLabel": "Show items per page",
-    "secondSimpleProducTitle": "Aim Analog Watch",
-    "simpleProductPrice": ".final-price .price-wrapper .price",
-    "simpleProductTitle": "Push It Messenger Bag",
-    "thumbnailImageLabel": "View larger image"
   },
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form"
