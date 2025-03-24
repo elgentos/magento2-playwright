@@ -28,6 +28,10 @@
     "orderPlacedNotification": "Thank you for your purchase!",
     "orderPlacedNumberText": "Your order number is:"
   },
+  "comparePage": {
+    "productRemovedNotificationTextOne": "You removed product",
+    "productRemovedNotificationTextTwo": "from the comparison list."
+  },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
   },

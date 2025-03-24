@@ -50,6 +50,9 @@
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
     "shippingMethodFixedLabel": "Fixed"
   },
+  "comparePage": {
+    "removeCompareLabel": "Remove Product"
+  },
   "configurationPage": {
     "advancedAdministrationTabLabel": "Admin",
     "advancedTabLabel": "Advanced",
@@ -83,7 +86,8 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
-    "removeLabel": "Remove"
+    "removeLabel": "Remove",
+    "successMessageLocator": "div.message.success"
   },
   "magentoAdminPage": {
     "loginButtonLabel": "Sign In",
