@@ -37,6 +37,14 @@
     "firstStreetAddressValue": "Testingstreet 1",
     "firstZipCodeValue": "12345"
   },
+  "payment": {
+    "creditCard": {
+      "number": "4111111111111111",
+      "expiry": "12/25",
+      "cvv": "123",
+      "name": "Test User"
+    }
+  },
   "secondAddress": {
     "secondCityValue": "Little Whinging",
     "secondCompanyNameValue": "Hogwarts",
