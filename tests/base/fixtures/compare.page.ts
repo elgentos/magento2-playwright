@@ -28,4 +28,7 @@ export default class ComparePage {
     await successMessage.waitFor();
     await expect(productAddedNotification).toBeVisible();
   }
+
+  async addToWishList(product:string){
+  }
 }

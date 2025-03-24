@@ -25,6 +25,11 @@ test('Add_product_to_cart_from_comparison_page', async ({page}) => {
   await comparePage.addToCart(UIReference.productPage.simpleProductTitle);
 });
 
+test('Add_product_to_wishlist_from_comparison_page', async ({page}) => {
+  const comparePage = new ComparePage(page);
+  await comparePage.addToWishList(UIReference.productPage.simpleProductTitle);
+});
+
 test.afterEach('Remove products from compare', async ({ page }) => {
   page.on('dialog', dialog => dialog.accept());
   const comparePage = new ComparePage(page);
