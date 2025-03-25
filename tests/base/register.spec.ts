@@ -1,5 +1,6 @@
 import {test} from '@playwright/test';
 import {RegisterPage} from './fixtures/register.page';
+import {faker} from '@faker-js/faker';
 
 import inputvalues from './config/input-values/input-values.json';
 
@@ -20,14 +21,14 @@ test('User can register an account', { tag: '@setup', }, async ({page, browserNa
 
   // Retrieve desired password from .env file
   const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-  var firstName = inputvalues.accountCreation.firstNameValue;
-  var lastName = inputvalues.accountCreation.lastNameValue;
-  
+  var firstName = faker.person.firstName();
+  var lastName = faker.person.lastName();
+
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let randomNumber = Math.floor(Math.random() * 100);
   let emailHandle = inputvalues.accountCreation.emailHandleValue;
   let emailHost = inputvalues.accountCreation.emailHostValue;
-  const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`; 
+  const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
   //const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
   if (!accountEmail || !existingAccountPassword) {

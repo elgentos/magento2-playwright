@@ -4,9 +4,9 @@ import {LoginPage} from './fixtures/login.page';
 import {RegisterPage} from './fixtures/register.page';
 import {AccountPage} from './fixtures/account.page';
 import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
+import {faker} from '@faker-js/faker';
 
 import slugs from './config/slugs.json';
-import inputvalues from './config/input-values/input-values.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
@@ -67,9 +67,9 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
       throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
     }
 
-    await registerPage.createNewAccount(inputvalues.accountCreation.firstNameValue, inputvalues.accountCreation.lastNameValue, emailPasswordUpdatevalue, passwordInputValue);
+    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
-    // Update password    
+    // Update password
     await page.goto(slugs.account.changePasswordSlug);
     await page.waitForLoadState();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
@@ -109,7 +109,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
-    
+
     if(await addNewAddressTitle.isHidden()) {
       await accountPage.deleteAllAddresses();
       testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
@@ -131,7 +131,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
-    
+
     await accountPage.addNewAddress();
   });
 
