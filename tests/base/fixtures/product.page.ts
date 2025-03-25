@@ -105,7 +105,7 @@ export class ProductPage {
 
     // Verify URL contains the new limit
     const urlAfterFirstChange = this.page.url();
-    expect(urlAfterFirstChange).toContain('limit=20');
+    expect(urlAfterFirstChange, 'URL should contain limit=20').toContain('limit=20');
     expect(urlAfterFirstChange).not.toEqual(initialUrl);
 
     // Select 50 reviews per page
@@ -114,8 +114,8 @@ export class ProductPage {
 
     // Verify URL contains the new limit
     const urlAfterSecondChange = this.page.url();
-    expect(urlAfterSecondChange).toContain('limit=50');
-    expect(urlAfterSecondChange).not.toEqual(urlAfterFirstChange);
+    expect(urlAfterSecondChange, 'URL should contain limit=50').toContain('limit=50');
+    expect(urlAfterSecondChange, 'URLs before and after change should be different').not.toEqual(urlAfterFirstChange);
   }
 
   // ==============================================
