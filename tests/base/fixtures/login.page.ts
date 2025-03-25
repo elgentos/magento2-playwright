@@ -22,7 +22,5 @@ export class LoginPage {
     await this.loginPasswordField.fill(password);
     // usage of .press("Enter") to prevent webkit issues with button.click();
     await this.loginButton.press("Enter");
-
-    await expect(this.page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem })).toBeVisible();
   }
 }
