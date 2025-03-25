@@ -88,11 +88,42 @@ export class ProductPage {
 
   }
 
+  async changeReviewCountAndVerify(url: string) {
+    await this.page.goto(url);
+
+    // Get the default review count from URL or UI
+    const initialUrl = this.page.url();
+
+    // Find and click the review count selector
+    const reviewCountSelector = this.page.getByLabel(UIReference.productPage.reviewCountSelectorLabel);
+
+    await expect(reviewCountSelector).toBeVisible();
+
+    // Select 20 reviews per page
+    await reviewCountSelector.selectOption('20');
+    await this.page.waitForURL(/.*limit=20.*/);
+
+    // Verify URL contains the new limit
+    const urlAfterFirstChange = this.page.url();
+    expect(urlAfterFirstChange, 'URL should contain limit=20').toContain('limit=20');
+    expect(urlAfterFirstChange).not.toEqual(initialUrl);
+
+    // Select 50 reviews per page
+    await reviewCountSelector.selectOption('50');
+    await this.page.waitForURL(/.*limit=50.*/);
+
+    // Verify URL contains the new limit
+    const urlAfterSecondChange = this.page.url();
+    expect(urlAfterSecondChange, 'URL should contain limit=50').toContain('limit=50');
+    expect(urlAfterSecondChange, 'URLs before and after change should be different').not.toEqual(urlAfterFirstChange);
+  }
+
   // ==============================================
   // Cart-related methods
   // ==============================================
 
   async addSimpleProductToCart(product: string, url: string, quantity?: string) {
+
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;

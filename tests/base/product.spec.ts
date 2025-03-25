@@ -45,6 +45,10 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     await productPage.openLightboxAndScrollThrough(slugs.productpage.configurableProductSlug);
   });
 
+  test('Change number of reviews shown on product page', async ({page}) => {
+    const productPage = new ProductPage(page);
+    await productPage.changeReviewCountAndVerify(slugs.productpage.simpleProductSlug);
+  });
 });
 
 test.describe('Simple product tests',{ tag: '@simple-product',}, () => {
