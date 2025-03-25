@@ -1,7 +1,10 @@
 import { test as base } from '@playwright/test';
+import {faker} from '@faker-js/faker';
+
 import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
 import { RegisterPage } from './fixtures/register.page';
-import {faker} from '@faker-js/faker';
+import { AccountPage } from './fixtures/account.page';
+import { RegisterPage } from './fixtures/register.page';
 
 import fs from 'fs';
 import path from 'path';
@@ -68,9 +71,10 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       );
     }
 
+    const registerPage = new RegisterPage(page);
     await registerPage.createNewAccount(
-      faker.person.firstName(),
-      faker.person.lastName(),
+      values.accountCreation.firstNameValue,
+      values.accountCreation.lastNameValue,
       accountEmail,
       accountPassword,
       true

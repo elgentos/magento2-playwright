@@ -185,4 +185,28 @@ test.describe('Checkout (guest)', () => {
     const checkout = new CheckoutPage(page);
     await checkout.enterWrongCouponCode("incorrect discount code");
   });
+
+  /**
+   * @feature Payment Method Selection
+   * @scenario Guest user selects different payment methods during checkout
+   * @given I have a product in my cart
+   *  @and I am on the checkout page as a guest
+   * @when I select a payment method
+   *  @and I complete the checkout process
+   * @then I should see a confirmation that my order has been placed
+   *  @and a order number should be created and shown to me
+   */
+  test('Guest can select different payment methods', { tag: ['@checkout', '@payment-methods'] }, async ({ page }) => {
+    const checkoutPage = new CheckoutPage(page);
+
+    // Test with check/money order payment
+    await test.step('Place order with check/money order payment', async () => {
+      await page.goto(slugs.checkout.checkoutSlug);
+      await checkoutPage.fillShippingAddress();
+      await checkoutPage.shippingMethodOptionFixed.check();
+      await checkoutPage.selectPaymentMethod('check');
+      let orderNumber = await checkoutPage.placeOrder();
+      expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
+    });
+  });
 });

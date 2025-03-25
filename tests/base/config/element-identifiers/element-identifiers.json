@@ -9,9 +9,41 @@
     "addressBookArea": ".block-addresses-list",
     "addressDeleteIconButton": "trash",
     "editAddressIconButton": "pencil-alt",
+    "accountInformationFieldLocator": ".column > div > div > .flex",
     "links": {
       "newsletterLink": "Newsletter Subscriptions"
     }
+  },
+  "newAddress": {
+    "addNewAddressTitle": "Add New Address",
+    "companyNameLabel": "Company",
+    "phoneNumberLabel": "Phone Number",
+    "streetAddressLabel": "Street Address",
+    "zipCodeLabel": "Zip/Postal Code",
+    "cityNameLabel": "City",
+    "countryLabel": "Country",
+    "provinceSelectLabel": "State/Province",
+    "provinceSelectFilterLabel": "Please select a region, state or province.",
+    "saveAdressButton": "Save Address"
+  },
+  "newsletterSubscriptions": {
+    "generalSubscriptionCheckLabel": "General Subscription",
+    "saveSubscriptionsButton": "Save"
+  },
+  "productPage": {
+    "simpleProductTitle": "Push It Messenger Bag",
+    "secondSimpleProducTitle": "Aim Analog Watch",
+    "simpleProductPrice": ".final-price .price-wrapper .price",
+    "configurableProductTitle": "Inez Full Zip Jacket",
+    "configurableProductSizeLabel": "Size",
+    "configurableProductColorLabel": "Color",
+    "configurableProductOptionForm": "#product_addtocart_form",
+    "configurableProductOptionValue": ".product-option-value-label",
+    "quantityFieldLabel": "Quantity",
+    "fullScreenOpenLabel": "Click to view image in",
+    "fullScreenCloseLabel": "Close fullscreen",
+    "thumbnailImageLabel": "View larger image",
+    "reviewCountLabel": "Show items per page"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
@@ -45,6 +77,12 @@
     "openCartButtonLabelContMultiple": "items",
     "openDiscountFormLabel": "Apply Discount Code",
     "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCreditCardLabel": "Credit Card",
+    "paymentOptionPaypalLabel": "PayPal",
+    "creditCardNumberLabel": "Credit Card Number",
+    "creditCardExpiryLabel": "Expiration Date",
+    "creditCardCVVLabel": "Card Verification Number",
+    "creditCardNameLabel": "Name on Card",
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
@@ -69,6 +107,7 @@
   "credentials": {
     "currentPasswordFieldLabel": "Current Password",
     "emailFieldLabel": "Email",
+    "emailCheckoutFieldLabel": "Email address",
     "loginButtonLabel": "Sign In",
     "nameFieldLabel": "Name",
     "newPasswordConfirmFieldLabel": "Confirm New Password",
@@ -116,40 +155,10 @@
     "removeProductIconLabel": "Remove product",
     "toCartLinkLabel": "View and Edit Cart"
   },
-  "newAddress": {
-    "addNewAddressTitle": "Add New Address",
-    "cityNameLabel": "City",
-    "companyNameLabel": "Company",
-    "countryLabel": "Country",
-    "phoneNumberLabel": "Phone Number",
-    "provinceSelectFilterLabel": "Please select a region, state or province.",
-    "provinceSelectLabel": "State/Province",
-    "saveAdressButton": "Save Address",
-    "streetAddressLabel": "Street Address",
-    "zipCodeLabel": "Zip/Postal Code"
-  },
-  "newsletterSubscriptions": {
-    "generalSubscriptionCheckLabel": "General Subscription",
-    "saveSubscriptionsButton": "Save"
-  },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
     "firstNameLabel": "First Name",
     "lastNameLabel": "Last Name"
-  },
-  "productPage": {
-    "configurableProductColorLabel": "Color",
-    "configurableProductOptionForm": "#product_addtocart_form",
-    "configurableProductOptionValue": ".product-option-value-label",
-    "configurableProductSizeLabel": "Size",
-    "configurableProductTitle": "Inez Full Zip Jacket",
-    "fullScreenCloseLabel": "Close fullscreen",
-    "fullScreenOpenLabel": "Click to view image in",
-    "quantityFieldLabel": "Quantity",
-    "secondSimpleProducTitle": "Aim Analog Watch",
-    "simpleProductPrice": ".final-price .price-wrapper .price",
-    "simpleProductTitle": "Push It Messenger Bag",
-    "thumbnailImageLabel": "View larger image"
   },
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form"
