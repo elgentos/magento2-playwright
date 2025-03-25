@@ -4,7 +4,8 @@ import {faker} from '@faker-js/faker';
 import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
 import { RegisterPage } from './fixtures/register.page';
 import { AccountPage } from './fixtures/account.page';
-import { RegisterPage } from './fixtures/register.page';
+
+import values from './config/input-values/input-values.json';
 
 import fs from 'fs';
 import path from 'path';
@@ -71,7 +72,6 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       );
     }
 
-    const registerPage = new RegisterPage(page);
     await registerPage.createNewAccount(
       values.accountCreation.firstNameValue,
       values.accountCreation.lastNameValue,
