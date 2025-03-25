@@ -9,6 +9,7 @@
     "addressBookArea": ".block-addresses-list",
     "addressDeleteIconButton": "trash",
     "editAddressIconButton": "pencil-alt",
+    "accountInformationFieldLocator": ".column > div > div > .flex",
     "links": {
       "newsletterLink": "Newsletter Subscriptions"
     }
@@ -76,6 +77,12 @@
     "openCartButtonLabelContMultiple": "items",
     "openDiscountFormLabel": "Apply Discount Code",
     "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCreditCardLabel": "Credit Card",
+    "paymentOptionPaypalLabel": "PayPal",
+    "creditCardNumberLabel": "Credit Card Number",
+    "creditCardExpiryLabel": "Expiration Date",
+    "creditCardCVVLabel": "Card Verification Number",
+    "creditCardNameLabel": "Name on Card",
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
@@ -100,6 +107,7 @@
   "credentials": {
     "currentPasswordFieldLabel": "Current Password",
     "emailFieldLabel": "Email",
+    "emailCheckoutFieldLabel": "Email address",
     "loginButtonLabel": "Sign In",
     "nameFieldLabel": "Name",
     "newPasswordConfirmFieldLabel": "Confirm New Password",

@@ -122,6 +122,7 @@ export class ProductPage {
   // ==============================================
 
   async addSimpleProductToCart(product: string, url: string, quantity?: string) {
+
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;

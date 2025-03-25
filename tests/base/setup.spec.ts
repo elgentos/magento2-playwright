@@ -1,6 +1,7 @@
 import { test as base } from '@playwright/test';
 import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
 import { AccountPage } from './fixtures/account.page';
+import { RegisterPage } from './fixtures/register.page';
 
 import values from './config/input-values/input-values.json';
 import fs from 'fs';
@@ -68,11 +69,13 @@ base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, bro
       );
     }
 
-    await accountPage.create(
+    const registerPage = new RegisterPage(page);
+    await registerPage.createNewAccount(
       values.accountCreation.firstNameValue,
       values.accountCreation.lastNameValue,
       accountEmail,
-      accountPassword
+      accountPassword,
+      true
     );
   });
 
