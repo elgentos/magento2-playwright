@@ -25,8 +25,11 @@ export class ProductPage {
 
   async addProductToCompare(product:string, url: string){
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
+    const successMessage = this.page.locator(UIReference.general.successMessageLocator);
+
     await this.page.goto(url);
     await this.addToCompareButton.click();
+    await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
 
     await this.page.goto(slugs.productpage.productComparisonSlug);

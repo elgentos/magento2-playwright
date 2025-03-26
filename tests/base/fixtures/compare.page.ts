@@ -13,6 +13,12 @@ export default class ComparePage {
   }
 
   async removeProductFromCompare(product:string){
+    let comparisonPageEmptyText = this.page.getByText(UIReference.comparePage.comparisonPageEmptyText);
+    // if the comparison page is empty, we can't remove anything
+    if (await comparisonPageEmptyText.isVisible()) {
+      return;
+    }
+
     let removeFromCompareButton = this.page.getByLabel(`${UIReference.comparePage.removeCompareLabel} ${product}`);
     let productRemovedNotification = this.page.getByText(`${outcomeMarker.comparePage.productRemovedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productRemovedNotificationTextTwo}`);
     await removeFromCompareButton.click();
@@ -30,5 +36,11 @@ export default class ComparePage {
   }
 
   async addToWishList(product:string){
+    const successMessage = this.page.locator(UIReference.general.successMessageLocator);
+    let addToWishlistButton = this.page.getByLabel(`${UIReference.comparePage.addToWishListLabel} ${product}`);
+    let productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
+
+    await addToWishlistButton.click();
+    await successMessage.waitFor();
   }
 }

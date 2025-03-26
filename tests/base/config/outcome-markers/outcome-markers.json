@@ -30,7 +30,8 @@
   },
   "comparePage": {
     "productRemovedNotificationTextOne": "You removed product",
-    "productRemovedNotificationTextTwo": "from the comparison list."
+    "productRemovedNotificationTextTwo": "from the comparison list.",
+    "productNotWishlistedNotificationText": "You must login or register to add items to your wishlist."
   },
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"

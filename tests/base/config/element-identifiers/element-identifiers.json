@@ -51,7 +51,10 @@
     "shippingMethodFixedLabel": "Fixed"
   },
   "comparePage": {
-    "removeCompareLabel": "Remove Product"
+    "removeCompareLabel": "Remove Product",
+    "addToWishListLabel": "Add to Wish List",
+    "comparisonPageEmptyText": "You have no items to compare.",
+    "comparisonPageTitleText": "Compare Products"
   },
   "configurationPage": {
     "advancedAdministrationTabLabel": "Admin",
@@ -87,7 +90,8 @@
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "removeLabel": "Remove",
-    "successMessageLocator": "div.message.success"
+    "successMessageLocator": "div.message.success",
+    "errorMessageLocator": "div.message.error"
   },
   "magentoAdminPage": {
     "loginButtonLabel": "Sign In",
@@ -156,6 +160,7 @@
     "thumbnailImageLabel": "View larger image"
   },
   "wishListPage": {
-    "wishListItemGridLabel": "#wishlist-view-form"
+    "wishListItemGridLabel": "#wishlist-view-form",
+    "updateCompareListButtonLabel": "Update Wish List"
   }
 }
