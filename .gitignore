@@ -11,3 +11,4 @@ package-lock.json
 .env
 .vscode
 /tests/.auth/
+/tests/base/config/test-toggles.json
