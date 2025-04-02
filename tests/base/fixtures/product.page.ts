@@ -8,13 +8,14 @@ import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 export class ProductPage {
   readonly page: Page;
   simpleProductTitle: Locator;
-  simpleProductAddToCartButon: Locator;
+  configurableProductTitle: Locator;
+  addToCartButton: Locator;
   addToCompareButton: Locator;
   addToWishlistButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.simpleProductAddToCartButon = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
+    this.addToCartButton = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
     this.addToCompareButton = page.getByLabel('Add to Compare', { exact: true });
     this.addToWishlistButton = page.getByLabel('Add to Wish List', { exact: true });
   }
@@ -139,19 +140,41 @@ export class ProductPage {
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
     }
 
-    await this.simpleProductAddToCartButon.click();
+    await this.addToCartButton.click();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
 
-  async addConfigurableProductToCart(){
+  async addConfigurableProductToCart(product: string, url:string, quantity?:string){
+    await this.page.goto(url);
+    this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
 
     // loop through each radiogroup (product option) within the form
     for (const option of await productOptions.getByRole('radiogroup').all()) {
-        await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
+      await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
     }
 
-    await this.simpleProductAddToCartButon.click();
-    await this.page.waitForLoadState();
+    if(quantity){
+      // set quantity
+      await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
+    }
+
+    await this.addToCartButton.click();
+    let successMessage = this.page.locator(UIReference.general.successMessageLocator);
+    await successMessage.waitFor();
+    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
+
+  // async addConfigurableProductToCart(){
+  //   const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
+
+  //   // loop through each radiogroup (product option) within the form
+  //   for (const option of await productOptions.getByRole('radiogroup').all()) {
+  //       await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
+  //   }
+
+  //   await this.simpleProductAddToCartButon.click();
+  //   await this.page.waitForLoadState();
+  // }
 }

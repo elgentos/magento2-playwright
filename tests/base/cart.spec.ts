@@ -238,7 +238,7 @@ test.describe('Price checking tests', () => {
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart();
+      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
 
     });
 
