@@ -165,16 +165,4 @@ export class ProductPage {
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
-
-  // async addConfigurableProductToCart(){
-  //   const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
-
-  //   // loop through each radiogroup (product option) within the form
-  //   for (const option of await productOptions.getByRole('radiogroup').all()) {
-  //       await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
-  //   }
-
-  //   await this.simpleProductAddToCartButon.click();
-  //   await this.page.waitForLoadState();
-  // }
 }
