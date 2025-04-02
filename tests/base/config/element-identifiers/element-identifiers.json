@@ -45,9 +45,13 @@
     "thumbnailImageLabel": "View larger image",
     "reviewCountLabel": "Show items per page"
   },
+  "categoryPage":{
+    "categoryPageTitleText": "Men"
+  },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
     "cancelCouponButtonLabel": "Cancel Coupon",
+    "cartTitleText": "Shopping Cart",
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
@@ -132,6 +136,9 @@
     "successMessageLocator": "div.message.success",
     "errorMessageLocator": "div.message.error"
   },
+  "homePage": {
+    "homePageTitleText": "Hyvä Themes"
+  },
   "magentoAdminPage": {
     "loginButtonLabel": "Sign In",
     "navigation": {
@@ -153,6 +160,7 @@
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
     "editProductIconLabel": "Edit product",
+    "minicartButtonLocator": "#menu-cart-icon",
     "minicartAmountBubbleLocator": "#menu-cart-icon > span",
     "minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
     "miniCartToggleLabelEmpty": "Cart is empty",
