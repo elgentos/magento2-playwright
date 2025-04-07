@@ -15,9 +15,9 @@ export class ProductPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.addToCartButton = page.getByRole('button', { name: 'shopping-cart Add to Cart' });
-    this.addToCompareButton = page.getByLabel('Add to Compare', { exact: true });
-    this.addToWishlistButton = page.getByLabel('Add to Wish List', { exact: true });
+    this.addToCartButton = page.getByRole('button', { name: UIReference.productPage.addToCartButtonLocator });
+    this.addToCompareButton = page.getByLabel(UIReference.productPage.addToCompareButtonLabel, { exact: true });
+    this.addToWishlistButton = page.getByLabel(UIReference.productPage.addToWishlistButtonLabel, { exact: true });
   }
 
   // ==============================================
