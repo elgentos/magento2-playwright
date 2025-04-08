@@ -46,7 +46,8 @@
     "reviewCountLabel": "Show items per page"
   },
   "categoryPage":{
-    "categoryPageTitleText": "Men"
+    "categoryPageTitleText": "Women",
+    "firstFilterOptionLocator": "#filter-option-0-content"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
