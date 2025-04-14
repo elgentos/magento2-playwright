@@ -2,8 +2,6 @@
   "accountCreation": {
     "emailHandleValue":"test-user",
     "emailHostValue": "gmail.com",
-    "emailHandleValue": "test-user",
-    "emailHostValue": "gmail.com",
     "firstNameValue": "John",
     "lastNameValue": "Doe"
   },

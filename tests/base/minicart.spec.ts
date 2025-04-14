@@ -115,7 +115,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const productPage = new ProductPage(page);
 
     await page.goto(slugs.productpage.configurableProductSlug);
-    await productPage.addConfigurableProductToCart();
+    await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();
   });

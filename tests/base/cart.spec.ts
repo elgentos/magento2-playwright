@@ -232,13 +232,14 @@ test.describe('Price checking tests', () => {
 
     await test.step('Step: Add configurable product to cart', async () =>{
       const productPage = new ProductPage(page);
+      // Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
       await page.goto(slugs.productpage.configurableProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel('Quantity').fill('2');
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart();
+      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
 
     });
 
