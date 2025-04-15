@@ -1,5 +1,5 @@
 {
   "general": {
-    "pageHealthCheck": true
+    "pageHealthCheck": false
   }
 }
