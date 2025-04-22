@@ -8,6 +8,15 @@ import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
+test.beforeEach('Add a Cookie Banner Handler', async ({ page }) => {
+  // Before Each step: add a cookie constent handler
+  const cookieButton = page.getByRole("button", {name: "Alle cookies toestaan"});
+  await page.addLocatorHandler(cookieButton, async () => {
+    await cookieButton.click();
+    await expect(cookieButton).not.toBeVisible();
+  });
+});
+
 test.describe('Cart functionalities (guest)', () => {
   /**
    * @feature BeforeEach runs before each test in this group.

@@ -30,7 +30,10 @@ export class CartPage {
     let subTotalBeforeUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
 
     await this.page.getByRole('button', { name: UIReference.cart.updateShoppingCartButtonLabel }).click();
-    await this.page.reload();
+    await this.page.waitForTimeout(2000);
+    // Wait for Grand Total to be calculated and visible
+    const grandTotalSummary = this.page.getByText(`Grand Total ${UIReference.general.genericPriceSymbol}`);
+    grandTotalSummary.waitFor();
 
     currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
 

@@ -12,6 +12,15 @@ import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
+
+  // Before Each step: add a cookie constent handler
+  const cookieButton = page.getByRole("button", {name: "Alle cookies toestaan"});
+  await page.addLocatorHandler(cookieButton, async () => {
+    await cookieButton.click();
+    await expect(cookieButton).not.toBeVisible();
+  });
+
+  // Before Each step: Log in
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
   let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
