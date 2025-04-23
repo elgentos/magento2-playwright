@@ -19,8 +19,7 @@ export default class CategoryPage {
     const firstFilterOption = this.page.locator(UIReference.categoryPage.firstFilterOptionLocator);
     await firstFilterOption.waitFor();
 
-    await this.page.waitForLoadState("networkidle");
-
+    this.page.waitForLoadState();
     await expect(this.categoryPageTitle).toBeVisible();
   }
 
@@ -34,28 +33,34 @@ export default class CategoryPage {
 
     // locator: filter-option-4-content
     // if this is not visible, it has style="display:none"
-
-    if(await filterContentGroup.isHidden()){
+    if(await this.page.locator('#filter-option-4-content').isHidden()){
       // filter group is not open, open it
+      console.log('Not visible!');
       await sizeFilterButton.click();
     }
 
-    await sizeFilterButton.click();
+    // await sizeFilterButton.click();
     let amountOfItemsBeforeFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
 
-    // Hard-coded filter to check other steps of the test
-    // await this.page.goto(`${slugs.productpage.categorySlug}?size=L`);
-    await sizeLButton.click({force: true});
+
+    await sizeLButton.click();
     await activeFilterHeader.waitFor();
-    await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
     let amountOfItemsAfterFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
 
-    expect(amountOfItemsAfterFilter, 'Amount of items shown with filter is less than without').toBeLessThan(amountOfItemsBeforeFilter);
+    await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
+    expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThan(amountOfItemsBeforeFilter);
+    expect(this.page.url(), `URL should contain 'size=L'`).toContain("size=L");
 
-    // URL now has 'size=L' at the end
-    // h3 id "active-filtering-heading" should now be visible
-    // a trash button should be visible now
-    // the value of the last toolbar-number should now be lower than it was before
+  }
 
+  async sortProducts(attribute:string){
+    const sortButton = this.page.getByLabel('Sort by');
+    await sortButton.selectOption(attribute);
+    await this.page.waitForTimeout(3000);
+  
+    // // sortButton should now display attribute
+    // expect(await sortButton.innerText(), `Sort button should now display ${attribute}`).toContain(attribute);
+    // URL now has ?product_list_order=${attribute}
+    expect(this.page.url()).toContain(`product_list_order=${attribute}`);
   }
 }

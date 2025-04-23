@@ -12,9 +12,12 @@ test('Filter_category_on_size',{ tag: '@category',}, async ({page}) => {
   await categoryPage.filterOnSize();
 });
 
-// test('Sort_category_by_price',{ tag: '@category',}, async ({page}) => {
-//   // insert your code here
-// });
+test('Sort_category_by_price',{ tag: '@category',}, async ({page}) => {
+  const categoryPage = new CategoryPage(page);
+  await categoryPage.goToCategoryPage();
+
+  await categoryPage.sortProducts('price');
+});
 
 // test('Change_amount_of_products_shown',{ tag: '@category',}, async ({page}) => {
 //   // insert your code here
