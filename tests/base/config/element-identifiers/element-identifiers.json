@@ -51,7 +51,11 @@
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
     "sortByButtonLabel": "Sort by",
-    "sortByButtonLocator": ".form-select.sorter-options"
+    "sortByButtonLocator": ".form-select.sorter-options",
+    "viewSwitchLabel": "Products view mode",
+    "viewGridLabel": "Products view mode - Grid",
+    "viewListLabel": "Products view mode - List",
+    "activeViewLocator": ".active"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
@@ -133,13 +137,13 @@
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
+    "errorMessageLocator": "div.message.error",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "removeLabel": "Remove",
-    "successMessageLocator": "div.message.success",
-    "errorMessageLocator": "div.message.error"
+    "successMessageLocator": "div.message.success"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Themes"

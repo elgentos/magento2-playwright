@@ -27,6 +27,8 @@ test('Change_amount_of_products_shown',{ tag: '@category',}, async ({page}) => {
   // insert your code here
 });
 
-// test('Switch_from_grid_to_list_view',{ tag: '@category',}, async ({page}) => {
-//   // insert your code here
-// });
+test('Switch_from_grid_to_list_view',{ tag: '@category',}, async ({page}) => {
+  const categoryPage = new CategoryPage(page);
+  await categoryPage.goToCategoryPage();
+  await categoryPage.switchView();
+});

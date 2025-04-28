@@ -81,4 +81,22 @@ export default class CategoryPage {
     expect(this.page.url(), `URL should contain ?product_list_limit=36`).toContain(`?product_list_limit=36`);
     expect(amountOfItems, `Amount of items on the page should be 36`).toBe(36);
   }
+
+  async switchView(){
+    const viewSwitcher = this.page.getByLabel(UIReference.categoryPage.viewSwitchLabel, {exact: true}).locator(UIReference.categoryPage.activeViewLocator);
+    const activeView = await viewSwitcher.getAttribute('title');
+
+    if(activeView == 'Grid'){
+      await this.page.getByLabel(UIReference.categoryPage.viewListLabel).click();
+    } else {
+      await this.page.getByLabel(UIReference.categoryPage.viewGridLabel).click();
+    }
+
+    const viewRegex = /\?product_list_mode=list$/;
+    await this.page.waitForURL(viewRegex);
+
+    const newActiveView = await viewSwitcher.getAttribute('title');
+    expect(newActiveView, `View (now ${newActiveView}) should be switched (old: ${activeView})`).not.toEqual(activeView);
+    expect(this.page.url(),`URL should contain ?product_list_mode=${newActiveView?.toLowerCase()}`).toContain(`?product_list_mode=${newActiveView?.toLowerCase()}`);
+  }
 }
