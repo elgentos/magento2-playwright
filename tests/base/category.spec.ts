@@ -5,11 +5,11 @@ import CategoryPage from './fixtures/category.page';
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
 
-test('Filter_category_on_size',{ tag: '@category',}, async ({page}) => {
+test('Filter_category_on_size',{ tag: '@category',}, async ({page, browserName}) => {
   const categoryPage = new CategoryPage(page);
   await categoryPage.goToCategoryPage();
 
-  await categoryPage.filterOnSize();
+  await categoryPage.filterOnSize(browserName);
 });
 
 test('Sort_category_by_price',{ tag: '@category',}, async ({page}) => {

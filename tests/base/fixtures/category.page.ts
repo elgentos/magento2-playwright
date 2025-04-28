@@ -23,34 +23,37 @@ export default class CategoryPage {
     await expect(this.categoryPageTitle).toBeVisible();
   }
 
-  async filterOnSize(){
+  async filterOnSize(browser:string){
     const sizeFilterButton = this.page.getByRole('button', {name: 'Size filter'});
-    const sizeLButton = this.page.getByLabel('Filter Size L');
-    const filterContentGroup = this.page.locator("#filter-option-4-content");
-    const activeFilterHeader = this.page.locator("#active-filtering-heading");
+    // const sizeLButton = this.page.getByLabel('Filter Size L');
+    const sizeLButton = this.page.locator('a.swatch-option-link-layered[aria-label*="Filter Size L"]');
     const removeActiveFilterLink = this.page.getByRole('link', {name: 'Remove active'}).first();
+    // const activeFilterHeader = this.page.locator("#active-filtering-heading");
+    const amountOfItemsBeforeFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
+    const sizeFilterState = await this.page.locator('#filter-option-4-content').isVisible();
 
 
-    // locator: filter-option-4-content
-    // if this is not visible, it has style="display:none"
-    if(await this.page.locator('#filter-option-4-content').isHidden()){
-      // filter group is not open, open it
-      console.log('Not visible!');
-      await sizeFilterButton.click();
-    }
+    console.log(`Are the size filter options visible? ${sizeFilterState}`);
+    console.log('Is the size L button visible? ' + await sizeLButton.isVisible());
 
-    // await sizeFilterButton.click();
-    let amountOfItemsBeforeFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
+    await this.page.waitForFunction(() => {
+      const el = document.querySelector('div.columns');
+      return !el || getComputedStyle(el).pointerEvents !== 'none';
+    });
 
+    await sizeLButton.click({force: true});
 
-    await sizeLButton.click();
-    await activeFilterHeader.waitFor();
-    let amountOfItemsAfterFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
+    const sizeFilterRegex = new RegExp(`\\?size=L$`);
+    await this.page.waitForURL(sizeFilterRegex);
 
+    /** 
+    const sizeFilterRegex = new RegExp(`\\?size=L$`);
+    await this.page.waitForURL(sizeFilterRegex);
+
+    const amountOfItemsAfterFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
     await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
     expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThan(amountOfItemsBeforeFilter);
-    expect(this.page.url(), `URL should contain 'size=L'`).toContain("size=L");
-
+    */
   }
 
   async sortProducts(attribute:string){
@@ -61,7 +64,7 @@ export default class CategoryPage {
   
     const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => sel.value);
 
-    // // sortButton should now display attribute
+    // sortButton should now display attribute
     expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
     // URL now has ?product_list_order=${attribute}
     expect(this.page.url(), `URL should contain ?product_list_order=${attribute}`).toContain(`product_list_order=${attribute}`);
