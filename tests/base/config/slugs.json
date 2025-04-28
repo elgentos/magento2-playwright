@@ -12,6 +12,9 @@
     "cartProductChangeSlug": "/cart/configure/",
     "cartSlug": "/checkout/cart/"
   },
+  "categoryPage": {
+    "categorySlug": "/women.html"
+  },
   "checkout": {
     "checkoutSlug": "/checkout/"
   },
@@ -19,7 +22,6 @@
     "contactSlug": "/contact"
   },
   "productpage": {
-    "categorySlug": "/women.html",
     "configurableProductSlug": "/inez-full-zip-jacket.html",
     "productComparisonSlug": "/catalog/product_compare/index/",
     "secondSimpleProductSlug": "/aim-analog-watch.html",

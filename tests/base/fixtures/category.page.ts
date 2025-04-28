@@ -14,7 +14,7 @@ export default class CategoryPage {
   }
 
   async goToCategoryPage(){
-    await this.page.goto(slugs.productpage.categorySlug);
+    await this.page.goto(slugs.categoryPage.categorySlug);
     // Wait for the first filter option to be visible
     const firstFilterOption = this.page.locator(UIReference.categoryPage.firstFilterOptionLocator);
     await firstFilterOption.waitFor();
@@ -54,13 +54,31 @@ export default class CategoryPage {
   }
 
   async sortProducts(attribute:string){
-    const sortButton = this.page.getByLabel('Sort by');
+    const sortButton = this.page.getByLabel(UIReference.categoryPage.sortByButtonLabel);
     await sortButton.selectOption(attribute);
-    await this.page.waitForTimeout(3000);
+    const sortRegex = new RegExp(`\\?product_list_order=${attribute}$`);
+    await this.page.waitForURL(sortRegex);
   
+    const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => sel.value);
+
     // // sortButton should now display attribute
-    // expect(await sortButton.innerText(), `Sort button should now display ${attribute}`).toContain(attribute);
+    expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
     // URL now has ?product_list_order=${attribute}
-    expect(this.page.url()).toContain(`product_list_order=${attribute}`);
+    expect(this.page.url(), `URL should contain ?product_list_order=${attribute}`).toContain(`product_list_order=${attribute}`);
+  }
+
+
+  async showMoreProducts(){
+    const itemsPerPageButton = this.page.getByLabel(UIReference.categoryPage.itemsPerPageButtonLabel);
+    const productGrid = this.page.locator(UIReference.categoryPage.productGridLocator);
+
+    await itemsPerPageButton.selectOption('36');
+    const itemsRegex = /\?product_list_limit=36$/;
+    await this.page.waitForURL(itemsRegex);
+
+    const amountOfItems = await productGrid.locator('li').count();
+
+    expect(this.page.url(), `URL should contain ?product_list_limit=36`).toContain(`?product_list_limit=36`);
+    expect(amountOfItems, `Amount of items on the page should be 36`).toBe(36);
   }
 }

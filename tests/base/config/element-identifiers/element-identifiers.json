@@ -47,7 +47,11 @@
   },
   "categoryPage":{
     "categoryPageTitleText": "Women",
-    "firstFilterOptionLocator": "#filter-option-0-content"
+    "firstFilterOptionLocator": "#filter-option-0-content",
+    "itemsPerPageButtonLabel": "Show items per page",
+    "productGridLocator": ".products-grid",
+    "sortByButtonLabel": "Sort by",
+    "sortByButtonLocator": ".form-select.sorter-options"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
