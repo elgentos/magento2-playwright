@@ -41,6 +41,8 @@ export default class CategoryPage {
       return !el || getComputedStyle(el).pointerEvents !== 'none';
     });
 
+    console.log(await sizeLButton.evaluate(el => el.getBoundingClientRect()));
+
     await sizeLButton.click({force: true});
 
     const sizeFilterRegex = new RegExp(`\\?size=L$`);
