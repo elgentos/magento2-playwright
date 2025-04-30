@@ -17,31 +17,56 @@ export class MagentoAdminPage {
   }
 
   async login(username: string, password: string){
+    // Define 'Stores' button so we can wait for it's visibility.
+    const storesButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel });
+
     if(!process.env.MAGENTO_ADMIN_SLUG) {
       throw new Error("MAGENTO_ADMIN_SLUG is not defined in your .env file.");
     }
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
-    await this.page.waitForLoadState('networkidle');
+    await this.adminLoginButton.waitFor();
+    // await this.page.waitForLoadState('networkidle');
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
-    await this.page.waitForLoadState('networkidle');
+    // await this.page.waitForLoadState('networkidle');
+    await storesButton.waitFor();
   }
 
   async addCartPriceRule(magentoCouponCode: string){
-    if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
-      throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
-    }
+    // if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
+    //   throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
+    // }
 
-    await this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel}).click();
-    await this.page.waitForLoadState('networkidle');
-    //await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
-    await expect(this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
-    await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
-    await this.page.waitForLoadState('networkidle');
-    await this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
-    await this.page.getByLabel(UIReference.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
+    const marketingButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel});
+    const cartPriceRulesButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel});
+    const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
+    const cartPriceRuleField = this.page.getByLabel(UIReference.cartPriceRulesPage.ruleNameFieldLabel);
+
+    await marketingButton.waitFor();
+    await marketingButton.click();
+
+    await cartPriceRulesButton.waitFor();
+    await cartPriceRulesButton.click();
+
+    await addCartPriceRuleButton.waitFor();
+    await addCartPriceRuleButton.click();
+
+    await cartPriceRuleField.waitFor();
+    await cartPriceRuleField.fill(values.coupon.couponCodeRuleName);
+
+    // await this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel}).click();
+    // await this.page.waitForLoadState('networkidle');
+    // //await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
+    // await expect(this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
+    // await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
+    // await this.page.waitForLoadState('networkidle');
+    // const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
+    // await addCartPriceRuleButton.waitFor();
+    // await addCartPriceRuleButton.click();
+    // // await this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
+    // await this.page.getByLabel(UIReference.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
 
     const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
     await websiteSelector.evaluate(select => {
@@ -63,17 +88,45 @@ export class MagentoAdminPage {
     await this.page.getByLabel(UIReference.cartPriceRulesPage.couponCodeFieldLabel).fill(magentoCouponCode);
 
     await this.page.getByText(UIReference.cartPriceRulesPage.actionsSubtitleLabel, { exact: true }).click();
-    await this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel).fill('10');
+    const discountAmountField = this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel);
+    await discountAmountField.waitFor();
+    await discountAmountField.fill('10');
+    // await this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel).fill('10');
 
     await this.page.getByRole('button', { name: 'Save', exact: true }).click();
+
+    // Wait for success message to be visible before moving on.
+    const succesMessageLocator = this.page.locator(UIReference.general.successMessageLocator);
+    await succesMessageLocator.waitFor();
   }
 
   async enableMultipleAdminLogins() {
-    await this.page.waitForLoadState('networkidle');
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    await this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.configurationPage.advancedAdministrationTabLabel, exact: true }).click();
+    // await this.page.waitForLoadState('networkidle');
+    const storesButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel });
+    const configurationButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel });
+    const advancedTab = this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel });
+    const advancedAdministrationTab = this.page.getByRole('link', { name: UIReference.configurationPage.advancedAdministrationTabLabel, exact: true });
+
+    // this function is called after login, meaning we should wait for the stores button to be visible
+    await storesButton.waitFor();
+    await storesButton.click();
+
+    // wait for Configuration button to be visible
+    await configurationButton.waitFor();
+    await configurationButton.click();
+
+    // wait for Advanced tab to be visible
+    await advancedTab.waitFor();
+    await advancedTab.click();
+
+    // wait for Advanced Administration tab to be visible
+    await advancedAdministrationTab.waitFor();
+    await advancedAdministrationTab.click();
+
+    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
+    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    // await this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel }).click();
+    // await this.page.getByRole('link', { name: UIReference.configurationPage.advancedAdministrationTabLabel, exact: true }).click();
 
     if (!await this.page.locator(UIReference.configurationPage.allowMultipleLoginsSystemCheckbox).isVisible()) {
       await this.page.getByRole('link', { name: UIReference.configurationPage.securitySectionLabel }).click();
@@ -85,13 +138,34 @@ export class MagentoAdminPage {
   }
 
   async disableLoginCaptcha() {
-    await this.page.waitForLoadState('networkidle');
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    await this.page.waitForLoadState('networkidle');
-    await this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.configurationPage.customerConfigurationTabLabel }).click();
-    await this.page.waitForLoadState('networkidle');
+    // No longer required because we wait for success message in the previous method/step.
+    // await this.page.waitForLoadState('networkidle');
+    const storesButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel });
+    const configurationButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel });
+    const customersTab = this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel });
+    const customerConfigurationTab = this.page.getByRole('link', { name: UIReference.configurationPage.customerConfigurationTabLabel });
+
+    await storesButton.waitFor();
+    await storesButton.click();
+
+    await configurationButton.waitFor();
+    await configurationButton.click();
+
+    await customersTab.waitFor();
+    await customersTab.click();
+
+    await customerConfigurationTab.waitFor();
+    await customerConfigurationTab.click();
+
+    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
+    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    // await this.page.waitForLoadState('networkidle');
+    // await this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel }).click();
+    // await this.page.getByRole('link', { name: UIReference.configurationPage.customerConfigurationTabLabel }).click();
+    // await this.page.waitForLoadState('networkidle');
+
+    // Wait for save config button to be visible
+    await this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel }).waitFor();    
 
     if (!await this.page.locator(UIReference.configurationPage.captchaSettingSystemCheckbox).isVisible()) {
       // await this.page.getByRole('link', { name: new RegExp(UIReference.configurationPage.captchaSectionLabel) }).click();
@@ -101,6 +175,9 @@ export class MagentoAdminPage {
     await this.page.locator(UIReference.configurationPage.captchaSettingSystemCheckbox).uncheck();
     await this.page.locator(UIReference.configurationPage.captchaSettingSelectField).selectOption({ label: values.captcha.captchaDisabled });
     await this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel }).click();
-    await this.page.waitForLoadState('networkidle');
+    // await this.page.waitForLoadState('networkidle');
+        // Wait for success message to be visible before moving on.
+        const succesMessageLocator = this.page.locator(UIReference.general.successMessageLocator);
+        await succesMessageLocator.waitFor();
   }
 }

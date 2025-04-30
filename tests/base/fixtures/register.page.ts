@@ -28,6 +28,8 @@ export class RegisterPage {
     let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
     await this.page.goto(slugs.account.createAccountSlug);
 
+    await this.accountCreationConfirmButton.waitFor();
+
     await this.accountCreationFirstNameField.fill(firstName);
     await this.accountCreationLastNameField.fill(lastName);
     await this.accountCreationEmailField.fill(email);
