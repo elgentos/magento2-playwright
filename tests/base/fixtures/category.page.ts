@@ -24,38 +24,30 @@ export default class CategoryPage {
   }
 
   async filterOnSize(browser:string){
-    const sizeFilterButton = this.page.getByRole('button', {name: 'Size filter'});
-    // const sizeLButton = this.page.getByLabel('Filter Size L');
-    const sizeLButton = this.page.locator('a.swatch-option-link-layered[aria-label*="Filter Size L"]');
-    const removeActiveFilterLink = this.page.getByRole('link', {name: 'Remove active'}).first();
-    // const activeFilterHeader = this.page.locator("#active-filtering-heading");
-    const amountOfItemsBeforeFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
-    const sizeFilterState = await this.page.locator('#filter-option-4-content').isVisible();
+    const sizeFilterButton = this.page.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
+    const sizeLButton = this.page.locator(UIReference.categoryPage.sizeLButtonLocator);
+    const removeActiveFilterLink = this.page.getByRole('link', {name: UIReference.categoryPage.removeActiveFilterButtonLabel}).first();
+    const amountOfItemsBeforeFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
+    
+    
+    /**
+     * BROWSER_WORKAROUND
+     * The size filter seems to auto-close in Firefox and Webkit.
+     * Therefore, we open it manually.
+     */
+    if(browser !== 'chromium'){
+      await sizeFilterButton.click();
+    }
 
-
-    console.log(`Are the size filter options visible? ${sizeFilterState}`);
-    console.log('Is the size L button visible? ' + await sizeLButton.isVisible());
-
-    await this.page.waitForFunction(() => {
-      const el = document.querySelector('div.columns');
-      return !el || getComputedStyle(el).pointerEvents !== 'none';
-    });
-
-    console.log(await sizeLButton.evaluate(el => el.getBoundingClientRect()));
-
-    await sizeLButton.click({force: true});
+    await sizeLButton.click();
 
     const sizeFilterRegex = new RegExp(`\\?size=L$`);
     await this.page.waitForURL(sizeFilterRegex);
 
-    /** 
-    const sizeFilterRegex = new RegExp(`\\?size=L$`);
-    await this.page.waitForURL(sizeFilterRegex);
-
-    const amountOfItemsAfterFilter = parseInt(await this.page.locator(".toolbar-number").last().innerText());
+    const amountOfItemsAfterFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
     await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
     expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThan(amountOfItemsBeforeFilter);
-    */
+
   }
 
   async sortProducts(attribute:string){

@@ -46,16 +46,20 @@
     "reviewCountLabel": "Show items per page"
   },
   "categoryPage":{
+    "activeViewLocator": ".active",
     "categoryPageTitleText": "Women",
     "firstFilterOptionLocator": "#filter-option-0-content",
+    "itemsOnPageAmountLocator": ".toolbar-number",
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
+    "removeActiveFilterButtonLabel": "Remove active",
+    "sizeFilterButtonLabel": "Size filter",
+    "sizeLButtonLocator": "a.swatch-option-link-layered[aria-label*=\"Filter Size L\"]",
     "sortByButtonLabel": "Sort by",
     "sortByButtonLocator": ".form-select.sorter-options",
     "viewSwitchLabel": "Products view mode",
     "viewGridLabel": "Products view mode - Grid",
-    "viewListLabel": "Products view mode - List",
-    "activeViewLocator": ".active"
+    "viewListLabel": "Products view mode - List"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
