@@ -61,8 +61,7 @@ export class MagentoAdminPage {
     await addCartPriceRuleButton.click();
 
     await cartPriceRuleField.waitFor();
-    // await cartPriceRuleField.fill(values.coupon.couponCodeRuleName);
-    await cartPriceRuleField.fill(magentoCouponCode);
+    await cartPriceRuleField.fill(values.coupon.couponCodeRuleName);
 
     // Apply coupon code to all store views
     const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
