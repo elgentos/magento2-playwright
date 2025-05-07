@@ -39,6 +39,7 @@ export class MagentoAdminPage {
     //   throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
     // }
 
+
     const marketingButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel});
     const cartPriceRulesButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel});
     const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
@@ -50,27 +51,31 @@ export class MagentoAdminPage {
     await cartPriceRulesButton.waitFor();
     await cartPriceRulesButton.click();
 
+    // Before adding the coupon codes, we check if they are already present.
+    const searchCouponButton = this.page.getByRole('button', {name: 'Search', exact: true});
+
+    await this.page.locator('#promo_quote_grid_filter_coupon_code').fill(magentoCouponCode);
+    await searchCouponButton.click();
+
+    const couponResult = this.page.getByText(magentoCouponCode);
+
+    if(await couponResult.isVisible()){
+      // coupon already added!
+      return false;
+    }
+
     await addCartPriceRuleButton.waitFor();
     await addCartPriceRuleButton.click();
 
     await cartPriceRuleField.waitFor();
-    await cartPriceRuleField.fill(values.coupon.couponCodeRuleName);
+    // await cartPriceRuleField.fill(values.coupon.couponCodeRuleName);
+    await cartPriceRuleField.fill(magentoCouponCode);
 
-    // await this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel}).click();
-    // await this.page.waitForLoadState('networkidle');
-    // //await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).waitFor();
-    // await expect(this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel})).toBeVisible();
-    // await this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel}).click();
-    // await this.page.waitForLoadState('networkidle');
-    // const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
-    // await addCartPriceRuleButton.waitFor();
-    // await addCartPriceRuleButton.click();
-    // // await this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel}).click();
-    // await this.page.getByLabel(UIReference.cartPriceRulesPage.ruleNameFieldLabel).fill(values.coupon.couponCodeRuleName);
-
+    // Apply coupon code to all store views
     const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
     await websiteSelector.evaluate(select => {
-        for (const option of select.options) {
+      const selectElement = select as HTMLSelectElement;
+        for (const option of selectElement.options) {
             option.selected = true;
         }
         select.dispatchEvent(new Event('change'));
@@ -78,7 +83,9 @@ export class MagentoAdminPage {
 
     const customerGroupsSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
     await customerGroupsSelector.evaluate(select => {
-        for (const option of select.options) {
+      const selectElement = select as HTMLSelectElement;
+        for (const option of selectElement.options) {
+        // for (const option of select.options) {
             option.selected = true;
         }
         select.dispatchEvent(new Event('change'));
@@ -98,6 +105,8 @@ export class MagentoAdminPage {
     // Wait for success message to be visible before moving on.
     const succesMessageLocator = this.page.locator(UIReference.general.successMessageLocator);
     await succesMessageLocator.waitFor();
+
+    return true;
   }
 
   async enableMultipleAdminLogins() {
