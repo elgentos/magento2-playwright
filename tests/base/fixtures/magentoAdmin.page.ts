@@ -26,20 +26,13 @@ export class MagentoAdminPage {
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
     await this.adminLoginButton.waitFor();
-    // await this.page.waitForLoadState('networkidle');
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
-    // await this.page.waitForLoadState('networkidle');
     await storesButton.waitFor();
   }
 
   async addCartPriceRule(magentoCouponCode: string){
-    // if(!process.env.MAGENTO_COUPON_CODE_CHROMIUM || !process.env.MAGENTO_COUPON_CODE_FIREFOX || !process.env.MAGENTO_COUPON_CODE_WEBKIT) {
-    //   throw new Error("MAGENTO_COUPON_CODE_CHROMIUM, MAGENTO_COUPON_CODE_FIREFOX or MAGENTO_COUPON_CODE_WEBKIT is not defined in your .env file.");
-    // }
-
-
     const marketingButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel});
     const cartPriceRulesButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel});
     const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
@@ -54,7 +47,7 @@ export class MagentoAdminPage {
     // Before adding the coupon codes, we check if they are already present.
     const searchCouponButton = this.page.getByRole('button', {name: 'Search', exact: true});
 
-    await this.page.locator('#promo_quote_grid_filter_coupon_code').fill(magentoCouponCode);
+    await this.page.locator(UIReference.magentoAdminPage.adminCouponCodeFieldLocator).fill(magentoCouponCode);
     await searchCouponButton.click();
 
     const couponResult = this.page.getByText(magentoCouponCode);
@@ -132,11 +125,6 @@ export class MagentoAdminPage {
     await advancedAdministrationTab.waitFor();
     await advancedAdministrationTab.click();
 
-    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    // await this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel }).click();
-    // await this.page.getByRole('link', { name: UIReference.configurationPage.advancedAdministrationTabLabel, exact: true }).click();
-
     if (!await this.page.locator(UIReference.configurationPage.allowMultipleLoginsSystemCheckbox).isVisible()) {
       await this.page.getByRole('link', { name: UIReference.configurationPage.securitySectionLabel }).click();
     }
@@ -165,13 +153,6 @@ export class MagentoAdminPage {
 
     await customerConfigurationTab.waitFor();
     await customerConfigurationTab.click();
-
-    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    // await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
-    // await this.page.waitForLoadState('networkidle');
-    // await this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel }).click();
-    // await this.page.getByRole('link', { name: UIReference.configurationPage.customerConfigurationTabLabel }).click();
-    // await this.page.waitForLoadState('networkidle');
 
     // Wait for save config button to be visible
     await this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel }).waitFor();    
