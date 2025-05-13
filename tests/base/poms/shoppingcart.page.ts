@@ -1,5 +1,6 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 
+import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
@@ -16,6 +17,10 @@ export class CartPage {
     this.page = page;
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
   }
+
+  // ==============================================
+  // Product-related methods
+  // ==============================================
 
   async changeProductQuantity(amount: string){
     const productRow = this.page.getByRole('row', {name: UIReference.productPage.simpleProductTitle});
@@ -42,18 +47,35 @@ export class CartPage {
     expect(currentQuantity, `quantity should be the new value`).toEqual(amount);
   }
 
-  // ==============================================
-  // Product-related methods
-  // ==============================================
-
   async removeProduct(productTitle: string){
-    let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
+    // Ensure we are on the cart page
+    if(this.page.url() !== slugs.cart.cartSlug){
+      await this.page.goto(slugs.cart.cartSlug);
+    };
+
+    if(await this.page.getByText(productTitle).first().isHidden()) {
+      // Product to be deleted is not in cart, return
+      return;
+    }
+    else if(await this.page.getByText(UIReference.cart.cartEmptyLabel).isVisible()){
+      // cart is already empty, return
+      return;
+    }
+
+    /**
+     * TEMPORARY WORKAROUND
+     * Due to Playwright parallelism, logged in tests with product may cause a duplicate product issue.
+     * To prevent issues where removing the product causes the test to fail, we look for the first instance of the product.
+     */
+    // let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
+    let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`).first();
     await removeButton.click();
-    await this.page.waitForLoadState();
+    // await this.page.waitForLoadState();
     await expect(removeButton,`Button to remove specified product is not visible in the cart`).toBeHidden();
 
     // Expect product to no longer be visible in the cart
     await expect (this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
+    return;
   }
 
   // ==============================================
@@ -84,9 +106,13 @@ export class CartPage {
     }
 
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
+    // wait for cancel coupon button to be visible
+    await cancelCouponButton.waitFor();
     await cancelCouponButton.click();
     await this.page.waitForLoadState();
 
+    // wait for notification to become visible
+    await this.page.getByText(outcomeMarker.cart.discountRemovedNotification).waitFor();
     await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
   }

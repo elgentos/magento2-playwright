@@ -1,6 +1,6 @@
 import {test, expect} from '@playwright/test';
-import {MainMenuPage} from './fixtures/mainmenu.page';
-import {HomePage} from './fixtures/home.page';
+import {MainMenuPage} from './poms/mainmenu.page';
+import {HomePage} from './poms/home.page';
 
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 

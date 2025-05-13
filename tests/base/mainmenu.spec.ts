@@ -1,7 +1,7 @@
 import {test} from '@playwright/test';
-import {LoginPage} from './fixtures/login.page';
-import {MainMenuPage} from './fixtures/mainmenu.page';
-import { ProductPage } from './fixtures/product.page';
+import {LoginPage} from './poms/login.page';
+import {MainMenuPage} from './poms/mainmenu.page';
+import { ProductPage } from './poms/product.page';
 
 import UIReference from './config/element-identifiers/element-identifiers.json';
 import slugs from './config/slugs.json';

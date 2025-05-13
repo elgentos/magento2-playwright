@@ -6,7 +6,8 @@
     "addressNewSlug": "customer/address/new",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create",
-    "loginSlug": "/customer/account/login"
+    "loginSlug": "/customer/account/login",
+    "newsLetterSlug": "newsletter/manage/"
   },
   "cart": {
     "cartProductChangeSlug": "/cart/configure/",

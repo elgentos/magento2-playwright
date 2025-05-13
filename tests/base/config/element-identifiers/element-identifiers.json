@@ -8,6 +8,7 @@
     "addAddressButtonLabel": "ADD NEW ADDRESS",
     "addressBookArea": ".block-addresses-list",
     "addressDeleteIconButton": "trash",
+    "defaultAddressNotSetLabel": "You have not set a default billing address.",
     "editAddressIconButton": "pencil-alt",
     "accountInformationFieldLocator": ".column > div > div > .flex",
     "links": {
@@ -54,6 +55,7 @@
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
     "cancelCouponButtonLabel": "Cancel Coupon",
+    "cartEmptyLabel": "You have no items in your shopping cart.",
     "cartTitleText": "Shopping Cart",
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
@@ -77,6 +79,7 @@
     "applyDiscountCodeLabel": "Apply Discount Code",
     "cancelDiscountButtonLabel": "Cancel Coupon",
     "cartDetailsLocator": "#checkout-cart-details div",
+    "changeBillingAddressArrowLocator": "Change Billing Address arrow-",
     "continueShoppingLabel": "Continue Shopping",
     "discountInputFieldLabel": "Enter discount code",
     "openCartButtonLabel": "Cart",

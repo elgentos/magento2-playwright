@@ -126,8 +126,11 @@ export class ProductPage {
   // ==============================================
 
   async addSimpleProductToCart(product: string, url: string, quantity?: string) {
+    // Ensure we are on the simple product page
+    if(this.page.url() !== url){
+      await this.page.goto(url);
+    };
 
-    await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
 
@@ -145,7 +148,11 @@ export class ProductPage {
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string){
-    await this.page.goto(url);
+    // Ensure we are on the configurable product page
+    if(this.page.url() !== slugs.productpage.configurableProductSlug){
+      await this.page.goto(slugs.productpage.configurableProductSlug);
+    };
+    
     this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);

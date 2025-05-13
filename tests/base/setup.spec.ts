@@ -2,9 +2,8 @@ import { test as base } from '@playwright/test';
 import {faker} from '@faker-js/faker';
 import toggles from './config/test-toggles.json';
 
-import { MagentoAdminPage } from './fixtures/magentoAdmin.page';
-import { RegisterPage } from './fixtures/register.page';
-import { AccountPage } from './fixtures/account.page';
+import { MagentoAdminPage } from './poms/magentoAdmin.page';
+import { RegisterPage } from './poms/register.page';
 
 
 import values from './config/input-values/input-values.json';
