@@ -22,8 +22,8 @@ if(toggles.general.pageHealthCheck === true) {
     });
   
     await test.step('PLP_returns_200', async () =>{
-      const plpResponsePromise = page.waitForResponse(slugs.productpage.categorySlug);
-      await page.goto(slugs.productpage.categorySlug);
+      const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
+      await page.goto(slugs.categoryPage.categorySlug);
       const plpResponse = await plpResponsePromise;
       expect(plpResponse.status(), 'PLP should return 200').toBe(200);
   
