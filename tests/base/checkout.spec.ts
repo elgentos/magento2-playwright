@@ -68,7 +68,7 @@ customTest('User_place_order_for_simple_product', {tag: ['@checkout', '@user']},
  *  @and a discount should be applied to the product
  */
 customTest('Add_coupon_code_in_checkout', {tag: ['@checkout', '@coupon-code']}, async ({productPage, browserName}) => {
-  await productPage.pageWithProduct.goto(slugs.checkout.checkoutSlug);
+  await productPage.page.goto(slugs.checkout.checkoutSlug);
   const checkout = new CheckoutPage(productPage.page);
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];

@@ -101,6 +101,7 @@ export class AccountPage {
 
     await this.firstNameField.fill(faker.person.firstName());
     await this.lastNameField.fill(faker.person.lastName());
+    await this.phoneNumberField.fill(faker.phone.number());
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(faker.location.zipCode());
     await this.cityField.fill(faker.location.city());

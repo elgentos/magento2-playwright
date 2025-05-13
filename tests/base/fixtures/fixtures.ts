@@ -11,40 +11,24 @@ import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
 type CustomFixtures = {
-  // productPage: any;
-  productPage: shopPageWithProduct;
+  productPage: any;
   userPage: any;
   userProductPage: any;
 }
 
-export const customTest = base.extend<CustomFixtures>({
+export const customTest = base.extend<CustomFixtures>({  
   productPage: async ({page}, use) => {
     // Setup the fixture
-    const pageWithProduct = new shopPageWithProduct(page);
-    await pageWithProduct.productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    const productPage = new ProductPage(page);
+    const cartPage = new CartPage(page);
+    await productPage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productpage.secondSimpleProductSlug);
 
     // Use step (where the actual test takes place)
-    await use(pageWithProduct);
+    await use({productPage, cartPage, page});
 
     // Teardown & Cleanup
-    await pageWithProduct.cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
+    await cartPage.removeProduct(UIReference.productPage.secondSimpleProducTitle);
   },
-  
-  // productPage: async ({page}, use) => {
-  //   // Setup the fixture
-  //   const pageWithProduct = new shopPageWithProduct(page);
-  //   await pageWithProduct.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-
-  //   const productPage = new ProductPage(page);
-  //   const cartPage = new CartPage(page);
-  //   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-
-  //   // Use step (where the actual test takes place)
-  //   await use({productPage, cartPage, page});
-
-  //   // Teardown & Cleanup
-  //   await cartPage.removeProduct(UIReference.productPage.simpleProductTitle);
-  // },
 
   userPage: async({page, browserName}, use) => {
     // Setup the fixture
