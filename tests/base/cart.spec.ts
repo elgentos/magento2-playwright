@@ -35,7 +35,7 @@ test.describe('Cart functionalities (guest)', () => {
    *  @and I am on the cart page
    * @then I should see the name of the product in my cart
    */
-  test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
+  test('Product can be added to cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
 
@@ -46,7 +46,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @when I log in
    * @then I should still have that product in my cart
    */
-  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account']}, async ({page, browserName}) => {
+  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account', '@hot']}, async ({page, browserName}) => {
     await test.step('Add another product to cart', async () =>{
       const productpage = new ProductPage(page);
       await page.goto(slugs.productpage.secondSimpleProductSlug);
@@ -80,7 +80,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see a notification that the product has been removed from my cart
    *  @and I should no longer see the product in my cart
    */
-  test('Remove product from cart',{ tag: '@cart',}, async ({page}) => {
+  test('Remove product from cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
     const cart = new CartPage(page);
     await cart.removeProduct(UIReference.productPage.simpleProductTitle);
   });
@@ -95,7 +95,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then the quantity field should have the new amount
    * @and the subtotal/grand total should update
    */
-  test('Change quantity of products in cart',{ tag: '@cart',}, async ({page}) => {
+  test('Change quantity of products in cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
     const cart = new CartPage(page);
     await cart.changeProductQuantity('2');
   });
