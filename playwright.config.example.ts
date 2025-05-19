@@ -7,6 +7,11 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 function getTestFiles(baseDir: string, customDir: string): string[] {
   const baseFiles = new Set(fs.readdirSync(baseDir).filter(file => file.endsWith('.spec.ts')));
   const customFiles = fs.readdirSync(customDir).filter(file => file.endsWith('.spec.ts'));
+
+  if(customFiles.length === 0) {
+    return Array.from(baseFiles);
+  }
+
   const testFiles = new Set<string>();
 
   // Get base files that have an override in custom
