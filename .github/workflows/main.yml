@@ -53,7 +53,7 @@ jobs:
           cp tests/base/config/test-toggles.example.json tests/base/config/test-toggles.json
 
       - name: Run Playwright setup test
-        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
+        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts --max-failures=1
         env:
           CI: true
       - uses: actions/upload-artifact@v4
