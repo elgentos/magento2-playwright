@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import toggles from './config/test-toggles.json';
 
 import UIReference from './config/element-identifiers/element-identifiers.json';
@@ -17,8 +18,11 @@ if(toggles.general.pageHealthCheck === true) {
       await page.goto(homepageURL);
       const homepageResponse = await homepageResponsePromise;
       expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
-  
       await expect(page.getByRole('heading', { name: UIReference.homePage.homePageTitleText }), `Homepage has a visible title`).toBeVisible();
+
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();
+      expect(accessibilityScanResults.violations).toEqual([]);
+
     });
   
     await test.step('PLP_returns_200', async () =>{
