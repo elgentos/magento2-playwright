@@ -6,7 +6,6 @@ import { CartPage } from './fixtures/cart.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
-import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 test.describe('Cart functionalities (guest)', () => {
   /**
