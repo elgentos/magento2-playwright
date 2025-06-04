@@ -1,5 +1,6 @@
 {
   "general": {
+    "accessibility": true,
     "setup": false,
     "pageHealthCheck": false
   }
