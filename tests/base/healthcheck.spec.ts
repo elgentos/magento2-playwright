@@ -14,33 +14,42 @@ if(toggles.general.pageHealthCheck === true) {
         throw new Error("BASE_URL has not been defined in the .env file.");
       }
   
+      // Check homepage response
       const homepageResponsePromise = page.waitForResponse(homepageURL);
       await page.goto(homepageURL);
       const homepageResponse = await homepageResponsePromise;
       expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
       await expect(page.getByRole('heading', { name: UIReference.homePage.homePageTitleText }), `Homepage has a visible title`).toBeVisible();
 
-      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();
+      // Accessibility Scan
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();  
       expect(accessibilityScanResults.violations).toEqual([]);
-
     });
   
     await test.step('PLP_returns_200', async () =>{
       const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
       await page.goto(slugs.categoryPage.categorySlug);
       const plpResponse = await plpResponsePromise;
+
       expect(plpResponse.status(), 'PLP should return 200').toBe(200);
-  
       await expect(page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText }), `PLP has a visible title`).toBeVisible();
+
+      // Accessibility Scan
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();  
+      expect(accessibilityScanResults.violations).toEqual([]);
     });
   
     await test.step('PDP_returns_200', async () =>{
       const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
       await page.goto(slugs.productpage.simpleProductSlug);
       const pdpResponse = await pdpResponsePromise;
+
       expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
-  
       await expect(page.getByRole('heading', {level:1, name: UIReference.productPage.simpleProductTitle}), `PLP has a visible title`).toBeVisible();
+
+      // Accessibility Scan
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();  
+      expect(accessibilityScanResults.violations).toEqual([]);
     });
   
     await test.step('Checkout_returns_200', async () =>{
@@ -68,6 +77,9 @@ if(toggles.general.pageHealthCheck === true) {
         await expect(page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel }), `Place Order button is visible`).toBeVisible();
       }
   
+      // Accessibility Scan
+      const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag21aa']).analyze();  
+      expect(accessibilityScanResults.violations).toEqual([]);
     });
   });
 }
