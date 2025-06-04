@@ -85,6 +85,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
    - @faker-js/faker (^9.4.0) - For generating test data
    - @types/node (^22.7.4) - TypeScript definitions for Node.js
    - dotenv (^16.4.5) - For environment variable management
+   - @axe-core/playwright (^4.10.1") - Automated accessibility testing
 
 4. **Install all dependencies**
 
