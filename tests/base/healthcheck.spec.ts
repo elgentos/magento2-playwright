@@ -7,10 +7,10 @@ import slugs from './config/slugs.json';
 if(toggles.general.pageHealthCheck === true) {
   test.only('Critical_pages_load_and_have_a_visible_title', async ({ page }) => {
     await test.step('Homepage_returns_200', async () =>{
-      let homepageURL = process.env.BASE_URL;
+      let homepageURL = process.env.PLAYWRIGHT_BASE_URL;
   
       if(!homepageURL) {
-        throw new Error("BASE_URL has not been defined in the .env file.");
+        throw new Error("PLAYWRIGHT_BASE_URL has not been defined in the .env file.");
       }
   
       const homepageResponsePromise = page.waitForResponse(homepageURL);
