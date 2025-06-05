@@ -49,7 +49,20 @@
     "reviewCountLabel": "Show items per page"
   },
   "categoryPage":{
-    "categoryPageTitleText": "Men"
+    "activeViewLocator": ".active",
+    "categoryPageTitleText": "Women",
+    "firstFilterOptionLocator": "#filter-option-0-content",
+    "itemsOnPageAmountLocator": ".toolbar-number",
+    "itemsPerPageButtonLabel": "Show items per page",
+    "productGridLocator": ".products-grid",
+    "removeActiveFilterButtonLabel": "Remove active",
+    "sizeFilterButtonLabel": "Size filter",
+    "sizeLButtonLocator": "a.swatch-option-link-layered[aria-label*=\"Filter Size L\"]",
+    "sortByButtonLabel": "Sort by",
+    "sortByButtonLocator": ".form-select.sorter-options",
+    "viewSwitchLabel": "Products view mode",
+    "viewGridLabel": "Products view mode - Grid",
+    "viewListLabel": "Products view mode - List"
   },
   "cart": {
     "applyDiscountButtonLabel": "Apply Discount",
@@ -131,13 +144,13 @@
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
+    "errorMessageLocator": "div.message.error",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
     "removeLabel": "Remove",
-    "successMessageLocator": "div.message.success",
-    "errorMessageLocator": "div.message.error"
+    "successMessageLocator": "div.message.success"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Themes"
