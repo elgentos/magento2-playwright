@@ -99,10 +99,14 @@ export default defineConfig({
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
+    {
+      name: 'mobile-chromium',
+      testMatch: testFiles,
+      use: {
+        ...devices['Pixel 5'],
+        viewport: { width: 393, height: 852 },
+      },
+    },
     // {
     //   name: 'Mobile Safari',
     //   use: { ...devices['iPhone 12'] },

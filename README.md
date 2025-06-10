@@ -146,6 +146,12 @@ npx playwright test
 
 This command will run all tests located in the `tests` directory.
 
+To run the suite on a mobile viewport, specify the `mobile-chromium` project:
+
+```bash
+npx playwright test --project=mobile-chromium
+```
+
 You can also run a specific test file:
 
 ```bash
