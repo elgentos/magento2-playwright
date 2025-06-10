@@ -33,6 +33,6 @@ export class LoginPage {
 
     const message = this.page.locator('#messages');
     await expect.soft(message, 'Error message should be visible').toContainText(errorMessage);
-    await expect(this.page, 'Should stay on login page').toHaveURL(slugs.account.loginSlug);
+    await expect(this.page, 'Should stay on login page').toHaveURL(slugs.account.loginSlug + "/");
   }
 }
