@@ -5,8 +5,8 @@ import UIReference from './config/element-identifiers/element-identifiers.json';
 import slugs from './config/slugs.json';
 
 if(toggles.general.pageHealthCheck === true) {
-  test.only('Critical_pages_load_and_have_a_visible_title', async ({ page }) => {
-    await test.step('Homepage_returns_200', async () =>{
+  test.describe.only('Page health checks', () => {
+    test('Homepage_returns_200', async ({ page }) => {
       let homepageURL = process.env.BASE_URL;
   
       if(!homepageURL) {
@@ -21,7 +21,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', { name: UIReference.homePage.homePageTitleText }), `Homepage has a visible title`).toBeVisible();
     });
   
-    await test.step('PLP_returns_200', async () =>{
+    test('PLP_returns_200', async ({ page }) => {
       const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
       await page.goto(slugs.categoryPage.categorySlug);
       const plpResponse = await plpResponsePromise;
@@ -30,7 +30,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText }), `PLP has a visible title`).toBeVisible();
     });
   
-    await test.step('PDP_returns_200', async () =>{
+    test('PDP_returns_200', async ({ page }) => {
       const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
       await page.goto(slugs.productpage.simpleProductSlug);
       const pdpResponse = await pdpResponsePromise;
@@ -39,7 +39,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', {level:1, name: UIReference.productPage.simpleProductTitle}), `PLP has a visible title`).toBeVisible();
     });
   
-    await test.step('Checkout_returns_200', async () =>{
+    test('Checkout_returns_200', async ({ page }) => {
   
       // First, check if there's an item in the cart
       const cartAmount = await page.locator(UIReference.miniCart.minicartButtonLocator).getAttribute('aria-label');
