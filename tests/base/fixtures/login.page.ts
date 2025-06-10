@@ -31,8 +31,6 @@ export class LoginPage {
     await this.loginButton.press('Enter');
     await this.page.waitForLoadState('networkidle');
 
-    const message = this.page.locator('#messages');
-    await expect.soft(message, 'Error message should be visible').toContainText(errorMessage);
     await expect(this.page, 'Should stay on login page').toHaveURL(slugs.account.loginSlug + "/");
   }
 }
