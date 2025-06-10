@@ -2,7 +2,7 @@ import {type Locator, type Page} from '@playwright/test';
 
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
-export class HomePage {
+class HomePage {
 
   readonly page: Page;
   buyProductButton: Locator;
@@ -21,3 +21,5 @@ export class HomePage {
     }
   }
 }
+
+export default HomePage;

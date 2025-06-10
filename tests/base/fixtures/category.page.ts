@@ -4,7 +4,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 
 import slugs from '../config/slugs.json';
 
-export default class CategoryPage {
+class CategoryPage {
   readonly page:Page;
   categoryPageTitle: Locator;
 
@@ -97,3 +97,4 @@ export default class CategoryPage {
     expect(this.page.url(),`URL should contain ?product_list_mode=${newActiveView?.toLowerCase()}`).toContain(`?product_list_mode=${newActiveView?.toLowerCase()}`);
   }
 }
+export default CategoryPage;

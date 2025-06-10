@@ -1,6 +1,6 @@
 import {test as base, expect} from '@playwright/test';
-import {LoginPage} from './fixtures/login.page';
-import {MainMenuPage} from './fixtures/mainmenu.page';
+import LoginPage from './fixtures/login.page';
+import MainMenuPage from './fixtures/mainmenu.page';
 import inputvalues from './config/input-values/input-values.json';
 
 base('User can log in with valid credentials', async ({page, browserName}) => {

@@ -5,7 +5,7 @@ import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
-export class ProductPage {
+class ProductPage {
   readonly page: Page;
   simpleProductTitle: Locator;
   configurableProductTitle: Locator;
@@ -166,3 +166,5 @@ export class ProductPage {
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
 }
+
+export default ProductPage;
