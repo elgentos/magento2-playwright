@@ -149,6 +149,7 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "messageLocator": "div.message",
     "removeLabel": "Remove",
     "successMessageLocator": "div.message.success"
   },
