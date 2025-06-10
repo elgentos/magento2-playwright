@@ -54,8 +54,7 @@
     "simpleProductAddedNotification": "You added"
   },
   "login": {
-    "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later.",
-    "requiredFieldMessage": "This is a required field."
+    "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
   },
   "wishListPage": {
     "wishListAddedNotification": "has been added to your Wish List."
