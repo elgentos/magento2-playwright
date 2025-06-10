@@ -23,4 +23,16 @@ export class LoginPage {
     // usage of .press("Enter") to prevent webkit issues with button.click();
     await this.loginButton.press("Enter");
   }
+
+  async loginExpectError(email: string, password: string, errorMessage: string) {
+    await this.page.goto(slugs.account.loginSlug);
+    await this.loginEmailField.fill(email);
+    await this.loginPasswordField.fill(password);
+    await this.loginButton.press('Enter');
+    await this.page.waitForLoadState('networkidle');
+
+    const message = this.page.locator('#messages');
+    await expect.soft(message, 'Error message should be visible').toContainText(errorMessage);
+    await expect(this.page, 'Should stay on login page').toHaveURL(slugs.account.loginSlug);
+  }
 }
