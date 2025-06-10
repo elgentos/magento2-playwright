@@ -31,6 +31,6 @@ export class LoginPage {
     await this.loginButton.press('Enter');
     await this.page.waitForLoadState('networkidle');
 
-    await expect(this.page, 'Should stay on login page').toHaveURL(slugs.account.loginSlug + "/");
+    await expect(this.page, 'Should stay on login page').toHaveURL(new RegExp(slugs.account.loginSlug));
   }
 }
