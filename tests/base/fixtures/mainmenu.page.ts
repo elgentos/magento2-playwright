@@ -5,7 +5,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
 
-export class MainMenuPage {
+class MainMenuPage {
   readonly page: Page;
   readonly mainMenuAccountButton: Locator;
   readonly mainMenuMiniCartButton: Locator;
@@ -59,3 +59,5 @@ export class MainMenuPage {
     await expect(this.mainMenuLogoutItem).toBeHidden();
   }
 }
+
+export default MainMenuPage;

@@ -1,5 +1,5 @@
 import {test} from '@playwright/test';
-import { ContactPage } from './fixtures/contact.page';
+import ContactPage from './fixtures/contact.page';
 
 /**
  * @feature Magento 2 Contact Form

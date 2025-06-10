@@ -3,7 +3,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import values from '../config/input-values/input-values.json';
 
-export class MagentoAdminPage {
+class MagentoAdminPage {
   readonly page: Page;
   readonly adminLoginEmailField: Locator;
   readonly adminLoginPasswordField: Locator;
@@ -104,3 +104,5 @@ export class MagentoAdminPage {
     await this.page.waitForLoadState('networkidle');
   }
 }
+
+export default MagentoAdminPage;

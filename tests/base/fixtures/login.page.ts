@@ -3,7 +3,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
-export class LoginPage {
+class LoginPage {
   readonly page: Page;
   readonly loginEmailField: Locator;
   readonly loginPasswordField: Locator;
@@ -24,3 +24,5 @@ export class LoginPage {
     await this.loginButton.press("Enter");
   }
 }
+
+export default LoginPage;

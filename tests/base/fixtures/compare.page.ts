@@ -5,7 +5,7 @@ import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
-export default class ComparePage {
+class ComparePage {
   page: Page;
 
   constructor(page: Page) {
@@ -44,3 +44,4 @@ export default class ComparePage {
     await successMessage.waitFor();
   }
 }
+export default ComparePage;
