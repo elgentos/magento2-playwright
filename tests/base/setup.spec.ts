@@ -48,6 +48,28 @@ if(process.env.CI) {
         testInfo.skip(true, `Skipping because configuration is only needed once.`);
       }
     });
+
+    base('Disable login CAPTCHA', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
+      const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
+      const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
+
+      if (!magentoAdminUsername || !magentoAdminPassword) {
+        throw new Error("MAGENTO_ADMIN_USERNAME or MAGENTO_ADMIN_PASSWORD is not defined in your .env file.");
+      }
+
+      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+
+      /**
+       * Only disable CAPTCHA for Chromium browser.
+       */
+      if (browserEngine === "CHROMIUM") {
+        const magentoAdminPage = new MagentoAdminPage(page);
+        await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+        await magentoAdminPage.disableLoginCaptcha();
+      } else {
+        testInfo.skip(true, `Skipping because configuration is only needed once.`);
+      }
+    });
   
     base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
@@ -76,7 +98,6 @@ if(process.env.CI) {
           throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} is not defined in your .env file.`);
         }
         await magentoAdminPage.addCartPriceRule(couponCode);
-        await magentoAdminPage.disableLoginCaptcha();
   
         const registerPage = new RegisterPage(page);
   
@@ -156,6 +177,28 @@ if(process.env.CI) {
           testInfo.skip(true, `Skipping because configuration is only needed once.`);
         }
       });
+
+      base('Disable login CAPTCHA', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
+        const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
+        const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
+
+        if (!magentoAdminUsername || !magentoAdminPassword) {
+          throw new Error("MAGENTO_ADMIN_USERNAME or MAGENTO_ADMIN_PASSWORD is not defined in your .env file.");
+        }
+
+        const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+
+        /**
+         * Only disable CAPTCHA for Chromium browser.
+         */
+        if (browserEngine === "CHROMIUM") {
+          const magentoAdminPage = new MagentoAdminPage(page);
+          await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+          await magentoAdminPage.disableLoginCaptcha();
+        } else {
+          testInfo.skip(true, `Skipping because configuration is only needed once.`);
+        }
+      });
     
       base('Setup Magento environment for tests', {tag: '@setup',}, async ({ page, browserName }, testInfo) => {
         const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
@@ -184,7 +227,6 @@ if(process.env.CI) {
             throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} is not defined in your .env file.`);
           }
           await magentoAdminPage.addCartPriceRule(couponCode);
-          await magentoAdminPage.disableLoginCaptcha();
     
           const registerPage = new RegisterPage(page);
     
