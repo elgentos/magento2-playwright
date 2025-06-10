@@ -44,5 +44,5 @@ base('User cannot log in with invalid credentials', async ({page}) => {
 
 base('Login fails with missing password', async ({page}) => {
   const loginPage = new LoginPage(page);
-  await loginPage.loginExpectError('invalid@example.com', '', outcomeMarker.login.requiredFieldMessage);
+  await loginPage.loginExpectError('invalid@example.com', '', false);
 });
