@@ -39,7 +39,7 @@ export class MainMenuPage {
     const cartAmountBubble = this.mainMenuMiniCartButton.locator('span');
     cartAmountBubble.waitFor();
     const amountInCart = await cartAmountBubble.innerText();
-    console.log(amountInCart);
+
     // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
     // await this.mainMenuMiniCartButton.waitFor();
 
