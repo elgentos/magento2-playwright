@@ -28,7 +28,7 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
  * @when I click the 'add to cart' button
  * @then I should see a notification that the product has been added
  */
-test('Add_product_to_cart_from_comparison_page',{ tag: '@comparison-page',}, async ({page}) => {
+test('Add_product_to_cart_from_comparison_page',{ tag: ['@comparison-page', '@cold']}, async ({page}) => {
   const comparePage = new ComparePage(page);
   await comparePage.addToCart(UIReference.productPage.simpleProductTitle);
 });
@@ -40,7 +40,7 @@ test('Add_product_to_cart_from_comparison_page',{ tag: '@comparison-page',}, asy
  * @when I click the 'add to wishlist' button
  * @then I should see an error message
  */
-test('Guests_can_not_add_a_product_to_their_wishlist',{ tag: '@comparison-page',}, async ({page}) => {
+test('Guests_can_not_add_a_product_to_their_wishlist',{ tag: ['@comparison-page', '@cold']}, async ({page}) => {
   const errorMessage = page.locator(UIReference.general.errorMessageLocator);
   let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
   let addToWishlistButton = page.getByLabel(`${UIReference.comparePage.addToWishListLabel} ${UIReference.productPage.simpleProductTitle}`);
@@ -59,7 +59,7 @@ test('Guests_can_not_add_a_product_to_their_wishlist',{ tag: '@comparison-page',
  * @when I click the 'add to wishlist' button
  * @then I should see a notification that the product has been added to my wishlist
  */
-test('Add_product_to_wishlist_from_comparison_page', async ({page, browserName}) => {
+test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', '@hot']}, async ({page, browserName}) => {
   await test.step('Log in with account', async () =>{
     const loginPage = new LoginPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";

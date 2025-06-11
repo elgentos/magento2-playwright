@@ -6,7 +6,6 @@ import { CartPage } from './fixtures/cart.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';
-import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 test.describe('Cart functionalities (guest)', () => {
   /**
@@ -35,7 +34,7 @@ test.describe('Cart functionalities (guest)', () => {
    *  @and I am on the cart page
    * @then I should see the name of the product in my cart
    */
-  test('Product can be added to cart',{ tag: '@cart',}, async ({page}) => {
+  test('Product can be added to cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
     await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
 
@@ -46,7 +45,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @when I log in
    * @then I should still have that product in my cart
    */
-  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account']}, async ({page, browserName}) => {
+  test('Product should remain in cart after logging in',{ tag: ['@cart', '@account', '@hot']}, async ({page, browserName}) => {
     await test.step('Add another product to cart', async () =>{
       const productpage = new ProductPage(page);
       await page.goto(slugs.productpage.secondSimpleProductSlug);
@@ -80,7 +79,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see a notification that the product has been removed from my cart
    *  @and I should no longer see the product in my cart
    */
-  test('Remove product from cart',{ tag: '@cart',}, async ({page}) => {
+  test('Remove product from cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
     const cart = new CartPage(page);
     await cart.removeProduct(UIReference.productPage.simpleProductTitle);
   });
@@ -95,7 +94,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then the quantity field should have the new amount
    * @and the subtotal/grand total should update
    */
-  test('Change quantity of products in cart',{ tag: '@cart',}, async ({page}) => {
+  test('Change quantity of products in cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
     const cart = new CartPage(page);
     await cart.changeProductQuantity('2');
   });
@@ -112,7 +111,7 @@ test.describe('Cart functionalities (guest)', () => {
    *  @and the code should be visible in the cart
    *  @and a discount should be applied to the product
    */
-  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code']}, async ({page, browserName}) => {
+  test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
     let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
@@ -137,7 +136,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see a notification the discount has been removed
    * @and the discount should no longer be visible.
    */
-  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code'] }, async ({page, browserName}) => {
+  test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
     let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
@@ -159,7 +158,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should get a notification that the code did not work.
    */
 
-  test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code'] }, async ({page}) => {
+  test('Using an invalid coupon code should give an error',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page}) => {
     const cart = new CartPage(page);
     await cart.enterWrongCouponCode("Incorrect Coupon Code");
   });
@@ -181,7 +180,7 @@ test.describe('Price checking tests', () => {
    * @then the amount of the product should be the same
    *  @and the price in the checkout should equal the price of the product * the amount of the product
    */
-  test('Simple product input to cart is consistent from PDP to checkout',{ tag: '@cart-price-check',}, async ({page}) => {
+  test('Simple product input to cart is consistent from PDP to checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
     var productPagePrice: string;
     var productPageAmount: string;
     var checkoutProductDetails: string[];
@@ -223,7 +222,7 @@ test.describe('Price checking tests', () => {
    * @then the amount of the product should be the same
    *  @and the price in the checkout should equal the price of the product * the amount of the product
    */
-  test('Configurable product input to cart is consistent from PDP to checkout',{ tag: '@cart-price-check',}, async ({page}) => {
+  test('Configurable product input to cart is consistent from PDP to checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
     var productPagePrice: string;
     var productPageAmount: string;
     var checkoutProductDetails: string[];
