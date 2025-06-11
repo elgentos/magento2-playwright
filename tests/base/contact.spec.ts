@@ -11,7 +11,7 @@ import { ContactPage } from './fixtures/contact.page';
  *  @then I should see a notification my message has been sent
  *  @and the fields should be empty again.
  */
-test('I can send a message through the contact form',{ tag: '@contact-form',}, async ({page}) => {
+test('I can send a message through the contact form',{ tag: ['@contact-form', '@cold']}, async ({page}) => {
   const contactPage = new ContactPage(page);
   await contactPage.fillOutForm();
 });
