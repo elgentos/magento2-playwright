@@ -52,7 +52,7 @@ test.describe('Checkout (login required)', () => {
    *  @and I have navigated to the checkout page
    * @then My name and address should already be filled in
    */
-  test('My address should be already filled in at the checkout',{ tag: '@checkout',}, async ({page}) => {
+  test('My address should be already filled in at the checkout',{ tag: ['@checkout', '@hot']}, async ({page}) => {
     let signInLink = page.getByRole('link', { name: UIReference.credentials.loginButtonLabel });
     let addressField = page.getByLabel(UIReference.newAddress.streetAddressLabel);
     let addressAlreadyAdded = false;
@@ -92,7 +92,7 @@ test.describe('Checkout (login required)', () => {
    * @then I should see a confirmation that my order has been placed
    *  @and a order number should be created and show to me
    */
-  test('Place order for simple product',{ tag: '@simple-product-order',}, async ({page}, testInfo) => {
+  test('Place order for simple product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}, testInfo) => {
     const checkoutPage = new CheckoutPage(page);
     let orderNumber = await checkoutPage.placeOrder();
     testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
@@ -112,7 +112,7 @@ test.describe('Checkout (guest)', () => {
    *  @and the code should be visible in the cart
    *  @and a discount should be applied to the product
    */
-    test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
+    test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
       const checkout = new CheckoutPage(page);
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
@@ -159,7 +159,7 @@ test.describe('Checkout (guest)', () => {
    * @and the discount should no longer be visible.
    */
 
-  test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code']}, async ({page, browserName}) => {
+  test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
     const checkout = new CheckoutPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
@@ -181,7 +181,7 @@ test.describe('Checkout (guest)', () => {
    * @then I should get a notification that the code did not work.
    */
 
-  test('Using an invalid coupon code should give an error',{ tag: ['@checkout', '@coupon-code'] }, async ({page}) => {
+  test('Using an invalid coupon code should give an error',{ tag: ['@checkout', '@coupon-code', '@cold'] }, async ({page}) => {
     const checkout = new CheckoutPage(page);
     await checkout.enterWrongCouponCode("incorrect discount code");
   });
@@ -196,7 +196,7 @@ test.describe('Checkout (guest)', () => {
    * @then I should see a confirmation that my order has been placed
    *  @and a order number should be created and shown to me
    */
-  test('Guest can select different payment methods', { tag: ['@checkout', '@payment-methods'] }, async ({ page }) => {
+  test('Guest can select different payment methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
     const checkoutPage = new CheckoutPage(page);
 
     // Test with check/money order payment

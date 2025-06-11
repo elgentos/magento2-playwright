@@ -4,7 +4,7 @@ import {HomePage} from './fixtures/home.page';
 
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
-test('Add product on homepage to cart',{ tag: '@homepage',}, async ({page}) => {
+test('Add product on homepage to cart',{ tag: ['@homepage', '@cold']}, async ({page}) => {
   const homepage = new HomePage(page);
   const mainmenu = new MainMenuPage(page);
 
