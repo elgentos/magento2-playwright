@@ -71,7 +71,7 @@ export class MagentoAdminPage {
   async enableMultipleAdminLogins() {
     await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).first().click();
     await this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel }).click();
     await this.page.getByRole('link', { name: UIReference.configurationPage.advancedAdministrationTabLabel, exact: true }).click();
 
@@ -87,7 +87,7 @@ export class MagentoAdminPage {
   async disableLoginCaptcha() {
     await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel }).click();
-    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).click();
+    await this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).first().click();
     await this.page.waitForLoadState('networkidle');
     await this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel }).click();
     await this.page.getByRole('link', { name: UIReference.configurationPage.customerConfigurationTabLabel }).click();
