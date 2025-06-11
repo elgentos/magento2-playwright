@@ -59,9 +59,10 @@ if(process.env.CI) {
 
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
-      /**
-       * Only disable CAPTCHA for Chromium browser.
-       */
+    /**
+     * Disable CAPTCHA in this browser. This only needs to be done once,
+     * since the setting applies to all browsers after being set.
+     */
       if (browserEngine === "CHROMIUM") {
         const magentoAdminPage = new MagentoAdminPage(page);
         await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
@@ -174,7 +175,7 @@ if(process.env.CI) {
           await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
           await magentoAdminPage.enableMultipleAdminLogins();
         } else {
-          testInfo.skip(true, `Skipping because configuration is only needed once.`);
+          testInfo.skip(true, `Skipping, because configuration is only needed once - this will only be done through Chromium`);
         }
       });
 
@@ -189,14 +190,15 @@ if(process.env.CI) {
         const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
         /**
-         * Only disable CAPTCHA for Chromium browser.
+         * Disable CAPTCHA in this browser. This only needs to be done once,
+         * since the setting applies to all browsers after being set.
          */
         if (browserEngine === "CHROMIUM") {
           const magentoAdminPage = new MagentoAdminPage(page);
           await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
           await magentoAdminPage.disableLoginCaptcha();
         } else {
-          testInfo.skip(true, `Skipping because configuration is only needed once.`);
+          testInfo.skip(true, `Skipping, because configuration is only needed once - this will only be done through Chromium`);
         }
       });
     
