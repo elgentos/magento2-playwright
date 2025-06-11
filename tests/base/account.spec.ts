@@ -43,7 +43,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-  test('I can change my password',{ tag: '@account-credentials', }, async ({page, browserName}, testInfo) => {
+  test('I can change my password',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}, testInfo) => {
 
     // Create instances and set variables
     const mainMenu = new MainMenuPage(page);
@@ -106,7 +106,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    *  @and The new address should be selected as default and shipping address
    */
 
-  test('I can add my first address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  test('I can add my first address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
 
@@ -128,7 +128,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The new address should be listed
    */
-  test('I can add another address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can add another address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
 
@@ -147,7 +147,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: '@address-actions', }, async ({page}) => {
+  test('I can edit an existing address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressNewSlug);
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
@@ -172,7 +172,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('I can delete an address',{ tag: '@address-actions', }, async ({page}, testInfo) => {
+  test('I can delete an address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
@@ -201,7 +201,7 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @then I should see a message confirming my action
    *  @and My subscription option should be updated.
    */
-  test('I can update my newsletter subscription',{ tag: '@newsletter-actions', }, async ({page, browserName}) => {
+  test('I can update my newsletter subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page, browserName}) => {
     test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });

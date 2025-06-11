@@ -38,7 +38,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @then I should navigate to the checkout page
    */
 
-  test('Add product to minicart, navigate to checkout',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Add product to minicart, navigate to checkout',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.goToCheckout();
   });
@@ -51,7 +51,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    * @then I should be navigated to the cart page
    */
 
-  test('Add product to minicart, navigate to cart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Add product to minicart, navigate to cart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.goToCart();
   });
@@ -67,7 +67,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @then I should see a confirmation
    *    @and the new amount should be shown in the minicart
    */
-  test('Change quantity of a product in minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Change quantity of a product in minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.updateProduct('3');
   });
@@ -80,7 +80,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @then The product should not be in my cart anymore
    *  @and I should see a notification that the product was removed
    */
-  test('Delete product from minicart',{ tag: '@minicart-simple-product',}, async ({page}, testInfo) => {
+  test('Delete product from minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}, testInfo) => {
     testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`});
     const miniCart = new MiniCartPage(page);
     await miniCart.removeProductFromMinicart(UIReference.productPage.simpleProductTitle);
@@ -92,7 +92,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    * @given I have added a (simple) product to the cart and opened the minicart
    * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
-  test('Price on PDP is the same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Price on PDP is the same as price in Minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.checkPriceWithProductPage();
   });
@@ -126,7 +126,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    * @given I have added a (configurable) product to the cart and opened the minicart
    * @then the price listed in the minicart (per product) should be the same as the price on the PDP
   */
-  test('Price configurable PDP is same as price in Minicart',{ tag: '@minicart-simple-product',}, async ({page}) => {
+  test('Price configurable PDP is same as price in Minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}) => {
     const miniCart = new MiniCartPage(page);
     await miniCart.checkPriceWithProductPage();
   });

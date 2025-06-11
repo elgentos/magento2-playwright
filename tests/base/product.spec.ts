@@ -9,12 +9,12 @@ import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
-  test('Add product to compare', async ({page}) => {
+  test('Add product to compare',{ tag: '@cold'}, async ({page}) => {
     const productPage = new ProductPage(page);
     await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
 
-  test('Add product to wishlist', async ({page, browserName}) => {
+  test('Add product to wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
@@ -35,7 +35,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
   });
 
 
-  test.fixme('Leave a product review (Test currently fails due to error on website)', async ({page}) => {
+  test.fixme('Leave a product review (Test currently fails due to error on website)',{ tag: '@cold'}, async ({page}) => {
     // const productPage = new ProductPage(page);
     // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
