@@ -5,7 +5,7 @@ import UIReference from './config/element-identifiers/element-identifiers.json';
 import slugs from './config/slugs.json';
 
 if(toggles.general.pageHealthCheck === true) {
-  test.only('Critical_pages_load_and_have_a_visible_title', async ({ page }) => {
+  test.only('Critical_pages_load_and_have_a_visible_title', {tag: '@cold'}, async ({ page }) => {
     await test.step('Homepage_returns_200', async () =>{
       let homepageURL = process.env.BASE_URL;
   
