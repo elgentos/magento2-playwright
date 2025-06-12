@@ -4,7 +4,7 @@ import {MainMenuPage} from './fixtures/mainmenu.page';
 import inputvalues from './config/input-values/input-values.json';
 import outcomeMarker from './config/outcome-markers/outcome-markers.json';
 
-base('User can log in with valid credentials', async ({page, browserName}) => {
+base('User can log in with valid credentials', {tag: '@hot'}, async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
