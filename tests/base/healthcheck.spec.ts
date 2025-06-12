@@ -6,7 +6,7 @@ import slugs from './config/slugs.json';
 
 if(toggles.general.pageHealthCheck === true) {
   test.describe.only('Page health checks', () => {
-    test('Homepage_returns_200', async ({ page }) => {
+    test('Homepage_returns_200',{ tag: '@healthcheck'}, async ({ page }) => {
       let homepageURL = process.env.BASE_URL;
 
       if(!homepageURL) {
@@ -21,7 +21,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', { name: UIReference.homePage.homePageTitleText }), `Homepage has a visible title`).toBeVisible();
     });
 
-    test('PLP_returns_200', async ({ page }) => {
+    test('PLP_returns_200',{ tag: '@healthcheck'}, async ({ page }) => {
       const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
       await page.goto(slugs.categoryPage.categorySlug);
       const plpResponse = await plpResponsePromise;
@@ -30,7 +30,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText }), `PLP has a visible title`).toBeVisible();
     });
 
-    test('PDP_returns_200', async ({ page }) => {
+    test('PDP_returns_200',{ tag: '@healthcheck'}, async ({ page }) => {
       const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
       await page.goto(slugs.productpage.simpleProductSlug);
       const pdpResponse = await pdpResponsePromise;
@@ -39,7 +39,7 @@ if(toggles.general.pageHealthCheck === true) {
       await expect(page.getByRole('heading', {level:1, name: UIReference.productPage.simpleProductTitle}), `PLP has a visible title`).toBeVisible();
     });
 
-    test('Checkout_returns_200', async ({ page }) => {
+    test('Checkout_returns_200',{ tag: '@healthcheck'}, async ({ page }) => {
         const responsePromise = page.waitForResponse(slugs.checkout.checkoutSlug);
 
         await page.goto(slugs.checkout.checkoutSlug);
