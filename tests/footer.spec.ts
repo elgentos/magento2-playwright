@@ -20,3 +20,14 @@ test(
             await page.goto('');
             await footer.switchCurrencySwitcher();
     })
+
+test(
+    'Newsletter subscription',
+    {tag: ['@footer-newsletter', '@cold']},
+    async ({page}) => {
+        const footer = new Footer(page);
+
+        await page.goto('');
+        await footer.subscribeToNewsletter();
+    }
+)

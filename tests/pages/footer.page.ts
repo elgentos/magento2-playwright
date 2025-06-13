@@ -1,5 +1,7 @@
+// @ts-check
+
 import { expect, Locator, type Page } from '@playwright/test';
-import { UIReference } from 'config';
+import { UIReference, outcomeMarker, inputValues } from 'config';
 
 export class Footer {
     readonly page: Page
@@ -21,5 +23,13 @@ export class Footer {
         await this.page.getByRole('link', { name: UIReference.footerPage.currencyEuro }).click();
         await this.page.reload();
         await expect(this.page.getByRole('button', { name: UIReference.footerPage.currencyEuro })).toBeVisible();
+    }
+
+    async subscribeToNewsletter() {
+        await expect(this.page.getByRole('textbox', { name: 'Email Address' })).toBeVisible();
+        await this.page.getByRole('textbox', { name: 'Email Address' }).fill(inputValues.contact.contactFormEmailValue);
+        await this.page.getByRole('button', { name: 'Subscribe' }).click();
+        // await this.page.reload();
+        await expect(this.page.getByText(outcomeMarker.footerPage.newsletterSubscription)).toBeVisible();
     }
 }
