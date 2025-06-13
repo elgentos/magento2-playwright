@@ -1,13 +1,13 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 import {faker} from '@faker-js/faker';
-import { BasePage } from './base.page';
+import BasePage from './base.page';
 
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 import inputvalues from '../config/input-values/input-values.json';
 
-export class CheckoutPage extends BasePage {
+class CheckoutPage extends BasePage {
 
   readonly shippingMethodOptionFixed: Locator;
   readonly paymentMethodOptionCheck: Locator;
@@ -207,3 +207,5 @@ export class CheckoutPage extends BasePage {
     await this.waitForMagewireRequests();
   }
 }
+
+export default CheckoutPage;

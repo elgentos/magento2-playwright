@@ -5,7 +5,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
-export class ContactPage {
+class ContactPage {
   readonly page: Page;
   readonly nameField: Locator;
   readonly emailField: Locator;
@@ -39,3 +39,5 @@ export class ContactPage {
     await expect(this.messageField, 'message should be empty now').toBeEmpty();
   }
 }
+
+export default ContactPage;

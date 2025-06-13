@@ -3,7 +3,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
-export class LoginPage {
+class LoginPage {
   readonly page: Page;
   readonly loginEmailField: Locator;
   readonly loginPasswordField: Locator;
@@ -34,3 +34,5 @@ export class LoginPage {
     await expect(this.page, 'Should stay on login page').toHaveURL(new RegExp(slugs.account.loginSlug));
   }
 }
+
+export default LoginPage;

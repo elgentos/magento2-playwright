@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 
-export class BasePage {
+class BasePage {
   readonly page: Page;
 
   constructor(page: Page) {
@@ -41,3 +41,5 @@ export class BasePage {
     await this.page.waitForTimeout(500);
   }
 }
+
+export default BasePage;
