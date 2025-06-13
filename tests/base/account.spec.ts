@@ -1,9 +1,9 @@
 import {test, expect} from '@playwright/test';
-import {MainMenuPage} from './fixtures/mainmenu.page';
-import {LoginPage} from './fixtures/login.page';
-import {RegisterPage} from './fixtures/register.page';
-import {AccountPage} from './fixtures/account.page';
-import {NewsletterSubscriptionPage} from './fixtures/newsletter.page';
+import MainMenuPage from './fixtures/mainmenu.page';
+import LoginPage from './fixtures/login.page';
+import RegisterPage from './fixtures/register.page';
+import AccountPage from './fixtures/account.page';
+import NewsletterSubscriptionPage from './fixtures/newsletter.page';
 import {faker} from '@faker-js/faker';
 
 import slugs from './config/slugs.json';
