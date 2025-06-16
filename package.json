@@ -3,5 +3,8 @@
   "version": "0.0.0",
   "author": "elgentos",
   "license": "ISC",
-  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop."
+  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.",
+  "scripts": {
+    "postinstall": "node install.js"
+  }
 }
