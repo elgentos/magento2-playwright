@@ -5,6 +5,6 @@
   "license": "ISC",
   "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.",
   "scripts": {
-    "postinstall": "node install.js"
+    "postinstall": "node build.js"
   }
 }
