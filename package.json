@@ -1,20 +1,7 @@
 {
-  "name": "playwright-magento2",
-  "version": "1.0.1-alpha",
-  "main": "install.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
+  "name": "@elgentos/playwright-magento2",
+  "version": "0.0.0",
+  "author": "elgentos",
   "license": "ISC",
-  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.",
-  "dependencies": {
-    "@faker-js/faker": "^9.4.0",
-    "@playwright/test": "^1.47.2",
-    "@types/node": "^22.7.4",
-    "csv-parse": "^5.5.3",
-    "dotenv": "^16.4.5"
-  },
-  "directories": {
-    "test": "tests"
-  }
+  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop."
 }

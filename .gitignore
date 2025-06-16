@@ -1,14 +1,2 @@
-.idea/
-node_modules/
-/test-results/
-/auth-storage/*
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-playwright.config.ts
-bypass-captcha.config.ts
-package-lock.json
-.env
-.vscode
-/tests/.auth/
-/tests/base/config/test-toggles.json
+.idea
+node_modules
