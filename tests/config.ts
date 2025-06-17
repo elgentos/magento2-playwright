@@ -5,5 +5,6 @@ import outcomeMarker from './config/outcome-markers.json';
 import slugs from './config/slugs.json';
 import inputValues from './config/input-values.json';
 
+import toggles from './config/test-toggles.json';
 
-export { UIReference, outcomeMarker, slugs, inputValues };
+export { UIReference, outcomeMarker, slugs, inputValues, toggles };
