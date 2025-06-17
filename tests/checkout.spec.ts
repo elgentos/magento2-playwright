@@ -2,10 +2,10 @@
 
 import {test, expect} from '@playwright/test';
 
-import LoginPage from './poms/login.page';
-import ProductPage from './poms/product.page';
-import AccountPage from './poms/account.page';
-import CheckoutPage from './poms/checkout.page';
+import LoginPage from './poms/frontend/login.page';
+import ProductPage from './poms/frontend/product.page';
+import AccountPage from './poms/frontend/account.page';
+import CheckoutPage from './poms/frontend/checkout.page';
 
 import { UIReference, slugs } from './config';
 

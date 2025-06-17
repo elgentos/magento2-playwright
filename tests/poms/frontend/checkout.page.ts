@@ -3,9 +3,9 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import MagewireUtils from '../utils/magewire.utils';
+import MagewireUtils from '../../utils/magewire.utils';
 
-import { UIReference, outcomeMarker, slugs, inputValues } from '../config';
+import { UIReference, outcomeMarker, slugs, inputValues } from '../../config';
 
 class CheckoutPage extends MagewireUtils {
 

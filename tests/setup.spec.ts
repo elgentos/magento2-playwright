@@ -2,8 +2,8 @@
 
 import { test as base } from '@playwright/test';
 
-import MagentoAdminPage from './poms/magentoAdmin.page';
-import RegisterPage from './poms/register.page';
+import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
+import RegisterPage from './poms/frontend/register.page';
 
 import { toggles, inputValues } from './config';
 

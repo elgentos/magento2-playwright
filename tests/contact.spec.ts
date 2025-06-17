@@ -1,7 +1,7 @@
 // @ts-check
 
 import {test} from '@playwright/test';
-import ContactPage from './poms/contact.page';
+import ContactPage from './poms/frontend/contact.page';
 
 /**
  * @feature Magento 2 Contact Form

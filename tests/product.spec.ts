@@ -2,8 +2,8 @@
 
 import { test } from '@playwright/test';
 
-import ProductPage from './poms/product.page';
-import LoginPage from './poms/login.page';
+import ProductPage from './poms/frontend/product.page';
+import LoginPage from './poms/frontend/login.page';
 
 import { UIReference, outcomeMarker ,slugs } from './config';
 
