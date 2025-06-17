@@ -1,9 +1,9 @@
+// @ts-check
+
 import {expect, type Locator, type Page} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import UIReference from '../config/element-identifiers/element-identifiers.json';
-import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
-import slugs from '../config/slugs.json';
+import { UIReference, outcomeMarker, slugs } from '../config';
 
 class ContactPage {
   readonly page: Page;
