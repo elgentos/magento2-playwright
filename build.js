@@ -9,7 +9,7 @@ function copyExampleFiles() {
     const newFileName = file.replace('.example','');
     fs.copyFile('./' + file, '../../' + newFileName, (err) => {
       if (err) throw err;
-      console.log('File was copied to destination');
+      console.log(newFileName + ' was copied to destination');
     });
   }
 };
