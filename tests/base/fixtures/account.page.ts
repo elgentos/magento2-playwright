@@ -5,7 +5,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
-export class AccountPage {
+class AccountPage {
   readonly page: Page;
   readonly accountDashboardTitle: Locator;
   readonly firstNameField: Locator;
@@ -168,3 +168,5 @@ export class AccountPage {
     }
   }
 }
+
+export default AccountPage;

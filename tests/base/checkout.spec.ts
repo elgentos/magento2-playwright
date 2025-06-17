@@ -1,8 +1,8 @@
 import {test, expect} from '@playwright/test';
-import {LoginPage} from './fixtures/login.page';
-import {ProductPage} from './fixtures/product.page';
-import {AccountPage} from './fixtures/account.page';
-import { CheckoutPage } from './fixtures/checkout.page';
+import LoginPage from './fixtures/login.page';
+import ProductPage from './fixtures/product.page';
+import AccountPage from './fixtures/account.page';
+import CheckoutPage from './fixtures/checkout.page';
 
 import slugs from './config/slugs.json';
 import UIReference from './config/element-identifiers/element-identifiers.json';

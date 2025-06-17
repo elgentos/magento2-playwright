@@ -4,7 +4,7 @@ import slugs from '../config/slugs.json';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
-export class RegisterPage {
+class RegisterPage {
   readonly page: Page;
   readonly accountCreationFirstNameField: Locator;
   readonly accountCreationLastNameField: Locator;
@@ -43,3 +43,5 @@ export class RegisterPage {
     }
   }
 }
+
+export default RegisterPage;

@@ -3,7 +3,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
-export class CartPage {
+class CartPage {
   readonly page: Page;
   readonly showDiscountButton: Locator;
   readonly applyDiscountButton: Locator;
@@ -146,3 +146,5 @@ export class CartPage {
     expect(calculatedPricePDP, `Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${priceCheckout})`).toEqual(priceCheckout);
   }
 }
+
+export default CartPage;

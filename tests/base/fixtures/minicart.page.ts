@@ -4,7 +4,7 @@ import UIReference from '../config/element-identifiers/element-identifiers.json'
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 import slugs from '../config/slugs.json';
 
-export class MiniCartPage {
+class MiniCartPage {
   readonly page: Page;
   readonly toCheckoutButton: Locator;
   readonly toCartButton: Locator;
@@ -66,3 +66,5 @@ export class MiniCartPage {
     expect(priceOnPage, `Expect these prices to be the same: priceOnpage: ${priceOnPage} and priceInMinicart: ${priceInMinicart}`).toBe(priceInMinicart);
   }
 }
+
+export default MiniCartPage;

@@ -2,7 +2,7 @@ import {expect, type Locator, type Page} from '@playwright/test';
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 import outcomeMarker from '../config/outcome-markers/outcome-markers.json';
 
-export class NewsletterSubscriptionPage {
+class NewsletterSubscriptionPage {
   readonly page: Page;
   readonly newsletterCheckElement: Locator;
   readonly saveSubscriptionsButton: Locator;
@@ -38,3 +38,5 @@ export class NewsletterSubscriptionPage {
     return subscribed;
   }
 }
+
+export default NewsletterSubscriptionPage;
