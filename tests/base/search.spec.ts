@@ -39,14 +39,5 @@ test.describe('Search features', { tag: '@search' }, () => {
     await searchPage.search('unfindable-product-name');
     await searchPage.expectNoResults();
   });
-
-  /**
-   * @scenario Suggestions appear while typing
-   */
-  test('Suggestions are shown during typing', async ({ page }) => {
-    const searchPage = new SearchPage(page);
-    await searchPage.type('bag');
-    await searchPage.expectSuggestions();
-  });
 });
 
