@@ -61,8 +61,7 @@ if (toggles.general.pageHealthCheck === true) {
         'Cart has a visible title'
       ).toBeVisible();
 
-      const headStatus = (await page.request.head(page.url())).status();
-      expect(headStatus, `Current page (${page.url()}) should return 200`).toBe(200);
+      expect((await page.request.head(page.url())).status(), `Current page (${page.url()}) should return 200`).toBe(200);
     });
   });
 }
