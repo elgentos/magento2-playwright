@@ -53,6 +53,9 @@
     "borderClassRegex": ".* border-primary$",
     "simpleProductAddedNotification": "You added"
   },
+  "search": {
+    "noResultsText": "Your search returned no results."
+  },
   "login": {
     "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
   },

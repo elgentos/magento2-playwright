@@ -187,6 +187,11 @@
     "removeProductIconLabel": "Remove product",
     "toCartLinkLabel": "View and Edit Cart"
   },
+  "search": {
+    "searchInputPlaceholder": "Search entire store here...",
+    "suggestionNavLabel": "Search Suggestions",
+    "resultItemLinkLocator": ".product-item-link"
+  },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
     "firstNameLabel": "First Name",
