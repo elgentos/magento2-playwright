@@ -2,9 +2,9 @@
 
 import { test, expect } from '@playwright/test';
 
-import ComparePage from './poms/compare.page';
-import LoginPage from './poms/login.page';
-import ProductPage from './poms/product.page';
+import ComparePage from './poms/frontend/compare.page';
+import LoginPage from './poms/frontend/login.page';
+import ProductPage from './poms/frontend/product.page';
 
 import  { UIReference, outcomeMarker, slugs } from './config';
 

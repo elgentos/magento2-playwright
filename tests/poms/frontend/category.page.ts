@@ -2,7 +2,7 @@
 
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import { UIReference, slugs } from '../config';
+import { UIReference, slugs } from '../../config';
 
 class CategoryPage {
   readonly page:Page;

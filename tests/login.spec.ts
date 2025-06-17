@@ -2,7 +2,7 @@
 
 import {test as base, expect} from '@playwright/test';
 
-import LoginPage from './poms/login.page';
+import LoginPage from './poms/frontend/login.page';
 
 import { outcomeMarker, inputValues } from './config';
 

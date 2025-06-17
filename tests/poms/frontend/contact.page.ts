@@ -3,7 +3,7 @@
 import {expect, type Locator, type Page} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import { UIReference, outcomeMarker, slugs } from '../config';
+import { UIReference, outcomeMarker, slugs } from '../../config';
 
 class ContactPage {
   readonly page: Page;

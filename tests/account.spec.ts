@@ -5,11 +5,11 @@ import {faker} from '@faker-js/faker';
 
 import { UIReference, outcomeMarker, slugs} from './config';
 
-import AccountPage from './poms/account.page';
-import LoginPage from './poms/login.page';
-import MainMenuPage from './poms/mainmenu.page';
-import NewsletterSubscriptionPage from './poms/newsletter.page';
-import RegisterPage from './poms/register.page';
+import AccountPage from './poms/frontend/account.page';
+import LoginPage from './poms/frontend/login.page';
+import MainMenuPage from './poms/frontend/mainmenu.page';
+import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
+import RegisterPage from './poms/frontend/register.page';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
