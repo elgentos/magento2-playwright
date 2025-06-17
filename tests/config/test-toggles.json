@@ -1,0 +1,6 @@
+{
+  "general": {
+    "setup": false,
+    "pageHealthCheck": true
+  }
+}
