@@ -1,7 +1,17 @@
 const fs = require('fs');
 
-// destination will be created or overwritten by default.
-fs.copyFile('./playwright.config.example.ts', '../playwright.config.ts', (err) => {
-  if (err) throw err;
-  console.log('File was copied to destination');
-});
+function copyExampleFiles() {
+  // const exampleFiles = new Set<string>();
+  const exampleFiles = new Set(fs.readdirSync(__dirname).filter(file => file.includes('.example')));
+
+  for (const file of exampleFiles) {
+    // destination will be created or overwritten by default.
+    const newFileName = file.replace('.example','');
+    fs.copyFile('./' + file, '../../' + newFileName, (err) => {
+      if (err) throw err;
+      console.log(newFileName + ' was copied to destination');
+    });
+  }
+};
+
+copyExampleFiles();
