@@ -8,16 +8,19 @@ class SearchPage {
   readonly page: Page;
   readonly searchInput: Locator;
   readonly suggestionNav: Locator;
+  readonly toggleButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.searchInput = page.getByPlaceholder(UIReference.search.searchInputPlaceholder);
     this.suggestionNav = page.getByRole('navigation', { name: UIReference.search.suggestionNavLabel });
+    this.toggleButton = page.getByLabel(UIReference.search.toggleButtonLabel);
   }
 
   async gotoHome() {
     await this.page.goto('');
-    await this.searchInput.waitFor();
+    await this.toggleButton.click();
+    await this.searchInput.waitFor({ state: 'visible' });
   }
 
   async type(term: string) {

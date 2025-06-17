@@ -190,7 +190,8 @@
   "search": {
     "searchInputPlaceholder": "Search entire store here...",
     "suggestionNavLabel": "Search Suggestions",
-    "resultItemLinkLocator": ".product-item-link"
+    "resultItemLinkLocator": ".product-item-link",
+    "toggleButtonLabel": "Toggle search form"
   },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
