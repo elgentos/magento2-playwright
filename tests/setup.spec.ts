@@ -120,7 +120,8 @@ const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.o
             throw new Error('.env file not found. Please ensure it exists in the root directory.');
           }
         } catch (error) {
-          throw new Error(`Failed to update .env file: ${error.message}`);
+          const err = error as Error;
+          throw new Error(`Failed to update .env file: ${err.message}`);
         }
       });
     });
