@@ -42,15 +42,14 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
 }
 
 const testFiles = getTestFiles(
+    path.join(__dirname, 'base-tests'),
     path.join(__dirname, 'tests'),
-    path.join(__dirname, '../../custom'),
 );
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -74,7 +73,7 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
   },
   /* Setup for global cookie to bypass CAPTCHA, remove '.example' when used */
-  globalSetup: require.resolve('./bypass-captcha.config.example.ts'),
+  // globalSetup: require.resolve('./bypass-captcha.config.example.ts'),
 
   /* Configure projects for major browsers */
   projects: [
@@ -87,7 +86,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         storageState: './auth-storage/chromium-storage-state.json',
-       },
+      },
     },
 
     {
@@ -104,7 +103,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Safari'],
         storageState: './auth-storage/webkit-storage-state.json',
-       },
+      },
     },
 
     /* Test against mobile viewports. */
