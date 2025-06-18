@@ -2,7 +2,7 @@
 
 import {expect, type Locator, type Page} from '@playwright/test';
 
-import { UIReference, inputValues } from '../config';
+import { UIReference, inputValues } from '../../config';
 
 class MagentoAdminPage {
   readonly page: Page;

@@ -2,8 +2,8 @@
 
 import {test, expect} from '@playwright/test';
 
-import MainMenuPage from './poms/mainmenu.page';
-import HomePage from './poms/home.page';
+import MainMenuPage from './poms/frontend/mainmenu.page';
+import HomePage from './poms/frontend/home.page';
 
 import { outcomeMarker } from './config';
 

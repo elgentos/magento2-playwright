@@ -2,9 +2,9 @@
 
 import {test} from '@playwright/test';
 
-import LoginPage from './poms/login.page';
-import MainMenuPage from './poms/mainmenu.page';
-import ProductPage from './poms/product.page';
+import LoginPage from './poms/frontend/login.page';
+import MainMenuPage from './poms/frontend/mainmenu.page';
+import ProductPage from './poms/frontend/product.page';
 
 import { UIReference, slugs } from './config';
 

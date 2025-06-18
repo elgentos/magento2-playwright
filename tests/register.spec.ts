@@ -3,7 +3,7 @@
 import {test} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import RegisterPage from './poms/register.page';
+import RegisterPage from './poms/frontend/register.page';
 
 import { inputValues } from './config';
 
