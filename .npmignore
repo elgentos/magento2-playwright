@@ -1,3 +1,10 @@
+#folders
 .idea
 node_modules/
-test-results/
+/test-results/
+/auth-storage/
+/playwright-report/
+
+#files
+/*.config.ts
+/.env

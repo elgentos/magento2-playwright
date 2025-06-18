@@ -1,11 +1,20 @@
+// @ts-check
+
 import { defineConfig, devices } from '@playwright/test';
+
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from "node:fs";
+
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-function getTestFiles(baseDir: string, customDir: string): string[] {
+function getTestFiles(baseDir: string, customDir?: string): string[] {
   const baseFiles = new Set(fs.readdirSync(baseDir).filter(file => file.endsWith('.spec.ts')));
+
+  if (!customDir || !fs.existsSync(customDir)) {
+    return Array.from(baseFiles);
+  }
+
   const customFiles = fs.readdirSync(customDir).filter(file => file.endsWith('.spec.ts'));
 
   if(customFiles.length === 0) {
@@ -33,8 +42,8 @@ function getTestFiles(baseDir: string, customDir: string): string[] {
 }
 
 const testFiles = getTestFiles(
-  path.join(__dirname, 'tests', 'base'),
-  path.join(__dirname, 'tests', 'custom'),
+    path.join(__dirname, 'tests'),
+    path.join(__dirname, '../../custom'),
 );
 
 /**
