@@ -7,7 +7,7 @@ function copyExampleFiles() {
   for (const file of exampleFiles) {
     // destination will be created or overwritten by default.
     const newFileName = file.replace('.example','');
-    fs.copyFile('./' + file, '../../' + newFileName, (err) => {
+    fs.copyFile('./' + file, '../../../' + newFileName, (err) => {
       if (err) throw err;
       console.log(newFileName + ' was copied to destination');
     });
