@@ -99,15 +99,22 @@ try {
 
   // Process JSON files
   const jsonFiles = [
-    'base-tests/config/element-identifiers.json',
-    'base-tests/config/outcome-markers.json'
+    'element-identifiers.json',
+    'outcome-markers.json'
   ];
 
-  for (const jsonFile of jsonFiles) {
-    const content = JSON.parse(fs.readFileSync(jsonFile, 'utf-8'));
+  for (const fileName of jsonFiles) {
+    const sourcePath = path.resolve('base-tests/config', fileName);
+    const destPath = path.resolve('tests/config', fileName);
+
+    const content = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
     const translatedContent = translateObject(content, translations);
-    fs.writeFileSync(jsonFile, JSON.stringify(translatedContent, null, 2));
-    console.log(`Translated ${jsonFile}`);
+
+    // Ensure target directory exists
+    fs.mkdirSync(path.dirname(destPath), { recursive: true });
+
+    fs.writeFileSync(destPath, JSON.stringify(translatedContent, null, 2));
+    console.log(`Translated file written: ${destPath}`);
   }
 
   console.log('Translation completed successfully!');
