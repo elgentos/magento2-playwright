@@ -7,7 +7,7 @@ import ProductPage from './poms/frontend/product.page';
 import AccountPage from './poms/frontend/account.page';
 import CheckoutPage from './poms/frontend/checkout.page';
 
-import { UIReference, slugs } from './config';
+import { UIReference, slugs } from './../tests.config';
 
 /**
  * @feature BeforeEach runs before each test in this group.

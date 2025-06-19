@@ -4,7 +4,7 @@ import {test as base, expect} from '@playwright/test';
 
 import LoginPage from './poms/frontend/login.page';
 
-import { outcomeMarker, inputValues } from './config';
+import { outcomeMarker, inputValues } from './../tests.config';
 
 base('User can log in with valid credentials', {tag: '@hot'}, async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";

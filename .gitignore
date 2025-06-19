@@ -9,4 +9,3 @@ node_modules/
 /*.config.ts
 /.env
 /tsconfig.json
-/**/**/test-toggles.json

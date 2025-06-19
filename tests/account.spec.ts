@@ -3,7 +3,7 @@
 import {test, expect} from '@playwright/test';
 import {faker} from '@faker-js/faker';
 
-import { UIReference, outcomeMarker, slugs} from './config';
+import { UIReference, outcomeMarker, slugs} from 'config';
 
 import AccountPage from './poms/frontend/account.page';
 import LoginPage from './poms/frontend/login.page';
