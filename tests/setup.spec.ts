@@ -5,7 +5,7 @@ import { test as base } from '@playwright/test';
 import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
 import RegisterPage from './poms/frontend/register.page';
 
-import { toggles, inputValues } from './config';
+import { toggles, inputValues } from './../tests.config';
 
 import fs from 'fs';
 import path from 'path';

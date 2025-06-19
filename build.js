@@ -9,6 +9,7 @@ class Build {
   constructor() {
     this.copyExampleFiles();
     this.copyTestsToTempFolder();
+    this.createNewTestsFolderForCustomTests();
   }
 
   /**
@@ -41,19 +42,19 @@ class Build {
     }
   }
 
-  /**
-   * @feature Copy base test files
-   * @scenario Prepare test suite by copying `tests/` to the root-level `base-tests/` folder.
-   * @given There is a `tests/` folder in the package directory
-   * @when I run the Build script
-   *  @and A `base-tests/` folder already exists in the root
-   * @then The existing `base-tests/` folder should be removed
-   *  @and A fresh copy of `tests/` should be placed in `../../../base-tests`
-   */
+    /**
+     * @feature Copy base test files
+     * @scenario Prepare test suite by copying `tests/` to the root-level `base-tests/` folder.
+     * @given There is a `tests/` folder in the package directory
+     * @when I run the Build script
+     *  @and A `base-tests/` folder already exists in the root
+     * @then The existing `base-tests/` folder should be removed
+     *  @and A fresh copy of `tests/` should be placed in `../../../base-tests`
+     */
   copyTestsToTempFolder() {
 
     const sourceDir = path.resolve(__dirname, 'tests');
-    const targetDir = path.resolve(__dirname, `../../../${this.tempDirTests}`);
+    const targetDir = path.resolve(__dirname, '../../../', this.tempDirTests);
 
     try {
       if (fs.existsSync(targetDir)) {
@@ -64,6 +65,28 @@ class Build {
       console.log(`Copied tests from ${sourceDir} to ${targetDir}`);
     } catch (err) {
       console.error('Error copying test directory:', err);
+    }
+  }
+
+  /**
+   * @feature Create tests directory
+   * @scenario Ensure the `tests/` directory exists at the project root level.
+   * @given There is no `tests/` directory at the project root
+   * @when I run the `createNewTestsFolderForCustomTests` function
+   * @then A new `tests/` directory should be created at `../../../tests`
+   *  @and A log message "Created tests directory: <path>" should be output
+   * @given The `tests/` directory already exists at the project root
+   * @when I run the `createNewTestsFolderForCustomTests` function
+   * @then No new directory should be created
+   *  @and A log message "Tests directory already exists: <path>" should be output
+   */
+  createNewTestsFolderForCustomTests() {
+    const testsDir = path.resolve(__dirname, '../../..', 'tests');
+    if (!fs.existsSync(testsDir)) {
+      fs.mkdirSync(testsDir);
+      console.log(`Created tests directory: ${testsDir}`);
+    } else {
+      console.log(`Tests directory already exists: ${testsDir}`);
     }
   }
 }

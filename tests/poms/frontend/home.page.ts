@@ -2,7 +2,7 @@
 
 import {type Locator, type Page} from '@playwright/test';
 
-import { UIReference } from '../../config';
+import { UIReference } from 'config';
 
 class HomePage {
 

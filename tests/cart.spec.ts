@@ -6,7 +6,7 @@ import CartPage from './poms/frontend/cart.page';
 import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
 
-import { UIReference, slugs } from './config';
+import { UIReference, slugs } from 'config';
 
 test.describe('Cart functionalities (guest)', () => {
   /**

@@ -6,7 +6,7 @@ import ComparePage from './poms/frontend/compare.page';
 import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
 
-import  { UIReference, outcomeMarker, slugs } from './config';
+import  { UIReference, outcomeMarker, slugs } from './../tests.config';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
