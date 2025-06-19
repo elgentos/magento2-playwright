@@ -1,6 +1,6 @@
 {
-  "name": "@elgentos/playwright-magento2",
-  "version": "0.0.17",
+  "name": "@elgentos/magento2-playwright",
+  "version": "0.0.0",
   "author": "elgentos",
   "license": "ISC",
   "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.",
