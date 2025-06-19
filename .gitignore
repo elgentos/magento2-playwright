@@ -8,4 +8,5 @@ node_modules/
 #files
 /*.config.ts
 /.env
+/tsconfig.json
 /**/**/test-toggles.json
