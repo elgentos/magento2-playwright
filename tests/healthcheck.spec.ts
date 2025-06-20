@@ -2,7 +2,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { UIReference, slugs, toggles } from './config';
+import { UIReference, slugs, toggles } from './../tests.config';
 
 if( toggles.general.pageHealthCheck ) {
   test.only('Critical_pages_load_and_have_a_visible_title', {tag: '@cold'}, async ({ page }) => {

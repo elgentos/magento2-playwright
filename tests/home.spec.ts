@@ -5,7 +5,7 @@ import {test, expect} from '@playwright/test';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import HomePage from './poms/frontend/home.page';
 
-import { outcomeMarker } from './config';
+import { outcomeMarker } from './../tests.config';
 
 test('Add product on homepage to cart',{ tag: ['@homepage', '@cold']}, async ({page}) => {
   const homepage = new HomePage(page);

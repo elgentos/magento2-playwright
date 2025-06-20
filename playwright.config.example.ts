@@ -42,15 +42,14 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
 }
 
 const testFiles = getTestFiles(
+    path.join(__dirname, 'base-tests'),
     path.join(__dirname, 'tests'),
-    path.join(__dirname, '../../custom'),
 );
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -73,8 +72,12 @@ export default defineConfig({
     /* Ignore https errors if they apply (should only happen on local) */
     ignoreHTTPSErrors: true,
   },
-  /* Setup for global cookie to bypass CAPTCHA, remove '.example' when used */
-  globalSetup: require.resolve('./bypass-captcha.config.example.ts'),
+
+  /*
+   * Setup for global cookie to bypass CAPTCHA, remove '.example' when used.
+   * If this is disabled remove storageState from all project objects.
+   */
+  globalSetup: require.resolve('./bypass-captcha.config.ts'),
 
   /* Configure projects for major browsers */
   projects: [
@@ -87,7 +90,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Chrome'],
         storageState: './auth-storage/chromium-storage-state.json',
-       },
+      },
     },
 
     {
@@ -95,7 +98,8 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Firefox'],
-        storageState: './auth-storage/firefox-storage-state.json', },
+        storageState: './auth-storage/firefox-storage-state.json',
+      },
     },
 
     {
@@ -104,7 +108,7 @@ export default defineConfig({
       use: {
         ...devices['Desktop Safari'],
         storageState: './auth-storage/webkit-storage-state.json',
-       },
+      },
     },
 
     /* Test against mobile viewports. */

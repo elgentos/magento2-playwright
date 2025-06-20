@@ -6,7 +6,7 @@ import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import ProductPage from './poms/frontend/product.page';
 
-import { UIReference, slugs } from './config';
+import { UIReference, slugs } from './../tests.config';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
