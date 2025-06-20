@@ -2,10 +2,9 @@
 
 import {test} from '@playwright/test';
 import {faker} from '@faker-js/faker';
+import { inputValues } from 'config';
 
 import RegisterPage from './poms/frontend/register.page';
-
-import { inputValues } from './../tests.config';
 
 // Reset storageState to ensure we're not logged in before running these tests.
 test.use({ storageState: { cookies: [], origins: [] } });

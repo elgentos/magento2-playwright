@@ -1,6 +1,6 @@
 // @ts-check
 
-import {test} from '@playwright/test';
+import { test } from '@playwright/test';
 import ContactPage from './poms/frontend/contact.page';
 
 /**

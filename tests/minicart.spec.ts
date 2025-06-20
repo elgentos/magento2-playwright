@@ -1,12 +1,11 @@
 // @ts-check
 
 import {test, expect} from '@playwright/test';
+import {UIReference, outcomeMarker, slugs} from 'config';
 
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import ProductPage from './poms/frontend/product.page';
 import MiniCartPage from './poms/frontend/minicart.page';
-
-import {UIReference, outcomeMarker, slugs} from './../tests.config';
 
 test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
   

@@ -1,13 +1,13 @@
 // @ts-check
 
-import {test, expect} from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { UIReference, slugs } from 'config';
 
 import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
 import AccountPage from './poms/frontend/account.page';
 import CheckoutPage from './poms/frontend/checkout.page';
 
-import { UIReference, slugs } from './../tests.config';
 
 /**
  * @feature BeforeEach runs before each test in this group.

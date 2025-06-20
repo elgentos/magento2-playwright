@@ -1,14 +1,12 @@
 // @ts-check
 
 import { test as base } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
+import { toggles, inputValues } from 'config';
 
 import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
 import RegisterPage from './poms/frontend/register.page';
-
-import { toggles, inputValues } from './../tests.config';
-
-import fs from 'fs';
-import path from 'path';
 
 /**
  * NOTE:

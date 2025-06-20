@@ -1,10 +1,9 @@
 // @ts-check
 
-import {test as base, expect} from '@playwright/test';
+import { test as base, expect } from '@playwright/test';
+import { outcomeMarker, inputValues } from 'config';
 
 import LoginPage from './poms/frontend/login.page';
-
-import { outcomeMarker, inputValues } from './../tests.config';
 
 base('User can log in with valid credentials', {tag: '@hot'}, async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";

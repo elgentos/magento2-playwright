@@ -1,11 +1,10 @@
 // @ts-check
 
 import { test } from '@playwright/test';
+import { UIReference ,slugs } from 'config';
 
 import ProductPage from './poms/frontend/product.page';
 import LoginPage from './poms/frontend/login.page';
-
-import { UIReference, outcomeMarker ,slugs } from './../tests.config';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add product to compare',{ tag: '@cold'}, async ({page}) => {
