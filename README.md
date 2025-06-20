@@ -64,53 +64,85 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 
 
 
-### Installation
+### 🧪 Installation
 
-1. **Clone the repository**
+1. **Create a `playwright/` directory inside your theme’s `/web` folder**
 
-   ```bash
-   ```
-
-2. **Navigate to the project directory**
+   Navigate to your custom theme folder (e.g. `app/design/frontend/Hyva/vendor_theme/web`) and create a `playwright/` directory:
 
    ```bash
+   cd app/design/frontend/Hyva/vendor_theme/web
+   mkdir -p playwright
+   cd playwright
    ```
 
-3. **Required Dependencies**
+2. **Initialize an npm project**
 
-   The project requires the following npm packages:
-   - @playwright/test (^1.47.2) - Core Playwright testing framework
-   - @faker-js/faker (^9.4.0) - For generating test data
-   - @types/node (^22.7.4) - TypeScript definitions for Node.js
-   - dotenv (^16.4.5) - For environment variable management
-
-4. **Install all dependencies**
+   If your `playwright/` directory doesn't yet have a `package.json`:
 
    ```bash
-   npm install
+   npm init -y
    ```
+
+3. **Install the test suite package**
+
+   ```bash
+   npm install @elgentos/magento2-playwright
+   ```
+
+4. **Copy configuration templates**
+
+   After installation, copy the example config files from the package to your project root:
+
+   ```bash
+   cp node_modules/@elgentos/magento2-playwright/.env.example .env
+   cp node_modules/@elgentos/magento2-playwright/playwright.config.example.ts playwright.config.ts
+   cp node_modules/@elgentos/magento2-playwright/bypass-captcha.config.example.ts bypass-captcha.config.ts
+   ```
+
+   > ℹ️ The `.env` file still needs to be filled in with your actual environment settings (Magento base URL, credentials, etc).
 
 5. **Install Playwright browsers**
+
+   Run the following command once to install the necessary browser binaries:
 
    ```bash
    npx playwright install --with-deps
    ```
 
-6. **Configure environment**
+6. **Customize the configuration**
 
-   Copy the example environment files and update them with your configuration:
+   Update the files in the `config/` folder to match your specific webshop setup:
+    - Page slugs
+    - DOM selectors
+    - Expected static texts
+    - Test-specific variables
 
-   ```bash
-   cp .env.example .env
-   cp playwright.config.example.ts playwright.config.ts
-   cp bypass-captcha.config.example.ts bypass-captcha.config.ts
+7. **Add default scripts to package.json**
+
+    ```json
+    "scripts": {
+       "build": "playwright install",
+       "test": "playwright test",
+       "ui": "npx playwright test --ui",
+       "translate": "node node_modules/@elgentos/magento2-playwright/translate-json.js nl_NL"
+    }
    ```
 
-   Update `.env` with your Magento 2 instance URL and other necessary settings.
+8. **Update .gitignore from magento project**
 
-7. **Update files in the `config` folder**
+    add following to .gitignore file:
 
-   Input variables, slugs, selectors and expected text are stored in files within the `config` folder. Update these to match your website's configuration.
+    ```bash
+    # playwright
+    /app/design/frontend/Hyva/demo/web/playwright/*
+    !/app/design/frontend/Hyva/demo/web/playwright/tests/*
+    !/app/design/frontend/Hyva/demo/web/playwright/package.json
+    !/app/design/frontend/Hyva/demo/web/playwright/package-lock.json
+    ```
+
+   > ℹ If you want more files comitted to git then just add it to the list above (like: `.env` with credentials.);
+
 
 ### Before you run
 Before you run our Testing Suite, you will need to perform a few steps to set-up your environment. Note that we are working on an update to automate these steps. Check out the [Contributing](#contributing) section if you want to help!
@@ -235,6 +267,7 @@ We welcome contributions to enhance this project! Here's how you can get involve
 1. **Clone this repository**
 
    ```bash
+   git clone https://github.com/elgentos/magento2-playwright
    ```
 
 2. **Create a branch**
