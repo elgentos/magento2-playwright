@@ -1,4 +1,4 @@
-# Magento 2 BDD E2E testing suite
+# Magento 2 Playwright BDD E2E testing suite
 A Playwright End-To-End (E2E) testing suite for Magento 2 that helps you find (potential) issues on your webshop.
 
 Or with more jargon: a Behavior Driven Development (BDD) End-To-End (E2E) testing suite for Magento 2 using Gherkin syntax in JSDoc and Playwright.
@@ -69,13 +69,13 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/elgentos/magento2-bdd-e2e-testing-suite.git
+   git clone https://github.com/elgentos/magento2-playwright.git
    ```
 
 2. **Navigate to the project directory**
 
    ```bash
-   cd magento2-bdd-e2e-testing-suite
+   cd magento2-playwright
    ```
 
 3. **Required Dependencies**
@@ -237,7 +237,7 @@ We welcome contributions to enhance this project! Here's how you can get involve
 1. **Clone this repository**
 
    ```bash
-   git clone https://github.com/elgentos/magento2-bdd-e2e-testing-suite
+   git clone https://github.com/elgentos/magento2-playwright
    ```
 
 2. **Create a branch**
