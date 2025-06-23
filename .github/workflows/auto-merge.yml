@@ -44,12 +44,12 @@ jobs:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
 
       - name: Merge PR with gh CLI
+        if: steps.check_pr.outputs.pr_exists == 'true'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if gh pr view "$PR_NUMBER" --json files -q '.files[].path' | \
-              grep -q '^\.github/workflows/'; then
+          PR_NUMBER="${{ steps.check_pr.outputs.pr_number }}"
+          if gh pr view "$PR_NUMBER" --json files -q '.files[].path' | grep -q '^\.github/workflows/'; then
             echo "Workflow changes detected, skipping auto-merge."
             exit 0
           fi
