@@ -22,15 +22,22 @@ test_mirror_pipeline:
   except:
     - main
   script:
-    - apt-get update && apt-get install -y file
     - mkdir -p ~/.ssh
-    - echo "$GIT_SSH_PRIVATE_KEY" | head -n 5
-    - echo "$GIT_SSH_PRIVATE_KEY" | cat -A
-    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - cp "$CI_PROJECT_DIR/gitlab-to-github" ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
-    - file ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.io"
     - echo "Testing mirror access to GitHub..."
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
+  dependencies: []
+  before_script:
+    - echo "⬇️ Downloading secure file..."
+    - mkdir -p "$CI_PROJECT_DIR"
+    - cp $(pwd)/gitlab-to-github "$CI_PROJECT_DIR/gitlab-to-github"
+  artifacts:
+    reports:
+      dotenv: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+
