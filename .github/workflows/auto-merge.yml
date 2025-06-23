@@ -13,9 +13,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install GitHub CLI
-        uses: cli/cli-action@v2
-
       - name: Authenticate GitHub CLI
         run: gh auth setup-git
         env:
@@ -46,10 +43,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
 
-      - name: Merge PR if exists and mergeable
-        if: steps.check_pr.outputs.pr_exists == 'true'
-        run: |
-          gh pr merge ${PR_NUMBER} --merge --auto
+      - name: Merge PR with gh CLI
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
-          PR_NUMBER: ${{ steps.check_pr.outputs.pr_number }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if gh pr view "$PR_NUMBER" --json files -q '.files[].path' | \
+              grep -q '^\.github/workflows/'; then
+            echo "Workflow changes detected, skipping auto-merge."
+            exit 0
+          fi
+          gh pr merge "$PR_NUMBER" --merge
