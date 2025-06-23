@@ -16,7 +16,7 @@ mirror_to_github:
     - git config --global user.email "developer@elgentos.nl"
     - git remote remove github || true
     - git remote add github git@github.com:elgentos/magento2-playwright.git
-    - git push github HEAD:gitlab-main
+    - git push github main:gitlab-main
 
 test_mirror_pipeline:
   stage: mirror
