@@ -23,14 +23,10 @@ test_mirror_pipeline:
     - main
   script:
     - mkdir -p ~/.ssh
-    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - echo "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.io"
     - echo "Testing mirror access to GitHub..."
-    - |
-      git ls-remote git@github.com:elgentos/magento2-playwright.git || {
-        echo "GitHub mirror access failed"
-        exit 1
-      }
+    - git ls-remote git@github.com:elgentos/magento2-playwright.git
