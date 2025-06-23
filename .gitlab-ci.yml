@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/playwright:v1.44.1-jammy
+image: node:16-bullseye
 
 stages:
   - mirror
