@@ -19,9 +19,5 @@ mirror_to_github:
 
 test_mirror_pipeline:
   stage: mirror
-  rules:
-    - if: '$CI_COMMIT_BRANCH != "main"'
-      when: always
-    - when: never
   script:
-    - echo "Mirror pipeline test successful for branch: $CI_COMMIT_BRANCH
+    - echo 'Mirror pipeline test successful'
