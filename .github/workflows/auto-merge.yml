@@ -1,4 +1,4 @@
-name: Auto merge GitLab branch
+name: Sync gitlab-main to main via gh CLI
 
 on:
   push:
@@ -6,23 +6,51 @@ on:
       - gitlab-main
 
 jobs:
-  create-pr-and-merge:
+  pr-and-merge:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
-        with:
-          branch: gitlab-main
-          base: main
-          title: "Sync gitlab-main to main"
-          body: "Automated PR from GitLab CI mirror."
-          token: ${{ secrets.AUTOMERGE_TOKEN }}
-          draft: false
-
-      - name: Auto-merge PR
-        uses: pascalgn/automerge-action@v0.16.4
+      - name: Authenticate GitHub CLI
+        run: gh auth setup-git
         env:
-          GITHUB_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+
+      - name: Check if PR exists
+        id: check_pr
+        run: |
+          set +e
+          gh pr list --head gitlab-main --base main --state open --json number -q '.[0].number' > pr_number.txt
+          set -e
+          if [ -s pr_number.txt ]; then
+            echo "pr_exists=true" >> $GITHUB_OUTPUT
+            echo "pr_number=$(cat pr_number.txt)" >> $GITHUB_OUTPUT
+          else
+            echo "pr_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR if needed
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        run: |
+          gh pr create \
+            --head gitlab-main \
+            --base main \
+            --title "Sync gitlab-main to main" \
+            --body "Automated PR from GitLab CI via gh CLI" \
+            --label auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+
+      - name: Merge PR with gh CLI
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if gh pr view "$PR_NUMBER" --json files -q '.files[].path' | \
+              grep -q '^\.github/workflows/'; then
+            echo "Workflow changes detected, skipping auto-merge."
+            exit 0
+          fi
+          gh pr merge "$PR_NUMBER" --merge
