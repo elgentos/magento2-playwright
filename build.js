@@ -3,6 +3,7 @@ const path = require('path');
 
 class Build {
 
+  pathToBaseDir = '../../../'
   tempDirTests = 'base-tests';
   exampleFileName = '.example';
 
@@ -10,6 +11,9 @@ class Build {
     this.copyExampleFiles();
     this.copyTestsToTempFolder();
     this.createNewTestsFolderForCustomTests();
+    if (process.env.CI === 'true') {
+      this.pathToBaseDir = './'
+    }
   }
 
   /**
@@ -27,7 +31,7 @@ class Build {
     for (const file of exampleFiles) {
       // destination will be created or overwritten by default.
       const sourceFile = './' + file;
-      const destFile = '../../../' + file.replace(this.exampleFileName,'');
+      const destFile = this.pathToBaseDir + file.replace(this.exampleFileName,'');
 
       try {
         fs.copyFileSync(sourceFile, destFile, fs.constants.COPYFILE_EXCL);
@@ -54,7 +58,7 @@ class Build {
   copyTestsToTempFolder() {
 
     const sourceDir = path.resolve(__dirname, 'tests');
-    const targetDir = path.resolve(__dirname, '../../../', this.tempDirTests);
+    const targetDir = path.resolve(__dirname, this.pathToBaseDir, this.tempDirTests);
 
     try {
       if (fs.existsSync(targetDir)) {

@@ -3,18 +3,17 @@
 import fs from 'fs';
 import path from 'path';
 
+const basePath = path.resolve('./base-tests/config');
+const overridePath = path.resolve('./tests/config');
+
 function loadConfig(filename: string) {
-    const overrideFile = path.join(path.resolve('./tests/config'), filename);
+    const overrideFile = path.join(overridePath, filename);
+    const baseFile = path.join(basePath, filename);
 
     if (fs.existsSync(overrideFile)) {
-        return import(overrideFile);
-    }
-
-    if (process.env.CI !== 'true') {
-        const baseFile = path.join(path.resolve('./base-tests/config'), filename);
-        if (fs.existsSync(baseFile)) {
-            return import(baseFile);
-        }
+        return require(overrideFile);
+    } else {
+        return require(baseFile);
     }
 }
 

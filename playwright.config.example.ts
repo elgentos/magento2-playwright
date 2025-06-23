@@ -4,7 +4,6 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from "node:fs";
-import {test as base} from "playwright/types/test";
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
@@ -41,17 +40,9 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
   return Array.from(testFiles);
 }
 
-let baseLocation = path.join(__dirname, 'base-tests');
-let customLocation = path.join(__dirname, 'tests');
-
-if (process.env.CI) {
-  baseLocation = path.join(__dirname, 'tests');
-  customLocation = null;
-}
-
 const testFiles = getTestFiles(
-    baseLocation,
-    customLocation,
+    path.join(__dirname, 'base-tests'),
+    path.join(__dirname, 'tests'),
 );
 
 /**
