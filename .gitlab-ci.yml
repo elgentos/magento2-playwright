@@ -17,7 +17,7 @@ mirror_to_github:
     - git remote remove github || true
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git checkout main
-    - git push github main:main
+    - git push github main:gitlab-main
 
 test_mirror_pipeline:
   stage: mirror

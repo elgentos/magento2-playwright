@@ -7,6 +7,7 @@ on:
 
 jobs:
   build-and-selftest:
+    if: github.head_ref != 'gitlab-main'
     runs-on: windows-latest
 
     env:
