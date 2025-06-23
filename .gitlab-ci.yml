@@ -1,3 +1,5 @@
+image: node:16-bullseye
+
 stages:
   - mirror
 
@@ -7,10 +9,23 @@ mirror_to_github:
     - main
   script:
     - mkdir -p ~/.ssh
-    - echo "GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.io"
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git push github HEAD:main
+
+test_mirror_pipeline:
+  stage: mirror
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+  script:
+    - mkdir -p ~/.ssh
+    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - git config --global user.name "developer-elgentos"
+    - git config --global user.email "developer@elgentos.io"
+    - git ls-remote git@github.com:elgentos/magento2-playwright.git
