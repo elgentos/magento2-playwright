@@ -23,8 +23,11 @@ test_mirror_pipeline:
     - main
   script:
     - mkdir -p ~/.ssh
-    - echo "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - echo "$GIT_SSH_PRIVATE_KEY" | head -n 5
+    - echo "$GIT_SSH_PRIVATE_KEY" | cat -A
+    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
     - chmod 600 ~/.ssh/id_ed25519
+    - file ~/.ssh/id_ed25519
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.io"
