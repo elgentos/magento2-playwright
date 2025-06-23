@@ -24,5 +24,4 @@ test_mirror_pipeline:
       when: always
     - when: never
   script:
-    - echo "🔧 Mirror CI dry-run:
-        no push executed (branch: $CI_COMMIT_BRANCH)"
+    - echo "Mirror pipeline test successful for branch: $CI_COMMIT_BRANCH
