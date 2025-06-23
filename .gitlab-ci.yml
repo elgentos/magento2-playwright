@@ -22,6 +22,7 @@ test_mirror_pipeline:
   except:
     - main
   script:
+    - apt-get update && apt-get install -y file
     - mkdir -p ~/.ssh
     - echo "$GIT_SSH_PRIVATE_KEY" | head -n 5
     - echo "$GIT_SSH_PRIVATE_KEY" | cat -A
