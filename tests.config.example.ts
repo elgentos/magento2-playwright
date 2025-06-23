@@ -13,12 +13,12 @@ function loadConfig(filename: string) {
         return import(overrideFile);
     }
 
-    if (process.env.CI !== 'true') {
-        const baseFile = path.join(basePath, filename);
-        if (fs.existsSync(baseFile)) {
-            return import(baseFile);
-        }
-    }
+    // if (process.env.CI !== 'true') {
+    //     const baseFile = path.join(basePath, filename);
+    //     if (fs.existsSync(baseFile)) {
+    //         return import(baseFile);
+    //     }
+    // }
 }
 
 const UIReference = loadConfig('element-identifiers.json');
