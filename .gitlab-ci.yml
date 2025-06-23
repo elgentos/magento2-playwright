@@ -14,7 +14,9 @@ mirror_to_github:
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.io"
+    - git remote remove github || true
     - git remote add github git@github.com:elgentos/magento2-playwright.git
+    - git checkout main
     - git push github main:main
 
 test_mirror_pipeline:
