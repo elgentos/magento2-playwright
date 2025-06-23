@@ -3,7 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 
-const basePath = path.resolve('./base-tests/config');
+if (process.env.CI !== 'true') {
+    const basePath = path.resolve('./base-tests/config');
+}
 const overridePath = path.resolve('./tests/config');
 
 function loadConfig(filename: string) {
@@ -13,12 +15,12 @@ function loadConfig(filename: string) {
         return import(overrideFile);
     }
 
-    // if (process.env.CI !== 'true') {
-    //     const baseFile = path.join(basePath, filename);
-    //     if (fs.existsSync(baseFile)) {
-    //         return import(baseFile);
-    //     }
-    // }
+    if (process.env.CI !== 'true') {
+        const baseFile = path.join(basePath, filename);
+        if (fs.existsSync(baseFile)) {
+            return import(baseFile);
+        }
+    }
 }
 
 const UIReference = loadConfig('element-identifiers.json');
