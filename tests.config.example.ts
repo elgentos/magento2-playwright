@@ -3,9 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 
-if (process.env.CI !== 'true') {
-    const basePath = path.resolve('./base-tests/config');
-}
+const basePath = path.resolve('./base-tests/config');
 const overridePath = path.resolve('./tests/config');
 
 function loadConfig(filename: string) {
