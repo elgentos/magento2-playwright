@@ -8,12 +8,13 @@ class Build {
   exampleFileName = '.example';
 
   constructor() {
-    this.copyExampleFiles();
-    this.copyTestsToTempFolder();
-    this.createNewTestsFolderForCustomTests();
     if (process.env.CI === 'true') {
       this.pathToBaseDir = './'
     }
+
+    this.copyExampleFiles();
+    this.copyTestsToTempFolder();
+    this.createNewTestsFolderForCustomTests();
   }
 
   /**
@@ -31,7 +32,7 @@ class Build {
     for (const file of exampleFiles) {
       // destination will be created or overwritten by default.
       const sourceFile = './' + file;
-      const destFile = this.pathToBaseDir + file.replace(this.exampleFileName,'');
+      const destFile = this.pathToBaseDir + file.replace(this.exampleFileName, '');
 
       try {
         fs.copyFileSync(sourceFile, destFile, fs.constants.COPYFILE_EXCL);
@@ -46,15 +47,15 @@ class Build {
     }
   }
 
-    /**
-     * @feature Copy base test files
-     * @scenario Prepare test suite by copying `tests/` to the root-level `base-tests/` folder.
-     * @given There is a `tests/` folder in the package directory
-     * @when I run the Build script
-     *  @and A `base-tests/` folder already exists in the root
-     * @then The existing `base-tests/` folder should be removed
-     *  @and A fresh copy of `tests/` should be placed in `../../../base-tests`
-     */
+  /**
+   * @feature Copy base test files
+   * @scenario Prepare test suite by copying `tests/` to the root-level `base-tests/` folder.
+   * @given There is a `tests/` folder in the package directory
+   * @when I run the Build script
+   *  @and A `base-tests/` folder already exists in the root
+   * @then The existing `base-tests/` folder should be removed
+   *  @and A fresh copy of `tests/` should be placed in `../../../base-tests`
+   */
   copyTestsToTempFolder() {
 
     const sourceDir = path.resolve(__dirname, 'tests');
@@ -62,10 +63,13 @@ class Build {
 
     try {
       if (fs.existsSync(targetDir)) {
-        fs.rmSync(targetDir, { recursive: true, force: true });
+        fs.rmSync(targetDir, {recursive: true, force: true});
       }
 
-      fs.cpSync(sourceDir, targetDir, { recursive: true });
+      fs.cpSync(sourceDir, targetDir, {recursive: true});
+      if (process.env.CI === 'true') {
+        fs.rmSync(sourceDir, {recursive: true, force: true});
+      }
       console.log(`Copied tests from ${sourceDir} to ${targetDir}`);
     } catch (err) {
       console.error('Error copying test directory:', err);
@@ -85,7 +89,7 @@ class Build {
    *  @and A log message "Tests directory already exists: <path>" should be output
    */
   createNewTestsFolderForCustomTests() {
-    const testsDir = path.resolve(__dirname, '../../..', 'tests');
+    const testsDir = path.resolve(__dirname, this.pathToBaseDir, 'tests');
     if (!fs.existsSync(testsDir)) {
       fs.mkdirSync(testsDir);
       console.log(`Created tests directory: ${testsDir}`);
