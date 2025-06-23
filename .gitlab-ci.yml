@@ -38,6 +38,3 @@ test_mirror_pipeline:
   artifacts:
     reports:
       dotenv: []
-  rules:
-    - if: '$CI_COMMIT_BRANCH != "main"'
-
