@@ -8,13 +8,15 @@ const overridePath = path.resolve('./tests/config');
 
 function loadConfig(filename: string) {
     const overrideFile = path.join(overridePath, filename);
-    const baseFile = path.join(basePath, filename);
 
     if (fs.existsSync(overrideFile)) {
-        return require(overrideFile);
-    } else {
-        if (! process.env.CI) {
-            return require(baseFile);
+        return import(overrideFile);
+    }
+
+    if (process.env.CI !== 'true') {
+        const baseFile = path.join(basePath, filename);
+        if (fs.existsSync(baseFile)) {
+            return import(baseFile);
         }
     }
 }

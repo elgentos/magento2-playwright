@@ -1,4 +1,4 @@
-name: Magento 2 BDD E2E Testing Suite Self Test
+name: Magento 2 Playwright Self Test
 
 on:
   pull_request:
