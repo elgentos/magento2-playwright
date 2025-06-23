@@ -13,7 +13,9 @@ function loadConfig(filename: string) {
     if (fs.existsSync(overrideFile)) {
         return require(overrideFile);
     } else {
-        return require(baseFile);
+        if (! process.env.CI) {
+            return require(baseFile);
+        }
     }
 }
 

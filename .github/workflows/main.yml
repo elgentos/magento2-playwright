@@ -54,7 +54,7 @@ jobs:
           cp tsconfig.example.json tsconfig.json
 
       - name: Run Playwright setup test
-        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
+        run: npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
         env:
           CI: true
 
