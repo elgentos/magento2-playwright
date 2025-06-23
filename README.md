@@ -68,10 +68,10 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 
 1. **Create a `playwright/` directory inside your theme’s `/web` folder**
 
-   Navigate to your custom theme folder (e.g. `app/design/frontend/Hyva/vendor_theme/web`) and create a `playwright/` directory:
+   Navigate to your custom theme folder (e.g. `app/design/frontend/Vendor/Theme/web`) and create a `playwright/` directory:
 
    ```bash
-   cd app/design/frontend/Hyva/vendor_theme/web
+   cd app/design/frontend/Vendor/Theme/web
    mkdir -p playwright
    cd playwright
    ```
