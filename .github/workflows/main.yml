@@ -1,4 +1,4 @@
-name: Magento 2 BDD E2E Testing Suite Self Test
+name: Magento 2 Playwright Self Test
 
 on:
   pull_request:
@@ -38,7 +38,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Install dependencies
         run: npm install
@@ -50,10 +50,11 @@ jobs:
         run: |
           cp playwright.config.example.ts playwright.config.ts
           cp bypass-captcha.config.example.ts bypass-captcha.config.ts
-          cp tests/base/config/test-toggles.example.json tests/base/config/test-toggles.json
+          cp tests.config.example.ts tests.config.ts
+          cp tsconfig.example.json tsconfig.json
 
       - name: Run Playwright setup test
-        run: npx playwright test --reporter=line --workers=4 tests/base/setup.spec.ts
+        run: npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
         env:
           CI: true
 
