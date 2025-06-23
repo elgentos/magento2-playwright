@@ -40,6 +40,7 @@ jobs:
             --title "Sync gitlab-main to main" \
             --body "Automated PR from GitLab CI via gh CLI" \
             --label auto-merge
+          echo "pr_exists=true" >> $GITHUB_OUTPUT
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
 
