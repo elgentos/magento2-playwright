@@ -1,4 +1,4 @@
-name: Sync gitlab-main to main via gh CLI
+name: Auto Merge gitlab-main to main
 
 on:
   push:
@@ -49,19 +49,23 @@ jobs:
         run: |
           PR_NUMBER="${{ steps.pr.outputs.pr_number }}"
           gh pr review "$PR_NUMBER" --approve
+          echo "merge_approved=true" >> "$GITHUB_OUTPUT"
 
-      - name: Merge PR with gh CLI
+      - name: Merge PR
+        if: steps.merge.outputs.merge_approved == 'true'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
         run: |
           PR_NUMBER="${{ steps.pr.outputs.pr_number }}"
           gh pr merge "$PR_NUMBER" --merge --admin
+          echo "merge_succeeded=true" >> "$GITHUB_OUTPUT"
 
-      - name: Delete gitlab-main branch from github
-        if: steps.check.outputs.head_ref == 'gitlab-main'
+      - name: Delete branch
+        if: steps.merge.outputs.merge_succeeded == 'true'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
         run: |
           echo "Deleting remote branch 'gitlab-main'"
           gh auth setup-git
           git push origin --delete gitlab-main
+          echo "branch_deleted=true" >> "$GITHUB_OUTPUT"
