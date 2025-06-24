@@ -56,3 +56,12 @@ jobs:
         run: |
           PR_NUMBER="${{ steps.pr.outputs.pr_number }}"
           gh pr merge "$PR_NUMBER" --merge --admin
+
+      - name: Delete gitlab-main branch
+        if: steps.check.outputs.head_ref == 'gitlab-main'
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+        run: |
+          echo "Deleting remote branch 'gitlab-main'"
+          gh auth setup-git
+          git push origin --delete gitlab-main
