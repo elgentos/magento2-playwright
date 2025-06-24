@@ -45,7 +45,7 @@ jobs:
 
       - name: Approve PR
         env:
-          GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
+          GH_TOKEN: ${{ secrets.AUTOAPPROVE_TOKEN }}
         run: |
           PR_NUMBER="${{ steps.pr.outputs.pr_number }}"
           gh pr review "$PR_NUMBER" --approve
