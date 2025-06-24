@@ -44,6 +44,7 @@ jobs:
           echo "pr_number=$pr_number" >> "$GITHUB_OUTPUT"
 
       - name: Approve PR
+        id: pr_approve
         env:
           GH_TOKEN: ${{ secrets.AUTOAPPROVE_TOKEN }}
         run: |
@@ -52,7 +53,8 @@ jobs:
           echo "merge_approved=true" >> "$GITHUB_OUTPUT"
 
       - name: Merge PR
-        if: steps.merge.outputs.merge_approved == 'true'
+        id: pr_merge
+        if: steps.pr_approve.outputs.merge_approved == 'true'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
         run: |
@@ -61,7 +63,7 @@ jobs:
           echo "merge_succeeded=true" >> "$GITHUB_OUTPUT"
 
       - name: Delete branch
-        if: steps.merge.outputs.merge_succeeded == 'true'
+        if: steps.pr_merge.outputs.merge_succeeded == 'true'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
         run: |
