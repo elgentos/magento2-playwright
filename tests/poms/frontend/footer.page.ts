@@ -2,8 +2,6 @@
 
 import { expect, Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues } from 'config';
-import { findPackageJSON } from "node:module";
-
 export class Footer {
     readonly page: Page
     readonly footerElement: Locator

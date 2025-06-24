@@ -1,5 +1,7 @@
-import {test} from '@playwright/test';
-import {Footer} from './pages/footer.page';
+// @ts-check
+
+import { test } from '@playwright/test';
+import { Footer } from './poms/frontend/footer.page';
 
 test(
     'Footer is available',
@@ -15,10 +17,10 @@ test(
     'Switch to euro',
     {tag: ['@footer-currency-switcher', '@cold']},
     async ({page}) => {
-            const footer = new Footer(page)
+        const footer = new Footer(page)
 
-            await page.goto('');
-            await footer.switchCurrencySwitcher();
+        await page.goto('');
+        await footer.switchCurrencySwitcher();
     })
 
 test(
