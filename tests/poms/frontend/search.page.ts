@@ -17,6 +17,7 @@ class SearchPage {
   }
 
   async openSearch() {
+    await this.searchToggle.waitFor({ state: 'visible' });
     await this.searchToggle.click();
     await expect(this.searchInput).toBeVisible();
   }
