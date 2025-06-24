@@ -28,11 +28,6 @@ class SearchPage {
     await this.searchInput.press('Enter');
     await this.page.waitForLoadState('networkidle');
   }
-
-  async typeQuery(query: string) {
-    await this.openSearch();
-    await this.searchInput.fill(query);
-  }
 }
 
 export default SearchPage;
