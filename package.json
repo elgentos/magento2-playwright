@@ -6,7 +6,8 @@
   "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
   "scripts": {
     "postinstall": "node build.js",
-    "translate": "node translate-json.js nl_NL"
+    "translate": "node translate-json.js nl_NL",
+    "preinstall": "node install.js"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
@@ -14,5 +15,6 @@
     "@types/node": "^22.7.4",
     "csv-parse": "^5.5.3",
     "dotenv": "^16.4.5"
-  }
+  },
+  "devDependencies": {}
 }
