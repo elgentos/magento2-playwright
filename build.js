@@ -9,7 +9,7 @@ class Build {
 
   constructor() {
     if (process.env.CI === 'true') {
-      this.pathToBaseDir = './'
+      this.pathToBaseDir = './';
     }
 
     this.copyExampleFiles();
