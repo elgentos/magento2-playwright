@@ -12,7 +12,8 @@ test.describe('Search functionality', () => {
     await searchPage.search(inputValues.search.queryMultipleResults);
     await expect(page).toHaveURL(new RegExp(slugs.search.resultsSlug));
     const results = page.locator(`${UIReference.categoryPage.productGridLocator} li`);
-    await expect(results).toHaveCountGreaterThan(1);
+    const resultCount = await results.count();
+    expect(resultCount).toBeGreaterThan(1);
   });
 
   test('User can find a specific product and navigate to its page', async ({ page }) => {
