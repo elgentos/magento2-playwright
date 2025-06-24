@@ -5,7 +5,7 @@ import {expect, Page, TestInfo} from "@playwright/test";
 // @ts-ignore
 import UIReference from '../config/element-identifiers/element-identifiers.json';
 
-export class NotificationValidator {
+class NotificationValidator {
 
     private page : Page;
     private testInfo: TestInfo;
@@ -33,3 +33,5 @@ export class NotificationValidator {
         this.testInfo.annotations.push({ type: 'Notification: beforeEach add product to cart', description: message.message });
     }
 }
+
+export default NotificationValidator;
