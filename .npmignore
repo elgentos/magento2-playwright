@@ -1,6 +1,7 @@
 #folders
 .idea
 .vscode
+.github
 node_modules/
 /test-results/
 /auth-storage/
