@@ -25,7 +25,7 @@ class NotificationValidator {
         if (
             ! expect.soft(this.page.locator(UIReference.general.messageLocator)).toContainText(value)
         ) {
-            message = { success: false, message: `Notificatie tekst niet gevonden: ${value}. Gevonden notificatie tekst: ${notificationText}` };
+            message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
         }
 
         this.testInfo.annotations.push({ type: 'Notification: beforeEach add product to cart', description: message.message });
