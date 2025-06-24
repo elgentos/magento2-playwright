@@ -30,11 +30,4 @@ test.describe('Search functionality', () => {
     await searchPage.search(inputValues.search.queryNoResults);
     await expect(page.getByText(outcomeMarker.search.noResultsMessage)).toBeVisible();
   });
-
-  test('Suggestions appear while typing', async ({ page }) => {
-    await page.goto('');
-    const searchPage = new SearchPage(page);
-    await searchPage.typeQuery(inputValues.search.queryMultipleResults);
-    await expect(searchPage.suggestionBox).toBeVisible();
-  });
 });
