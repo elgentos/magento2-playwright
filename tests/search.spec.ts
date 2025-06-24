@@ -20,7 +20,6 @@ test.describe('Search functionality', () => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
-    await page.getByRole('link', { name: UIReference.productPage.simpleProductTitle }).first().click();
     await expect(page).toHaveURL(slugs.productpage.simpleProductSlug);
   });
 
