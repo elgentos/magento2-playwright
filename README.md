@@ -79,7 +79,8 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 2. **Install the test suite package**
 
    ```bash
-   npm install --prefix ./ @elgentos/magento2-playwright
+   npm init -y
+   npm install @elgentos/magento2-playwright
    ```
 
 3. **Copy configuration templates**
@@ -99,7 +100,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
    Run the following command once to install the necessary browser binaries:
 
    ```bash
-   npx playwright install --with-deps
+   npx playwright install
    ```
 
 5. **Customize the configuration**
