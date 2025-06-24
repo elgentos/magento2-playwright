@@ -57,7 +57,7 @@ jobs:
           PR_NUMBER="${{ steps.pr.outputs.pr_number }}"
           gh pr merge "$PR_NUMBER" --merge --admin
 
-      - name: Delete gitlab-main branch
+      - name: Delete gitlab-main branch from github
         if: steps.check.outputs.head_ref == 'gitlab-main'
         env:
           GH_TOKEN: ${{ secrets.AUTOMERGE_TOKEN }}
