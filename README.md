@@ -76,21 +76,14 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
    cd playwright
    ```
 
-2. **Initialize an npm project**
-
-   If your `playwright/` directory doesn't yet have a `package.json`:
+2. **Install the test suite package**
 
    ```bash
    npm init -y
-   ```
-
-3. **Install the test suite package**
-
-   ```bash
    npm install @elgentos/magento2-playwright
    ```
 
-4. **Copy configuration templates**
+3. **Copy configuration templates**
 
    After installation, copy the example config files from the package to your project root:
 
@@ -102,15 +95,15 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
 
    > ℹ️ The `.env` file still needs to be filled in with your actual environment settings (Magento base URL, credentials, etc).
 
-5. **Install Playwright browsers**
+4. **Install Playwright browsers**
 
    Run the following command once to install the necessary browser binaries:
 
    ```bash
-   npx playwright install --with-deps
+   npx playwright install
    ```
 
-6. **Customize the configuration**
+5. **Customize the configuration**
 
    Update the files in the `config/` folder to match your specific webshop setup:
     - Page slugs
@@ -118,7 +111,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
     - Expected static texts
     - Test-specific variables
 
-7. **Add default scripts to package.json**
+6. **Add default scripts to package.json**
 
     ```json
     "scripts": {
@@ -129,7 +122,7 @@ Please note that this Testing Suite is currently in alpha testing. If you are ha
     }
    ```
 
-8. **Update .gitignore from magento project**
+7. **Update .gitignore from magento project**
 
     add following to .gitignore file:
 
