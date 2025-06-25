@@ -6,6 +6,7 @@ import { UIReference, slugs } from 'config';
 import CartPage from './poms/frontend/cart.page';
 import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
+import { requireEnv } from './utils/env.utils';
 
 test.describe('Cart functionalities (guest)', () => {
   /**
@@ -55,12 +56,8 @@ test.describe('Cart functionalities (guest)', () => {
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const loginPage = new LoginPage(page);
-      let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-      let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-      if(!emailInputValue || !passwordInputValue) {
-        throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-      }
+      const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+      const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
       await loginPage.login(emailInputValue, passwordInputValue);
     });
@@ -114,11 +111,7 @@ test.describe('Cart functionalities (guest)', () => {
   test('Add coupon code in cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
-    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-
-    if(!discountCode) {
-      throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
-    }
+    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
     await cart.applyDiscountCode(discountCode);
   });
@@ -139,11 +132,7 @@ test.describe('Cart functionalities (guest)', () => {
   test('Remove coupon code from cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const cart = new CartPage(page);
-    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-
-    if(!discountCode) {
-      throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
-    }
+    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
     await cart.applyDiscountCode(discountCode);
     await cart.removeDiscountCode();

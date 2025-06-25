@@ -5,6 +5,7 @@ import { UIReference ,slugs } from 'config';
 
 import ProductPage from './poms/frontend/product.page';
 import LoginPage from './poms/frontend/login.page';
+import { requireEnv } from './utils/env.utils';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add product to compare',{ tag: '@cold'}, async ({page}) => {
@@ -15,12 +16,8 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add product to wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-      let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-      let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-      if(!emailInputValue || !passwordInputValue) {
-        throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-      }
+      const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+      const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
       const loginPage = new LoginPage(page);
       await loginPage.login(emailInputValue, passwordInputValue);

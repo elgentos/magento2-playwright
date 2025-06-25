@@ -5,6 +5,7 @@ import {faker} from '@faker-js/faker';
 import { inputValues } from 'config';
 
 import RegisterPage from './poms/frontend/register.page';
+import { requireEnv } from './utils/env.utils';
 
 // Reset storageState to ensure we're not logged in before running these tests.
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -22,7 +23,7 @@ test('User can register an account', { tag: ['@setup', '@hot'] }, async ({page, 
   const registerPage = new RegisterPage(page);
 
   // Retrieve desired password from .env file
-  const existingAccountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+  const existingAccountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
   var firstName = faker.person.firstName();
   var lastName = faker.person.lastName();
 
@@ -33,10 +34,8 @@ test('User can register an account', { tag: ['@setup', '@hot'] }, async ({page, 
   const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
   //const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
-  if (!accountEmail || !existingAccountPassword) {
-    throw new Error(
-      `MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} or MAGENTO_EXISTING_ACCOUNT_PASSWORD is not defined in your .env file.`
-    );
+  if (!accountEmail) {
+    throw new Error(`Generated account email is invalid.`);
   }
   // end of browserNameEmailSection
 
