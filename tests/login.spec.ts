@@ -2,18 +2,16 @@
 
 import { test as base, expect } from '@playwright/test';
 import { outcomeMarker, inputValues } from 'config';
+import { requireEnv } from './utils/env.utils';
 
 import LoginPage from './poms/frontend/login.page';
 
 base('User can log in with valid credentials', {tag: '@hot'}, async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-
-  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-  if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-  }
+  // We can't move this browser specific check inside LoginPage because the
+  // variable name differs per browser engine.
+  const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+  const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
   const loginPage = new LoginPage(page)
   await loginPage.login(emailInputValue, passwordInputValue);

@@ -7,6 +7,7 @@ import { toggles, inputValues } from 'config';
 
 import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
 import RegisterPage from './poms/frontend/register.page';
+import { requireEnv } from './utils/env.utils';
 
 /**
  * NOTE:
@@ -18,12 +19,8 @@ import RegisterPage from './poms/frontend/register.page';
 const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.only) => {
   describeFn('Setting up the testing environment', () => {
     base('Enable multiple Magento admin logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-      const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
-      const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
-
-      if (!magentoAdminUsername || !magentoAdminPassword) {
-        throw new Error("MAGENTO_ADMIN_USERNAME or MAGENTO_ADMIN_PASSWORD is not defined in your .env file.");
-      }
+      const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
+      const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
@@ -37,12 +34,8 @@ const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.o
     });
 
     base('Disable login CAPTCHA', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-      const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
-      const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
-
-      if (!magentoAdminUsername || !magentoAdminPassword) {
-        throw new Error("MAGENTO_ADMIN_USERNAME or MAGENTO_ADMIN_PASSWORD is not defined in your .env file.");
-      }
+      const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
+      const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
@@ -65,31 +58,18 @@ const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.o
       }
 
       await base.step(`Step 1: Perform actions`, async () => {
-        const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
-        const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
-
-        if (!magentoAdminUsername || !magentoAdminPassword) {
-          throw new Error("MAGENTO_ADMIN_USERNAME or MAGENTO_ADMIN_PASSWORD is not defined in your .env file.");
-        }
+        const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
+        const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
         const magentoAdminPage = new MagentoAdminPage(page);
         await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
 
-        const couponCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-        if (!couponCode) {
-          throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} is not defined in your .env file.`);
-        }
+        const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
         await magentoAdminPage.addCartPriceRule(couponCode);
 
         const registerPage = new RegisterPage(page);
-        const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-        const accountPassword = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-        if (!accountEmail || !accountPassword) {
-          throw new Error(
-            `MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} or MAGENTO_EXISTING_ACCOUNT_PASSWORD is not defined in your .env file.`
-          );
-        }
+        const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+        const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
         await registerPage.createNewAccount(
           inputValues.accountCreation.firstNameValue,

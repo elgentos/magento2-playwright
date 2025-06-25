@@ -6,6 +6,7 @@ import { UIReference, slugs } from 'config';
 import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
 import AccountPage from './poms/frontend/account.page';
+import { requireEnv } from './utils/env.utils';
 import CheckoutPage from './poms/frontend/checkout.page';
 
 
@@ -33,12 +34,8 @@ test.describe('Checkout (login required)', () => {
   // Before each test, log in
   test.beforeEach(async ({ page, browserName }) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-    if(!emailInputValue || !passwordInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-    }
+    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+    const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     const loginPage = new LoginPage(page);
     await loginPage.login(emailInputValue, passwordInputValue);
@@ -116,11 +113,7 @@ test.describe('Checkout (guest)', () => {
     test('Add coupon code in checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
       const checkout = new CheckoutPage(page);
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-      let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-
-      if(!discountCode) {
-        throw new Error(`MAGENTO_COUPON_CODE_${browserEngine} appears to not be set in .env file. Value reported: ${discountCode}`);
-      }
+      const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
       await checkout.applyDiscountCodeCheckout(discountCode);
     });
@@ -163,11 +156,7 @@ test.describe('Checkout (guest)', () => {
   test('Remove coupon code from checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
     const checkout = new CheckoutPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    let discountCode = process.env[`MAGENTO_COUPON_CODE_${browserEngine}`];
-
-    if(!discountCode) {
-      throw new Error(`MAGENTO_COUPON_CODE appears to not be set in .env file. Value reported: ${discountCode}`);
-    }
+    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
     await checkout.applyDiscountCodeCheckout(discountCode);
     await checkout.removeDiscountCode();
