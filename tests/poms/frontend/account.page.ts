@@ -30,6 +30,7 @@ class AccountPage {
   readonly accountCreationPasswordField: Locator;
   readonly accountCreationPasswordRepeatField: Locator;
   readonly accountCreationConfirmButton: Locator;
+  readonly accountInformationField: Locator;
 
 
   constructor(page: Page){
@@ -59,6 +60,8 @@ class AccountPage {
     this.accountCreationPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, { exact: true });
     this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.credentials.passwordConfirmFieldLabel);
     this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.accountCreation.createAccountButtonLabel});
+
+    this.accountInformationField = page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: UIReference.accountDashboard.addAddressButtonLabel});
@@ -148,6 +151,18 @@ class AccountPage {
     await this.page.waitForLoadState();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
+  }
+
+  async updateEmail(currentPassword: string, newEmail: string) {
+    let accountUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+
+    await this.accountCreationEmailField.fill(newEmail);
+    await this.currentPasswordField.fill(currentPassword);
+    await this.genericSaveButton.click();
+    await this.page.waitForLoadState();
+
+    await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
+    await expect(this.accountInformationField, `Account information should contain email: ${newEmail}`).toContainText(newEmail);
   }
 
   async deleteAllAddresses() {
