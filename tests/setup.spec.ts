@@ -12,7 +12,7 @@ import RegisterPage from './poms/frontend/register.page';
  * NOTE:
  * The first if-statement checks if we are running in CI.
  * If so, we always run the setup.
- * Else, we check if the 'setup' test toggle in test-toggles.json has been set to true. 
+ * Else, we check if the 'setup' test toggle in test-toggles.json has been set to true.
  */
 
 const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.only) => {
