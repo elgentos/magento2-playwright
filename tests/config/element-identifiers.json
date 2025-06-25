@@ -190,6 +190,7 @@
   },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
+    "changeEmailCheckLabel": "Change Email",
     "firstNameLabel": "First Name",
     "lastNameLabel": "Last Name"
   },
