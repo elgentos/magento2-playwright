@@ -4,6 +4,7 @@
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
     "addressNewSlug": "customer/address/new",
+    "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create",
     "loginSlug": "/customer/account/login"

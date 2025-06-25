@@ -1,6 +1,6 @@
 {
   "general": {
-    "setup": false,
+    "setup": true,
     "pageHealthCheck": false
   }
 }
