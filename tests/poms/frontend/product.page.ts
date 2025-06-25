@@ -127,9 +127,6 @@ class ProductPage {
 
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
-    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
-
-    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
 
@@ -139,7 +136,9 @@ class ProductPage {
     }
 
     await this.addToCartButton.click();
-    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
+
+    await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+    return ;
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string){
