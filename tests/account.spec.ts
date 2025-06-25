@@ -85,6 +85,54 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     }
     await loginPage.login(emailInputValue, passwordInputValue);
   });
+
+  /**
+   * @feature Magento 2 Update E-mail Address
+   * @scenario User updates their e-mail address
+   * @given I am logged in
+   * @and I am on the Account Dashboard page
+   * @when I navigate to the Account Information page
+   * @and I fill in a new e-mail address and my current password
+   * @and I click Save
+   * @then I should see a notification that my account has been updated
+   * @and I should be able to login with my new e-mail address.
+   */
+  test('I can update my e-mail address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
+    const mainMenu = new MainMenuPage(page);
+    const registerPage = new RegisterPage(page);
+    const accountPage = new AccountPage(page);
+    const loginPage = new LoginPage(page);
+
+    const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
+    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let updatedEmail = `updated-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()) {
+      await mainMenu.logout();
+    }
+
+    if(!passwordInputValue) {
+      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
+    }
+
+    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
+
+    await page.goto(slugs.account.accountEditSlug);
+    await page.waitForLoadState();
+    await accountPage.updateEmail(passwordInputValue, updatedEmail);
+
+    await mainMenu.logout();
+    await loginPage.login(updatedEmail, passwordInputValue);
+
+    await mainMenu.logout();
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    if(!emailInputValue) {
+      throw new Error(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.`);
+    }
+    await loginPage.login(emailInputValue, passwordInputValue);
+  });
 });
 
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
