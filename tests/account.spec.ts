@@ -9,16 +9,13 @@ import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
 import RegisterPage from './poms/frontend/register.page';
+import { requireEnv } from './utils/env.utils';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-  if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-  }
+  const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+  const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
   const loginPage = new LoginPage(page);
   await loginPage.login(emailInputValue, passwordInputValue);
@@ -54,8 +51,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     let randomNumberforEmail = Math.floor(Math.random() * 101);
     let emailPasswordUpdatevalue = `passwordupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+    let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+    let changedPasswordValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
     // Log out of current account
     if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()){
@@ -63,9 +60,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     }
 
     // Create account
-    if(!changedPasswordValue || !passwordInputValue) {
-      throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
-    }
 
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
@@ -79,10 +73,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
     // Logout again, login with original account
     await mainMenu.logout();
-    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-    if(!emailInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-    }
+    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
     await loginPage.login(emailInputValue, passwordInputValue);
   });
 });
