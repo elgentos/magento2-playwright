@@ -29,7 +29,7 @@ class MainMenuPage {
   async gotoAddressBook() {
     await this.page.goto(slugs.account.accountOverviewSlug);
     await this.mainMenuAccountButton.click();
-    await this.page.getByRole('link', { name: UIReference.mainMenu.addressBookLinkLabel }).click();
+    await this.page.getByTitle(UIReference.mainMenu.addressBookLinkTitle).click();
 
     await expect(
       this.page.getByRole('heading', { name: outcomeMarker.account.addressBookTitle })

@@ -176,6 +176,7 @@
     "loginLinkLabel": "Sign In",
     "createAccountLinkLabel": "Create an Account",
     "addressBookLinkLabel": "Address Book",
+    "addressBookLinkTitle": "Address Book",
     "wishListLinkLabel": "My Wish List",
     "ordersLinkLabel": "My Orders",
     "searchToggleLabel": "Toggle search form",
