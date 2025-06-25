@@ -53,5 +53,8 @@
     "secondProvinceValue": "South Dakota",
     "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
     "secondZipCodeValue": "67890"
+  },
+  "search": {
+    "searchTerm": "Push"
   }
 }
