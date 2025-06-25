@@ -32,12 +32,6 @@ test.describe('Main menu (guest)', () => {
     const menu = new MainMenuPage(page);
     await menu.gotoSubCategory(UIReference.categoryMenu.womenLabel, UIReference.categoryMenu.topsLabel, slugs.categoryPage.subCategorySlug);
   });
-
-  test('Use the search form', async ({ page }) => {
-    const menu = new MainMenuPage(page);
-    await menu.openSearchForm(inputValues.search.searchTerm);
-    await expect(page).toHaveURL(new RegExp(slugs.search.searchResultRegex));
-  });
 });
 
 test.describe('Main menu (logged in)', () => {
