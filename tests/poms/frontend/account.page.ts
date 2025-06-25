@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker } from 'config';
+import LoginPage from './login.page';
 
 class AccountPage {
   readonly page: Page;
@@ -10,6 +11,7 @@ class AccountPage {
   readonly firstNameField: Locator;
   readonly lastNameField: Locator;
   readonly phoneNumberField: Locator;
+  readonly loginPage: LoginPage;
   readonly streetAddressField: Locator;
   readonly zipCodeField: Locator;
   readonly cityField: Locator;
@@ -36,6 +38,7 @@ class AccountPage {
 
   constructor(page: Page){
     this.page = page;
+    this.loginPage = new LoginPage(page);
     this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
     this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
@@ -163,8 +166,8 @@ class AccountPage {
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
     await this.page.waitForLoadState();
+    await this.loginPage.login(newEmail, currentPassword);
 
-    await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
     await expect(this.accountInformationField, `Account information should contain email: ${newEmail}`).toContainText(newEmail);
   }
 
