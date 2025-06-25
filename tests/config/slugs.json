@@ -1,6 +1,6 @@
 {
   "account": {
-    "accountOverviewSlug": "/customer/account/index/",
+    "accountOverviewSlug": "/customer/account/",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
     "addressNewSlug": "customer/address/new",
