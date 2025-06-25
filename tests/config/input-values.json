@@ -53,5 +53,10 @@
     "secondProvinceValue": "South Dakota",
     "secondStreetAddressValue": "Under the Stairs, 4 Privet Drive",
     "secondZipCodeValue": "67890"
+  },
+  "search": {
+    "queryMultipleResults": "bag",
+    "querySpecificProduct": "Push It Messenger Bag",
+    "queryNoResults": "sdfasdfasddd"
   }
 }

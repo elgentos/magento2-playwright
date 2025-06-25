@@ -56,6 +56,9 @@
   "login": {
     "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
   },
+  "search": {
+    "noResultsMessage": "Your search returned no results."
+  },
   "wishListPage": {
     "wishListAddedNotification": "has been added to your Wish List."
   }
