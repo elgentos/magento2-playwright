@@ -29,9 +29,6 @@
     "secondSimpleProductSlug": "/aim-analog-watch.html",
     "simpleProductSlug": "/push-it-messenger-bag.html"
   },
-  "search": {
-    "searchResultRegex": "search\\/result"
-  },
   "wishlist": {
     "wishListRegex": ".*wishlist.*"
   }
