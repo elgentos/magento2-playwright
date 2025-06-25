@@ -172,7 +172,14 @@
   "mainMenu": {
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
-    "myAccountLogoutItem": "Sign Out"
+    "myAccountLogoutItem": "Sign Out",
+    "loginLinkLabel": "Sign In",
+    "createAccountLinkLabel": "Create an Account",
+    "addressBookLinkLabel": "Address Book",
+    "wishListLinkLabel": "My Wish List",
+    "ordersLinkLabel": "My Orders",
+    "searchToggleLabel": "Toggle search form",
+    "searchPlaceholder": "Search entire store here..."
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
@@ -196,5 +203,9 @@
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form",
     "updateCompareListButtonLabel": "Update Wish List"
+  },
+  "categoryMenu": {
+    "womenLabel": "Women",
+    "topsLabel": "Tops"
   }
 }

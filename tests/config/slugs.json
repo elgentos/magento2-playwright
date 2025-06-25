@@ -6,14 +6,16 @@
     "addressNewSlug": "customer/address/new",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create",
-    "loginSlug": "/customer/account/login"
+    "loginSlug": "/customer/account/login",
+    "ordersSlug": "/sales/order/history/"
   },
   "cart": {
     "cartProductChangeSlug": "/cart/configure/",
     "cartSlug": "/checkout/cart/"
   },
   "categoryPage": {
-    "categorySlug": "/women.html"
+    "categorySlug": "/women.html",
+    "subCategorySlug": "/women/tops-women.html"
   },
   "checkout": {
     "checkoutSlug": "/checkout/"
@@ -26,6 +28,9 @@
     "productComparisonSlug": "/catalog/product_compare/index/",
     "secondSimpleProductSlug": "/aim-analog-watch.html",
     "simpleProductSlug": "/push-it-messenger-bag.html"
+  },
+  "search": {
+    "searchResultRegex": "search\\/result"
   },
   "wishlist": {
     "wishListRegex": ".*wishlist.*"

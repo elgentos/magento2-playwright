@@ -27,23 +27,78 @@ class MainMenuPage {
   }
 
   async gotoAddressBook() {
-    // create function to navigate to Address Book through the header menu links
+    await this.page.goto(slugs.account.accountOverviewSlug);
+    await this.mainMenuAccountButton.click();
+    await this.page.getByRole('link', { name: UIReference.mainMenu.addressBookLinkLabel }).click();
+
+    await expect(
+      this.page.getByRole('heading', { name: outcomeMarker.account.addressBookTitle })
+    ).toBeVisible();
+  }
+
+  async gotoLoginPage() {
+    await this.page.goto(slugs.productpage.simpleProductSlug);
+    await this.mainMenuAccountButton.click();
+    await this.page.getByRole('link', { name: UIReference.mainMenu.loginLinkLabel }).click();
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.account.loginSlug));
+  }
+
+  async gotoCreateAccountPage() {
+    await this.page.goto(slugs.productpage.simpleProductSlug);
+    await this.mainMenuAccountButton.click();
+    await this.page.getByRole('link', { name: UIReference.mainMenu.createAccountLinkLabel }).click();
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.account.createAccountSlug));
+  }
+
+  async gotoWishList() {
+    await this.page.goto(slugs.account.accountOverviewSlug);
+    await this.mainMenuAccountButton.click();
+    await this.page.getByRole('link', { name: UIReference.mainMenu.wishListLinkLabel }).click();
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.wishlist.wishListRegex));
+  }
+
+  async gotoOrders() {
+    await this.page.goto(slugs.account.accountOverviewSlug);
+    await this.mainMenuAccountButton.click();
+    await this.page.getByRole('link', { name: UIReference.mainMenu.ordersLinkLabel }).click();
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.account.ordersSlug));
+  }
+
+  async gotoCategory(categoryName: string, slug: string) {
+    await this.page.goto('');
+    await this.page.getByRole('link', { name: categoryName }).first().click();
+
+    await expect(this.page).toHaveURL(new RegExp(slug));
+  }
+
+  async gotoSubCategory(categoryName: string, subCategoryName: string, slug: string) {
+    await this.page.goto('');
+    const category = this.page.getByRole('link', { name: categoryName }).first();
+    await category.hover();
+    await this.page.getByRole('link', { name: subCategoryName }).click();
+
+    await expect(this.page).toHaveURL(new RegExp(slug));
+  }
+
+  async openSearchForm(searchTerm: string) {
+    await this.page.getByLabel(UIReference.mainMenu.searchToggleLabel).click();
+    const searchBox = this.page.getByRole('searchbox', { name: UIReference.mainMenu.searchPlaceholder });
+    await searchBox.fill(searchTerm);
+    await searchBox.press('Enter');
+
+    await expect(this.page).toHaveURL(new RegExp(slugs.search.searchResultRegex));
   }
 
   async openMiniCart() {
-    // await this.page.reload();
-    // FIREFOX_WORKAROUND: wait for 3 seconds to allow minicart to be updated.
     await this.page.waitForTimeout(3000);
-    const cartAmountBubble = this.mainMenuMiniCartButton.locator('span');
-    cartAmountBubble.waitFor();
-    const amountInCart = await cartAmountBubble.innerText();
-
-    // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
-    // await this.mainMenuMiniCartButton.waitFor();
+    await this.mainMenuMiniCartButton.locator('span').waitFor();
 
     await this.mainMenuMiniCartButton.click();
-
-    let miniCartDrawer = this.page.locator("#cart-drawer-title");
+    const miniCartDrawer = this.page.locator('#cart-drawer-title');
     await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
   }
 
