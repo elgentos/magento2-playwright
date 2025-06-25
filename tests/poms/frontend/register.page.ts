@@ -37,7 +37,7 @@ class RegisterPage {
     if(!muted) {
       // Assertions: Account created notification, navigated to account page, email visible on page
       await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText), 'Account creation notification should be visible').toBeVisible();
-      await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('^' + slugs.account.accountOverviewSlug));
+      await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('.+' + slugs.account.accountOverviewSlug));
       await expect(accountInformationField, `Account information should contain email: ${email}`).toContainText(email);
     }
   }
