@@ -5,7 +5,7 @@ import { outcomeMarker, inputValues } from 'config';
 
 import LoginPage from './poms/frontend/login.page';
 
-base('User can log in with valid credentials', {tag: '@hot'}, async ({page, browserName}) => {
+base('User_logs_in_with_valid_credentials', {tag: '@hot'}, async ({page, browserName}) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
@@ -38,12 +38,12 @@ base('User can log in with valid credentials', {tag: '@hot'}, async ({page, brow
   expect(parsedData.customer.fullname, 'Customer lastname should match').toContain(inputValues.accountCreation.lastNameValue);
 });
 
-base('User cannot log in with invalid credentials', async ({page}) => {
+base('Invalid_credentials_are_rejected', async ({page}) => {
   const loginPage = new LoginPage(page);
   await loginPage.loginExpectError('invalid@example.com', 'wrongpassword', outcomeMarker.login.invalidCredentialsMessage);
 });
 
-base('Login fails with missing password', async ({page}) => {
+base('Login_fails_with_missing_password', async ({page}) => {
   const loginPage = new LoginPage(page);
   await loginPage.loginExpectError('invalid@example.com', '', '');
 });

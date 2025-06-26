@@ -17,7 +17,7 @@ import RegisterPage from './poms/frontend/register.page';
 
 const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.only) => {
   describeFn('Setting up the testing environment', () => {
-    base('Enable multiple Magento admin logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
+    base('Enable_multiple_admin_logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
       const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
       const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
 
@@ -36,7 +36,7 @@ const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.o
       }
     });
 
-    base('Disable login CAPTCHA', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
+    base('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
       const magentoAdminUsername = process.env.MAGENTO_ADMIN_USERNAME;
       const magentoAdminPassword = process.env.MAGENTO_ADMIN_PASSWORD;
 
@@ -55,7 +55,7 @@ const runSetupTests = (describeFn: typeof base.describe | typeof base.describe.o
       }
     });
 
-    base('Setup Magento environment for tests', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
+    base('Setup_environment_for_tests', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const setupCompleteVar = `SETUP_COMPLETE_${browserEngine}`;
       const isSetupComplete = process.env[setupCompleteVar];
