@@ -187,6 +187,13 @@ Playwright also offers a trace view. While using the UI mode is seen as the defa
 npx playwright test --trace on
 ```
 
+### Healthcheck
+To quickly check if your Magento site is up and running, execute the smoke tests with the following command:
+
+```bash
+npx playwright test --grep @smoke
+```
+
 ### Skipping specific tests
 Certain `spec` files and specific tests are used as a setup. For example, all setup tests (such as creating an account and setting a coupon code in your Magento 2 environment) have the tag ‘@setup’. Since these only have to be used once (or in the case of our demo website every 24 hours), most of the time you can skip these. These means most of the time, using the following command is best. This command skips both the `user can register an account` test, as well as the whole of `base/setup.spec.ts`.
 
