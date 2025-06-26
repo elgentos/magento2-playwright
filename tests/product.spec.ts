@@ -7,12 +7,12 @@ import ProductPage from './poms/frontend/product.page';
 import LoginPage from './poms/frontend/login.page';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
-  test('Add product to compare',{ tag: '@cold'}, async ({page}) => {
+  test('Add_product_to_compare',{ tag: '@cold'}, async ({page}) => {
     const productPage = new ProductPage(page);
     await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
 
-  test('Add product to wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
+  test('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
@@ -38,12 +38,12 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
   });
 
-  test('Open pictures in lightbox and scroll through', async ({page}) => {
+  test('Open_pictures_in_lightbox_and_scroll', async ({page}) => {
     const productPage = new ProductPage(page);
     await productPage.openLightboxAndScrollThrough(slugs.productpage.configurableProductSlug);
   });
 
-  test('Change number of reviews shown on product page', async ({page}) => {
+  test('Change_number_of_reviews_shown_on_product_page', async ({page}) => {
     const productPage = new ProductPage(page);
     await productPage.changeReviewCountAndVerify(slugs.productpage.simpleProductSlug);
   });

@@ -5,7 +5,7 @@ import { UIReference, slugs, toggles} from 'config';
 
 if ( toggles.general.pageHealthCheck ) {
   test.describe('Page health checks', () => {
-    test('Homepage returns 200', { tag: ['@healthcheck','@cold'] }, async ({ page }) => {
+    test('Homepage_returns_200', { tag: ['@healthcheck','@cold'] }, async ({ page }) => {
       const homepageURL = process.env.PLAYWRIGHT_BASE_URL || process.env.BASE_URL;
       if (!homepageURL) {
         throw new Error("PLAYWRIGHT_BASE_URL has not been defined in the .env file.");
@@ -22,7 +22,7 @@ if ( toggles.general.pageHealthCheck ) {
       ).toBeVisible();
     });
 
-    test('PLP returns 200', { tag: ['@healthcheck','@cold'] }, async ({ page }) => {
+    test('Plp_returns_200', { tag: ['@healthcheck','@cold'] }, async ({ page }) => {
       const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
       await page.goto(slugs.categoryPage.categorySlug);
       const plpResponse = await plpResponsePromise;
@@ -34,7 +34,7 @@ if ( toggles.general.pageHealthCheck ) {
       ).toBeVisible();
     });
 
-    test('PDP returns 200', { tag: ['@healthcheck','@cold']  }, async ({ page }) => {
+    test('Pdp_returns_200', { tag: ['@healthcheck','@cold']  }, async ({ page }) => {
       const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
       await page.goto(slugs.productpage.simpleProductSlug);
       const pdpResponse = await pdpResponsePromise;
@@ -46,7 +46,7 @@ if ( toggles.general.pageHealthCheck ) {
       ).toBeVisible();
     });
 
-    test('Checkout returns 200', { tag: ['@healthcheck','@cold']  }, async ({ page }) => {
+    test('Checkout_returns_200', { tag: ['@healthcheck','@cold']  }, async ({ page }) => {
       const responsePromise = page.waitForResponse(slugs.checkout.checkoutSlug);
 
       await page.goto(slugs.checkout.checkoutSlug);
