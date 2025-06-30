@@ -23,8 +23,8 @@ mirror_to_github:
 
 test_mirror_pipeline:
   stage: mirror
-  # rules:
-  #  - if: '$CI_COMMIT_BRANCH != "main"'
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
   script:
     - mkdir -p ~/.ssh
     - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
@@ -62,23 +62,6 @@ setup_environment_for_suite:
         CAPTCHA_BYPASS: true
     script:
         - echo 'Setting up the testing environment'
-        - |
-            echo "PLAYWRIGHT_BASE_URL=$PLAYWRIGHT_BASE_URL" > .env
-            echo "PLAYWRIGHT_PRODUCTION_URL=$PLAYWRIGHT_PRODUCTION_URL" >> .env
-            echo "PLAYWRIGHT_STAGING_URL=$PLAYWRIGHT_STAGING_URL" >> .env
-            echo "MAGENTO_ADMIN_SLUG=$MAGENTO_ADMIN_SLUG" >> .env
-            echo "MAGENTO_ADMIN_USERNAME=$MAGENTO_ADMIN_USERNAME" >> .env
-            echo "MAGENTO_ADMIN_PASSWORD=$MAGENTO_ADMIN_PASSWORD" >> .env
-            echo "MAGENTO_NEW_ACCOUNT_PASSWORD=$MAGENTO_NEW_ACCOUNT_PASSWORD" >> .env
-            echo "MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM=$MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM" >> .env
-            echo "MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX=$MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX" >> .env
-            echo "MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT=$MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT" >> .env
-            echo "MAGENTO_EXISTING_ACCOUNT_PASSWORD=$MAGENTO_EXISTING_ACCOUNT_PASSWORD" >> .env
-            echo "MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD=$MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD" >> .env
-            echo "MAGENTO_COUPON_CODE_CHROMIUM=$MAGENTO_COUPON_CODE_CHROMIUM" >> .env
-            echo "MAGENTO_COUPON_CODE_FIREFOX=$MAGENTO_COUPON_CODE_FIREFOX" >> .env
-            echo "MAGENTO_COUPON_CODE_WEBKIT=$MAGENTO_COUPON_CODE_WEBKIT" >> .env
-            echo "CAPTCHA_BYPASS=$CAPTCHA_BYPASS" >> .env
         - npm install
         - npx playwright install-deps
         - mkdir -p base-tests
