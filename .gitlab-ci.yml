@@ -63,7 +63,7 @@ run_testing_suite:
     before_script:
         - echo 'Setting up the testing environment'
         - npm install
-        - npx playwright install-deps
+        - npx playwright install --with-deps
         - mkdir -p base-tests
         - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
     script:
