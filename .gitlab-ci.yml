@@ -36,7 +36,7 @@ test_mirror_pipeline:
 
 # Build and test suite using this new version of the suite
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
-setup_environment_for_suite:
+run_testing_suite:
     stage: setup_for_suite
     when: manual
     variables:
@@ -60,12 +60,15 @@ setup_environment_for_suite:
         MAGENTO_COUPON_CODE_WEBKIT: $MAGENTO_COUPON_CODE_WEBKIT
 
         CAPTCHA_BYPASS: true
-    script:
+    before_script:
         - echo 'Setting up the testing environment'
         - npm install
         - npx playwright install-deps
         - mkdir -p base-tests
         - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
+    script:
+        - echo 'Running test suite'
+        - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
     allow_failure: false
     artifacts:
         when: always
@@ -73,9 +76,9 @@ setup_environment_for_suite:
         - playwright-report/
         - test-results/
 
-run_testing_suite:
-    stage: run_suite
-    script:
-        - echo 'Running test suite'
-        - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
-    needs: [setup_environment_for_suite] # optional, stage order already enforces this
+# run_testing_suite:
+#    stage: run_suite
+#    script:
+#        - echo 'Running test suite'
+#        - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+#    needs: [setup_environment_for_suite] # optional, stage order already enforces this
