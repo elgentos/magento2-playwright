@@ -2,7 +2,6 @@ image: node:18-bullseye
 
 stages:
   - mirror
-  - manual_acceptance
   - setup_for_suite
   - run_suite
 
@@ -37,20 +36,16 @@ test_mirror_pipeline:
 
 # Build and test suite using this new version of the suite
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
-confirm_selftest:
-    stage: manual_acceptance
-    when: manual
-    script:
-        - echo "Confirm you want to perform the self-test by performing this manual step."
-    allow_failure: false
-
 setup_environment_for_suite:
     stage: setup_for_suite
+    when: manual
     script:
         - echo 'Setting up the testing environment'
         - npm install
+        - npx playwright install-deps
         - mkdir -p base-tests
         - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
+    allow_failure: false
     artifacts:
         when: always
         paths:
