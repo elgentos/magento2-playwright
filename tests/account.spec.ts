@@ -3,13 +3,13 @@
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs} from 'config';
+import { requireEnv } from './utils/env.utils';
 
 import AccountPage from './poms/frontend/account.page';
 import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
 import RegisterPage from './poms/frontend/register.page';
-import { requireEnv } from './utils/env.utils';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
@@ -88,7 +88,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my account has been updated
    * @and I should be able to login with my new e-mail address.
    */
-  test('I can update my e-mail address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
+  test('Update_my_e-mail_address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
     const mainMenu = new MainMenuPage(page);
     const registerPage = new RegisterPage(page);
     const accountPage = new AccountPage(page);
@@ -123,41 +123,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
       throw new Error(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.`);
     }
     await loginPage.login(emailInputValue, passwordInputValue);
-  });
-
-  /**
-   * @feature Magento 2 Update E-mail Address
-   * @scenario User updates their e-mail address
-   * @given I am logged in
-   * @and I am on the Account Dashboard page
-   * @when I navigate to the Account Information page
-   * @and I fill in a new e-mail address and my current password
-   * @and I click Save
-   * @then I should see a notification that my account has been updated
-   * @and I should be able to login with my new e-mail address.
-   */
-  test('I can update my e-mail address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
-    const mainMenu = new MainMenuPage(page);
-    const registerPage = new RegisterPage(page);
-    const accountPage = new AccountPage(page);
-    const loginPage = new LoginPage(page);
-
-    const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
-    let randomNumberforEmail = Math.floor(Math.random() * 101);
-    let randomNumberforNewEmail = Math.floor(Math.random() * 101);
-    let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
-    let updatedEmail = `updated-${randomNumberforNewEmail}-${browserEngine}@example.com`;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-    if(!passwordInputValue) {
-      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
-    }
-
-    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
-
-    await page.goto(slugs.account.accountEditSlug);
-    await page.waitForLoadState();
-    await accountPage.updateEmail(passwordInputValue, updatedEmail);
   });
 });
 

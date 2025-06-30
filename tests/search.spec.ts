@@ -6,7 +6,7 @@ import { UIReference, outcomeMarker, inputValues, slugs } from 'config';
 import SearchPage from './poms/frontend/search.page';
 
 test.describe('Search functionality', () => {
-  test('Search query returns multiple results', async ({ page }) => {
+  test('Search_query_returns_multiple_results', async ({ page }) => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryMultipleResults);
@@ -16,14 +16,14 @@ test.describe('Search functionality', () => {
     expect(resultCount).toBeGreaterThan(1);
   });
 
-  test('User can find a specific product and navigate to its page', async ({ page }) => {
+  test('User_can_find_a_specific_product_and_navigate_to_its_page', async ({ page }) => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
     await expect(page).toHaveURL(slugs.productpage.simpleProductSlug);
   });
 
-  test('No results message is shown for unknown query', async ({ page }) => {
+  test('No_results_message_is_shown_for_unknown_query', async ({ page }) => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryNoResults);
