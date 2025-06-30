@@ -3,7 +3,7 @@ const path = require('path');
 
 class Build {
 
-  pathToBaseDir = '../../../'
+  pathToBaseDir = './'
   tempDirTests = 'base-tests';
   exampleFileName = '.example';
 
