@@ -2,6 +2,9 @@ image: node:18-bullseye
 
 stages:
   - mirror
+  - manual_acceptance
+  - setup_for_suite
+  - run_suite
 
 mirror_to_github:
   stage: mirror
@@ -31,3 +34,32 @@ test_mirror_pipeline:
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.nl"
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
+
+# Build and test suite using this new version of the suite
+# Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
+confirm_selftest:
+    stage: manual_acceptance
+    when: manual
+    script:
+        - echo "Confirm you want to perform the self-test by performing this manual step."
+    allow_failure: false
+
+setup_environment_for_suite:
+    stage: setup_for_suite
+    script:
+        - echo 'Setting up the testing environment'
+        - npm install
+        - mkdir -p base-tests
+        - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
+    artifacts:
+        when: always
+        paths:
+        - playwright-report/
+        - test-results/
+
+run_testing_suite:
+    stage: run_suite
+    script:
+        - echo 'Running test suite'
+        - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+    needs: [setup_environment_for_suite] # optional, stage order already enforces this
