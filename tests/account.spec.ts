@@ -9,16 +9,13 @@ import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
 import RegisterPage from './poms/frontend/register.page';
+import { requireEnv } from './utils/env.utils';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-  let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-  if(!emailInputValue || !passwordInputValue) {
-    throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-  }
+  const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+  const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
   const loginPage = new LoginPage(page);
   await loginPage.login(emailInputValue, passwordInputValue);
@@ -43,7 +40,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @then I should see a notification that my password has been updated
    * @and I should be able to login with my new credentials.
    */
-  test('I can change my password',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}, testInfo) => {
+  test('Change_password',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}, testInfo) => {
 
     // Create instances and set variables
     const mainMenu = new MainMenuPage(page);
@@ -54,8 +51,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     let randomNumberforEmail = Math.floor(Math.random() * 101);
     let emailPasswordUpdatevalue = `passwordupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-    let changedPasswordValue = process.env.MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD;
+    let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+    let changedPasswordValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
     // Log out of current account
     if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()){
@@ -63,9 +60,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     }
 
     // Create account
-    if(!changedPasswordValue || !passwordInputValue) {
-      throw new Error("Changed password or original password in your .env file is not defined or could not be read.");
-    }
 
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
@@ -79,18 +73,109 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
     // Logout again, login with original account
     await mainMenu.logout();
+    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+    await loginPage.login(emailInputValue, passwordInputValue);
+  });
+
+  /**
+   * @feature Magento 2 Update E-mail Address
+   * @scenario User updates their e-mail address
+   * @given I am logged in
+   * @and I am on the Account Dashboard page
+   * @when I navigate to the Account Information page
+   * @and I fill in a new e-mail address and my current password
+   * @and I click Save
+   * @then I should see a notification that my account has been updated
+   * @and I should be able to login with my new e-mail address.
+   */
+  test('I can update my e-mail address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
+    const mainMenu = new MainMenuPage(page);
+    const registerPage = new RegisterPage(page);
+    const accountPage = new AccountPage(page);
+    const loginPage = new LoginPage(page);
+
+    const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
+    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let updatedEmail = `updated-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()) {
+      await mainMenu.logout();
+    }
+
+    if(!passwordInputValue) {
+      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
+    }
+
+    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
+
+    await page.goto(slugs.account.accountEditSlug);
+    await page.waitForLoadState();
+    await accountPage.updateEmail(passwordInputValue, updatedEmail);
+
+    await mainMenu.logout();
+    await loginPage.login(updatedEmail, passwordInputValue);
+
+    await mainMenu.logout();
     let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
     if(!emailInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+      throw new Error(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.`);
     }
     await loginPage.login(emailInputValue, passwordInputValue);
+  });
+
+  /**
+   * @feature Magento 2 Update E-mail Address
+   * @scenario User updates their e-mail address
+   * @given I am logged in
+   * @and I am on the Account Dashboard page
+   * @when I navigate to the Account Information page
+   * @and I fill in a new e-mail address and my current password
+   * @and I click Save
+   * @then I should see a notification that my account has been updated
+   * @and I should be able to login with my new e-mail address.
+   */
+  test('I can update my e-mail address',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}) => {
+    const mainMenu = new MainMenuPage(page);
+    const registerPage = new RegisterPage(page);
+    const accountPage = new AccountPage(page);
+    const loginPage = new LoginPage(page);
+
+    const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
+    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let randomNumberforNewEmail = Math.floor(Math.random() * 101);
+    let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
+    let updatedEmail = `updated-${randomNumberforNewEmail}-${browserEngine}@example.com`;
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(!passwordInputValue) {
+      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
+    }
+
+    await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
+
+    await page.goto(slugs.account.accountEditSlug);
+    await page.waitForLoadState();
+    await accountPage.updateEmail(passwordInputValue, updatedEmail);
   });
 });
 
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
-  test.beforeEach(async ({page}) => {
+  test.beforeEach(async ({page, browserName}) => {
     await page.goto(slugs.account.addressBookSlug);
     await page.waitForLoadState();
+
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(!emailInputValue || !passwordInputValue) {
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    }
+
+    const loginPage = new LoginPage(page);
+    await loginPage.login(emailInputValue, passwordInputValue);
   });
 
   /**
@@ -106,7 +191,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    *  @and The new address should be selected as default and shipping address
    */
 
-  test('I can add my first address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
+  test('Add_first_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
     let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
 
@@ -128,7 +213,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The new address should be listed
    */
-  test('I can add another address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
+  test('Add_another_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
 
@@ -147,7 +232,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('I can edit an existing address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
+  test('Edit_existing_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressNewSlug);
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
@@ -172,7 +257,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('I can delete an address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
+  test('Delete_an_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
@@ -186,8 +271,19 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 });
 
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
-  test.beforeEach(async ({page}) => {
+  test.beforeEach(async ({page, browserName}) => {
     await page.goto(slugs.account.accountOverviewSlug);
+
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
+    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+
+    if(!emailInputValue || !passwordInputValue) {
+      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
+    }
+
+    const loginPage = new LoginPage(page);
+    await loginPage.login(emailInputValue, passwordInputValue)
   });
 
   /**
@@ -201,7 +297,7 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @then I should see a message confirming my action
    *  @and My subscription option should be updated.
    */
-  test('I can update my newsletter subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page, browserName}) => {
+  test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page, browserName}) => {
     test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
