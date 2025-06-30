@@ -127,21 +127,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 });
 
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
-  test.beforeEach(async ({page, browserName}) => {
-    await page.goto(slugs.account.addressBookSlug);
-    await page.waitForLoadState();
-
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
-
-    if(!emailInputValue || !passwordInputValue) {
-      throw new Error("MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.");
-    }
-
-    const loginPage = new LoginPage(page);
-    await loginPage.login(emailInputValue, passwordInputValue);
-  });
 
   /**
    * @feature Magento 2 Add First Address to Account
