@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker } from 'config';
+import LoginPage from './login.page';
 
 class AccountPage {
   readonly page: Page;
@@ -10,6 +11,7 @@ class AccountPage {
   readonly firstNameField: Locator;
   readonly lastNameField: Locator;
   readonly phoneNumberField: Locator;
+  readonly loginPage: LoginPage;
   readonly streetAddressField: Locator;
   readonly zipCodeField: Locator;
   readonly cityField: Locator;
@@ -20,6 +22,7 @@ class AccountPage {
   readonly deleteAddressButton: Locator;
   readonly editAddressButton: Locator;
   readonly changePasswordCheck: Locator;
+  readonly changeEmailCheck: Locator;
   readonly currentPasswordField: Locator;
   readonly newPasswordField: Locator;
   readonly confirmNewPasswordField: Locator;
@@ -30,10 +33,12 @@ class AccountPage {
   readonly accountCreationPasswordField: Locator;
   readonly accountCreationPasswordRepeatField: Locator;
   readonly accountCreationConfirmButton: Locator;
+  readonly accountInformationField: Locator;
 
 
   constructor(page: Page){
     this.page = page;
+    this.loginPage = new LoginPage(page);
     this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
     this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
@@ -47,6 +52,7 @@ class AccountPage {
 
     // Account Information elements
     this.changePasswordCheck = page.getByRole('checkbox', {name: UIReference.personalInformation.changePasswordCheckLabel});
+    this.changeEmailCheck = page.getByRole('checkbox', {name: UIReference.personalInformation.changeEmailCheckLabel});
     this.currentPasswordField = page.getByLabel(UIReference.credentials.currentPasswordFieldLabel);
     this.newPasswordField = page.getByLabel(UIReference.credentials.newPasswordFieldLabel, {exact:true});
     this.confirmNewPasswordField = page.getByLabel(UIReference.credentials.newPasswordConfirmFieldLabel);
@@ -59,6 +65,8 @@ class AccountPage {
     this.accountCreationPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, { exact: true });
     this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.credentials.passwordConfirmFieldLabel);
     this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.accountCreation.createAccountButtonLabel});
+
+    this.accountInformationField = page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
 
     // Address Book elements
     this.addNewAddressButton = page.getByRole('button',{name: UIReference.accountDashboard.addAddressButtonLabel});
@@ -148,6 +156,19 @@ class AccountPage {
     await this.page.waitForLoadState();
 
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
+  }
+
+  async updateEmail(currentPassword: string, newEmail: string) {
+    let accountUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+
+    await this.changeEmailCheck.check();
+    await this.accountCreationEmailField.fill(newEmail);
+    await this.currentPasswordField.fill(currentPassword);
+    await this.genericSaveButton.click();
+    await this.page.waitForLoadState();
+    await this.loginPage.login(newEmail, currentPassword);
+
+    await expect(this.accountInformationField, `Account information should contain email: ${newEmail}`).toContainText(newEmail);
   }
 
   async deleteAllAddresses() {
