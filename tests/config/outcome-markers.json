@@ -26,7 +26,7 @@
     "couponRemovedNotification": "Your coupon was successfully removed",
     "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again.",
     "orderPlacedNotification": "Thank you for your purchase!",
-    "orderPlacedNumberText": "Your order # is"
+    "orderPlacedNumberText": "Your order number is"
   },
   "comparePage": {
     "productRemovedNotificationTextOne": "You removed product",
