@@ -11,7 +11,8 @@ test(
 
         await page.goto('');
         await footer.getFooterElement();
-    })
+    }
+)
 
 test(
     'Switch_to_euro',
@@ -21,7 +22,8 @@ test(
 
         await page.goto('');
         await footer.switchCurrencySwitcher();
-    })
+    }
+)
 
 test(
     'Newsletter_subscription',
