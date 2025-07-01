@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from '@config';
+import {UIReference, outcomeMarker, inputValues} from '@config';
 
 class NewsletterSubscriptionPage {
   readonly page: Page;
@@ -36,6 +36,13 @@ class NewsletterSubscriptionPage {
 
     await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
     return subscribed;
+  }
+
+  async footerSubscribeToNewsletter() {
+    await expect(this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel})).toBeVisible();
+    await this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel}).fill(inputValues.contact.contactFormEmailValue);
+    await this.page.getByRole('button', {name: UIReference.footerPage.newsletterSubscribeButtonLabel}).click();
+    return ;
   }
 }
 
