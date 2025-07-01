@@ -49,7 +49,7 @@ class AccountPage {
     this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
     this.cityField = page.getByLabel(UIReference.newAddress.cityNameLabel);
     this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
-    this.stateSelectorField = page.getByLabel(UIReference.newAddress.provinceSelectLabel).filter({hasText: UIReference.newAddress.provinceSelectFilterLabel});
+    this.stateSelectorField = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
     this.saveAddressButton = page.getByRole('button',{name: UIReference.newAddress.saveAdressButton});
 
     // Account Information elements
@@ -108,7 +108,7 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
-    await this.stateSelectorField.selectOption(stateName);
+    await this.stateSelectorField.fill(stateName);
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 

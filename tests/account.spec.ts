@@ -239,7 +239,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
     await accountPage.saveAddressButton.click();
 
-    const errorMessage = page.locator(UIReference.general.errorMessageLocator);
+    const errorMessage = page.getByText(UIReference.general.errorMessageLocator).first();
     await errorMessage.waitFor();
     await expect(errorMessage).toBeVisible();
   });

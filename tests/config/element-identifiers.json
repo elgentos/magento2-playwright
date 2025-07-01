@@ -144,7 +144,7 @@
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
-    "errorMessageLocator": "div.message.error",
+    "errorMessageLocator": "This is a required field",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
