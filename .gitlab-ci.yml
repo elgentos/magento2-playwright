@@ -59,6 +59,11 @@ setting_up_testing_environment:
             - node_modules/
             - playwright-report/
             - test-results/
+            - base-tests/
+            - bypass-captcha.config.ts
+            - playwright.config.ts
+            - tests.config.ts
+            - tsconfig.json
 
 # Build and test suite using this new version of the suite
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
