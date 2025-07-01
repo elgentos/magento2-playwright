@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 import { Footer } from './poms/frontend/footer.page';
 
 test(
-    'Footer is available',
+    'Footer_is_available',
     {tag: ['@footer', '@cold']},
     async ({page}) => {
         const footer = new Footer(page);
@@ -14,7 +14,7 @@ test(
     })
 
 test(
-    'Switch to euro',
+    'Switch_to_euro',
     {tag: ['@footer-currency-switcher', '@cold']},
     async ({page}) => {
         const footer = new Footer(page)
@@ -24,7 +24,7 @@ test(
     })
 
 test(
-    'Newsletter subscription',
+    'Newsletter_subscription',
     {tag: ['@footer-newsletter', '@cold']},
     async ({page}) => {
         const footer = new Footer(page);

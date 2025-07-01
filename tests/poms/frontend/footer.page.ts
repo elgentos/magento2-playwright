@@ -6,7 +6,7 @@ export class Footer {
     readonly page: Page
     readonly footerElement: Locator
 
-    constructor(page) {
+    constructor(page: Page) {
         this.page = page
         this.footerElement = this.page.locator(UIReference.footerPage.footerLocator);
     }
