@@ -111,14 +111,13 @@ export default defineConfig({
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: 'Mobile 393x852',
+      use: {
+        ...devices['Pixel 5'],
+        viewport: { width: 393, height: 852 },
+      },
+    },
 
     /* Test against branded browsers. */
     // {
