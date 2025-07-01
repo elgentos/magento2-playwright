@@ -2,8 +2,7 @@ image: node:18-bullseye
 
 stages:
   - mirror
-  - setup_for_suite
-  - run_suite
+  - testing_suite
 
 mirror_to_github:
   stage: mirror
@@ -21,24 +20,27 @@ mirror_to_github:
     - git checkout main
     - git push github main:gitlab-main
 
-test_mirror_pipeline:
-  stage: mirror
-  rules:
-    - if: '$CI_COMMIT_BRANCH != "main"'
-  script:
-    - mkdir -p ~/.ssh
-    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
-    - ssh-keyscan github.com >> ~/.ssh/known_hosts
-    - git config --global user.name "developer-elgentos"
-    - git config --global user.email "developer@elgentos.nl"
-    - git ls-remote git@github.com:elgentos/magento2-playwright.git
+
+setting_up_testing_environment:
+    stage: testing_suite
+    when: manual
+    script:
+        - echo 'Setting up the testing environment'
+        - npm install
+        - npx playwright install --with-deps
+        - mkdir -p base-tests
+        - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
+    allow_failure: false
+    artifacts:
+        when: always
+        paths:
+            - playwright-report/
+            - test-results/
 
 # Build and test suite using this new version of the suite
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
 run_testing_suite:
-    stage: setup_for_suite
-    when: manual
+    stage: testing_suite
     variables:
         PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
         PLAYWRIGHT_PRODUCTION_URL: https://hyva-demo.elgentos.io/
@@ -60,25 +62,13 @@ run_testing_suite:
         MAGENTO_COUPON_CODE_WEBKIT: $MAGENTO_COUPON_CODE_WEBKIT
 
         CAPTCHA_BYPASS: true
-    before_script:
-        - echo 'Setting up the testing environment'
-        - npm install
-        - npx playwright install --with-deps
-        - mkdir -p base-tests
-        - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
     script:
         - echo 'Running test suite'
         - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+    needs: [setting_up_testing_environment] #optional, stage order already enforces this
     allow_failure: false
     artifacts:
         when: always
         paths:
         - playwright-report/
         - test-results/
-
-# run_testing_suite:
-#    stage: run_suite
-#    script:
-#        - echo 'Running test suite'
-#        - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
-#    needs: [setup_environment_for_suite] # optional, stage order already enforces this
