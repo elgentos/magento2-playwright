@@ -2,7 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker } from 'config';
+import { UIReference, outcomeMarker, inputValues } from 'config';
 import LoginPage from './login.page';
 
 class AccountPage {
@@ -17,6 +17,7 @@ class AccountPage {
   readonly cityField: Locator;
   readonly countrySelectorField: Locator;
   readonly stateSelectorField: Locator;
+  readonly stateInputField: Locator;
   readonly saveAddressButton: Locator;
   readonly addNewAddressButton: Locator;
   readonly deleteAddressButton: Locator;
@@ -47,7 +48,8 @@ class AccountPage {
     this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
     this.cityField = page.getByLabel(UIReference.newAddress.cityNameLabel);
     this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
-    this.stateSelectorField = page.getByLabel(UIReference.newAddress.provinceSelectLabel).filter({hasText: UIReference.newAddress.provinceSelectFilterLabel});
+    this.stateInputField = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
+    this.stateSelectorField = this.stateInputField.filter({hasText: UIReference.newAddress.provinceSelectFilterLabel});
     this.saveAddressButton = page.getByRole('button',{name: UIReference.newAddress.saveAdressButton});
 
     // Account Information elements
@@ -86,7 +88,17 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(faker.location.zipCode());
     await this.cityField.fill(faker.location.city());
-    await this.stateSelectorField.selectOption(faker.location.state());
+
+    const country = faker.helpers.arrayElement(inputValues.addressCountries);
+    await this.countrySelectorField.selectOption({ label: country });
+
+    const stateValue = faker.location.state();
+    if (await this.stateSelectorField.count()) {
+      await this.stateSelectorField.selectOption(stateValue);
+    } else {
+      await this.stateInputField.fill(stateValue);
+    }
+
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
@@ -111,7 +123,12 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(faker.location.zipCode());
     await this.cityField.fill(faker.location.city());
-    await this.stateSelectorField.selectOption(faker.location.state());
+    const stateEdit = faker.location.state();
+    if (await this.stateSelectorField.count()) {
+      await this.stateSelectorField.selectOption(stateEdit);
+    } else {
+      await this.stateInputField.fill(stateEdit);
+    }
 
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
