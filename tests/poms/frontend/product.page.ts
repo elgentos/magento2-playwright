@@ -127,6 +127,9 @@ class ProductPage {
 
     await this.page.goto(url);
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
+
+    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
 
@@ -138,7 +141,7 @@ class ProductPage {
     // Webkit workaround: wait for button to be visible, then force the click.
     this.addToCartButton.waitFor();
     await this.addToCartButton.click({force: true});
-    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
+    await expect(this.page.getByText(UIReference.general.messageLocator)).toBeVisible();
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string){
