@@ -3,13 +3,15 @@ const path = require('path');
 
 class Build {
 
-  pathToBaseDir = './'
+  pathToBaseDir = '../../../'; // default: when installed via npm
   tempDirTests = 'base-tests';
   exampleFileName = '.example';
 
   constructor() {
-    if (process.env.CI === 'true') {
-      this.pathToBaseDir = './';
+    const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
+
+    if (isLocalDev) {
+      this.pathToBaseDir = './'; // we're in the root of the dev repo
     }
 
     this.copyExampleFiles();
