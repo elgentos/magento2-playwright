@@ -10,6 +10,7 @@ class AccountPage {
   readonly accountDashboardTitle: Locator;
   readonly firstNameField: Locator;
   readonly lastNameField: Locator;
+  readonly companyNameField: Locator;
   readonly phoneNumberField: Locator;
   readonly loginPage: LoginPage;
   readonly streetAddressField: Locator;
@@ -42,6 +43,7 @@ class AccountPage {
     this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
     this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
+    this.companyNameField = page.getByLabel(UIReference.newAddress.companyNameLabel);
     this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
     this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, {exact:true});
     this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
@@ -74,19 +76,39 @@ class AccountPage {
     this.editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
   }
 
-  async addNewAddress(){
+  async addNewAddress(values?: {
+    company?: string;
+    phone?: string;
+    street?: string;
+    zip?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  }) {
     let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-    let streetName = faker.location.streetAddress();
+    const phone = values?.phone || faker.phone.number();
+    const streetName = values?.street || faker.location.streetAddress();
+    const zipCode = values?.zip || faker.location.zipCode();
+    const cityName = values?.city || faker.location.city();
+    const stateName = values?.state || faker.location.state();
 
-    // Name should be filled in automatically.
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
 
-    await this.phoneNumberField.fill(faker.phone.number());
+    if (values?.company) {
+      await this.companyNameField.fill(values.company);
+    }
+
+    await this.phoneNumberField.fill(phone);
+
+    if (values?.country) {
+      await this.countrySelectorField.selectOption(values.country);
+    }
+
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(faker.location.zipCode());
-    await this.cityField.fill(faker.location.city());
-    await this.stateSelectorField.selectOption(faker.location.state());
+    await this.zipCodeField.fill(zipCode);
+    await this.cityField.fill(cityName);
+    await this.stateSelectorField.selectOption(stateName);
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
@@ -95,10 +117,25 @@ class AccountPage {
   }
 
 
-  async editExistingAddress(){
+  async editExistingAddress(values?: {
+    firstName?: string;
+    lastName?: string;
+    company?: string;
+    phone?: string;
+    street?: string;
+    zip?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  }) {
     // the notification for a modified address is the same as the notification for a new address.
     let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-    let streetName = faker.location.streetAddress();
+    const streetName = values?.street || faker.location.streetAddress();
+    const zipCode = values?.zip || faker.location.zipCode();
+    const cityName = values?.city || faker.location.city();
+    const stateName = values?.state || faker.location.state();
+    const firstName = values?.firstName || faker.person.firstName();
+    const lastName = values?.lastName || faker.person.lastName();
 
     await this.editAddressButton.click();
 
@@ -106,12 +143,25 @@ class AccountPage {
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
 
-    await this.firstNameField.fill(faker.person.firstName());
-    await this.lastNameField.fill(faker.person.lastName());
+    await this.firstNameField.fill(firstName);
+    await this.lastNameField.fill(lastName);
+
+    if (values?.company) {
+      await this.companyNameField.fill(values.company);
+    }
+
+    if (values?.phone) {
+      await this.phoneNumberField.fill(values.phone);
+    }
+
+    if (values?.country) {
+      await this.countrySelectorField.selectOption(values.country);
+    }
+
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(faker.location.zipCode());
-    await this.cityField.fill(faker.location.city());
-    await this.stateSelectorField.selectOption(faker.location.state());
+    await this.zipCodeField.fill(zipCode);
+    await this.cityField.fill(cityName);
+    await this.stateSelectorField.selectOption(stateName);
 
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
