@@ -161,7 +161,7 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
-    await this.stateSelectorField.selectOption(stateName);
+    await this.stateSelectorField.fill(stateName);
 
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
