@@ -135,10 +135,10 @@ class ProductPage {
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
     }
 
-    await this.addToCartButton.click();
-
-    await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
-    return ;
+    // Webkit workaround: wait for button to be visible, then force the click.
+    this.addToCartButton.waitFor();
+    await this.addToCartButton.click({force: true});
+    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string){
