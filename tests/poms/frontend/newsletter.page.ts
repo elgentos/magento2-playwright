@@ -15,15 +15,14 @@ class NewsletterSubscriptionPage {
   }
 
   async updateNewsletterSubscription(){
-    
-    if(await this.newsletterCheckElement.isChecked()) {
-      // user is already subscribed, test runs unsubscribe 
-      var subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification; 
 
+    let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
+    let subscribed = false;
+
+    if(await this.newsletterCheckElement.isChecked()) {
+      // user is already subscribed, test runs unsubscribe
       await this.newsletterCheckElement.uncheck();
       await this.saveSubscriptionsButton.click();
-      
-      var subscribed = false;
       
     } else {
       // user is not yet subscribed, test runs subscribe
