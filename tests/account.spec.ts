@@ -184,6 +184,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     const secondAddress = inputValues.secondAddress;
     const companyName = faker.company.name();
+    const streetValue = secondAddress.secondStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
     await accountPage.addNewAddress({
       company: companyName,
       phone: secondAddress.secondPhoneNumberValue,
@@ -195,7 +196,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     });
 
     await expect(page.getByText(companyName)).toBeVisible();
-    await expect(page.getByText(secondAddress.secondStreetAddressValue)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
   });
 
   /**
