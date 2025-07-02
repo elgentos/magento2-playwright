@@ -154,8 +154,9 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     const firstAddress = inputValues.firstAddress;
     const streetValue = firstAddress.firstStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
+    const companyName = faker.company.name();
     await accountPage.addNewAddress({
-      company: faker.company.name(),
+      company: companyName,
       phone: firstAddress.firstPhoneNumberValue,
       street: streetValue,
       zip: firstAddress.firstZipCodeValue,
@@ -164,7 +165,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       country: firstAddress.firstNonDefaultCountry,
     });
 
-    await expect(page.getByText(firstAddress.firstCompanyNameValue)).toBeVisible();
+    await expect(page.getByText(companyName)).toBeVisible();
     await expect(page.getByText(streetValue)).toBeVisible();
   });
 
@@ -182,8 +183,9 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     const accountPage = new AccountPage(page);
 
     const secondAddress = inputValues.secondAddress;
+    const companyName = faker.company.name();
     await accountPage.addNewAddress({
-      company: faker.company.name(),
+      company: companyName,
       phone: secondAddress.secondPhoneNumberValue,
       street: secondAddress.secondStreetAddressValue,
       zip: secondAddress.secondZipCodeValue,
@@ -192,7 +194,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       country: secondAddress.secondNonDefaultCountry,
     });
 
-    await expect(page.getByText(secondAddress.secondCompanyNameValue)).toBeVisible();
+    await expect(page.getByText(companyName)).toBeVisible();
     await expect(page.getByText(secondAddress.secondStreetAddressValue)).toBeVisible();
   });
 
@@ -220,17 +222,18 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     await page.goto(slugs.account.addressBookSlug);
     const editAddress = inputValues.editedAddress;
+    const companyName = faker.company.name();
     await accountPage.editExistingAddress({
       firstName: editAddress.editfirstNameValue,
       lastName: editAddress.editLastNameValue,
-      company: faker.company.name(),
+      company: companyName,
       street: editAddress.editStreetAddressValue,
       zip: editAddress.editZipCodeValue,
       city: editAddress.editCityValue,
       state: editAddress.editStateValue,
-    });
+      });
 
-    await expect(page.getByText(editAddress.editCompanyNameValue)).toBeVisible();
+    await expect(page.getByText(companyName)).toBeVisible();
     await expect(page.getByText(editAddress.editStreetAddressValue)).toBeVisible();
   });
 
