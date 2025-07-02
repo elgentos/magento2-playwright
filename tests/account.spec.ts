@@ -164,7 +164,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       country: firstAddress.firstNonDefaultCountry,
     });
 
-    await expect(page.getByText(firstAddress.firstCompanyNameValue).first()).toBeVisible();
+    await expect(page.getByText(firstAddress.firstCompanyNameValue)).toBeVisible();
     await expect(page.getByText(streetValue)).toBeVisible();
   });
 
@@ -192,7 +192,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       country: secondAddress.secondNonDefaultCountry,
     });
 
-    await expect(page.getByText(secondAddress.secondCompanyNameValue).first()).toBeVisible();
+    await expect(page.getByText(secondAddress.secondCompanyNameValue)).toBeVisible();
     await expect(page.getByText(secondAddress.secondStreetAddressValue)).toBeVisible();
   });
 
