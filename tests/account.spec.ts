@@ -10,6 +10,7 @@ import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
 import RegisterPage from './poms/frontend/register.page';
+import { random } from 'cypress/types/lodash';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
@@ -152,10 +153,11 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     }
 
     const firstAddress = inputValues.firstAddress;
+    const streetValue = firstAddress.firstStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
     await accountPage.addNewAddress({
       company: firstAddress.firstCompanyNameValue,
       phone: firstAddress.firstPhoneNumberValue,
-      street: firstAddress.firstStreetAddressValue,
+      street: streetValue,
       zip: firstAddress.firstZipCodeValue,
       city: firstAddress.firstCityValue,
       state: firstAddress.firstProvinceValue,
@@ -163,7 +165,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     });
 
     await expect(page.getByText(firstAddress.firstCompanyNameValue).first()).toBeVisible();
-    await expect(page.getByText(firstAddress.firstStreetAddressValue)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
   });
 
   /**
