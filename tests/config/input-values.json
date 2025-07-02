@@ -19,6 +19,10 @@
     "couponCodeRuleName": "Test coupon",
     "couponType": "Specific Coupon"
   },
+  "addressCountries": [
+    "Netherlands",
+    "United Kingdom"
+  ],
   "editedAddress": {
     "editCityValue": "Pallet Town",
     "editCompanyNameValue": "Pokémon",
