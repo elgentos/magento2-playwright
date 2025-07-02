@@ -8,7 +8,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "config": ["tests.config.ts"],
+      "config": ["tests.config.ts"]
     }
   }
 }
