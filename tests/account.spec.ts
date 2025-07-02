@@ -155,7 +155,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     const firstAddress = inputValues.firstAddress;
     const streetValue = firstAddress.firstStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
     await accountPage.addNewAddress({
-      company: firstAddress.firstCompanyNameValue,
+      company: faker.company.name(),
       phone: firstAddress.firstPhoneNumberValue,
       street: streetValue,
       zip: firstAddress.firstZipCodeValue,
@@ -183,7 +183,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     const secondAddress = inputValues.secondAddress;
     await accountPage.addNewAddress({
-      company: secondAddress.secondCompanyNameValue,
+      company: faker.company.name(),
       phone: secondAddress.secondPhoneNumberValue,
       street: secondAddress.secondStreetAddressValue,
       zip: secondAddress.secondZipCodeValue,
@@ -192,7 +192,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       country: secondAddress.secondNonDefaultCountry,
     });
 
-    await expect(page.getByText(secondAddress.secondCompanyNameValue)).toBeVisible();
+    await expect(page.getByText(secondAddress.secondCompanyNameValue).first()).toBeVisible();
     await expect(page.getByText(secondAddress.secondStreetAddressValue)).toBeVisible();
   });
 
@@ -223,7 +223,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await accountPage.editExistingAddress({
       firstName: editAddress.editfirstNameValue,
       lastName: editAddress.editLastNameValue,
-      company: editAddress.editCompanyNameValue,
+      company: faker.company.name(),
       street: editAddress.editStreetAddressValue,
       zip: editAddress.editZipCodeValue,
       city: editAddress.editCityValue,

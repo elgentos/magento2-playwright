@@ -25,7 +25,6 @@
   ],
   "editedAddress": {
     "editCityValue": "Pallet Town",
-    "editCompanyNameValue": "Pokémon",
     "editfirstNameValue": "Ash",
     "editLastNameValue": "Ketchum",
     "editStateValue": "Kansas",
@@ -34,7 +33,6 @@
   },
   "firstAddress": {
     "firstCityValue": "Testing Valley",
-    "firstCompanyNameValue": "ACME Company",
     "firstNonDefaultCountry": "Netherlands",
     "firstPhoneNumberValue": "0622000000",
     "firstProvinceValue": "Idaho",
@@ -51,7 +49,6 @@
   },
   "secondAddress": {
     "secondCityValue": "Little Whinging",
-    "secondCompanyNameValue": "Hogwarts",
     "secondNonDefaultCountry": "United Kingdom",
     "secondPhoneNumberValue": "0620081998",
     "secondProvinceValue": "South Dakota",
