@@ -76,7 +76,7 @@ npm install @elgentos/magento2-playwright
 
 ## ⏸️ Before you run
 
-After the installation, a variety of folders will have been created. Most notable in these are `base-tests`, which contain the tests without alteration, and `tests`. **You will never have to make changes to the** `base-tests` **folder. Doing so might break things, so please be cautious.**
+After the installation, a variety of folders will have been created. Most notable in these are `base-tests`, which contain the tests without alteration, and `tests`. **You should never make changes directly to the base-tests folder, as this may break functionality. However, note that the** `base-tests` **can be updated when you upgrade the package, so always review any changes after an update.**
 
 
 
