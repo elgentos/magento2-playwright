@@ -2,7 +2,7 @@
 
 import { test } from '@playwright/test';
 import { Footer } from './poms/frontend/footer.page';
-import NotificationValidator from "./utils/notification.validator";
+import NotificationValidatorUtils from "./utils/notificationValidator.utils";
 import { outcomeMarker } from 'config';
 
 import NewsletterPage from "./poms/frontend/newsletter.page";
@@ -41,7 +41,7 @@ test(
         const subscriptionOutput = outcomeMarker.footerPage.newsletterSubscription;
         const notificationType = 'Newsletter subscription notification';
 
-        const notificationValidator = new NotificationValidator(page, testInfo);
+        const notificationValidator = new NotificationValidatorUtils(page, testInfo);
         await notificationValidator.validate(notificationType, subscriptionOutput);
     }
 )

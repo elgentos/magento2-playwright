@@ -3,7 +3,7 @@
 import { expect, Page, TestInfo } from "@playwright/test";
 import { UIReference } from '@config';
 
-class NotificationValidator {
+class NotificationValidatorUtils {
 
     private page : Page;
     private testInfo: TestInfo;
@@ -36,7 +36,9 @@ class NotificationValidator {
         }
 
         this.testInfo.annotations.push({ type: `Notification: ${notificationType}`, description: message.message });
+
+        return message;
     }
 }
 
-export default NotificationValidator;
+export default NotificationValidatorUtils;
