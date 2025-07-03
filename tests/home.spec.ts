@@ -6,6 +6,8 @@ import { outcomeMarker } from '@config';
 import MainMenuPage from '@poms/frontend/mainmenu.page';
 import HomePage from '@poms/frontend/home.page';
 
+console.log('Bestand:', require.resolve('@poms/frontend/home.page'));
+
 test('Add_product_on_homepage_to_cart',{ tag: ['@homepage', '@cold']}, async ({page}) => {
   const homepage = new HomePage(page);
   const mainmenu = new MainMenuPage(page);
