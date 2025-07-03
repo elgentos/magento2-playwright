@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.1-alpha] - 2025-07-02
+
+### Fixes
+- Fixed error in the order of install script in `package.json` which meant that the setup of `.env` didn't work.
+- Fixed trailing comma that can cause unnecessary issues in certain linters.
+
 ## [2.0.0-alpha] - 2025-07-02
 The initial NPM Package release!
 
@@ -27,7 +33,7 @@ Due to a difference in releases between the GitHub version and the npm package, 
 ### Changed
 
 - The elgentos testing suite is now a npm package for maintainability: [link to testing suite npm package](https://www.npmjs.com/package/@elgentos/magento2-playwright).
-- Removed test toggles to avoid issues where the suite would fail without giving a helpful message. 
+- Removed test toggles to avoid issues where the suite would fail without giving a helpful message.
 - Added 'smoke' tags to healthcheck tests to better adhere to industry standards.
 - 'Fixtures' folder is now 'poms'.
 - Split the magento admin page files and frontend page files in the renamed 'poms' folder.
