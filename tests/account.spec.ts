@@ -188,7 +188,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await accountPage.addNewAddress({
       company: companyName,
       phone: secondAddress.secondPhoneNumberValue,
-      street: secondAddress.secondStreetAddressValue,
+      street: streetValue,
       zip: secondAddress.secondZipCodeValue,
       city: secondAddress.secondCityValue,
       state: secondAddress.secondProvinceValue,
@@ -224,18 +224,19 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await page.goto(slugs.account.addressBookSlug);
     const editAddress = inputValues.editedAddress;
     const companyName = faker.company.name();
+    const streetValue = editAddress.editStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
     await accountPage.editExistingAddress({
       firstName: editAddress.editfirstNameValue,
       lastName: editAddress.editLastNameValue,
       company: companyName,
-      street: editAddress.editStreetAddressValue,
+      street: streetValue,
       zip: editAddress.editZipCodeValue,
       city: editAddress.editCityValue,
       state: editAddress.editStateValue,
       });
 
     await expect(page.getByText(companyName)).toBeVisible();
-    await expect(page.getByText(editAddress.editStreetAddressValue)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
   });
 
   test('Missing_required_field_prevents_creation',{ tag: ['@account-credentials'] }, async ({page}) => {
