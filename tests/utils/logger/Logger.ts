@@ -1,3 +1,5 @@
+// @ts-check
+
 export class Logger {
     private readonly context: string;
     private readonly isDebug: boolean;

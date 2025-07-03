@@ -1,3 +1,5 @@
+// @ts-check
+
 import { Logger } from './Logger';
 
 export function createLogger(context: string): Logger {
