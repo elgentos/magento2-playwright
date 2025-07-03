@@ -9,11 +9,11 @@ import { requireEnv } from './utils/env.utils';
 import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
 import RegisterPage from './poms/frontend/register.page';
 
+const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
+const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
+
 base.describe('Setting up the testing environment', () => {
   base('Enable_multiple_admin_logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-    const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
-    const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
-
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
     if (browserEngine === "CHROMIUM") {
@@ -26,9 +26,6 @@ base.describe('Setting up the testing environment', () => {
   });
 
   base('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-    const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
-    const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
-
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
     if (browserEngine === "CHROMIUM") {
@@ -50,9 +47,6 @@ base.describe('Setting up the testing environment', () => {
     }
 
     await base.step(`Step 1: Perform actions`, async () => {
-      const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
-      const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
-
       const magentoAdminPage = new MagentoAdminPage(page);
       await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
 
