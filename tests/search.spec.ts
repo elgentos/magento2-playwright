@@ -1,9 +1,9 @@
 // @ts-check
 
 import { test, expect } from '@playwright/test';
-import { UIReference, outcomeMarker, inputValues, slugs } from 'config';
+import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 
-import SearchPage from './poms/frontend/search.page';
+import SearchPage from '@poms/frontend/search.page';
 
 test.describe('Search functionality', () => {
   test('Search_query_returns_multiple_results', async ({ page }) => {

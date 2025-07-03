@@ -1,13 +1,13 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { UIReference, slugs } from 'config';
-import { requireEnv } from './utils/env.utils';
+import { UIReference, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
 
-import LoginPage from './poms/frontend/login.page';
-import ProductPage from './poms/frontend/product.page';
-import CheckoutPage from './poms/frontend/checkout.page';
-import OrderHistoryPage from './poms/frontend/orderhistory.page';
+import LoginPage from '@poms/frontend/login.page';
+import ProductPage from '@poms/frontend/product.page';
+import CheckoutPage from '@poms/frontend/checkout.page';
+import OrderHistoryPage from '@poms/frontend/orderhistory.page';
 
 test('Recent_order_is_visible_in_history', async ({ page, browserName }) => {
   const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';

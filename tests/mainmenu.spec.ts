@@ -1,12 +1,12 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { UIReference, slugs } from 'config';
+import { UIReference, slugs } from '@config';
 
-import LoginPage from './poms/frontend/login.page';
-import MainMenuPage from './poms/frontend/mainmenu.page';
-import ProductPage from './poms/frontend/product.page';
-import { requireEnv } from './utils/env.utils';
+import LoginPage from '@poms/frontend/login.page';
+import MainMenuPage from '@poms/frontend/mainmenu.page';
+import ProductPage from '@poms/frontend/product.page';
+import { requireEnv } from '@utils/env.utils';
 
 // no resetting storageState, mainmenu has more functionalities when logged in.
 
