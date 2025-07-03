@@ -2,7 +2,7 @@
 
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, slugs} from 'config';
+import { UIReference, outcomeMarker, slugs, inputValues } from 'config';
 import { requireEnv } from './utils/env.utils';
 
 import AccountPage from './poms/frontend/account.page';
@@ -151,7 +151,21 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       await page.goto(slugs.account.addressNewSlug);
     }
 
-    await accountPage.addNewAddress();
+    const firstAddress = inputValues.firstAddress;
+    const streetValue = firstAddress.firstStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
+    const companyName = faker.company.name();
+    await accountPage.addNewAddress({
+      company: companyName,
+      phone: firstAddress.firstPhoneNumberValue,
+      street: streetValue,
+      zip: firstAddress.firstZipCodeValue,
+      city: firstAddress.firstCityValue,
+      state: firstAddress.firstProvinceValue,
+      country: firstAddress.firstNonDefaultCountry,
+    });
+
+    await expect(page.getByText(companyName)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
   });
 
   /**
@@ -167,7 +181,21 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
 
-    await accountPage.addNewAddress();
+    const secondAddress = inputValues.secondAddress;
+    const companyName = faker.company.name();
+    const streetValue = secondAddress.secondStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
+    await accountPage.addNewAddress({
+      company: companyName,
+      phone: secondAddress.secondPhoneNumberValue,
+      street: streetValue,
+      zip: secondAddress.secondZipCodeValue,
+      city: secondAddress.secondCityValue,
+      state: secondAddress.secondProvinceValue,
+      country: secondAddress.secondNonDefaultCountry,
+    });
+
+    await expect(page.getByText(companyName)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
   });
 
   /**
@@ -193,7 +221,33 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     }
 
     await page.goto(slugs.account.addressBookSlug);
-    await accountPage.editExistingAddress();
+    const editAddress = inputValues.editedAddress;
+    const companyName = faker.company.name();
+    const streetValue = editAddress.editStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
+    await accountPage.editExistingAddress({
+      firstName: editAddress.editfirstNameValue,
+      lastName: editAddress.editLastNameValue,
+      company: companyName,
+      street: streetValue,
+      zip: editAddress.editZipCodeValue,
+      city: editAddress.editCityValue,
+      state: editAddress.editStateValue,
+      });
+
+    await expect(page.getByText(companyName)).toBeVisible();
+    await expect(page.getByText(streetValue)).toBeVisible();
+  });
+
+  test('Missing_required_field_prevents_creation',{ tag: ['@account-credentials'] }, async ({page}) => {
+    await page.goto(slugs.account.addressNewSlug);
+    const accountPage = new AccountPage(page);
+
+    await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
+    await accountPage.saveAddressButton.click();
+
+    const errorMessage = page.getByText(UIReference.general.errorMessageRequiredFieldText).first();
+    await errorMessage.waitFor();
+    await expect(errorMessage).toBeVisible();
   });
 
   /**
