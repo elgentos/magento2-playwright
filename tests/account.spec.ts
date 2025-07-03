@@ -246,7 +246,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
     await accountPage.saveAddressButton.click();
 
-    const errorMessage = page.getByText(UIReference.general.errorMessageText).first();
+    const errorMessage = page.getByText(UIReference.general.errorMessageRequiredFieldText).first();
     await errorMessage.waitFor();
     await expect(errorMessage).toBeVisible();
   });
