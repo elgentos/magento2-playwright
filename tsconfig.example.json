@@ -6,24 +6,27 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "@config": ["tests/config"],
+      "@config": [
+        "base-tests/config",
+        "tests/config"
+      ],
       "@utils/*": [
-        "tests/utils/*",
-        "base-tests/utils/*"
+        "base-tests/utils/*",
+        "tests/utils/*"
       ],
       "@poms/*": [
-        "tests/poms/*",
-        "base-tests/poms/*"
+        "base-tests/poms/*",
+        "tests/poms/*"
       ],
       "@types/*": [
-        "tests/types/*",
         "base-tests/types/*",
+        "tests/types/*"
       ],
       "@fixtures/*": [
-        "tests/fixtures/*",
-        "base-tests/fixtures/*"
+        "base-tests/fixtures/*",
+        "tests/fixtures/*"
       ]
     }
   }
