@@ -10,7 +10,6 @@ import LoginPage from './poms/frontend/login.page';
 import MainMenuPage from './poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
 import RegisterPage from './poms/frontend/register.page';
-import { random } from 'cypress/types/lodash';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
