@@ -23,9 +23,11 @@ class RegisterPage {
   }
 
 
-  async createNewAccount(firstName: string, lastName: string, email: string, password: string, muted: boolean = false){
+  async createNewAccount(firstName: string, lastName: string, email: string, password: string, muted: boolean = false, navigate: boolean = true){
     let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
-    await this.page.goto(slugs.account.createAccountSlug);
+    if(navigate){
+      await this.page.goto(slugs.account.createAccountSlug);
+    }
 
     await this.accountCreationFirstNameField.fill(firstName);
     await this.accountCreationLastNameField.fill(lastName);

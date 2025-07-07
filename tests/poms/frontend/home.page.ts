@@ -1,7 +1,7 @@
 // @ts-check
 
 import { type Page } from '@playwright/test';
-import { UIReference } from 'config';
+import { UIReference, slugs } from 'config';
 
 class HomePage {
 
@@ -9,6 +9,10 @@ class HomePage {
 
   constructor(page: Page) {
     this.page = page;
+  }
+
+  async openHomePage() {
+    await this.page.goto(slugs.home.homeSlug);
   }
 
   async addHomepageProductToCart(){
