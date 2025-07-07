@@ -114,12 +114,13 @@ class AccountPage {
     await this.countrySelectorField.selectOption({ label: country });
 
     const stateValue = faker.location.state();
-    if(await this.stateInputField.isVisible()){
-      // input field is visible
-      await this.stateInputField.fill(stateValue);
-    } else {
+    if(await this.page.locator('#region_id').isVisible()){
+    // if(await this.stateInputField.isVisible()){
       // dropdown selector is visible
       await this.stateSelectorField.selectOption(stateValue);
+    } else {
+      // input field is visible
+      await this.stateInputField.fill(stateValue);
     }
 
     // const stateValue = faker.location.state();
