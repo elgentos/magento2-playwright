@@ -107,15 +107,27 @@ class AccountPage {
 
     await this.phoneNumberField.fill(phone);
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(zipCode);
-    await this.cityField.fill(cityName);
+    await this.zipCodeField.fill(faker.location.zipCode());
+    await this.cityField.fill(faker.location.city());
+
+    const country:string = faker.helpers.arrayElement(inputValues.addressCountries);
     await this.countrySelectorField.selectOption({ label: country });
 
-    if (await this.stateSelectorField.count()) {
-      await this.stateSelectorField.selectOption(stateName);
+    const stateValue = faker.location.state();
+    if(await this.stateInputField.isVisible()){
+      // input field is visible
+      await this.stateInputField.fill(stateValue);
     } else {
-      await this.stateInputField.fill(stateName);
+      // dropdown selector is visible
+      await this.stateSelectorField.selectOption(stateValue);
     }
+
+    // const stateValue = faker.location.state();
+    // if (await this.stateSelectorField.count()) {
+    //   await this.stateSelectorField.selectOption(stateValue);
+    // } else {
+    //   await this.stateInputField.fill(stateValue);
+    // }
 
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
