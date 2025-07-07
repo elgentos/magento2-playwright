@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidator from '@utils/notification.validator';
 
 class ProductPage {
   readonly page: Page;
@@ -137,9 +138,9 @@ class ProductPage {
     }
 
     // Webkit workaround: wait for button to be visible, then force the click.
-    this.addToCartButton.waitFor();
+    await this.addToCartButton.waitFor();
     await this.addToCartButton.click({force: true});
-    await expect(this.page.getByText(UIReference.general.messageLocator)).toBeVisible();
+    await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string){
