@@ -2,6 +2,10 @@
 
 import { test, expect } from '@playwright/test';
 import { UIReference, slugs } from 'config';
+import HomePage from './poms/frontend/home.page';
+import CategoryPage from './poms/frontend/category.page';
+import ProductPage from './poms/frontend/product.page';
+import CheckoutPage from './poms/frontend/checkout.page';
 
 test.describe('Page health checks', () => {
     test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
@@ -11,7 +15,8 @@ test.describe('Page health checks', () => {
         }
 
         const homepageResponsePromise = page.waitForResponse(homepageURL);
-        await page.goto(homepageURL);
+        const homePage = new HomePage(page);
+        await homePage.openHomePage();
         const homepageResponse = await homepageResponsePromise;
         expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
 
@@ -23,7 +28,8 @@ test.describe('Page health checks', () => {
 
     test('Plp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
         const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
-        await page.goto(slugs.categoryPage.categorySlug);
+        const categoryPage = new CategoryPage(page);
+        await categoryPage.goToCategoryPage();
         const plpResponse = await plpResponsePromise;
         expect(plpResponse.status(), 'PLP should return 200').toBe(200);
 
@@ -35,7 +41,8 @@ test.describe('Page health checks', () => {
 
     test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
         const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
-        await page.goto(slugs.productpage.simpleProductSlug);
+        const productPage = new ProductPage(page);
+        await productPage.openProductPage(slugs.productpage.simpleProductSlug);
         const pdpResponse = await pdpResponsePromise;
         expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
 
@@ -48,7 +55,8 @@ test.describe('Page health checks', () => {
     test('Checkout_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
         const responsePromise = page.waitForResponse(slugs.checkout.checkoutSlug);
 
-        await page.goto(slugs.checkout.checkoutSlug);
+        const checkoutPage = new CheckoutPage(page);
+        await checkoutPage.openCheckout();
         const response = await responsePromise;
 
         expect(response.status(), 'Cart empty, checkout should return 302').toBe(302);

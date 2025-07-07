@@ -43,6 +43,11 @@ class CheckoutPage extends MagewireUtils {
     this.creditCardNameField = this.page.getByLabel(UIReference.checkout.creditCardNameLabel);
   }
 
+  async openCheckout() {
+    await this.page.goto(slugs.checkout.checkoutSlug);
+    await this.page.waitForLoadState();
+  }
+
   // ==============================================
   // Order-related methods
   // ==============================================

@@ -2,7 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, inputValues } from 'config';
+import { UIReference, outcomeMarker, inputValues, slugs } from 'config';
 import LoginPage from './login.page';
 
 class AccountPage {
@@ -77,6 +77,31 @@ class AccountPage {
     this.addNewAddressButton = page.getByRole('button', { name: UIReference.accountDashboard.addAddressButtonLabel });
     this.deleteAddressButton = page.getByRole('link', { name: UIReference.accountDashboard.addressDeleteIconButton }).first();
     this.editAddressButton = page.getByRole('link', { name: UIReference.accountDashboard.editAddressIconButton }).first();
+  }
+
+  async openAccountOverview() {
+    await this.page.goto(slugs.account.accountOverviewSlug);
+    await this.page.waitForLoadState();
+  }
+
+  async openChangePassword() {
+    await this.page.goto(slugs.account.changePasswordSlug);
+    await this.page.waitForLoadState();
+  }
+
+  async openAccountEdit() {
+    await this.page.goto(slugs.account.accountEditSlug);
+    await this.page.waitForLoadState();
+  }
+
+  async openAddressNew() {
+    await this.page.goto(slugs.account.addressNewSlug);
+    await this.page.waitForLoadState();
+  }
+
+  async openAddressBook() {
+    await this.page.goto(slugs.account.addressBookSlug);
+    await this.page.waitForLoadState();
   }
 
   async addNewAddress(values?: {

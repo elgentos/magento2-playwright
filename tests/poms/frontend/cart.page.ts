@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from 'config';
+import { UIReference, outcomeMarker, slugs } from 'config';
 
 class CartPage {
   readonly page: Page;
@@ -12,6 +12,11 @@ class CartPage {
   constructor(page: Page) {
     this.page = page;
     this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
+  }
+
+  async openCart() {
+    await this.page.goto(slugs.cart.cartSlug);
+    await this.page.waitForLoadState();
   }
 
   async changeProductQuantity(amount: string){

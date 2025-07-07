@@ -19,8 +19,10 @@ class ContactPage {
     this.sendFormButton = this.page.getByRole('button', { name: UIReference.general.genericSubmitButtonLabel });
   }
 
-  async fillOutForm(){
-    await this.page.goto(slugs.contact.contactSlug);
+  async fillOutForm(navigate: boolean = true){
+    if(navigate){
+      await this.page.goto(slugs.contact.contactSlug);
+    }
     let messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
 
     // Add a wait for the form to be visible

@@ -24,9 +24,9 @@ import CheckoutPage from './poms/frontend/checkout.page';
 test.beforeEach(async ({ page }) => {
   const productPage = new ProductPage(page);
 
-  await page.goto(slugs.productpage.simpleProductSlug);
   await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-  await page.goto(slugs.checkout.checkoutSlug);
+  const checkoutPageInit = new CheckoutPage(page);
+  await checkoutPageInit.openCheckout();
 });
 
 
@@ -39,7 +39,8 @@ test.describe('Checkout (login required)', () => {
 
     const loginPage = new LoginPage(page);
     await loginPage.login(emailInputValue, passwordInputValue);
-    await page.goto(slugs.checkout.checkoutSlug);
+    const checkoutPage = new CheckoutPage(page);
+    await checkoutPage.openCheckout();
   });
 
   /**
@@ -124,7 +125,8 @@ test.describe('Checkout (guest)', () => {
 
       // Add product to cart and go to checkout
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-      await page.goto(slugs.checkout.checkoutSlug);
+      const checkoutPage = new CheckoutPage(page);
+      await checkoutPage.openCheckout();
 
       // Select shipping method to trigger price calculations
       await checkoutPage.shippingMethodOptionFixed.check();
@@ -191,7 +193,7 @@ test.describe('Checkout (guest)', () => {
 
     // Test with check/money order payment
     await test.step('Place order with check/money order payment', async () => {
-      await page.goto(slugs.checkout.checkoutSlug);
+      await checkoutPage.openCheckout();
       await checkoutPage.fillShippingAddress();
       await checkoutPage.shippingMethodOptionFixed.check();
       await checkoutPage.selectPaymentMethod('check');

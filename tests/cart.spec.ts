@@ -31,7 +31,8 @@ test.describe('Cart functionalities (guest)', () => {
 
     // await mainMenu.openMiniCart();
     // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
-    await page.goto(slugs.cart.cartSlug);
+    const cartPage = new CartPage(page);
+    await cartPage.openCart();
   });
 
   /**
@@ -55,7 +56,6 @@ test.describe('Cart functionalities (guest)', () => {
   test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page, browserName}) => {
     await test.step('Add another product to cart', async () =>{
       const productpage = new ProductPage(page);
-      await page.goto(slugs.productpage.secondSimpleProductSlug);
       await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productpage.secondSimpleProductSlug);
     });
 
@@ -68,7 +68,8 @@ test.describe('Cart functionalities (guest)', () => {
       await loginPage.login(emailInputValue, passwordInputValue);
     });
 
-    await page.goto(slugs.cart.cartSlug);
+    const cartPage = new CartPage(page);
+    await cartPage.openCart();
     await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
     await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
   });
@@ -184,19 +185,19 @@ test.describe('Price checking tests', () => {
 
     await test.step('Step: Add simple product to cart', async () =>{
       const productPage = new ProductPage(page);
-      await page.goto(slugs.productpage.simpleProductSlug);
+      await productPage.openProductPage(slugs.productpage.simpleProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, '2');
+      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, '2', false);
 
     });
 
     await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
+      const checkoutPage = new CheckoutPage(page);
+      await checkoutPage.openCheckout();
 
       // returns productPriceInCheckout and productQuantityInCheckout
       checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.simpleProductTitle, productPagePrice, productPageAmount);
@@ -226,20 +227,19 @@ test.describe('Price checking tests', () => {
 
     await test.step('Step: Add configurable product to cart', async () =>{
       const productPage = new ProductPage(page);
-      // Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-      await page.goto(slugs.productpage.configurableProductSlug);
+      await productPage.openProductPage(slugs.productpage.configurableProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel('Quantity').fill('2');
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
+      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2', false);
 
     });
 
     await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
+      const checkoutPage = new CheckoutPage(page);
+      await checkoutPage.openCheckout();
 
       // returns productPriceInCheckout and productQuantityInCheckout
       checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.configurableProductTitle, productPagePrice, productPageAmount);
