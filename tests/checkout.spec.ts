@@ -128,7 +128,6 @@ test.describe('Checkout (guest)', () => {
 
       // Add product to cart and go to checkout
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-      const checkoutPage = new CheckoutPage(page);
       await checkoutPage.openCheckout();
 
       // Select shipping method to trigger price calculations
