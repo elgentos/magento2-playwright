@@ -149,6 +149,10 @@ class ProductPage {
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
 
+    // wait for the color and size selectors are actually visible
+    await productOptions.getByRole('radiogroup').first().waitFor();
+    await productOptions.getByRole('radiogroup').last().waitFor();
+
     // loop through each radiogroup (product option) within the form
     for (const option of await productOptions.getByRole('radiogroup').all()) {
       await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
