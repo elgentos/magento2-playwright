@@ -19,15 +19,22 @@ class ProductPage {
     this.addToWishlistButton = page.getByLabel(UIReference.productPage.addToWishlistButtonLabel, { exact: true });
   }
 
+  async openProductPage(url: string) {
+    await this.page.goto(url);
+    await this.page.waitForLoadState();
+  }
+
   // ==============================================
   // Productpage-related methods
   // ==============================================
 
-  async addProductToCompare(product:string, url: string){
+  async addProductToCompare(product:string, url: string, navigate: boolean = true){
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
     const successMessage = this.page.locator(UIReference.general.successMessageLocator);
 
-    await this.page.goto(url);
+    if(navigate){
+      await this.page.goto(url);
+    }
     await this.addToCompareButton.click();
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
@@ -38,9 +45,11 @@ class ProductPage {
     await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
   }
 
-  async addProductToWishlist(product:string, url: string){
+  async addProductToWishlist(product:string, url: string, navigate: boolean = true){
     let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
-    await this.page.goto(url);
+    if(navigate){
+      await this.page.goto(url);
+    }
     await this.addToWishlistButton.click();
     await this.page.waitForLoadState();
 
@@ -51,9 +60,10 @@ class ProductPage {
     await expect(productNameInWishlist).toContainText(product);
   }
 
-  async leaveProductReview(product:string, url: string){
-
-    await this.page.goto(url);
+  async leaveProductReview(product:string, url: string, navigate: boolean = true){
+    if(navigate){
+      await this.page.goto(url);
+    }
 
     //TODO: Uncomment this and fix test once website is fixed
     /*
@@ -70,9 +80,10 @@ class ProductPage {
     */
   }
 
-  async openLightboxAndScrollThrough(url: string){
-
-    await this.page.goto(url);
+  async openLightboxAndScrollThrough(url: string, navigate: boolean = true){
+    if(navigate){
+      await this.page.goto(url);
+    }
     let fullScreenOpener = this.page.getByLabel(UIReference.productPage.fullScreenOpenLabel);
     let fullScreenCloser = this.page.getByLabel(UIReference.productPage.fullScreenCloseLabel);
     let thumbnails = this.page.getByRole('button', {name: UIReference.productPage.thumbnailImageLabel});
@@ -92,9 +103,10 @@ class ProductPage {
 
   }
 
-  async changeReviewCountAndVerify(url: string) {
-
-    await this.page.goto(url);
+  async changeReviewCountAndVerify(url: string, navigate: boolean = true) {
+    if(navigate){
+      await this.page.goto(url);
+    }
 
     // Get the default review count from URL or UI
     const initialUrl = this.page.url();
@@ -126,10 +138,11 @@ class ProductPage {
   // Cart-related methods
   // ==============================================
 
-  async addSimpleProductToCart(product: string, url: string, quantity?: string) {
+  async addSimpleProductToCart(product: string, url: string, quantity?: string, navigate: boolean = true) {
 
-    await this.page.goto(url);
-
+    if(navigate){
+      await this.page.goto(url);
+    }
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
@@ -145,10 +158,10 @@ class ProductPage {
     await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
   }
 
-  async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
-
-    await this.page.goto(url);
-
+  async addConfigurableProductToCart(product: string, url:string, quantity?:string, navigate: boolean = true){
+    if(navigate){
+      await this.page.goto(url);
+    }
     this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
