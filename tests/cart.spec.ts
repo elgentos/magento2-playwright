@@ -8,6 +8,7 @@ import LoginPage from './poms/frontend/login.page';
 import ProductPage from './poms/frontend/product.page';
 import { requireEnv } from './utils/env.utils';
 import NotificationValidator from './utils/notification.validator';
+import CheckoutPage from './poms/frontend/checkout.page';
 
 test.describe('Cart functionalities (guest)', () => {
   /**
