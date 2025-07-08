@@ -8,7 +8,26 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "config": ["tests.config.ts"]
+      "@config": [
+        "base-tests/config",
+        "tests/config"
+      ],
+      "@utils/*": [
+        "base-tests/utils/*",
+        "tests/utils/*"
+      ],
+      "@poms/*": [
+        "base-tests/poms/*",
+        "tests/poms/*"
+      ],
+      "@types/*": [
+        "base-tests/types/*",
+        "tests/types/*"
+      ],
+      "@fixtures/*": [
+        "base-tests/fixtures/*",
+        "tests/fixtures/*"
+      ]
     }
   }
 }

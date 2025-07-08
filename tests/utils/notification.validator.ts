@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, Page, TestInfo } from "@playwright/test";
-import { UIReference } from 'config';
+import { UIReference } from '@config';
 
 class NotificationValidator {
 

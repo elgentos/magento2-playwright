@@ -2,8 +2,8 @@
 
 import { test as setup, expect } from '@playwright/test';
 import path from 'path';
-import { UIReference, slugs } from 'config';
-import { requireEnv } from './utils/env.utils';
+import { UIReference, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
 
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 

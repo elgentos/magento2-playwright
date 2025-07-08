@@ -3,11 +3,11 @@
 import { test as base } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { inputValues } from 'config';
-import { requireEnv } from './utils/env.utils';
+import { inputValues } from '@config';
+import { requireEnv } from '@utils/env.utils';
 
-import MagentoAdminPage from './poms/adminhtml/magentoAdmin.page';
-import RegisterPage from './poms/frontend/register.page';
+import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
+import RegisterPage from '@poms/frontend/register.page';
 
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
