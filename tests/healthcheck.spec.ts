@@ -1,7 +1,7 @@
 // @ts-check
 
 import { test, expect } from '@playwright/test';
-import { UIReference, slugs } from 'config';
+import { UIReference, slugs } from '@config';
 
 test.describe('Page health checks', () => {
     test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {

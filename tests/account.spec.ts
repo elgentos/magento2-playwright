@@ -2,14 +2,14 @@
 
 import { test, expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, slugs, inputValues } from 'config';
-import { requireEnv } from './utils/env.utils';
+import { UIReference, outcomeMarker, slugs, inputValues} from '@config';
+import { requireEnv } from '@utils/env.utils';
 
-import AccountPage from './poms/frontend/account.page';
-import LoginPage from './poms/frontend/login.page';
-import MainMenuPage from './poms/frontend/mainmenu.page';
-import NewsletterSubscriptionPage from './poms/frontend/newsletter.page';
-import RegisterPage from './poms/frontend/register.page';
+import AccountPage from '@poms/frontend/account.page';
+import LoginPage from '@poms/frontend/login.page';
+import MainMenuPage from '@poms/frontend/mainmenu.page';
+import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
+import RegisterPage from '@poms/frontend/register.page';
 
 // Before each test, log in
 test.beforeEach(async ({ page, browserName }) => {
