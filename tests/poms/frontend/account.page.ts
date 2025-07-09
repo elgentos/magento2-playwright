@@ -95,8 +95,8 @@ class AccountPage {
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
-    const stateName = values?.state || faker.location.state();
-    const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
+    const stateValue = values?.state || faker.location.state();
+    const country:string = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
     await expect(this.firstNameField).not.toBeEmpty();
     await expect(this.lastNameField).not.toBeEmpty();
@@ -107,13 +107,10 @@ class AccountPage {
 
     await this.phoneNumberField.fill(phone);
     await this.streetAddressField.fill(streetName);
-    await this.zipCodeField.fill(faker.location.zipCode());
-    await this.cityField.fill(faker.location.city());
-
-    const country:string = faker.helpers.arrayElement(inputValues.addressCountries);
+    await this.zipCodeField.fill(zipCode);
+    await this.cityField.fill(cityName);
     await this.countrySelectorField.selectOption({ label: country });
 
-    const stateValue = faker.location.state();
     if(await this.page.locator('#region_id').isVisible()){
     // if(await this.stateInputField.isVisible()){
       // dropdown selector is visible

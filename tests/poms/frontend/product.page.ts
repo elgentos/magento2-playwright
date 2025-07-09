@@ -42,7 +42,6 @@ class ProductPage {
     let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
     await this.page.goto(url);
     await this.addToWishlistButton.click();
-
     await this.page.waitForLoadState();
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
@@ -53,6 +52,7 @@ class ProductPage {
   }
 
   async leaveProductReview(product:string, url: string){
+
     await this.page.goto(url);
 
     //TODO: Uncomment this and fix test once website is fixed
@@ -71,6 +71,7 @@ class ProductPage {
   }
 
   async openLightboxAndScrollThrough(url: string){
+
     await this.page.goto(url);
     let fullScreenOpener = this.page.getByLabel(UIReference.productPage.fullScreenOpenLabel);
     let fullScreenCloser = this.page.getByLabel(UIReference.productPage.fullScreenCloseLabel);
@@ -92,6 +93,7 @@ class ProductPage {
   }
 
   async changeReviewCountAndVerify(url: string) {
+
     await this.page.goto(url);
 
     // Get the default review count from URL or UI
@@ -143,8 +145,10 @@ class ProductPage {
     await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
   }
 
-  async addConfigurableProductToCart(product: string, url:string, quantity?:string){
+  async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
+
     await this.page.goto(url);
+
     this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
