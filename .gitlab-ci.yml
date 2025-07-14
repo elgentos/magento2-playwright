@@ -42,10 +42,8 @@ mirror_to_github:
     - git checkout main
     - git push github main:gitlab-main
 
-
-setting_up_testing_environment:
+create_testing_suite:
     stage: testing_suite
-    when: manual
     script:
         - echo 'Setting up the testing environment'
         - mkdir -p base-tests
@@ -53,7 +51,7 @@ setting_up_testing_environment:
         - npx playwright install-deps
         # Check what files are present
         - ls -l base-tests
-        - npx playwright test --grep "@setup" --reporter=line --workers=4
+        - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
     allow_failure: false
     artifacts:
         when: always
