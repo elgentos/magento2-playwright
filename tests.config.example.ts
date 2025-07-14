@@ -2,9 +2,15 @@
 
 import fs from 'fs';
 import path from 'path';
+import * as process from "node:process";
 
-const basePath = path.resolve('./base-tests/config');
-const overridePath = path.resolve('./tests/config');
+if(process.env.CI){
+  const basePath = path.resolve('base-tests/config');
+  const overridePath = path.resolve('tests/config');
+} else {
+  const basePath = path.resolve('./base-tests/config');
+  const overridePath = path.resolve('./tests/config');
+}
 
 function loadConfig(filename: string) {
     const overrideFile = path.join(overridePath, filename);
