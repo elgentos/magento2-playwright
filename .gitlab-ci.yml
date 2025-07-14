@@ -51,7 +51,7 @@ setting_up_testing_environment:
         - mkdir -p base-tests
         - npm install
         - npx playwright install --with-deps
-        - CI=true npx playwright test --reporter=line --workers=4 tests/setup.spec.ts
+        - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
     allow_failure: false
     artifacts:
         when: always
@@ -61,6 +61,7 @@ setting_up_testing_environment:
             - test-results/
             - base-tests/
             - tests/
+            - .env
             - bypass-captcha.config.ts
             - playwright.config.ts
             - tests.config.ts
