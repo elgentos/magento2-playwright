@@ -60,6 +60,7 @@ setting_up_testing_environment:
             - playwright-report/
             - test-results/
             - base-tests/
+            - tests/
             - bypass-captcha.config.ts
             - playwright.config.ts
             - tests.config.ts
