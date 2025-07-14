@@ -20,6 +20,7 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
   const customFiles = fs.readdirSync(customDir).filter(file => file.endsWith('.spec.ts'));
 
   if(customFiles.length === 0) {
+    console.log(process.cwd());
     return Array.from(baseFiles);
   }
 
