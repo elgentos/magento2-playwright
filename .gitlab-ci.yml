@@ -50,10 +50,11 @@ setting_up_testing_environment:
         - echo 'Setting up the testing environment'
         - mkdir -p base-tests
         - npm install
-        - npx playwright install --with-deps
+        - npx playwright install
+        - npx playwright install-deps
         # Check what files are present
         - ls -l base-tests
-        - CI=true npx playwright test ./base-tests/setup.spec.ts --reporter=line --workers=4
+        - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
     allow_failure: false
     artifacts:
         when: always
