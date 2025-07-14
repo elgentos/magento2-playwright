@@ -8,6 +8,9 @@ import fs from "node:fs";
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 function getTestFiles(baseDir: string, customDir?: string): string[] {
+  // TODO REMOVE WHEN PIPELINE IS FIXED
+  console.log(`Getting test files from ${baseDir} and ${customDir}`);
+
   const baseFiles = new Set(fs.readdirSync(baseDir).filter(file => file.endsWith('.spec.ts')));
 
   if (!customDir || !fs.existsSync(customDir)) {
