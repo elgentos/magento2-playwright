@@ -76,7 +76,7 @@ run_testing_suite:
         - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
     needs: [create_testing_suite] #optional, stage order already enforces this
     dependencies:
-        - setting_up_testing_environment
+        - create_testing_suite
     allow_failure: false
     artifacts:
         when: always
