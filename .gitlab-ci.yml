@@ -1,4 +1,4 @@
-image: mcr.microsoft.com/windows/servercore:ltsc2025
+image: node:18-bullseye
 
 stages:
   - mirror
@@ -53,7 +53,6 @@ setting_up_testing_environment:
         - npx playwright install --with-deps
         # Check what files are present
         - ls -l base-tests
-        - ls -l tests
         - CI=true npx playwright test base-tests/setup.spec.ts --reporter=line --workers=4
     allow_failure: false
     artifacts:
