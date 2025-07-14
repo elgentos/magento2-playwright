@@ -51,9 +51,6 @@ const testFiles = getTestFiles(
     path.join(__dirname, 'tests'),
 );
 
-console.log(testFiles);
-
-
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
