@@ -50,7 +50,6 @@ setting_up_testing_environment:
         - echo 'Setting up the testing environment'
         - mkdir -p base-tests
         - npm install
-        - npx playwright install
         - npx playwright install-deps
         # Check what files are present
         - ls -l base-tests
