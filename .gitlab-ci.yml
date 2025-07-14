@@ -54,7 +54,7 @@ setting_up_testing_environment:
         # Check what files are present
         - ls -l base-tests
         - ls -l tests
-        - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
+        - CI=true npx playwright test /base-tests/setup.spec.ts --reporter=line --workers=4
     allow_failure: false
     artifacts:
         when: always
