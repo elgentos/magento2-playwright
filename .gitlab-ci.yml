@@ -51,7 +51,7 @@ setting_up_testing_environment:
         - mkdir -p base-tests
         - npm install
         - npx playwright install --with-deps
-        - CI=true npx playwright test setup.spec.ts --reporter=line --workers=4
+        - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
     allow_failure: false
     artifacts:
         when: always
