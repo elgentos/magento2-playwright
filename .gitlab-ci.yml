@@ -74,7 +74,7 @@ run_testing_suite:
         - echo 'Running test suite'
         - npx playwright install --with-deps
         - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
-    needs: [setting_up_testing_environment] #optional, stage order already enforces this
+    needs: [create_testing_suite] #optional, stage order already enforces this
     dependencies:
         - setting_up_testing_environment
     allow_failure: false
