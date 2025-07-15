@@ -2,7 +2,7 @@
 
 import { test } from '@playwright/test';
 
-import CategoryPage from './poms/frontend/category.page';
+import CategoryPage from '@poms/frontend/category.page';
 
 test('Filter_category_on_size',{ tag: ['@category', '@cold']}, async ({page, browserName}) => {
   const categoryPage = new CategoryPage(page);

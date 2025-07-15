@@ -1,11 +1,12 @@
 // @ts-check
 
 import { test, expect } from '@playwright/test';
-import { UIReference, slugs } from 'config';
-import HomePage from './poms/frontend/home.page';
-import CategoryPage from './poms/frontend/category.page';
-import ProductPage from './poms/frontend/product.page';
-import CheckoutPage from './poms/frontend/checkout.page';
+import { UIReference, slugs } from '@config';
+
+import HomePage from '@poms/frontend/home.page';
+import CategoryPage from '@poms/frontend/category.page';
+import ProductPage from '@poms/frontend/product.page';
+import CheckoutPage from '@poms/frontend/checkout.page';
 
 test.describe('Page health checks', () => {
     test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {

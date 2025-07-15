@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from 'config';
+import { UIReference, outcomeMarker } from '@config';
 
 class NewsletterSubscriptionPage {
   readonly page: Page;

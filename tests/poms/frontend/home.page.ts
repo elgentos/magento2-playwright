@@ -1,7 +1,7 @@
 // @ts-check
 
 import { type Page } from '@playwright/test';
-import { UIReference, slugs } from 'config';
+import { UIReference, slugs } from '@config';
 
 class HomePage {
 

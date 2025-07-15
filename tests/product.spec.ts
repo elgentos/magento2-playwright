@@ -1,11 +1,11 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { UIReference ,slugs } from 'config';
+import { UIReference ,slugs } from '@config';
 
-import ProductPage from './poms/frontend/product.page';
-import LoginPage from './poms/frontend/login.page';
-import { requireEnv } from './utils/env.utils';
+import ProductPage from '@poms/frontend/product.page';
+import LoginPage from '@poms/frontend/login.page';
+import { requireEnv } from '@utils/env.utils';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add_product_to_compare',{ tag: '@cold'}, async ({page}) => {

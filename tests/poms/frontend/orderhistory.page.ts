@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Page } from '@playwright/test';
-import { slugs } from 'config';
+import { slugs } from '@config';
 
 class OrderHistoryPage {
   readonly page: Page;

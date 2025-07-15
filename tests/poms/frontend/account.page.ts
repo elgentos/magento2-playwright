@@ -2,8 +2,9 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, inputValues, slugs } from 'config';
-import LoginPage from './login.page';
+import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+
+import LoginPage from '@poms/frontend/login.page';
 
 class AccountPage {
   readonly page: Page;
@@ -80,7 +81,11 @@ class AccountPage {
   }
 
   async openAccountOverview() {
-    await this.page.goto(slugs.account.accountOverviewSlug);
+    await this.page.goto(
+      
+      
+      
+      .account.accountOverviewSlug);
     await this.page.waitForLoadState();
   }
 

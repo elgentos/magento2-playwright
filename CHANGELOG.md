@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0-alpha] - 2025-07-08
+
+### Added
+- Added and configured path aliases in `tsconfig.json` and Playwright setup to support unified imports from both `tests` and `base-tests` directories.
+- Introduced centralized index files for configuration and utilities to enable simplified imports.
+
+### Changed
+- Improved TypeScript path alias usage across the project for cleaner and more maintainable imports.
+- Replaced relative path traversals with specific path aliases (`@utils`, `@poms`, `@config`) to enhance developer experience and reduce errors.
+- Updated all affected files to conform with the new import structure.
+- Enhanced override mechanisms for better modularity and clarity in the codebase.
+- Updated `setup.spec` to ensure compatibility and structure.
+
+### Fixed
+- Resolved compatibility issues with IDE tooling and runtime environments to prevent import-related problems.
+
+### Impact
+- Cleaner import statements throughout the codebase.
+- Improved code maintainability and easier onboarding for new developers.
+- Reduced likelihood of import path errors during development and CI runs.
+
 ## [2.0.1-alpha] - 2025-07-02
 
 ### Fixes

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker, slugs } from 'config';
+import { UIReference, outcomeMarker, slugs } from '@config';
 
 class ComparePage {
   page: Page;
