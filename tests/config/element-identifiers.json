@@ -158,6 +158,7 @@
     "homePageTitleText": "Hyvä Themes"
   },
   "magentoAdminPage": {
+    "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",
     "navigation": {
       "marketingButtonLabel": "Marketing",
