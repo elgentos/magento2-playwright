@@ -22,7 +22,7 @@ class MagentoAdminPage {
     }
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForURL(`**/${process.env.MAGENTO_ADMIN_SLUG}`);
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
@@ -45,18 +45,20 @@ class MagentoAdminPage {
 
     const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
     await websiteSelector.evaluate(select => {
-        for (const option of select.options) {
-            option.selected = true;
-        }
-        select.dispatchEvent(new Event('change'));
+      const s = select as HTMLSelectElement;
+      for (const option of s.options) {
+        option.selected = true;
+      }
+      select.dispatchEvent(new Event('change'));
     });
 
     const customerGroupsSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
     await customerGroupsSelector.evaluate(select => {
-        for (const option of select.options) {
-            option.selected = true;
-        }
-        select.dispatchEvent(new Event('change'));
+      const s = select as HTMLSelectElement;
+      for (const option of s.options) {
+        option.selected = true;
+      }
+      select.dispatchEvent(new Event('change'));
     });
 
     await this.page.locator(UIReference.cartPriceRulesPage.couponTypeSelectField).selectOption({ label: inputValues.coupon.couponType });
