@@ -109,7 +109,8 @@
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
-    "shippingMethodFixedLabel": "Fixed"
+    "shippingMethodFixedLabel": "Fixed",
+    "shippingMethodTableRateLabel": "Table Rate"
   },
   "comparePage": {
     "removeCompareLabel": "Remove Product",

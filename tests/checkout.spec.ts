@@ -2,13 +2,15 @@
 
 import { test, expect } from '@playwright/test';
 import { UIReference, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
+import MagewireUtils from '@utils/magewire.utils';
 
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
-import { requireEnv } from '@utils/env.utils';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
+let magewire: MagewireUtils;
 
 /**
  * @feature BeforeEach runs before each test in this group.
@@ -22,6 +24,9 @@ import CheckoutPage from '@poms/frontend/checkout.page';
  *  @and I should see the product in the minicart
  */
 test.beforeEach(async ({ page }) => {
+  magewire = new MagewireUtils(page);
+  magewire.startMonitoring();
+
   const productPage = new ProductPage(page);
 
   await page.goto(slugs.productpage.simpleProductSlug);
@@ -91,7 +96,7 @@ test.describe('Checkout (login required)', () => {
    *  @and a order number should be created and show to me
    */
   test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}, testInfo) => {
-    const checkoutPage = new CheckoutPage(page);
+    const checkoutPage = new CheckoutPage(page, magewire);
     let orderNumber = await checkoutPage.placeOrder();
     testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
   });
@@ -111,7 +116,7 @@ test.describe('Checkout (guest)', () => {
    *  @and a discount should be applied to the product
    */
     test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-      const checkout = new CheckoutPage(page);
+      const checkout = new CheckoutPage(page, magewire);
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
@@ -120,7 +125,7 @@ test.describe('Checkout (guest)', () => {
 
     test('Verify_price_calculations_in_checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
       const productPage = new ProductPage(page);
-      const checkoutPage = new CheckoutPage(page);
+      const checkoutPage = new CheckoutPage(page, magewire);
 
       // Add product to cart and go to checkout
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
@@ -154,7 +159,7 @@ test.describe('Checkout (guest)', () => {
    */
 
   test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-    const checkout = new CheckoutPage(page);
+    const checkout = new CheckoutPage(page, magewire);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
@@ -172,7 +177,7 @@ test.describe('Checkout (guest)', () => {
    */
 
   test('Invalid_coupon_code_in_checkout_is_rejected',{ tag: ['@checkout', '@coupon-code', '@cold'] }, async ({page}) => {
-    const checkout = new CheckoutPage(page);
+    const checkout = new CheckoutPage(page, magewire);
     await checkout.enterWrongCouponCode("incorrect discount code");
   });
 
@@ -187,13 +192,13 @@ test.describe('Checkout (guest)', () => {
    *  @and a order number should be created and shown to me
    */
   test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
-    const checkoutPage = new CheckoutPage(page);
+    const checkoutPage = new CheckoutPage(page, magewire);
 
     // Test with check/money order payment
     await test.step('Place order with check/money order payment', async () => {
       await page.goto(slugs.checkout.checkoutSlug);
       await checkoutPage.fillShippingAddress();
-      await checkoutPage.shippingMethodOptionFixed.check();
+      await checkoutPage.selectShippingMethod('fixed');
       await checkoutPage.selectPaymentMethod('check');
       let orderNumber = await checkoutPage.placeOrder();
       expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
