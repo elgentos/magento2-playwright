@@ -25,8 +25,7 @@ class CheckoutPage extends MagewireUtils {
   readonly creditCardNameField: Locator;
 
   constructor(
-      page: Page, 
-      private magewire: MagewireUtils
+      page: Page
   ){
     super(page);
     this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
@@ -62,14 +61,14 @@ class CheckoutPage extends MagewireUtils {
     // If shipping method is not selected, select it
     if (!(await this.shippingMethodOptionFixed.isChecked())) {
       await this.shippingMethodOptionFixed.check();
-      await this.magewire.waitForMagewireRequests();
+      await this.waitForMagewireRequests();
     }
 
     await this.paymentMethodOptionCheck.check();
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
 
     await this.placeOrderButton.click();
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
 
     await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
@@ -87,14 +86,14 @@ class CheckoutPage extends MagewireUtils {
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
-      await this.magewire.waitForMagewireRequests();
+      await this.waitForMagewireRequests();
     }
 
     if(await this.page.getByText(outcomeMarker.cart.priceReducedSymbols).isVisible()){
       // discount is already active.
       let cancelCouponButton = this.page.getByRole('button', { name: UIReference.checkout.cancelDiscountButtonLabel });
       await cancelCouponButton.click();
-      await this.magewire.waitForMagewireRequests();
+      await this.waitForMagewireRequests();
     }
 
     let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
@@ -102,7 +101,7 @@ class CheckoutPage extends MagewireUtils {
 
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
 
     await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
     await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
@@ -112,14 +111,14 @@ class CheckoutPage extends MagewireUtils {
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
-      await this.magewire.waitForMagewireRequests();
+      await this.waitForMagewireRequests();
     }
 
     let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
     let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
     await checkoutDiscountField.fill(code);
     await applyCouponCheckoutButton.click();
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
 
     await expect.soft(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
     await expect(checkoutDiscountField).toBeEditable();
@@ -129,12 +128,12 @@ class CheckoutPage extends MagewireUtils {
     if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
       // discount field is not open.
       await this.showDiscountFormButton.click();
-      await this.magewire.waitForMagewireRequests();
+      await this.waitForMagewireRequests();
     }
 
     let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
     await cancelCouponButton.click();
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
 
     await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
@@ -187,7 +186,7 @@ class CheckoutPage extends MagewireUtils {
         break;
     }
 
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
   }
 
   async selectShippingMethod(method: 'fixed' | 'table rate'): Promise<void> {
@@ -200,7 +199,7 @@ class CheckoutPage extends MagewireUtils {
         break;
     }
 
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
   }
 
   async fillShippingAddress() {
@@ -220,7 +219,7 @@ class CheckoutPage extends MagewireUtils {
     await this.page.getByLabel('State/Province').selectOption(faker.location.state());
 
     // Wait for any Magewire updates
-    await this.magewire.waitForMagewireRequests();
+    await this.waitForMagewireRequests();
   }
 }
 

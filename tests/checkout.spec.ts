@@ -10,8 +10,6 @@ import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
-let magewire: MagewireUtils;
-
 /**
  * @feature BeforeEach runs before each test in this group.
  * @scenario Add product to the cart, confirm it's there, then move to checkout.
@@ -24,7 +22,7 @@ let magewire: MagewireUtils;
  *  @and I should see the product in the minicart
  */
 test.beforeEach(async ({ page }) => {
-  magewire = new MagewireUtils(page);
+  const magewire = new MagewireUtils(page);
   magewire.startMonitoring();
 
   const productPage = new ProductPage(page);
@@ -96,7 +94,7 @@ test.describe('Checkout (login required)', () => {
    *  @and a order number should be created and show to me
    */
   test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}, testInfo) => {
-    const checkoutPage = new CheckoutPage(page, magewire);
+    const checkoutPage = new CheckoutPage(page);
     let orderNumber = await checkoutPage.placeOrder();
     testInfo.annotations.push({ type: 'Order number', description: `${orderNumber}` });
   });
@@ -116,7 +114,7 @@ test.describe('Checkout (guest)', () => {
    *  @and a discount should be applied to the product
    */
     test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-      const checkout = new CheckoutPage(page, magewire);
+      const checkout = new CheckoutPage(page);
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
@@ -125,7 +123,7 @@ test.describe('Checkout (guest)', () => {
 
     test('Verify_price_calculations_in_checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
       const productPage = new ProductPage(page);
-      const checkoutPage = new CheckoutPage(page, magewire);
+      const checkoutPage = new CheckoutPage(page);
 
       // Add product to cart and go to checkout
       await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
@@ -159,7 +157,7 @@ test.describe('Checkout (guest)', () => {
    */
 
   test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-    const checkout = new CheckoutPage(page, magewire);
+    const checkout = new CheckoutPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
@@ -177,7 +175,7 @@ test.describe('Checkout (guest)', () => {
    */
 
   test('Invalid_coupon_code_in_checkout_is_rejected',{ tag: ['@checkout', '@coupon-code', '@cold'] }, async ({page}) => {
-    const checkout = new CheckoutPage(page, magewire);
+    const checkout = new CheckoutPage(page);
     await checkout.enterWrongCouponCode("incorrect discount code");
   });
 
@@ -192,7 +190,7 @@ test.describe('Checkout (guest)', () => {
    *  @and a order number should be created and shown to me
    */
   test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
-    const checkoutPage = new CheckoutPage(page, magewire);
+    const checkoutPage = new CheckoutPage(page);
 
     // Test with check/money order payment
     await test.step('Place order with check/money order payment', async () => {
