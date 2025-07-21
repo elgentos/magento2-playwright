@@ -1,9 +1,9 @@
 // @ts-check
 
 import { expect, Locator, type Page } from '@playwright/test';
-import { UIReference } from 'config';
+import { UIReference } from '@config';
 
-export class Footer {
+class Footer {
     readonly page: Page
     readonly footerElement: Locator
 
@@ -25,3 +25,5 @@ export class Footer {
         await expect(this.page.getByRole('button', { name: UIReference.footerPage.currencyEuro })).toBeVisible();
     }
 }
+
+export default Footer;

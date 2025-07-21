@@ -1,11 +1,11 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { Footer } from './poms/frontend/footer.page';
-import NotificationValidatorUtils from "./utils/notificationValidator.utils";
-import { outcomeMarker } from 'config';
+import NotificationValidatorUtils from "@utils/notificationValidator.utils";
+import { outcomeMarker } from '@config';
 
-import NewsletterPage from "./poms/frontend/newsletter.page";
+import NewsletterPage from "@poms/frontend/newsletter.page";
+import Footer from '@poms/frontend/footer.page';
 
 test(
     'Footer_is_available',
