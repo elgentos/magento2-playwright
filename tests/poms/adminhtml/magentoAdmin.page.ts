@@ -93,12 +93,19 @@ class MagentoAdminPage {
   }
 
   async checkIfCustomerExists(email: string){
-    const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.customersButtonLabel});
+    const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.customersButtonLabel}).first();
     const allCustomersLink = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.allCustomersButtonLabel});
     const customersSearchField = this.page.getByRole('textbox', {name: UIReference.customerOverviewPage.tableSearchFieldLabel});
 
-    await mainMenuCustomersButton.click();
-    await expect(allCustomersLink).toBeVisible();
+    // loop clicking the 'Customers' button until clicking it show the subnavigation
+    await expect(async() =>{
+      await mainMenuCustomersButton.press('Enter');
+      await expect(allCustomersLink).toBeVisible({timeout: 5000});
+    }).toPass();
+
+    // await mainMenuCustomersButton.click({force: true});
+    // await mainMenuCustomersButton.press('Enter');
+    // await expect(allCustomersLink).toBeVisible();
     await allCustomersLink.click();
 
     // Wait for URL. If loading symbol is visible, wait for it to go away

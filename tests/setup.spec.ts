@@ -102,7 +102,7 @@ base.describe('Setting up the testing environment', () => {
     await base.step(`Check if ${accountEmail} is already registered`, async () => {
       const customerLookUp = await magentoAdminPage.checkIfCustomerExists(accountEmail);
       if(customerLookUp){
-        testInfo.skip(true, `${accountEmail} was found in user table. E-mail does not have to be created again`);
+        testInfo.skip(true, `${accountEmail} was found in user table, this step is skipped. If you think this is incorrect, consider removing user from the table and try running the setup again.`);
       }
     });
 
