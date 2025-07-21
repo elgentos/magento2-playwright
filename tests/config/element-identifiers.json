@@ -76,8 +76,11 @@
   },
   "cartPriceRulesPage": {
     "actionsSubtitleLabel": "Actions",
+    "activeStatusLabelLocator": ".admin__actions-switch-text",
+    "activeStatusSwitcherLocator": ".admin__actions-switch-label",
     "addCartPriceRuleButtonLabel": "Add New Rule",
     "couponCodeFieldLabel": "Coupon Code",
+    "couponCodeActiveStatusText": "Active",
     "couponTypeSelectField": "select[name='coupon_type']",
     "customerGroupsSelectLabel": "Customer Groups",
     "discountAmountFieldLabel": "Discount Amount",
@@ -153,8 +156,10 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "div.message",
     "removeLabel": "Remove",
+    "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"
   },
   "homePage": {

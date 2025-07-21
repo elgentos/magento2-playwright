@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, inputValues } from '@config';
+import { UIReference, inputValues, outcomeMarker } from '@config';
 
 class MagentoAdminPage {
   readonly page: Page;
@@ -16,10 +16,22 @@ class MagentoAdminPage {
     this.adminLoginButton = page.getByRole('button', {name: UIReference.magentoAdminPage.loginButtonLabel});
   }
 
-
+  /**
+   * @feature Cart Price Rules Configuration
+   * @scenario Add or activate a cart price rule with a specific coupon code
+   * @given the admin is on the Magento dashboard
+   * @when the coupon exists but is inactive
+   * @then the admin activates the existing coupon and saves the rule
+   * @but if the coupon does not exist
+   * @then the admin creates a new cart price rule with the given coupon code
+   * @and selects all websites and customer groups
+   * @and sets the coupon type and discount amount
+   * @and clicks the Save button
+   * @then the system displays a success message confirming the rule was saved
+   */
   async addCartPriceRule(magentoCouponCode: string){
 
-    // Force specific viewport size
+    // Force specific viewport size to deal with webkit issues
     await this.page.setViewportSize({
         width: 1920,
         height: 1080
@@ -40,22 +52,23 @@ class MagentoAdminPage {
     if(await couponCellField.isVisible()){
       const couponStatusField = this.page.locator('tr').filter({hasText:magentoCouponCode});
       const couponStatus = await couponStatusField.innerText();
-      if(couponStatus.includes('Active')){
+      if(couponStatus.includes(UIReference.cartPriceRulesPage.couponCodeActiveStatusText)){
           console.log('Coupon already exists and is active');
-          return;
+          return 'Coupon already exists and is active.';
       } else {
         // coupon has been found, but is not active.
         await couponCellField.click();
-        const activeStatusWitcher = this.page.locator('.admin__actions-switch-label').first();
-        const activeStatusLabel = this.page.locator('.admin__actions-switch-text').first();
+        const activeStatusSwitcher = this.page.locator(UIReference.cartPriceRulesPage.activeStatusSwitcherLocator).first();
+        const activeStatusLabel = this.page.locator(UIReference.cartPriceRulesPage.activeStatusLabelLocator).first();
 
         await expect(activeStatusLabel).toBeVisible();
-        await activeStatusWitcher.click();
+        await activeStatusSwitcher.click();
 
-        const saveCouponButton = this.page.getByRole('button', {name:'Save', exact:true});
+        const saveCouponButton = this.page.getByRole('button', {name:UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact:true});
         await saveCouponButton.click();
 
         await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+        return `Coupon code ${magentoCouponCode} has been activated.`;
       }
     } else {
       // coupon is not set
@@ -85,13 +98,23 @@ class MagentoAdminPage {
       await this.page.getByText(UIReference.cartPriceRulesPage.actionsSubtitleLabel, { exact: true }).click();
       await this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel).fill('10');
 
-      const couponSaveButton = this.page.getByRole('button', { name: 'Save', exact: true });
+      const couponSaveButton = this.page.getByRole('button', { name: UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact: true });
       await couponSaveButton.scrollIntoViewIfNeeded();
       await couponSaveButton.click({force:true});
       await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+      return `Coupon code ${magentoCouponCode} has been set and activated.`;
     }
-  }
+  };
 
+  /**
+   * @feature Customer Management
+   * @scenario Check if a customer exists by email address
+   * @given the admin is on the Magento dashboard
+   * @when the admin navigates to Customers > All Customers
+   * @and the customer table is fully loaded
+   * @and the admin searches for a specific email address
+   * @then the system returns whether a customer with that email exists in the customer list
+   */
   async checkIfCustomerExists(email: string){
     const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.customersButtonLabel}).first();
     const allCustomersLink = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.allCustomersButtonLabel});
@@ -103,22 +126,27 @@ class MagentoAdminPage {
       await expect(allCustomersLink).toBeVisible({timeout: 5000});
     }).toPass();
 
-    // await mainMenuCustomersButton.click({force: true});
-    // await mainMenuCustomersButton.press('Enter');
-    // await expect(allCustomersLink).toBeVisible();
     await allCustomersLink.click();
 
     // Wait for URL. If loading symbol is visible, wait for it to go away
     await this.page.waitForURL('**/beheer/customer/index/**');
-    if (await this.page.locator('#container .spinner').isVisible()) {
-      await this.page.locator('#container .spinner').waitFor({state: 'hidden'});
+    if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
+      await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
     }
 
     await customersSearchField.waitFor();
     await customersSearchField.fill(email);
-    await this.page.getByRole('button', {name: 'Search'}).click();
+    await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
 
-    await this.page.getByText('records found').first().waitFor();
+
+    if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
+      await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+    }
+
+    // Loop to ensure the 'results found' text is visible
+    await expect(async() =>{
+      await this.page.getByText(outcomeMarker.customerOverviewPage.searchResultsFoundText).first().waitFor();
+    }).toPass();
 
     // Return true (email found) or false (email not found)
     return await this.page.getByRole('cell', {name:email}).locator('div').isVisible();

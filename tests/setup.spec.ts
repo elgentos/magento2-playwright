@@ -81,7 +81,8 @@ base.describe('Setting up the testing environment', () => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
-    await magentoAdminPage.addCartPriceRule(couponCode);
+    const addCouponCodeResult = await magentoAdminPage.addCartPriceRule(couponCode);
+    testInfo.annotations.push({type: 'notice', description: addCouponCodeResult});
   });
 
   /**
