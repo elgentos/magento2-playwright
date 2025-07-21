@@ -141,6 +141,9 @@
     "passwordConfirmFieldLabel": "Confirm Password",
     "passwordFieldLabel": "Password"
   },
+  "customerOverviewPage": {
+    "tableSearchFieldLabel": "Search by keyword"
+  },
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
@@ -161,11 +164,13 @@
     "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",
     "navigation": {
+      "customersButtonLabel": "Customers",
       "marketingButtonLabel": "Marketing",
       "storesButtonLabel": "Stores"
     },
     "passwordFieldLabel": "Password",
     "subNavigation": {
+      "allCustomersButtonLabel": "All Customers",
       "cartPriceRulesButtonLabel": "Cart Price Rules",
       "configurationButtonLabel": "Configuration"
     },

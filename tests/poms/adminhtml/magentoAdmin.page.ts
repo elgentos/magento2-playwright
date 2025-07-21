@@ -93,7 +93,28 @@ class MagentoAdminPage {
   }
 
   async checkIfCustomerExists(email: string){
+    const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.customersButtonLabel});
+    const allCustomersLink = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.allCustomersButtonLabel});
+    const customersSearchField = this.page.getByRole('textbox', {name: UIReference.customerOverviewPage.tableSearchFieldLabel});
 
+    await mainMenuCustomersButton.click();
+    await expect(allCustomersLink).toBeVisible();
+    await allCustomersLink.click();
+
+    // Wait for URL. If loading symbol is visible, wait for it to go away
+    await this.page.waitForURL('**/beheer/customer/index/**');
+    if (await this.page.locator('#container .spinner').isVisible()) {
+      await this.page.locator('#container .spinner').waitFor({state: 'hidden'});
+    }
+
+    await customersSearchField.waitFor();
+    await customersSearchField.fill(email);
+    await this.page.getByRole('button', {name: 'Search'}).click();
+
+    await this.page.getByText('records found').first().waitFor();
+
+    // Return true (email found) or false (email not found)
+    return await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
   }
 
   /**
@@ -221,6 +242,12 @@ class MagentoAdminPage {
 
     await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
     await this.page.waitForURL(`**/${process.env.MAGENTO_ADMIN_SLUG}`);
+
+    if(await this.page.getByRole('heading', {name: UIReference.magentoAdminPage.dashboardHeadingText}).isVisible()) {
+      // already logged in
+      return;
+    }
+
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();

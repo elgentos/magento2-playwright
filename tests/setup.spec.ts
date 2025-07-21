@@ -1,18 +1,27 @@
 // @ts-check
 
-import { test as base } from '@playwright/test';
+import {test, test as base} from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import { inputValues } from '@config';
+import {inputValues, outcomeMarker, slugs, UIReference} from '@config';
 import { requireEnv } from '@utils/env.utils';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
+import ProductPage from "@poms/frontend/product.page";
+import NotificationValidator from "@utils/notification.validator";
 
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
+
 base.describe('Setting up the testing environment', () => {
+
+  base.beforeEach(async ({ page }, testInfo) => {
+    const magentoAdminPage = new MagentoAdminPage(page);
+    await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+  });
+
   /**
    * @feature Magento Admin Configuration (Enable multiple admin logins)
    * @scenario Enable multiple admin logins only in Chromium browser
@@ -33,7 +42,6 @@ base.describe('Setting up the testing environment', () => {
       testInfo.skip(true, `Enabling multiple admin logins through Chromium. This is ${browserEngine}, therefore test is skipped.`);
     } else {
       const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
       await magentoAdminPage.enableMultipleAdminLogins();
     }
   });
@@ -56,7 +64,6 @@ base.describe('Setting up the testing environment', () => {
       testInfo.skip(true, `Disabling login captcha through Chromium. This is ${browserEngine}, therefore test is skipped.`);
     } else {
       const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
       await magentoAdminPage.disableLoginCaptcha();
     }
   });
@@ -72,7 +79,6 @@ base.describe('Setting up the testing environment', () => {
   base('Set_up_coupon_codes', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
     const magentoAdminPage = new MagentoAdminPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
     const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
     await magentoAdminPage.addCartPriceRule(couponCode);
@@ -94,7 +100,10 @@ base.describe('Setting up the testing environment', () => {
     const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     await base.step(`Check if ${accountEmail} is already registered`, async () => {
-      await magentoAdminPage.checkIfCustomerExists(accountEmail);
+      const customerLookUp = await magentoAdminPage.checkIfCustomerExists(accountEmail);
+      if(customerLookUp){
+        testInfo.skip(true, `${accountEmail} was found in user table. E-mail does not have to be created again`);
+      }
     });
 
     await registerPage.createNewAccount(
@@ -105,4 +114,6 @@ base.describe('Setting up the testing environment', () => {
       true
     );
   });
+
+
 });
