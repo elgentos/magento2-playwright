@@ -90,44 +90,11 @@ class MagentoAdminPage {
       await couponSaveButton.click({force:true});
       await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
     }
-
-
-    //
-    // await addCartPriceRuleButton.click();
-    //
-    //
-    //
-    //
-    //
-    // await this.page.getByLabel(UIReference.cartPriceRulesPage.ruleNameFieldLabel).fill(inputValues.coupon.couponCodeRuleName);
-    //
-    // const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
-    // await websiteSelector.evaluate(select => {
-    //   const s = select as HTMLSelectElement;
-    //   for (const option of s.options) {
-    //     option.selected = true;
-    //   }
-    //   select.dispatchEvent(new Event('change'));
-    // });
-    //
-    // const customerGroupsSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
-    // await customerGroupsSelector.evaluate(select => {
-    //   const s = select as HTMLSelectElement;
-    //   for (const option of s.options) {
-    //     option.selected = true;
-    //   }
-    //   select.dispatchEvent(new Event('change'));
-    // });
-    //
-    // await this.page.locator(UIReference.cartPriceRulesPage.couponTypeSelectField).selectOption({ label: inputValues.coupon.couponType });
-    // await this.page.getByLabel(UIReference.cartPriceRulesPage.couponCodeFieldLabel).fill(magentoCouponCode);
-    //
-    // await this.page.getByText(UIReference.cartPriceRulesPage.actionsSubtitleLabel, { exact: true }).click();
-    // await this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel).fill('10');
-    //
-    // await this.page.getByRole('button', { name: 'Save', exact: true }).click();
   }
 
+  async checkIfCustomerExists(email: string){
+
+  }
 
   /**
    * @feature Magento Admin Configuration

@@ -87,17 +87,22 @@ base.describe('Setting up the testing environment', () => {
    * @then a new customer account is successfully created for testing purposes
    */
   base('Create_test_accounts', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
+    const magentoAdminPage = new MagentoAdminPage(page);
     const registerPage = new RegisterPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
     const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+
+    await base.step(`Check if ${accountEmail} is already registered`, async () => {
+      await magentoAdminPage.checkIfCustomerExists(accountEmail);
+    });
 
     await registerPage.createNewAccount(
       inputValues.accountCreation.firstNameValue,
       inputValues.accountCreation.lastNameValue,
       accountEmail,
       accountPassword,
-      false
+      true
     );
   });
 });
