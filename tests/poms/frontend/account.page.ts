@@ -91,16 +91,15 @@ class AccountPage {
   }) {
     let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
+    await expect(this.firstNameField).not.toBeEmpty();
+    await expect(this.lastNameField).not.toBeEmpty();
+
     const phone = values?.phone || faker.phone.number();
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
     const stateName = values?.state || faker.location.state();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
-
-    await expect(this.firstNameField).not.toBeEmpty();
-    await expect(this.lastNameField).not.toBeEmpty();
-
     if (values?.company) {
       await this.companyNameField.fill(values.company);
     }
@@ -109,20 +108,41 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
-    await this.countrySelectorField.selectOption({ label: country });
 
-    if (await this.stateSelectorField.count()) {
-      await this.stateSelectorField.selectOption(stateName);
+    // If default selected country == country we want to use for the test,
+    // don't re-select it.
+    const defaultSelectedCountry = await this.countrySelectorField.evaluate(
+      (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+    );
+
+    if(country !== defaultSelectedCountry) {
+      await this.countrySelectorField.selectOption({label: country});
+    }
+    const regionDropdown = this.page.locator('#region_id');
+    const regionInputField = this.page.getByRole('textbox', {name: 'State/Province'});
+
+    if(country !== 'United States') {
+      await expect(regionDropdown).toBeHidden();
+      await expect(regionInputField).toBeVisible();
+
+      await regionInputField.fill(stateName);
     } else {
-      await this.stateInputField.fill(stateName);
+      // await regionDropdown.selectOption(stateName);
+      await this.stateSelectorField.selectOption(stateName);
+      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
+      // Standard debounce is 250ms.
+      await this.page.waitForTimeout(1000);
     }
 
+    await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
     await expect.soft(this.page.getByText(addressAddedNotification)).toBeVisible();
     await expect(this.page.getByText(streetName).last()).toBeVisible();
   }
+
+
 
   async editExistingAddress(values?: {
     firstName?: string;

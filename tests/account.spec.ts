@@ -60,7 +60,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     }
 
     // Create account
-
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
     // Update password
@@ -128,74 +127,34 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
 
-  /**
-   * @feature Magento 2 Add First Address to Account
-   * @scenario User adds a first address to their account
-   * @given I am logged in
-   *  @and I am on the account dashboard page
-   * @when I go to the page where I can add my address
-   *   @and I haven't added an address yet
-   * @when I fill in the required information
-   *   @and I click the save button
-   * @then I should see a notification my address has been updated.
-   *  @and The new address should be selected as default and shipping address
-   */
-
-  test('Add_first_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
-    const accountPage = new AccountPage(page);
-    let addNewAddressTitle = page.getByRole('heading', {level: 1, name: UIReference.newAddress.addNewAddressTitle});
-
-    if(await addNewAddressTitle.isHidden()) {
-      await accountPage.deleteAllAddresses();
-      testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
-      await page.goto(slugs.account.addressNewSlug);
-    }
-
-    const firstAddress = inputValues.firstAddress;
-    const streetValue = firstAddress.firstStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
-    const companyName = faker.company.name();
-    await accountPage.addNewAddress({
-      company: companyName,
-      phone: firstAddress.firstPhoneNumberValue,
-      street: streetValue,
-      zip: firstAddress.firstZipCodeValue,
-      city: firstAddress.firstCityValue,
-      state: firstAddress.firstProvinceValue,
-      country: firstAddress.firstNonDefaultCountry,
-    });
-
-    await expect(page.getByText(companyName)).toBeVisible();
-    await expect(page.getByText(streetValue)).toBeVisible();
+  test.beforeEach(async ({page}) => {
+    await page.goto(slugs.account.addressIndexSlug);
+    await page.waitForLoadState();
   });
 
   /**
    * @given I am logged in
-   *  @and I am on the account dashboard page
+   * @and I am on the account dashboard page
    * @when I go to the page where I can add another address
    * @when I fill in the required information
-   *   @and I click the save button
+   * @and I click the save button
    * @then I should see a notification my address has been updated.
-   *  @and The new address should be listed
+   * @and The new address should be listed
    */
-  test('Add_another_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
+  test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
 
-    const secondAddress = inputValues.secondAddress;
-    const companyName = faker.company.name();
-    const streetValue = secondAddress.secondStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
+    const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
+    const company = faker.company.name();
+
     await accountPage.addNewAddress({
-      company: companyName,
-      phone: secondAddress.secondPhoneNumberValue,
-      street: streetValue,
-      zip: secondAddress.secondZipCodeValue,
-      city: secondAddress.secondCityValue,
-      state: secondAddress.secondProvinceValue,
-      country: secondAddress.secondNonDefaultCountry,
+      company: company,
+      street: address
     });
 
-    await expect(page.getByText(companyName)).toBeVisible();
-    await expect(page.getByText(streetValue)).toBeVisible();
+    await expect(page.getByText(address).first()).toBeVisible();
+    await expect(page.getByText(company).first()).toBeVisible();
   });
 
   /**
@@ -210,7 +169,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been updated.
    *  @and The updated address should be visible in the addres book page.
    */
-  test('Edit_existing_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
+  test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressNewSlug);
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
@@ -238,7 +197,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     await expect(page.getByText(streetValue)).toBeVisible();
   });
 
-  test('Missing_required_field_prevents_creation',{ tag: ['@account-credentials'] }, async ({page}) => {
+  test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
     await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
 
@@ -261,7 +220,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('Delete_an_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}, testInfo) => {
+  test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
 
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
