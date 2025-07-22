@@ -12,6 +12,14 @@ class CategoryPage {
     this.categoryPageTitle = this.page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText });
   }
 
+  /**
+   * @feature Navigate to Category page
+   * @scenario User navigates to the category page
+   * @given
+   * @when I navigate to the category page
+   * @then I should see the filter options
+   * @and I should see the title of the page
+   */
   async goToCategoryPage(){
     await this.page.goto(slugs.categoryPage.categorySlug);
     // Wait for the first filter option to be visible
@@ -22,40 +30,51 @@ class CategoryPage {
     await expect(this.categoryPageTitle).toBeVisible();
   }
 
-  async filterOnSize(browser:string){
+  /**
+   * @feature Filter category page
+   * @scenario User filters category page on size L
+   * @given I am on the category page
+   * @when I open the Size filter category
+   * @and I click the size L button
+   * @then the URL should reflect this filter
+   * @and I should see fewer products
+   */
+  async filterOnSize() {
     const sizeFilterButton = this.page.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeLButton = this.page.locator(UIReference.categoryPage.sizeLButtonLocator);
+    const sizeLButton = this.page.getByRole('link', {name: UIReference.categoryPage.sizeLLinkLabel});
     const removeActiveFilterLink = this.page.getByRole('link', {name: UIReference.categoryPage.removeActiveFilterButtonLabel}).first();
     const amountOfItemsBeforeFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
-    
-    
-    /**
-     * BROWSER_WORKAROUND
-     * The size filter seems to auto-close in Firefox and Webkit.
-     * Therefore, we open it manually.
-     */
-    if(browser !== 'chromium'){
+
+    await expect(async() => {
       await sizeFilterButton.click();
-    }
+      await expect(sizeLButton).toBeVisible();
+    }).toPass();
 
     await sizeLButton.click();
-
     const sizeFilterRegex = new RegExp(`\\?size=L$`);
     await this.page.waitForURL(sizeFilterRegex);
 
     const amountOfItemsAfterFilter = parseInt(await this.page.locator(UIReference.categoryPage.itemsOnPageAmountLocator).last().innerText());
     await expect(removeActiveFilterLink, 'Trash button to remove filter is visible').toBeVisible();
     expect(amountOfItemsAfterFilter, `Amount of items shown with filter (${amountOfItemsAfterFilter}) is less than without (${amountOfItemsBeforeFilter})`).toBeLessThan(amountOfItemsBeforeFilter);
-
   }
 
+  /**
+   * @feature Sort category page by price
+   * @scenario User sorts category page by price
+   * @given I am on the category page
+   * @when I open the 'Sort' dropdown
+   * @and I click the price button
+   * @then the URL should reflect this filter
+   * @and I should see products sorted by price
+   */
   async sortProducts(attribute:string){
     const sortButton = this.page.getByLabel(UIReference.categoryPage.sortByButtonLabel);
     await sortButton.selectOption(attribute);
     const sortRegex = new RegExp(`\\?product_list_order=${attribute}$`);
     await this.page.waitForURL(sortRegex);
-  
-    const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => sel.value);
+
+    const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => (sel as HTMLSelectElement).value);
 
     // sortButton should now display attribute
     expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
@@ -63,7 +82,14 @@ class CategoryPage {
     expect(this.page.url(), `URL should contain ?product_list_order=${attribute}`).toContain(`product_list_order=${attribute}`);
   }
 
-
+  /**
+   * @feature products per page
+   * @scenario User updates the amount of products shown on the page
+   * @given I am on the category page
+   * @when I change the 'Show' dropdown
+   * @then the URl should reflect this filter
+   * @and the amount of items should be the new amount I've selected
+   */
   async showMoreProducts(){
     const itemsPerPageButton = this.page.getByLabel(UIReference.categoryPage.itemsPerPageButtonLabel);
     const productGrid = this.page.locator(UIReference.categoryPage.productGridLocator);
@@ -78,6 +104,14 @@ class CategoryPage {
     expect(amountOfItems, `Amount of items on the page should be 36`).toBe(36);
   }
 
+  /**
+   * @feature View switcher
+   * @scenario User switches from the grid to the list view
+   * @given I am on the category page
+   * @when I click the grid or list mode button
+   * @then the URl should reflect this updated view
+   * @and the reported selected view should not be the same as it was before I clicked the button
+   */
   async switchView(){
     const viewSwitcher = this.page.getByLabel(UIReference.categoryPage.viewSwitchLabel, {exact: true}).locator(UIReference.categoryPage.activeViewLocator);
     const activeView = await viewSwitcher.getAttribute('title');
