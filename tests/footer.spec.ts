@@ -1,47 +1,50 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import NotificationValidatorUtils from "@utils/notificationValidator.utils";
 import { outcomeMarker } from '@config';
+import NotificationValidatorUtils from "@utils/notificationValidator.utils";
 
 import NewsletterPage from "@poms/frontend/newsletter.page";
 import Footer from '@poms/frontend/footer.page';
 
-test(
-    'Footer_is_available',
-    {tag: ['@footer', '@cold']},
-    async ({page}) => {
-        const footer = new Footer(page);
+test.describe('Footer', () => {
 
-        await page.goto('');
-        await footer.getFooterElement();
-    }
-)
+	test(
+		'Footer_is_available',
+		{tag: ['@footer', '@cold']},
+		async ({page}) => {
+			const footer = new Footer(page);
 
-test(
-    'Switch_to_euro',
-    {tag: ['@footer-currency-switcher', '@cold']},
-    async ({page}) => {
-        const footer = new Footer(page)
+			await page.goto('');
+			await footer.goToFooterElement();
+		}
+	)
 
-        await page.goto('');
-        await footer.switchCurrencySwitcher();
-    }
-)
+	test(
+		'Footer_switch_currency',
+		{tag: ['@footer', '@cold']},
+		async ({page}) => {
+			const footer = new Footer(page);
 
-test(
-    'Newsletter_subscription',
-    {tag: ['@footer-newsletter', '@cold']},
-    async ({page}, testInfo) => {
-        const newsletterPage = new NewsletterPage(page);
+			await page.goto('');
+			await footer.switchCurrency();
+		}
+	)
 
-        await page.goto('');
-        await newsletterPage.footerSubscribeToNewsletter();
+	test(
+		'Footer_newsletter_subscription',
+		{tag: ['@footer', '@cold']},
+		async ({page}, testInfo) => {
+			const newsletterPage = new NewsletterPage(page);
 
-        const subscriptionOutput = outcomeMarker.footerPage.newsletterSubscription;
-        const notificationType = 'Newsletter subscription notification';
+			await page.goto('');
+			await newsletterPage.footerSubscribeToNewsletter();
 
-        const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-        await notificationValidator.validate(notificationType, subscriptionOutput);
-    }
-)
+			const subscriptionOutput = outcomeMarker.footerPage.newsletterSubscription;
+			const notificationType = 'Newsletter subscription notification';
+
+			const notificationValidator = new NotificationValidatorUtils(page, testInfo);
+			await notificationValidator.validate(notificationType, subscriptionOutput);
+		}
+	)
+})
