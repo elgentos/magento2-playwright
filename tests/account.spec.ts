@@ -24,8 +24,8 @@ test.beforeEach(async ({ page, browserName }) => {
 test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
 
   test.beforeEach(async ({page}) => {
-    await page.goto(slugs.account.accountOverviewSlug);
-    await page.waitForLoadState();
+    const accountPage = new AccountPage(page);
+    await accountPage.openAccountOverview();
   });
 
   /**
@@ -64,8 +64,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
     // Update password
-    await page.goto(slugs.account.changePasswordSlug);
-    await page.waitForLoadState();
+    await accountPage.openChangePassword();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
     // If login with changePasswordValue is possible, then password change was succesful.
@@ -110,8 +109,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
 
-    await page.goto(slugs.account.accountEditSlug);
-    await page.waitForLoadState();
+    await accountPage.openAccountEdit();
     await accountPage.updateEmail(passwordInputValue, updatedEmail);
 
     await mainMenu.logout();
@@ -148,7 +146,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     if(await addNewAddressTitle.isHidden()) {
       await accountPage.deleteAllAddresses();
       testInfo.annotations.push({ type: 'Notification: deleted addresses', description: `All addresses are deleted to recreate the first address flow.` });
-      await page.goto(slugs.account.addressNewSlug);
+      await accountPage.openAddressNew();
     }
 
     const firstAddress = inputValues.firstAddress;
@@ -178,8 +176,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    *  @and The new address should be listed
    */
   test('Add_another_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
-    await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
+    await accountPage.openAddressNew();
 
     const secondAddress = inputValues.secondAddress;
     const companyName = faker.company.name();
@@ -212,7 +210,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    */
   test('Edit_existing_address',{ tag: ['@account-credentials', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    await page.goto(slugs.account.addressNewSlug);
+    await accountPage.openAddressNew();
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
 
     if(await editAddressButton.isHidden()){
@@ -220,7 +218,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
       await accountPage.addNewAddress();
     }
 
-    await page.goto(slugs.account.addressBookSlug);
+    await accountPage.openAddressBook();
     const editAddress = inputValues.editedAddress;
     const companyName = faker.company.name();
     const streetValue = editAddress.editStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
@@ -239,8 +237,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   });
 
   test('Missing_required_field_prevents_creation',{ tag: ['@account-credentials'] }, async ({page}) => {
-    await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
+    await accountPage.openAddressNew();
 
     await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
     await accountPage.saveAddressButton.click();
@@ -267,7 +265,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
 
     if(await deleteAddressButton.isHidden()) {
-      await page.goto(slugs.account.addressNewSlug);
+      await accountPage.openAddressNew();
       await accountPage.addNewAddress();
     }
     await accountPage.deleteFirstAddressFromAddressBook();
