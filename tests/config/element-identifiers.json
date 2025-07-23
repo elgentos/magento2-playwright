@@ -16,15 +16,16 @@
   },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
-    "companyNameLabel": "Company",
-    "phoneNumberLabel": "Phone Number",
-    "streetAddressLabel": "Street Address",
-    "zipCodeLabel": "Zip/Postal Code",
     "cityNameLabel": "City",
+    "companyNameLabel": "Company",
     "countryLabel": "Country",
+    "phoneNumberLabel": "Phone Number",
     "provinceSelectLabel": "State/Province",
     "provinceSelectFilterLabel": "Please select a region, state or province.",
-    "saveAdressButton": "Save Address"
+    "regionDropdownLocator": "#region_id",
+    "streetAddressLabel": "Street Address",
+    "saveAdressButton": "Save Address",
+    "zipCodeLabel": "Zip/Postal Code"
   },
   "newsletterSubscriptions": {
     "generalSubscriptionCheckLabel": "General Subscription",

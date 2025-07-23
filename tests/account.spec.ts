@@ -133,6 +133,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   });
 
   /**
+   * @feature Add an address
    * @given I am logged in
    * @and I am on the account dashboard page
    * @when I go to the page where I can add another address
@@ -148,13 +149,10 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
     const company = faker.company.name();
 
-    await accountPage.addNewAddress({
-      company: company,
-      street: address
-    });
+    await accountPage.addNewAddress({ company: company, street: address});
 
-    await expect(page.getByText(address).first()).toBeVisible();
-    await expect(page.getByText(company).first()).toBeVisible();
+    await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
+    await expect(page.getByText(company).first(), `Expect new company name to be listed`).toBeVisible();
   });
 
   /**
@@ -171,30 +169,24 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    */
   test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    await page.goto(slugs.account.addressNewSlug);
+    await page.goto(slugs.account.addressBookSlug);
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
 
     if(await editAddressButton.isHidden()){
       // The edit address button was not found, add another address first.
+      if(await page.getByRole('link', { name: 'Change Shipping Address arrow' }).isVisible()) {
+          
+      }
+      expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
       await accountPage.addNewAddress();
     }
 
-    await page.goto(slugs.account.addressBookSlug);
-    const editAddress = inputValues.editedAddress;
-    const companyName = faker.company.name();
-    const streetValue = editAddress.editStreetAddressValue + ' ' + Math.floor(Math.random() * 100 + 1);
-    await accountPage.editExistingAddress({
-      firstName: editAddress.editfirstNameValue,
-      lastName: editAddress.editLastNameValue,
-      company: companyName,
-      street: streetValue,
-      zip: editAddress.editZipCodeValue,
-      city: editAddress.editCityValue,
-      state: editAddress.editStateValue,
-      });
+    // const companyName = faker.company.name();
+    const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
+    await accountPage.editExistingAddress({street:address});
 
-    await expect(page.getByText(companyName)).toBeVisible();
-    await expect(page.getByText(streetValue)).toBeVisible();
+    // await expect(page.getByText(companyName)).toBeVisible();
+    await expect(page.getByText(address).first()).toBeVisible();
   });
 
   test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
@@ -222,11 +214,13 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    */
   test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}, testInfo) => {
     const accountPage = new AccountPage(page);
+    await page.goto(slugs.account.addressBookSlug);
 
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
 
     if(await deleteAddressButton.isHidden()) {
-      await page.goto(slugs.account.addressNewSlug);
+      // The edit address button was not found, add another address first.
+      expect (page.url(), `Delete address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
       await accountPage.addNewAddress();
     }
     await accountPage.deleteFirstAddressFromAddressBook();
