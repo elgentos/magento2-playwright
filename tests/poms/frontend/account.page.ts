@@ -157,7 +157,7 @@ class AccountPage {
     city?: string;
     state?: string;
     country?: string;
-  }) {
+  }, defaultAddress: boolean = false) {
     let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
     const firstName = values?.firstName || faker.person.firstName();
@@ -170,8 +170,8 @@ class AccountPage {
     const stateName = values?.state || faker.location.state();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
-    // Click first 'edit address' button
-    await this.editAddressButton.click();
+    // click the correct button based on if there's more than one address (defaultAddress boolean)
+    defaultAddress ? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click() : await this.editAddressButton.click();
 
     let oldAddress = await this.streetAddressField.inputValue();
 
@@ -183,8 +183,7 @@ class AccountPage {
     await this.lastNameField.fill(lastName);
     await this.companyNameField.fill(companyName);
     await this.phoneNumberField.fill(phone);
-
-
+    
     // Address information section
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);

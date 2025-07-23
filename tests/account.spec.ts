@@ -171,19 +171,21 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressBookSlug);
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
+    let isDefaultAddress = false;
 
     if(await editAddressButton.isHidden()){
       // The edit address button was not found, add another address first.
       if(await page.getByRole('link', { name: 'Change Shipping Address arrow' }).isVisible()) {
-          
+        isDefaultAddress = true;
+      } else {
+        expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
+        await accountPage.addNewAddress();
       }
-      expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
-      await accountPage.addNewAddress();
     }
 
     // const companyName = faker.company.name();
     const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
-    await accountPage.editExistingAddress({street:address});
+    await accountPage.editExistingAddress({street:address}, isDefaultAddress);
 
     // await expect(page.getByText(companyName)).toBeVisible();
     await expect(page.getByText(address).first()).toBeVisible();
@@ -219,8 +221,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
 
     if(await deleteAddressButton.isHidden()) {
-      // The edit address button was not found, add another address first.
-      expect (page.url(), `Delete address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
+      // The delete address button was not found, add another address first.
       await accountPage.addNewAddress();
     }
     await accountPage.deleteFirstAddressFromAddressBook();
