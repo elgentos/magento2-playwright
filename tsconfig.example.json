@@ -8,10 +8,7 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@config": [
-        "base-tests/config",
-        "tests/config"
-      ],
+      "@config": ["base-tests/config"],
       "@utils/*": [
         "base-tests/utils/*",
         "tests/utils/*"
