@@ -47,12 +47,14 @@ class MiniCartPage {
     await this.editProductButton.click();
     await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartProductChangeSlug}.*`));
 
+    await this.productQuantityField.click();
     await this.productQuantityField.fill(amount);
+
     await this.updateItemButton.click();
     await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
-    let productQuantityInCart = await this.page.getByLabel(UIReference.cart.cartQuantityLabel).first().inputValue();
-    expect(productQuantityInCart).toBe(amount);
+      let productQuantityInCart = await this.page.getByLabel(UIReference.cart.cartQuantityLabel).first().inputValue();
+      expect(productQuantityInCart).toBe(amount);
   }
 
   async checkPriceWithProductPage() {
