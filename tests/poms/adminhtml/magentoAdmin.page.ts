@@ -168,8 +168,12 @@ class MagentoAdminPage {
     const mainMenuStoresButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel});
     // selecting first specifically because plugins can place another 'configuration' link in this menu.
     const storeSettingsConfigurationLink = this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).first();
-    await mainMenuStoresButton.click();
-    await storeSettingsConfigurationLink.waitFor();
+
+    await expect(async () => {
+      await mainMenuStoresButton.click();
+      await expect(storeSettingsConfigurationLink).toBeVisible();
+    }).toPass();
+
     await storeSettingsConfigurationLink.click();
 
     const customersTab = this.page.getByRole('tab', { name: UIReference.configurationPage.customersTabLabel });
@@ -221,8 +225,12 @@ class MagentoAdminPage {
     const mainMenuStoresButton = this.page.getByRole('link', { name: UIReference.magentoAdminPage.navigation.storesButtonLabel});
     // selecting first specifically because plugins can place another 'configuration' link in this menu.
     const storeSettingsConfigurationLink = this.page.getByRole('link', { name: UIReference.magentoAdminPage.subNavigation.configurationButtonLabel }).first();
-    await mainMenuStoresButton.click();
-    await storeSettingsConfigurationLink.waitFor();
+
+    await expect(async () => {
+      await mainMenuStoresButton.click();
+      await expect(storeSettingsConfigurationLink).toBeVisible();
+    }).toPass();
+
     await storeSettingsConfigurationLink.click();
 
     const advancedConfigurationTab = this.page.getByRole('tab', { name: UIReference.configurationPage.advancedTabLabel });
