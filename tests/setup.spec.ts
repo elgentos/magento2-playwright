@@ -1,19 +1,14 @@
 // @ts-check
 
-import {test, test as base} from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
-import {inputValues, outcomeMarker, slugs, UIReference} from '@config';
+import { test as base } from '@playwright/test';
+import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
-import ProductPage from "@poms/frontend/product.page";
-import NotificationValidator from "@utils/notification.validator";
 
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
-
 
 base.describe('Setting up the testing environment', () => {
 
@@ -115,6 +110,4 @@ base.describe('Setting up the testing environment', () => {
       true
     );
   });
-
-
 });
