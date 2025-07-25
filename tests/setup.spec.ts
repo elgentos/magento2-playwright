@@ -10,13 +10,12 @@ import RegisterPage from '@poms/frontend/register.page';
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
+base.beforeEach(async ({ page }, testInfo) => {
+  const magentoAdminPage = new MagentoAdminPage(page);
+  await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+});
+
 base.describe('Setting up the testing environment', () => {
-
-  base.beforeEach(async ({ page }, testInfo) => {
-    const magentoAdminPage = new MagentoAdminPage(page);
-    await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
-  });
-
   /**
    * @feature Magento Admin Configuration (Enable multiple admin logins)
    * @scenario Enable multiple admin logins only in Chromium browser

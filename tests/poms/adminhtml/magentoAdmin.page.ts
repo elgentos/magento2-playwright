@@ -299,8 +299,12 @@ class MagentoAdminPage {
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
 
+    const dashboardLabel = this.page.getByRole('heading',{level:1, name: UIReference.magentoAdminPage.dashboardHeadingText});
+
     // expect the H1 'Dashboard' to be visible
-    await expect(this.page.getByRole('heading',{level:1, name: UIReference.magentoAdminPage.dashboardHeadingText})).toBeVisible();
+    await expect(async () => {
+      await expect(dashboardLabel).toBeVisible();
+    }).toPass();
   }
 }
 
