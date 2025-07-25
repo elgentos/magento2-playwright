@@ -40,8 +40,12 @@ class MagentoAdminPage {
     const mainMenuMarketingButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel});
     const cartPriceRulesLink = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel});
     await expect(mainMenuMarketingButton).toBeVisible();
-    await mainMenuMarketingButton.click();
-    await expect(cartPriceRulesLink).toBeVisible();
+
+    await expect(async () => {
+      await mainMenuMarketingButton.click();
+      await expect(cartPriceRulesLink).toBeVisible();
+    }).toPass();
+
     await cartPriceRulesLink.click();
 
     const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
