@@ -76,8 +76,11 @@
   },
   "cartPriceRulesPage": {
     "actionsSubtitleLabel": "Actions",
+    "activeStatusLabelLocator": ".admin__actions-switch-text",
+    "activeStatusSwitcherLocator": ".admin__actions-switch-label",
     "addCartPriceRuleButtonLabel": "Add New Rule",
     "couponCodeFieldLabel": "Coupon Code",
+    "couponCodeActiveStatusText": "Active",
     "couponTypeSelectField": "select[name='coupon_type']",
     "customerGroupsSelectLabel": "Customer Groups",
     "discountAmountFieldLabel": "Discount Amount",
@@ -141,6 +144,9 @@
     "passwordConfirmFieldLabel": "Confirm Password",
     "passwordFieldLabel": "Password"
   },
+  "customerOverviewPage": {
+    "tableSearchFieldLabel": "Search by keyword"
+  },
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
@@ -150,21 +156,26 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "div.message",
     "removeLabel": "Remove",
+    "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Themes"
   },
   "magentoAdminPage": {
+    "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",
     "navigation": {
+      "customersButtonLabel": "Customers",
       "marketingButtonLabel": "Marketing",
       "storesButtonLabel": "Stores"
     },
     "passwordFieldLabel": "Password",
     "subNavigation": {
+      "allCustomersButtonLabel": "All Customers",
       "cartPriceRulesButtonLabel": "Cart Price Rules",
       "configurationButtonLabel": "Configuration"
     },
