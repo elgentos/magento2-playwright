@@ -3,9 +3,12 @@
 import { test as base } from '@playwright/test';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
+import { createLogger } from '@utils/logger';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
+
+const logger = createLogger('Setup');
 
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
