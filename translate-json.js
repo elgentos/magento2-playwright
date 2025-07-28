@@ -42,7 +42,8 @@ function parseCsvFile(filePath) {
   });
 
   const translations = {};
-  for (const [key, value] of records) {
+  for (const [index, record] of records.entries()) {
+    const [key, value] = record;
     translations[key] = value;
   }
 
@@ -94,8 +95,13 @@ try {
 
   // Parse vendor translations
   for (const file of vendorCsvFiles) {
-    const translations = parseCsvFile(file);
-    vendorTranslations = { ...vendorTranslations, ...translations };
+    try {
+      const translations = parseCsvFile(file);
+      vendorTranslations = { ...vendorTranslations, ...translations };
+    } catch (error) {
+      console.error(`Error processing vendor file ${file}:`, error.message);
+      continue;
+    }
   }
 
   // Merge translations with app taking precedence
