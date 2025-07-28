@@ -31,8 +31,10 @@ function findCsvFiles(dir, locale) {
   return results;
 }
 
-// Function to parse CSV file
 function parseCsvFile(filePath) {
+  const relativeFilePath = filePath.replace('../../../../../../../', '');
+  console.log("Translating file: ", relativeFilePath);
+
   const content = fs.readFileSync(filePath, 'utf-8');
   const records = csv.parse(content, {
     skip_empty_lines: true,
@@ -43,6 +45,8 @@ function parseCsvFile(filePath) {
   for (const [key, value] of records) {
     translations[key] = value;
   }
+
+  console.log("Done...");
 
   return translations;
 }
