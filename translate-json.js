@@ -52,30 +52,46 @@ function parseCsvFile(filePath) {
   return translations;
 }
 
-// Function to merge translations with precedence
-function mergeTranslations(appTranslations, vendorTranslations) {
-  return { ...vendorTranslations, ...appTranslations };
+// Function to deeply merge translations with specified precedence
+function mergeTranslations(primaryTranslations, secondaryTranslations) {
+  const result = { ...secondaryTranslations };
+
+  for (const [key, value] of Object.entries(primaryTranslations)) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      result[key] = mergeTranslations(value, result[key] || {});
+    } else {
+      if (!result.hasOwnProperty(key)) {
+        result[key] = value;
+      }
+    }
+  }
+
+  return result;
 }
 
 // Function to translate values in an object recursively
 function translateObject(obj, translations) {
   if (typeof obj === 'string') {
-    return translations[obj] || obj;
+    const translatedValue = translations[obj];
+    return translatedValue !== undefined ? translatedValue : null;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => translateObject(item, translations));
+    return obj.map(item => translateObject(item, translations)).filter(item => item !== null);
   }
 
   if (typeof obj === 'object' && obj !== null) {
     const result = {};
     for (const [key, value] of Object.entries(obj)) {
-      result[key] = translateObject(value, translations);
+      const translatedValue = translateObject(value, translations);
+      if (translatedValue !== null) {
+        result[key] = translatedValue;
+      }
     }
     return result;
   }
 
-  return obj;
+  return null;
 }
 
 // Main execution
@@ -118,7 +134,15 @@ try {
     const destPath = path.resolve('tests/config', fileName);
 
     const content = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
-    const translatedContent = translateObject(content, translations);
+    let translatedContent = translateObject(content, translations);
+
+    // Read existing translations if the file exists
+    if (fs.existsSync(destPath)) {
+      const existingContent = JSON.parse(fs.readFileSync(destPath, 'utf-8'));
+
+      // Combine existing and new translations, preserving existing ones
+      translatedContent = mergeTranslations(translatedContent, existingContent);
+    }
 
     // Ensure target directory exists
     fs.mkdirSync(path.dirname(destPath), { recursive: true });
