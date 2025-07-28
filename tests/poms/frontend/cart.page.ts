@@ -19,24 +19,20 @@ class CartPage {
     let currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
 
     if(currentQuantity == amount){
-      // quantity is the same as amount, therefore we change amount to ensure test can continue.
       amount = '3';
     }
 
-    await productRow.getByLabel(UIReference.cart.cartQuantityLabel).fill(amount);
     let subTotalBeforeUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
-
+    await productRow.getByLabel(UIReference.cart.cartQuantityLabel).fill(amount);
     await this.page.getByRole('button', { name: UIReference.cart.updateShoppingCartButtonLabel }).click();
-    await this.page.reload();
 
-    currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    await expect(async () => {
+      let subTotalAfterUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
+      await expect(subTotalBeforeUpdate, `Subtotal should change`).not.toEqual(subTotalAfterUpdate);
+    }).toPass();
 
-    // Last $ to get the Subtotal
-    let subTotalAfterUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
-
-    // Assertions: subtotals are different, and quantity field is still the new amount.
-    expect(subTotalAfterUpdate, `Subtotals should not be the same`).not.toEqual(subTotalBeforeUpdate);
-    expect(currentQuantity, `quantity should be the new value`).toEqual(amount);
+    let updatedQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    expect(updatedQuantity, `updated quantity (${updatedQuantity}) should equal amount we've requested (${amount})`).toEqual(amount);
   }
 
   // ==============================================

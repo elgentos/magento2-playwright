@@ -24,8 +24,8 @@ test('User_registers_an_account', { tag: ['@account-creation', '@hot'] }, async 
 
   // Retrieve desired password from .env file
   const existingAccountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-  var firstName = faker.person.firstName();
-  var lastName = faker.person.lastName();
+  let firstName = faker.person.firstName();
+  let lastName = faker.person.lastName();
 
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
   let randomNumber = Math.floor(Math.random() * 100);

@@ -36,6 +36,9 @@
   "contactPage": {
     "messageSentConfirmationText": "Thanks for contacting us with"
   },
+  "customerOverviewPage": {
+    "searchResultsFoundText": "records found"
+  },
   "homePage": {
     "firstProductName": "Aim Analog Watch"
   },

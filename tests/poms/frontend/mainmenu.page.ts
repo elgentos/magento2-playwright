@@ -5,6 +5,7 @@ import { UIReference, outcomeMarker, slugs } from '@config';
 
 class MainMenuPage {
   readonly page: Page;
+  readonly mainMenuElement: Locator;
   readonly mainMenuAccountButton: Locator;
   readonly mainMenuMiniCartButton: Locator;
   readonly mainMenuMyAccountItem: Locator;
@@ -12,10 +13,11 @@ class MainMenuPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.mainMenuAccountButton = page.getByLabel(UIReference.mainMenu.myAccountButtonLabel);
-    this.mainMenuMiniCartButton = page.getByLabel(UIReference.mainMenu.miniCartLabel);
-    this.mainMenuLogoutItem = page.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
-    this.mainMenuMyAccountItem = page.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
+    this.mainMenuElement = page.locator('header');
+    this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
+    this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
+    this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
   }
 
   async gotoMyAccount(){

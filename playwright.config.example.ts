@@ -8,15 +8,21 @@ import fs from "node:fs";
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 function getTestFiles(baseDir: string, customDir?: string): string[] {
-  const baseFiles = new Set(fs.readdirSync(baseDir).filter(file => file.endsWith('.spec.ts')));
+  const baseFiles = new Set(
+      fs.readdirSync(baseDir)
+          .filter(file => file.endsWith('.spec.ts'))
+          .map(file => path.join(baseDir, file))
+  );
 
   if (!customDir || !fs.existsSync(customDir)) {
     return Array.from(baseFiles);
   }
 
-  const customFiles = fs.readdirSync(customDir).filter(file => file.endsWith('.spec.ts'));
+  const customFiles = fs.readdirSync(customDir)
+      .filter(file => file.endsWith('.spec.ts'))
+      .map(file => path.join(customDir, file));
 
-  if(customFiles.length === 0) {
+  if (customFiles.length === 0) {
     return Array.from(baseFiles);
   }
 
@@ -24,16 +30,16 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
 
   // Get base files that have an override in custom
   for (const file of baseFiles) {
-    const baseFilePath = path.join(baseDir, file);
-    const customFilePath = path.join(customDir, file);
+    const baseFilePath = path.join(baseDir, path.basename(file));
+    const customFilePath = path.join(customDir, path.basename(file));
 
     testFiles.add(fs.existsSync(customFilePath) ? customFilePath : baseFilePath);
   }
 
   // Add custom tests that aren't in base
   for (const file of customFiles) {
-    if (!baseFiles.has(file)) {
-      testFiles.add(path.join(customDir, file));
+    if (!baseFiles.has(path.basename(file))) {
+      testFiles.add(file);
     }
   }
 
@@ -49,6 +55,7 @@ const testFiles = getTestFiles(
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  testDir: '.',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

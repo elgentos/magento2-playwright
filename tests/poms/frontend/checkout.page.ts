@@ -3,12 +3,12 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
-
 import MagewireUtils from '@utils/magewire.utils';
 
 class CheckoutPage extends MagewireUtils {
 
   readonly shippingMethodOptionFixed: Locator;
+  readonly shippingMethodTableRateFixed: Locator;
   readonly paymentMethodOptionCheck: Locator;
   readonly showDiscountFormButton: Locator;
   readonly placeOrderButton: Locator;
@@ -24,9 +24,12 @@ class CheckoutPage extends MagewireUtils {
   readonly creditCardCVVField: Locator;
   readonly creditCardNameField: Locator;
 
-  constructor(page: Page){
+  constructor(
+      page: Page
+  ){
     super(page);
     this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
+    this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.checkout.shippingMethodTableRateLabel);
     this.paymentMethodOptionCheck = this.page.getByLabel(UIReference.checkout.paymentOptionCheckLabel);
     this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
     this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
@@ -180,6 +183,19 @@ class CheckoutPage extends MagewireUtils {
         break;
       case 'paypal':
         await this.paymentMethodOptionPaypal.check();
+        break;
+    }
+
+    await this.waitForMagewireRequests();
+  }
+
+  async selectShippingMethod(method: 'fixed' | 'table rate'): Promise<void> {
+    switch(method) {
+      case 'fixed':
+        await this.shippingMethodOptionFixed.check();
+        break;
+      case 'table rate':
+        await this.shippingMethodTableRateFixed.check();
         break;
     }
 
