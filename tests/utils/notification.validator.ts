@@ -25,7 +25,7 @@ class NotificationValidator {
         if(
           notificationText !== null
         ) {
-          message = { success: true, message: notificationText};
+          message = { success: true, message: notificationText.trim()};
         }
 
         if (
@@ -34,7 +34,7 @@ class NotificationValidator {
             message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
         }
 
-        this.testInfo.annotations.push({ type: 'Notification message on page:', description: message.message });
+        this.testInfo.annotations.push({ type: 'Notification message on page', description: message.message });
     }
 }
 
