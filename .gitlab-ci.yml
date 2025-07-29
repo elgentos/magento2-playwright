@@ -39,7 +39,8 @@ mirror_to_github:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch origin main
     - git checkout main
-    - git push --force github main:gitlab-main
+    - git rebase --dry-run github/main
+    - git push github main:gitlab-main
 
 test_mirror_pipeline:
   stage: mirror
@@ -57,7 +58,7 @@ test_mirror_pipeline:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch github
     - git checkout main
-    - git rebase github/main
+    - git rebase --dry-run github/main
 
 create_testing_suite:
     stage: testing_suite
