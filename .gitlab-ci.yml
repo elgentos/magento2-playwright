@@ -30,27 +30,27 @@ mirror_to_github:
   stage: mirror
   only:
     - main
-  script:
+  before_script:
     - mkdir -p ~/.ssh
-    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
+    - printf "%s\n"  "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
-    - git config --global user.name "developer-elgentos"
-    - git config --global user.email "developer@elgentos.nl"
-    - git remote remove github || true
+  script:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
+    - git fetch origin main
     - git checkout main
-    - git push github main:gitlab-main
+    - git push --force github main:gitlab-main
 
 test_mirror_pipeline:
   stage: mirror
   rules:
     - if: '$CI_COMMIT_BRANCH != "main"'
-  script:
+  before_script:
     - mkdir -p ~/.ssh
-    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-    - chmod 600 ~/.ssh/id_ed25519
+    - printf "%s\n"  "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
+  script:
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.nl"
     - git remote remove github || true
