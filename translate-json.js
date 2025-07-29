@@ -15,11 +15,16 @@ class TranslateJson {
   pathToBaseDir = '../../../../../../../'; // default: when installed via npm (magento2 root folder)
   locale = 'en_US';
 
+  baseSourcePath = 'base-tests/config';
+  baseDestinationPath = 'tests/config';
+
   constructor() {
     const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
 
     if (isLocalDev) {
-      this.pathToBaseDir = './'; // we're in the root of the dev repo
+      this.pathToBaseDir = './i18n/'; // we're in the root of the dev repo
+      this.baseSourcePath = 'tests/config';
+      this.baseDestinationPath = 'base-tests/config';
     }
 
     this.locale = process.argv[2];
@@ -62,8 +67,8 @@ class TranslateJson {
       ];
 
       for (const fileName of jsonFiles) {
-        const sourcePath = path.resolve('base-tests/config', fileName);
-        const destPath = path.resolve('tests/config', fileName);
+        const sourcePath = path.resolve(this.baseSourcePath, fileName);
+        const destPath = path.resolve(this.baseDestinationPath, fileName);
 
         const content = JSON.parse(fs.readFileSync(sourcePath, 'utf-8'));
         let translatedContent = this.translateObject(content, translations);
@@ -155,13 +160,13 @@ class TranslateJson {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => translateObject(item, translations)).filter(item => item !== null);
+      return obj.map(item => this.translateObject(item, translations)).filter(item => item !== null);
     }
 
     if (typeof obj === 'object' && obj !== null) {
       const result = {};
       for (const [key, value] of Object.entries(obj)) {
-        const translatedValue = translateObject(value, translations);
+        const translatedValue = this.translateObject(value, translations);
         if (translatedValue !== null) {
           result[key] = translatedValue;
         }

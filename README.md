@@ -94,7 +94,14 @@ The Magento 2 Playwright Testing Suite supports translations, allowing you to ru
 
 1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/Vendor/theme/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
 
-2. **Generate translation files**: run following command: `node translate-json.js nl_NL`. `nl_NL` is the language you want to translate to. For example; it will look for nl_NL.csv
+
+2. **(Optional) Create Test Files**: Go to step 3 when this is the NPM installed package. Set up the following directories and file:
+   - `i18n/app/nl_NL.csv`
+   - `i18n/vendor/`
+
+   After creating these, populate `nl_NL.csv` with entries that match texts from `./config/element-identifiers.json`. For instance, you might add `"Password", "Wachtwoord"`. Alternatively, you can copy a translation file from Magento into the `i18n/app` directory. 
+
+3. **Generate translation files**: run following command: `node translate-json.js nl_NL`. `nl_NL` is the language you want to translate to. For example; it will look for nl_NL.csv
 
 3. **Configuration**: Add the necessary configuration to your `.env` file to specify which translations to use during testing.
 
