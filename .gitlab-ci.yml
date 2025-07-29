@@ -1,8 +1,8 @@
 image: node:18-bullseye
 
 stages:
-#  - testing_suite
   - mirror
+  - testing_suite
 
 variables:
   PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
