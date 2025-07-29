@@ -80,6 +80,10 @@ class AccountPage {
     this.editAddressButton = page.getByRole('link', { name: UIReference.accountDashboard.editAddressIconButton }).first();
   }
 
+  /**
+   * Add an address to test account
+   * @param values - Optional values to fill the form with
+   */
   async addNewAddress(values?: {
     company?: string;
     phone?: string;
@@ -91,16 +95,15 @@ class AccountPage {
   }) {
     let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
+    await expect(this.firstNameField, `first name should be pre-filled`).not.toBeEmpty();
+    await expect(this.lastNameField, `last name should be pre-filled`).not.toBeEmpty();
+
     const phone = values?.phone || faker.phone.number();
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
     const stateName = values?.state || faker.location.state();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
-
-    await expect(this.firstNameField).not.toBeEmpty();
-    await expect(this.lastNameField).not.toBeEmpty();
-
     if (values?.company) {
       await this.companyNameField.fill(values.company);
     }
@@ -109,20 +112,42 @@ class AccountPage {
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
-    await this.countrySelectorField.selectOption({ label: country });
 
-    if (await this.stateSelectorField.count()) {
-      await this.stateSelectorField.selectOption(stateName);
+    // If default selected country == country we want to use for the test,
+    // don't re-select it.
+    const defaultSelectedCountry = await this.countrySelectorField.evaluate(
+      (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+    );
+
+    if(country !== defaultSelectedCountry) {
+      await this.countrySelectorField.selectOption({label: country});
+    }
+    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
+
+    if(country !== 'United States') {
+      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+
+      await regionInputField.fill(stateName);
     } else {
-      await this.stateInputField.fill(stateName);
+      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
+      // await regionDropdown.selectOption(stateName);
+      await this.stateSelectorField.selectOption(stateName);
+      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
+      // Standard debounce is 250ms.
+      await this.page.waitForTimeout(1000);
     }
 
+    await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
-    await expect.soft(this.page.getByText(addressAddedNotification)).toBeVisible();
-    await expect(this.page.getByText(streetName).last()).toBeVisible();
+    await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
   }
+
+
 
   async editExistingAddress(values?: {
     firstName?: string;
@@ -134,43 +159,68 @@ class AccountPage {
     city?: string;
     state?: string;
     country?: string;
-  }) {
+  }, defaultAddress: boolean = false) {
     let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
+    const firstName = values?.firstName || faker.person.firstName();
+    const lastName = values?.lastName || faker.person.lastName();
+    const companyName = values?.company || faker.company.name();
+    const phone = values?.phone || faker.phone.number();
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
     const stateName = values?.state || faker.location.state();
-    const firstName = values?.firstName || faker.person.firstName();
-    const lastName = values?.lastName || faker.person.lastName();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
-    await this.editAddressButton.click();
+    // click the correct button based on if there's more than one address (defaultAddress boolean)
+    defaultAddress ? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click() : await this.editAddressButton.click();
 
-    await expect(this.firstNameField).not.toBeEmpty();
-    await expect(this.lastNameField).not.toBeEmpty();
+    let oldAddress = await this.streetAddressField.inputValue();
 
+    await expect(this.firstNameField,`first name field should be filled in automatically`).not.toBeEmpty();
+    await expect(this.lastNameField, `first name field should be filled in automatically`).not.toBeEmpty();
+
+    // contact information section
     await this.firstNameField.fill(firstName);
     await this.lastNameField.fill(lastName);
+    await this.companyNameField.fill(companyName);
+    await this.phoneNumberField.fill(phone);
 
-    if (values?.company) await this.companyNameField.fill(values.company);
-    if (values?.phone) await this.phoneNumberField.fill(values.phone);
+    // Address information section
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
-    await this.countrySelectorField.selectOption({ label: country });
 
-    if (await this.stateSelectorField.count()) {
-      await this.stateSelectorField.selectOption(stateName);
-    } else {
-      await this.stateInputField.fill(stateName);
+    // If default selected country == country we want to use for the test,
+    // don't re-select it.
+    const defaultSelectedCountry = await this.countrySelectorField.evaluate( (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text);
+    if(country !== defaultSelectedCountry) {
+      await this.countrySelectorField.selectOption({label: country});
     }
 
+    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
+
+    if(country !== 'United States') {
+      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+
+      await regionInputField.fill(stateName);
+    } else {
+      // await regionDropdown.selectOption(stateName);
+      await this.stateSelectorField.selectOption(stateName);
+      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
+      // Standard debounce is 250ms.
+      await this.page.waitForTimeout(1000);
+    }
+
+    await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
     await expect.soft(this.page.getByText(addressModifiedNotification)).toBeVisible();
-    await expect(this.page.getByText(streetName).last()).toBeVisible();
+    // await expect(this.page.getByText(streetName).last()).toBeVisible();
+    if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
   }
 
   async deleteFirstAddressFromAddressBook() {

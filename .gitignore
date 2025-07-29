@@ -5,6 +5,7 @@ node_modules/
 /test-results/
 /auth-storage/
 /playwright-report/
+/base-tests/
 
 #files
 /*.config.ts

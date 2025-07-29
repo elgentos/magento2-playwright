@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
+import MainmenuPage from '@poms/frontend/mainmenu.page';
 
 class LoginPage {
   readonly page: Page;
@@ -22,6 +23,11 @@ class LoginPage {
     await this.loginPasswordField.fill(password);
     // usage of .press("Enter") to prevent webkit issues with button.click();
     await this.loginButton.press("Enter");
+
+    // Open the menu, then check the 'Sign Out' button is visible
+    const mainmenu = new MainmenuPage(this.page);
+    await mainmenu.mainMenuAccountButton.click();
+    await expect(mainmenu.mainMenuLogoutItem, 'Sign Out button is visible, user is logged in').toBeVisible();
   }
 
   async loginExpectError(email: string, password: string, errorMessage: string) {

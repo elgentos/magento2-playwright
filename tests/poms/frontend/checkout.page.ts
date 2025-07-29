@@ -3,12 +3,12 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
-
 import MagewireUtils from '@utils/magewire.utils';
 
 class CheckoutPage extends MagewireUtils {
 
   readonly shippingMethodOptionFixed: Locator;
+  readonly shippingMethodTableRateFixed: Locator;
   readonly paymentMethodOptionCheck: Locator;
   readonly showDiscountFormButton: Locator;
   readonly placeOrderButton: Locator;
@@ -24,9 +24,12 @@ class CheckoutPage extends MagewireUtils {
   readonly creditCardCVVField: Locator;
   readonly creditCardNameField: Locator;
 
-  constructor(page: Page){
+  constructor(
+      page: Page
+  ){
     super(page);
     this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
+    this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.checkout.shippingMethodTableRateLabel);
     this.paymentMethodOptionCheck = this.page.getByLabel(UIReference.checkout.paymentOptionCheckLabel);
     this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
     this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
@@ -66,6 +69,8 @@ class CheckoutPage extends MagewireUtils {
 
     await this.placeOrderButton.click();
     await this.waitForMagewireRequests();
+
+    await this.page.waitForURL(slugs.checkout.purchaseSuccessSlug);
 
     await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
@@ -186,6 +191,19 @@ class CheckoutPage extends MagewireUtils {
     await this.waitForMagewireRequests();
   }
 
+  async selectShippingMethod(method: 'fixed' | 'table rate'): Promise<void> {
+    switch(method) {
+      case 'fixed':
+        await this.shippingMethodOptionFixed.check();
+        break;
+      case 'table rate':
+        await this.shippingMethodTableRateFixed.check();
+        break;
+    }
+
+    await this.waitForMagewireRequests();
+  }
+
   async fillShippingAddress() {
     // Fill required shipping address fields
     await this.page.getByLabel(UIReference.credentials.emailCheckoutFieldLabel, { exact: true }).fill(faker.internet.email());
@@ -198,9 +216,38 @@ class CheckoutPage extends MagewireUtils {
 
     // Select country (if needed)
     // await this.page.getByLabel('Country').selectOption('US');
+    const country = faker.helpers.arrayElement(inputValues.addressCountries);
+    const countrySelectorField = this.page.getByLabel(UIReference.newAddress.countryLabel);
+    const stateInputField = this.page.getByRole('textbox', { name: 'State/Province' });
+    const stateSelectorField = stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
+
+
+    // If default selected country == country we want to use for the test,
+    // don't re-select it.
+    const defaultSelectedCountry = await countrySelectorField.evaluate(
+      (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+    );
+
+    if(country !== defaultSelectedCountry) {
+      await countrySelectorField.selectOption({label: country});
+    }
+
+    const regionDropdown = this.page.getByLabel(UIReference.newAddress.provinceSelectLabel);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     // Select state
-    await this.page.getByLabel('State/Province').selectOption(faker.location.state());
+    if(country !== 'United States') {
+      // await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionInputField, `State input field should be editable`).toBeEditable();
+      await regionInputField.fill(faker.location.state());
+    } else {
+      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
+      // await expect(regionDropdown, `State input field should be editable`).toBeEditable();
+      await regionDropdown.selectOption(faker.location.state());
+      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
+      // Standard debounce is 250ms.
+      await this.page.waitForTimeout(1000);
+    }
 
     // Wait for any Magewire updates
     await this.waitForMagewireRequests();
