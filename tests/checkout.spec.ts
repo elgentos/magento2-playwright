@@ -2,13 +2,13 @@
 
 import { test, expect } from '@playwright/test';
 import { UIReference, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
+import MagewireUtils from '@utils/magewire.utils';
 
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
-import { requireEnv } from '@utils/env.utils';
 import CheckoutPage from '@poms/frontend/checkout.page';
-
 
 /**
  * @feature BeforeEach runs before each test in this group.
@@ -22,6 +22,9 @@ import CheckoutPage from '@poms/frontend/checkout.page';
  *  @and I should see the product in the minicart
  */
 test.beforeEach(async ({ page }) => {
+  const magewire = new MagewireUtils(page);
+  magewire.startMonitoring();
+
   const productPage = new ProductPage(page);
 
   await page.goto(slugs.productpage.simpleProductSlug);
@@ -193,7 +196,7 @@ test.describe('Checkout (guest)', () => {
     await test.step('Place order with check/money order payment', async () => {
       await page.goto(slugs.checkout.checkoutSlug);
       await checkoutPage.fillShippingAddress();
-      await checkoutPage.shippingMethodOptionFixed.check();
+      await checkoutPage.selectShippingMethod('fixed');
       await checkoutPage.selectPaymentMethod('check');
       let orderNumber = await checkoutPage.placeOrder();
       expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();

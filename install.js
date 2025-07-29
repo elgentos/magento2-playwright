@@ -44,8 +44,17 @@ async function install() {
   const envPath = path.join('.env');
   let envContent = '';
 
+  // for (const [key, value] of Object.entries(envVars)) {
+  //   const userInput = await question(`Enter ${ key } (default: ${ value.default }): `);
+  //   envContent += `${ key }=${ userInput || value.default }\n`;
+  // }
+
+  const isCI = process.env.CI === 'true';
   for (const [key, value] of Object.entries(envVars)) {
-    const userInput = await question(`Enter ${ key } (default: ${ value.default }): `);
+    let userInput = '';
+    if (!isCI) {
+      userInput = await question(`Enter ${ key } (default: ${ value.default }): `);
+    }
     envContent += `${ key }=${ userInput || value.default }\n`;
   }
 
