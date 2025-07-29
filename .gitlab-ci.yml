@@ -58,7 +58,7 @@ test_mirror_pipeline:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch github
     - git checkout main
-    - git rebase --dry-run github/main
+    - git merge --no-commit --no-ff github/main
 
 create_testing_suite:
     stage: testing_suite
