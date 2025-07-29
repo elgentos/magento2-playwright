@@ -214,9 +214,38 @@ class CheckoutPage extends MagewireUtils {
 
     // Select country (if needed)
     // await this.page.getByLabel('Country').selectOption('US');
+    const country = faker.helpers.arrayElement(inputValues.addressCountries);
+    const countrySelectorField = this.page.getByLabel(UIReference.newAddress.countryLabel);
+    const stateInputField = this.page.getByRole('textbox', { name: 'State/Province' });
+    const stateSelectorField = stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
+
+
+    // If default selected country == country we want to use for the test,
+    // don't re-select it.
+    const defaultSelectedCountry = await countrySelectorField.evaluate(
+      (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+    );
+
+    if(country !== defaultSelectedCountry) {
+      await countrySelectorField.selectOption({label: country});
+    }
+
+    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     // Select state
-    await this.page.getByLabel('State/Province').selectOption(faker.location.state());
+    if(country !== 'United States') {
+      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionInputField, `State input field should be editable`).toBeEditable();
+      await regionInputField.fill(faker.location.state());
+    } else {
+      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
+      await regionDropdown.selectOption(faker.location.state());
+      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
+      // Standard debounce is 250ms.
+      await this.page.waitForTimeout(1000);
+    }
 
     // Wait for any Magewire updates
     await this.waitForMagewireRequests();

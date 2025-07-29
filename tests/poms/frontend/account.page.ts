@@ -131,6 +131,8 @@ class AccountPage {
 
       await regionInputField.fill(stateName);
     } else {
+      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
+      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
       // await regionDropdown.selectOption(stateName);
       await this.stateSelectorField.selectOption(stateName);
       // Timeout because Alpine uses an @input.debounce to delay the activation of the event
@@ -183,7 +185,7 @@ class AccountPage {
     await this.lastNameField.fill(lastName);
     await this.companyNameField.fill(companyName);
     await this.phoneNumberField.fill(phone);
-    
+
     // Address information section
     await this.streetAddressField.fill(streetName);
     await this.zipCodeField.fill(zipCode);
