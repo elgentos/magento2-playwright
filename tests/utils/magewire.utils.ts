@@ -63,7 +63,7 @@ class MagewireUtils {
       await expect(async () => {
         await expect(element).toBeHidden();
       }).toPass();
-    })
+    }, {noWaitAfter: true})
   }
 
   // private async waitForMagewireDomIdle(): Promise<void> {
