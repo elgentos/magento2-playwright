@@ -54,7 +54,7 @@ test_mirror_pipeline:
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.nl"
     - git remote remove github || true
-    - git ls-remote git@github.com:elgentos/magento2-playwright.git
+    - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git checkout main
     - git rebase github/main
 
