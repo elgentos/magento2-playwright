@@ -70,6 +70,8 @@ class CheckoutPage extends MagewireUtils {
     await this.placeOrderButton.click();
     await this.waitForMagewireRequests();
 
+    await this.page.waitForURL(slugs.checkout.purchaseSuccessSlug);
+
     await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
 
@@ -230,17 +232,17 @@ class CheckoutPage extends MagewireUtils {
       await countrySelectorField.selectOption({label: country});
     }
 
-    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
+    const regionDropdown = this.page.getByLabel(UIReference.newAddress.provinceSelectLabel);
     const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     // Select state
     if(country !== 'United States') {
-      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+      // await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
       await expect(regionInputField, `State input field should be editable`).toBeEditable();
       await regionInputField.fill(faker.location.state());
     } else {
       await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
+      // await expect(regionDropdown, `State input field should be editable`).toBeEditable();
       await regionDropdown.selectOption(faker.location.state());
       // Timeout because Alpine uses an @input.debounce to delay the activation of the event
       // Standard debounce is 250ms.

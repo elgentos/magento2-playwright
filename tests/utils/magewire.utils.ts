@@ -1,6 +1,6 @@
 // @ts-check
 
-import { Page } from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 class MagewireUtils {
 
@@ -55,19 +55,31 @@ class MagewireUtils {
   }
 
   private async waitForMagewireDomIdle(): Promise<void> {
-    // 1. Check of de messenger height 0px is
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    }, { timeout: 30000 });
+    const element = this.page.locator('.magewire.messenger');
 
-    // 2. Check if there is no processing ongoing
-    await this.page.waitForFunction(() => {
-      return !(window.magewire && (window.magewire as any).processing);
-    }, { timeout: 30000 });
-
-    await this.page.waitForTimeout(500);
+    // LocatorHandler will keep looking for pop-up
+    await this.page.addLocatorHandler(element, async() => {
+      // Keep retrying, waiting for element to be hidden.
+      await expect(async () => {
+        await expect(element).toBeHidden();
+      }).toPass();
+    }, {noWaitAfter: true})
   }
+
+  // private async waitForMagewireDomIdle(): Promise<void> {
+  //   // 1. Check of de messenger height 0px is
+  //   await this.page.waitForFunction(() => {
+  //     const element = document.querySelector('.magewire\\.messenger');
+  //     return element && getComputedStyle(element).height === '0px';
+  //   }, { timeout: 30000 });
+  //
+  //   // 2. Check if there is no processing ongoing
+  //   await this.page.waitForFunction(() => {
+  //     return !(window.magewire && (window.magewire as any).processing);
+  //   }, { timeout: 30000 });
+  //
+  //   await this.page.waitForTimeout(500);
+  // }
 
   private isMagewireRequest(url: string): boolean {
     return url.includes('/magewire/message');
