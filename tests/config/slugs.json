@@ -18,7 +18,8 @@
     "categorySlug": "/women.html"
   },
   "checkout": {
-    "checkoutSlug": "/checkout/"
+    "checkoutSlug": "/checkout/",
+    "purchaseSuccessSlug": "/checkout/onepage/success/"
   },
   "contact": {
     "contactSlug": "/contact"
