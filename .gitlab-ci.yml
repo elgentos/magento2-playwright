@@ -1,8 +1,8 @@
 image: node:18-bullseye
 
 stages:
-  - mirror
   - testing_suite
+  - mirror
 
 variables:
   PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
@@ -41,6 +41,19 @@ mirror_to_github:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git checkout main
     - git push github main:gitlab-main
+
+test_mirror_pipeline:
+  stage: mirror
+  rules:
+    - if: '$CI_COMMIT_BRANCH != "main"'
+  script:
+    - mkdir -p ~/.ssh
+    - printf "%s\n" "$GIT_SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+    - chmod 600 ~/.ssh/id_ed25519
+    - ssh-keyscan github.com >> ~/.ssh/known_hosts
+    - git config --global user.name "developer-elgentos"
+    - git config --global user.email "developer@elgentos.nl"
+    - git ls-remote git@github.com:elgentos/magento2-playwright.git
 
 create_testing_suite:
     stage: testing_suite
