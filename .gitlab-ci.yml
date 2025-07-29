@@ -1,7 +1,7 @@
 image: node:18-bullseye
 
 stages:
-  - testing_suite
+#  - testing_suite
   - mirror
 
 variables:
@@ -40,7 +40,7 @@ mirror_to_github:
     - git remote remove github || true
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git checkout main
-    - git push github main:gitlab-main
+    - git push github HEAD:gitlab-main
 
 test_mirror_pipeline:
   stage: mirror
@@ -53,7 +53,10 @@ test_mirror_pipeline:
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.nl"
+    - git remote remove github || true
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
+    - git checkout main
+    - git rebase github/main
 
 create_testing_suite:
     stage: testing_suite
