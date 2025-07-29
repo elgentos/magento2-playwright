@@ -86,6 +86,22 @@ npx playwright test --grep-invert "@setup" --trace on
 
 ---
 
+## 🌐 Generate Translations
+
+The Magento 2 Playwright Testing Suite supports translations, allowing you to run tests in multiple languages. This is particularly useful for international stores with multilingual sites.
+
+### Setting Up Translations
+
+1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/Vendor/theme/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
+
+2. **Generate translation files**: run following command: `node translate-json.js nl_NL`. `nl_NL` is the language you want to translate to. For example; it will look for nl_NL.csv
+
+3. **Configuration**: Add the necessary configuration to your `.env` file to specify which translations to use during testing.
+
+By following these steps, you can seamlessly integrate language support into your testing workflow, ensuring that your Magento 2 store is thoroughly tested across different languages.
+
+---
+
 ## 🚀 How to use the testing suite
 
 The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit.
