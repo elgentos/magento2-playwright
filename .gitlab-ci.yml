@@ -39,7 +39,8 @@ mirror_to_github:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch github main
     - git fetch origin main
-    - git checkout main
+    - git checkout -B main github/main
+    - git merge origin/main
     - git push github --delete gitlab-main || true
     - git push github main:gitlab-main
 
@@ -59,7 +60,7 @@ test_mirror_pipeline:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch github main
     - git fetch origin main
-    - git checkout -B main github/main
+    - git checkout -B github-main github/main
     - git merge --no-commit --no-ff origin/main
 
 create_testing_suite:
