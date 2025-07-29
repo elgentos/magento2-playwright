@@ -37,7 +37,7 @@ mirror_to_github:
     - ssh-keyscan github.com >> ~/.ssh/known_hosts
   script:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
-    - git fetch github
+    - git fetch github main
     - git fetch origin main
     - git checkout main
     - git push github --delete gitlab-main || true
@@ -57,7 +57,7 @@ test_mirror_pipeline:
     - git config --global user.email "developer@elgentos.nl"
     - git remote remove github || true
     - git remote add github git@github.com:elgentos/magento2-playwright.git
-    - git fetch github
+    - git fetch github main
     - git fetch origin main
     - git checkout main
     - git merge --no-commit --no-ff github/main
