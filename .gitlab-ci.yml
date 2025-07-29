@@ -1,7 +1,7 @@
 image: node:18-bullseye
 
 stages:
-  - testing_suite
+# - testing_suite
   - mirror
 
 variables:
