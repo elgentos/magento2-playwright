@@ -21,7 +21,8 @@
   },
   "addressCountries": [
     "Netherlands",
-    "United Kingdom"
+    "United Kingdom",
+    "United States"
   ],
   "editedAddress": {
     "editCityValue": "Pallet Town",

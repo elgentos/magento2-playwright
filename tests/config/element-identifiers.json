@@ -16,15 +16,16 @@
   },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
-    "companyNameLabel": "Company",
-    "phoneNumberLabel": "Phone Number",
-    "streetAddressLabel": "Street Address",
-    "zipCodeLabel": "Zip/Postal Code",
     "cityNameLabel": "City",
+    "companyNameLabel": "Company",
     "countryLabel": "Country",
+    "phoneNumberLabel": "Phone Number",
     "provinceSelectLabel": "State/Province",
     "provinceSelectFilterLabel": "Please select a region, state or province.",
-    "saveAdressButton": "Save Address"
+    "regionDropdownLocator": "#region_id",
+    "streetAddressLabel": "Street Address",
+    "saveAdressButton": "Save Address",
+    "zipCodeLabel": "Zip/Postal Code"
   },
   "newsletterSubscriptions": {
     "generalSubscriptionCheckLabel": "General Subscription",
@@ -56,8 +57,8 @@
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
     "removeActiveFilterButtonLabel": "Remove active",
-    "sizeFilterButtonLabel": "Size filter",
-    "sizeLButtonLocator": "a.swatch-option-link-layered[aria-label*=\"Filter Size L\"]",
+    "sizeFilterButtonLabel": "Size",
+    "sizeLLinkLabel": "Filter Size L",
     "sortByButtonLabel": "Sort by",
     "sortByButtonLocator": ".form-select.sorter-options",
     "viewSwitchLabel": "Products view mode",
@@ -76,8 +77,11 @@
   },
   "cartPriceRulesPage": {
     "actionsSubtitleLabel": "Actions",
+    "activeStatusLabelLocator": ".admin__actions-switch-text",
+    "activeStatusSwitcherLocator": ".admin__actions-switch-label",
     "addCartPriceRuleButtonLabel": "Add New Rule",
     "couponCodeFieldLabel": "Coupon Code",
+    "couponCodeActiveStatusText": "Active",
     "couponTypeSelectField": "select[name='coupon_type']",
     "customerGroupsSelectLabel": "Customer Groups",
     "discountAmountFieldLabel": "Discount Amount",
@@ -106,7 +110,8 @@
     "placeOrderButtonLabel": "Place Order",
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
-    "shippingMethodFixedLabel": "Fixed"
+    "shippingMethodFixedLabel": "Fixed",
+    "shippingMethodTableRateLabel": "Table Rate"
   },
   "comparePage": {
     "removeCompareLabel": "Remove Product",
@@ -141,6 +146,9 @@
     "passwordConfirmFieldLabel": "Confirm Password",
     "passwordFieldLabel": "Password"
   },
+  "customerOverviewPage": {
+    "tableSearchFieldLabel": "Search by keyword"
+  },
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
@@ -150,21 +158,26 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "div.message",
     "removeLabel": "Remove",
+    "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"
   },
   "homePage": {
     "homePageTitleText": "Hyvä Themes"
   },
   "magentoAdminPage": {
+    "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",
     "navigation": {
+      "customersButtonLabel": "Customers",
       "marketingButtonLabel": "Marketing",
       "storesButtonLabel": "Stores"
     },
     "passwordFieldLabel": "Password",
     "subNavigation": {
+      "allCustomersButtonLabel": "All Customers",
       "cartPriceRulesButtonLabel": "Cart Price Rules",
       "configurationButtonLabel": "Configuration"
     },

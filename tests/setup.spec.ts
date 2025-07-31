@@ -1,8 +1,6 @@
 // @ts-check
 
 import { test as base } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import { createLogger } from '@utils/logger';
@@ -15,81 +13,103 @@ const logger = createLogger('Setup');
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
+base.beforeEach(async ({ page }, testInfo) => {
+  const magentoAdminPage = new MagentoAdminPage(page);
+  await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+});
+
 base.describe('Setting up the testing environment', () => {
+  /**
+   * @feature Magento Admin Configuration (Enable multiple admin logins)
+   * @scenario Enable multiple admin logins only in Chromium browser
+   * @given the
+   * @scenario Enable multiple admin logins only in Chromium browser
+   * @given the test is running in a Chromium-based browser
+   * @when the admin logs in to the Magento dashboard
+   * @and the admin navigates to the configuration page
+   * @and the "Allow Multiple Admin Account Login" setting is updated to "Yes"
+   * @then the configuration is saved successfully
+   * @but if the browser is not Chromium
+   * @then the test is skipped with an appropriate message
+   */
   base('Enable_multiple_admin_logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
-    if (browserEngine === "CHROMIUM") {
-      const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
-      await magentoAdminPage.enableMultipleAdminLogins();
+    if (browserEngine !== "CHROMIUM") {
+      testInfo.skip(true, `Enabling multiple admin logins through Chromium. This is ${browserEngine}, therefore test is skipped.`);
     } else {
-      testInfo.skip(true, `Skipping because configuration is only needed once.`);
+      const magentoAdminPage = new MagentoAdminPage(page);
+      await magentoAdminPage.enableMultipleAdminLogins();
     }
   });
 
+  /**
+   * @feature Magento Admin Configuration (disable login CAPTCHA)
+   * @scenario Disable login CAPTCHA in admin settings via Chromium browser
+   * @given the test is running in a Chromium-based browser
+   * @when the admin logs in to the Magento dashboard
+   * @and the admin navigates to the security configuration section
+   * @and the "Enable CAPTCHA on Admin Login" setting is updated to "No"
+   * @then the configuration is saved successfully
+   * @but if the browser is not Chromium
+   * @then the test is skipped with an appropriate message
+   */
   base('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 
-    if (browserEngine === "CHROMIUM") {
-      const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
-      await magentoAdminPage.disableLoginCaptcha();
+    if (browserEngine !== "CHROMIUM") {
+      testInfo.skip(true, `Disabling login captcha through Chromium. This is ${browserEngine}, therefore test is skipped.`);
     } else {
-      testInfo.skip(true, `Skipping because configuration is only needed once.`);
+      const magentoAdminPage = new MagentoAdminPage(page);
+      await magentoAdminPage.disableLoginCaptcha();
     }
   });
 
-  base('Setup_environment_for_tests', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
+  /**
+   * @feature Cart Price Rules Configuration
+   * @scenario Set up a coupon code for the current browser environment
+   * @given a valid coupon code environment variable exists for the current browser engine
+   * @when the admin navigates to the Cart Price Rules section
+   * @and the admin creates a new cart price rule with the specified coupon code
+   * @then the coupon code is successfully saved and available for use
+   */
+  base('Set_up_coupon_codes', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
+    const magentoAdminPage = new MagentoAdminPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const setupCompleteVar = `SETUP_COMPLETE_${browserEngine}`;
-    const isSetupComplete = process.env[setupCompleteVar];
+    const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
-    if (isSetupComplete === 'DONE') {
-      testInfo.skip(true, `Skipping because configuration is only needed once.`);
-    }
+    const addCouponCodeResult = await magentoAdminPage.addCartPriceRule(couponCode);
+    testInfo.annotations.push({type: 'notice', description: addCouponCodeResult});
+  });
 
-    await base.step(`Step 1: Perform actions`, async () => {
-      const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+  /**
+   * @feature Customer Account Setup
+   * @scenario Create a test customer account for the current browser environment
+   * @given valid environment variables for email and password exist for the current browser engine
+   * @when the user navigates to the registration page
+   * @and submits the registration form with first name, last name, email, and password
+   * @then a new customer account is successfully created for testing purposes
+   */
+  base('Create_test_accounts', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
+    const magentoAdminPage = new MagentoAdminPage(page);
+    const registerPage = new RegisterPage(page);
+    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+    const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-      const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
-      await magentoAdminPage.addCartPriceRule(couponCode);
-
-      const registerPage = new RegisterPage(page);
-      const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-      const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-
-      await registerPage.createNewAccount(
-        inputValues.accountCreation.firstNameValue,
-        inputValues.accountCreation.lastNameValue,
-        accountEmail,
-        accountPassword,
-        true
-      );
+    await base.step(`Check if ${accountEmail} is already registered`, async () => {
+      const customerLookUp = await magentoAdminPage.checkIfCustomerExists(accountEmail);
+      if(customerLookUp){
+        testInfo.skip(true, `${accountEmail} was found in user table, this step is skipped. If you think this is incorrect, consider removing user from the table and try running the setup again.`);
+      }
     });
 
-      await base.step(`Step 2: (optional) Update env file`, async () => {
-        if (process.env.CI === 'true') {
-          logger.info("Running in CI environment. Skipping .env update.");
-          base.skip();
-        }
-
-        const envPath = path.resolve(__dirname, '../.env');
-        try {
-          if (fs.existsSync(envPath)) {
-            const envContent = fs.readFileSync(envPath, 'utf-8');
-            if (!envContent.includes(`SETUP_COMPLETE_${browserEngine}='DONE'`)) {
-              fs.appendFileSync(envPath, `\nSETUP_COMPLETE_${browserEngine}='DONE'`);
-              logger.info(`Environment setup completed. Added SETUP_COMPLETE_${browserEngine}='DONE' to .env`);
-            }
-          } else {
-            throw new Error('.env file not found. Please ensure it exists in the root directory.');
-          }
-        } catch (error) {
-          const err = error as Error;
-          throw new Error(`Failed to update .env file: ${err.message}`);
-        }
-    });
+    await registerPage.createNewAccount(
+      inputValues.accountCreation.firstNameValue,
+      inputValues.accountCreation.lastNameValue,
+      accountEmail,
+      accountPassword,
+      true
+    );
   });
 });
