@@ -1,8 +1,8 @@
 image: node:18-bullseye
 
 stages:
-  - mirror
   - testing_suite
+  - mirror
 
 variables:
   PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
@@ -39,9 +39,7 @@ mirror_to_github:
     - git remote add github git@github.com:elgentos/magento2-playwright.git
     - git fetch github main
     - git fetch origin main
-    - git checkout -B main github/main
-    - git merge origin/main
-    - git push github --delete gitlab-main || true
+    - git checkout -B main origin/main
     - git push github main:gitlab-main
 
 test_mirror_pipeline:
@@ -61,7 +59,8 @@ test_mirror_pipeline:
     - git fetch github main
     - git fetch origin main
     - git checkout -B github-main github/main
-    - git merge --no-commit --no-ff origin/main
+    - git merge --no-commit --no-ff
+    - git branch -D github-main
 
 create_testing_suite:
     stage: testing_suite
