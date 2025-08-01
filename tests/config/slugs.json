@@ -36,4 +36,7 @@
   "wishlist": {
     "wishListRegex": ".*wishlist.*"
   }
+  ,"home": {
+    "homeSlug": "/"
+  }
 }

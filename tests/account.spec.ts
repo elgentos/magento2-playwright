@@ -24,8 +24,8 @@ test.beforeEach(async ({ page, browserName }) => {
 test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
 
   test.beforeEach(async ({page}) => {
-    await page.goto(slugs.account.accountOverviewSlug);
-    await page.waitForLoadState();
+    const accountPage = new AccountPage(page);
+    await accountPage.openAccountOverview();
   });
 
   /**
@@ -63,8 +63,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
     // Update password
-    await page.goto(slugs.account.changePasswordSlug);
-    await page.waitForLoadState();
+    await accountPage.openChangePassword();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
     // If login with changePasswordValue is possible, then password change was succesful.
@@ -109,8 +108,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
 
-    await page.goto(slugs.account.accountEditSlug);
-    await page.waitForLoadState();
+    await accountPage.openAccountEdit();
     await accountPage.updateEmail(passwordInputValue, updatedEmail);
 
     await mainMenu.logout();
@@ -128,8 +126,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
 
   test.beforeEach(async ({page}) => {
-    await page.goto(slugs.account.addressIndexSlug);
-    await page.waitForLoadState();
+	const accountPage = new AccountPage(page);
+	await accountPage.openAddressBook();
   });
 
   /**
@@ -143,8 +141,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @and The new address should be listed
    */
   test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-    await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
+    await accountPage.openAddressNew();
 
     const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
     const company = faker.company.name();
@@ -169,7 +167,9 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    */
   test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
-    await page.goto(slugs.account.addressBookSlug);
+    await page.goto(slugs.account.addressNewSlug);
+	await accountPage.openAddressBook();
+
     let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
     let isDefaultAddress = false;
 
@@ -192,8 +192,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
   });
 
   test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
-    await page.goto(slugs.account.addressNewSlug);
     const accountPage = new AccountPage(page);
+    await accountPage.openAddressNew();
 
     await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
     await accountPage.saveAddressButton.click();

@@ -5,6 +5,8 @@ import path from 'path';
 import { UIReference, slugs } from '@config';
 import { requireEnv } from '@utils/env.utils';
 
+import LoginPage from '@poms/frontend/login.page';
+
 const authFile = path.join(__dirname, '../playwright/.auth/user.json');
 
 setup('authenticate', async ({ page, browserName }) => {
@@ -12,11 +14,8 @@ setup('authenticate', async ({ page, browserName }) => {
   const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
   const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-  // Perform authentication steps. Replace these actions with your own.
-  await page.goto(slugs.account.loginSlug);
-  await page.getByLabel(UIReference.credentials.emailFieldLabel, {exact: true}).fill(emailInputValue);
-  await page.getByLabel(UIReference.credentials.passwordFieldLabel, {exact: true}).fill(passwordInputValue);
-  await page.getByRole('button', { name: UIReference.credentials.loginButtonLabel }).click();
+  const loginPage = new LoginPage(page);
+  await loginPage.login(emailInputValue, passwordInputValue);
   // Wait until the page receives the cookies.
   //
   // Sometimes login flow sets cookies in the process of several redirects.

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker, slugs} from '@config';
+import { UIReference, outcomeMarker, slugs } from '@config';
 
 class RegisterPage {
   readonly page: Page;
@@ -22,10 +22,11 @@ class RegisterPage {
     this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.accountCreation.createAccountButtonLabel});
   }
 
-
-  async createNewAccount(firstName: string, lastName: string, email: string, password: string, isSetup: boolean = false){
+  async createNewAccount(firstName: string, lastName: string, email: string, password: string, isSetup: boolean = false, navigate: boolean = true){
     let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
-    await this.page.goto(slugs.account.createAccountSlug);
+    if(navigate){
+      await this.page.goto(slugs.account.createAccountSlug);
+    }
 
     await this.accountCreationFirstNameField.fill(firstName);
     await this.accountCreationLastNameField.fill(lastName);

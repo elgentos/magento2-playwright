@@ -17,7 +17,8 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
   });
 
   await test.step('Navigate to product comparison page', async () =>{
-    await page.goto(slugs.productpage.productComparisonSlug);
+    const comparePage = new ComparePage(page);
+    await comparePage.openComparisonPage();
     await expect(page.getByRole('heading', { name: UIReference.comparePage.comparisonPageTitleText }).locator('span')).toBeVisible();
   });
 });
@@ -72,8 +73,9 @@ test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', 
   
   await test.step('Add product to compare', async () =>{
     const productPage = new ProductPage(page);
-    await page.goto(slugs.productpage.productComparisonSlug);
-    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    const comparePage = new ComparePage(page);
+    await comparePage.openComparisonPage();
+    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, false);
   });
 
   await test.step('Add product to wishlist', async () =>{
@@ -87,11 +89,9 @@ test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', 
 
 
 test.afterEach('Remove products from compare', async ({ page }) => {
-  // ensure we are on the right page
-  await page.goto(slugs.productpage.productComparisonSlug);
-
-  page.on('dialog', dialog => dialog.accept());
   const comparePage = new ComparePage(page);
+  await comparePage.openComparisonPage();
+  page.on('dialog', dialog => dialog.accept());
   await comparePage.removeProductFromCompare(UIReference.productPage.simpleProductTitle);
   await comparePage.removeProductFromCompare(UIReference.productPage.secondSimpleProducTitle);
 });
