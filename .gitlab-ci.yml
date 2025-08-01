@@ -3,6 +3,10 @@ image: node:18-bullseye
 stages:
   - mirror
 
+variables:
+  GIT_DEPTH: 0
+  GIT_TRACE: 1
+
 mirror_to_github:
   stage: mirror
   only:
@@ -15,10 +19,10 @@ mirror_to_github:
     - git config --global user.name "developer-elgentos"
     - git config --global user.email "developer@elgentos.nl"
   script:
-    - git remote add github git@github.com:elgentos/magento2-playwright.git
-    - git fetch github main
     - git fetch origin main
     - git checkout -B main origin/main
+    - git remote add github git@github.com:elgentos/magento2-playwright.git
+    - git fetch github main
     - git push github main:gitlab-main
 
 test_mirror_pipeline:

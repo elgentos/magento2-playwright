@@ -10,7 +10,7 @@
     "paths": {
       "@config": [
         "base-tests/config",
-        "tests/config"
+        "tests/config", // keep this for gitlab and when index.ts needs to be changed.
       ],
       "@utils/*": [
         "base-tests/utils/*",

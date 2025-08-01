@@ -161,11 +161,6 @@ test.describe('Cart functionalities (guest)', () => {
 
 test.describe('Price checking tests', () => {
 
-  // Test: Configurable Product Input check from PDP to checkout
-  // test.step: add configurable product to cart, return priceOnPDP and productAmount as variables
-  // test.step: call function retrieveCheckoutPrices() to go to checkout, retrieve values
-  // test.step: call function compareRetrievedPrices() to compare price on PDP to price in checkout
-
   /**
    * @feature Simple Product price/amount check from PDP to Checkout
    * @given none
@@ -176,9 +171,9 @@ test.describe('Price checking tests', () => {
    *  @and the price in the checkout should equal the price of the product * the amount of the product
    */
   test('Simple_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-    var productPagePrice: string;
-    var productPageAmount: string;
-    var checkoutProductDetails: string[];
+    let productPagePrice: string;
+    let productPageAmount: string;
+    let checkoutProductDetails: string[];
 
     const cart = new CartPage(page);
 

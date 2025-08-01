@@ -23,7 +23,7 @@ class RegisterPage {
   }
 
 
-  async createNewAccount(firstName: string, lastName: string, email: string, password: string, muted: boolean = false){
+  async createNewAccount(firstName: string, lastName: string, email: string, password: string, isSetup: boolean = false){
     let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
     await this.page.goto(slugs.account.createAccountSlug);
 
@@ -34,7 +34,7 @@ class RegisterPage {
     await this.accountCreationPasswordRepeatField.fill(password);
     await this.accountCreationConfirmButton.click();
 
-    if(!muted) {
+    if(!isSetup) {
       // Assertions: Account created notification, navigated to account page, email visible on page
       await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText), 'Account creation notification should be visible').toBeVisible();
       await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('.+' + slugs.account.accountOverviewSlug));

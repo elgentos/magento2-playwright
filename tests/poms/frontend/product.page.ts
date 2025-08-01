@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidator from '@utils/notification.validator';
 
 class ProductPage {
   readonly page: Page;
@@ -41,7 +42,6 @@ class ProductPage {
     let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
     await this.page.goto(url);
     await this.addToWishlistButton.click();
-
     await this.page.waitForLoadState();
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
@@ -52,6 +52,7 @@ class ProductPage {
   }
 
   async leaveProductReview(product:string, url: string){
+
     await this.page.goto(url);
 
     //TODO: Uncomment this and fix test once website is fixed
@@ -70,6 +71,7 @@ class ProductPage {
   }
 
   async openLightboxAndScrollThrough(url: string){
+
     await this.page.goto(url);
     let fullScreenOpener = this.page.getByLabel(UIReference.productPage.fullScreenOpenLabel);
     let fullScreenCloser = this.page.getByLabel(UIReference.productPage.fullScreenCloseLabel);
@@ -91,6 +93,7 @@ class ProductPage {
   }
 
   async changeReviewCountAndVerify(url: string) {
+
     await this.page.goto(url);
 
     // Get the default review count from URL or UI
@@ -126,6 +129,7 @@ class ProductPage {
   async addSimpleProductToCart(product: string, url: string, quantity?: string) {
 
     await this.page.goto(url);
+
     this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     expect(await this.simpleProductTitle.innerText()).toEqual(product);
     await expect(this.simpleProductTitle.locator('span')).toBeVisible();
@@ -135,17 +139,23 @@ class ProductPage {
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
     }
 
-    await this.addToCartButton.click();
-
+    // Webkit workaround: wait for button to be visible, then force the click.
+    await this.addToCartButton.waitFor();
+    await this.addToCartButton.click({force: true});
     await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
-    return ;
   }
 
-  async addConfigurableProductToCart(product: string, url:string, quantity?:string){
+  async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
+
     await this.page.goto(url);
+
     this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
+
+    // wait for the color and size selectors are actually visible
+    await productOptions.getByRole('radiogroup').first().waitFor();
+    await productOptions.getByRole('radiogroup').last().waitFor();
 
     // loop through each radiogroup (product option) within the form
     for (const option of await productOptions.getByRole('radiogroup').all()) {
