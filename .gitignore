@@ -7,7 +7,6 @@ node_modules/
 /playwright-report/
 /base-tests/
 /i18n/
-/base-tests/
 
 #files
 /*.config.ts
