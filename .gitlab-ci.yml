@@ -1,11 +1,33 @@
 image: node:18-bullseye
 
 stages:
+  - testing_suite
   - mirror
 
 variables:
   GIT_DEPTH: 0
   GIT_TRACE: 1
+  
+  PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
+  PLAYWRIGHT_PRODUCTION_URL: https://hyva-demo.elgentos.io/
+  PLAYWRIGHT_STAGING_URL: https://hyva-demo.elgentos.io/
+
+  MAGENTO_ADMIN_SLUG: $MAGENTO_ADMIN_SLUG
+  MAGENTO_ADMIN_USERNAME: $MAGENTO_ADMIN_USERNAME
+  MAGENTO_ADMIN_PASSWORD: $MAGENTO_ADMIN_PASSWORD
+
+  MAGENTO_NEW_ACCOUNT_PASSWORD: $MAGENTO_NEW_ACCOUNT_PASSWORD
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM: $MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX: $MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT: $MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT
+  MAGENTO_EXISTING_ACCOUNT_PASSWORD: $MAGENTO_EXISTING_ACCOUNT_EMAIL_PASSWORD
+  MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: $MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD
+
+  MAGENTO_COUPON_CODE_CHROMIUM: $MAGENTO_COUPON_CODE_CHROMIUM
+  MAGENTO_COUPON_CODE_FIREFOX: $MAGENTO_COUPON_CODE_FIREFOX
+  MAGENTO_COUPON_CODE_WEBKIT: $MAGENTO_COUPON_CODE_WEBKIT
+
+  CAPTCHA_BYPASS: true
 
 mirror_to_github:
   stage: mirror
@@ -38,3 +60,45 @@ test_mirror_pipeline:
     - git config --global user.email "developer@elgentos.nl"
   script:
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
+
+create_testing_suite:
+  stage: testing_suite
+  script:
+    - echo 'Setting up the testing environment'
+    - mkdir -p base-tests
+    - npm install
+    - npx playwright install-deps
+    # Check what files are present
+    - ls -l base-tests
+    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
+  allow_failure: false
+  artifacts:
+    when: always
+    paths:
+      - node_modules/
+      - playwright-report/
+      - test-results/
+      - base-tests/
+      - tests/
+      - .env
+      - bypass-captcha.config.ts
+      - playwright.config.ts
+      - tsconfig.json
+
+# Build and test suite using this new version of the suite
+# Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
+run_testing_suite:
+  stage: testing_suite
+  script:
+    - echo 'Running test suite'
+    - npx playwright install --with-deps
+    - CI=true npx playwright test --workers=4 --grep-invert "@setup"
+  needs: [create_testing_suite] #optional, stage order already enforces this
+  dependencies:
+    - create_testing_suite
+  allow_failure: false
+  artifacts:
+    when: always
+    paths:
+      - playwright-report/
+      - test-results/
