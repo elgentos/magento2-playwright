@@ -2,8 +2,8 @@
 
 import { test, expect } from '@playwright/test';
 import { UIReference, slugs, outcomeMarker } from '@config';
-import { requireEnv } from './utils/env.utils';
-import NotificationValidator from './utils/notification.validator';
+import { requireEnv } from '@utils/env.utils';
+import NotificationValidator from '@utils/notification.validator';
 
 import CartPage from '@poms/frontend/cart.page';
 import LoginPage from '@poms/frontend/login.page';
