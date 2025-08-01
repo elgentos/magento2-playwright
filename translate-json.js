@@ -17,12 +17,18 @@ class TranslateJson {
 
   baseSourcePath = 'base-tests/config';
   baseDestinationPath = 'tests/config';
+  jsonFiles = [
+    'element-identifiers.json',
+    'outcome-markers.json'
+  ];
+
 
   constructor() {
     const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
 
+    // Change paths when running translation script in gitrepo.
     if (isLocalDev) {
-      this.pathToBaseDir = './i18n/'; // we're in the root of the dev repo
+      this.pathToBaseDir = './i18n/';
       this.baseSourcePath = 'tests/config';
       this.baseDestinationPath = 'base-tests/config';
     }
@@ -30,8 +36,8 @@ class TranslateJson {
     this.locale = process.argv[2];
   }
 
+  // Main execution
   main() {
-    // Main execution
     try {
       // Find and parse CSV files
       const appCsvFiles = this.findCsvFiles(this.pathToBaseDir  + 'app', this.locale);
@@ -53,7 +59,6 @@ class TranslateJson {
           vendorTranslations = { ...vendorTranslations, ...translations };
         } catch (error) {
           console.error(`Error processing vendor file ${file}:`, error.message);
-          continue;
         }
       }
 
@@ -61,12 +66,7 @@ class TranslateJson {
       const translations = this.mergeTranslations(appTranslations, vendorTranslations);
 
       // Process JSON files
-      const jsonFiles = [
-        'element-identifiers.json',
-        'outcome-markers.json'
-      ];
-
-      for (const fileName of jsonFiles) {
+      for (const fileName of this.jsonFiles) {
         const sourcePath = path.resolve(this.baseSourcePath, fileName);
         const destPath = path.resolve(this.baseDestinationPath, fileName);
 
@@ -95,7 +95,7 @@ class TranslateJson {
     }
   }
 
-// Function to find CSV files recursively
+  // Function to find CSV files recursively
   findCsvFiles(dir, locale) {
     let results = [];
     const files = fs.readdirSync(dir);
@@ -105,7 +105,7 @@ class TranslateJson {
       const stat = fs.statSync(filePath);
 
       if (stat.isDirectory()) {
-        results = results.concat(findCsvFiles(filePath, locale));
+        results = results.concat(this.findCsvFiles(filePath, locale));
       } else if (file === `${locale}.csv`) {
         results.push(filePath);
       }
@@ -135,13 +135,13 @@ class TranslateJson {
     return translations;
   }
 
-// Function to deeply merge translations with specified precedence
+  // Function to deeply merge translations with specified precedence
   mergeTranslations(primaryTranslations, secondaryTranslations) {
     const result = { ...secondaryTranslations };
 
     for (const [key, value] of Object.entries(primaryTranslations)) {
       if (value && typeof value === 'object' && !Array.isArray(value)) {
-        result[key] = mergeTranslations(value, result[key] || {});
+        result[key] = this.mergeTranslations(value, result[key] || {});
       } else {
         if (!result.hasOwnProperty(key)) {
           result[key] = value;
@@ -152,7 +152,7 @@ class TranslateJson {
     return result;
   }
 
-// Function to translate values in an object recursively
+  // Function to translate values in an object recursively
   translateObject(obj, translations) {
     if (typeof obj === 'string') {
       const translatedValue = translations[obj];
@@ -178,6 +178,5 @@ class TranslateJson {
   }
 }
 
-
-const $translateJson = new TranslateJson();
-$translateJson.main();
+const translateJson = new TranslateJson();
+translateJson.main();
