@@ -40,22 +40,26 @@ async function install() {
     'MAGENTO_COUPON_CODE_WEBKIT': { default: 'WEBKIT321' }
   };
 
+  // Add initial question to allow user to simply use defaults
+  const isCI = process.env.CI === 'true';
+  let useDefaults = true;
+
+  // Check if user
+  if (!isCI) {
+    const initialAnswer = await question('Do you want to customize environment variables? (y/N): ');
+    useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
+  }
+
   // Read and update .env file
   const envPath = path.join('.env');
   let envContent = '';
 
-  // for (const [key, value] of Object.entries(envVars)) {
-  //   const userInput = await question(`Enter ${ key } (default: ${ value.default }): `);
-  //   envContent += `${ key }=${ userInput || value.default }\n`;
-  // }
-
-  const isCI = process.env.CI === 'true';
   for (const [key, value] of Object.entries(envVars)) {
-    let userInput = '';
-    if (!isCI) {
-      userInput = await question(`Enter ${ key } (default: ${ value.default }): `);
-    }
-    envContent += `${ key }=${ userInput || value.default }\n`;
+      let userInput = '';
+      if (!isCI && !useDefaults) {
+          userInput = await question(`Enter ${key} (default: ${value.default}): `);
+      }
+      envContent += `${key}=${userInput || value.default}\n`;
   }
 
   fs.writeFileSync(envPath, envContent);
@@ -67,4 +71,50 @@ async function install() {
   rl.close();
 }
 
-install();
+async function appendGitIgnore() {
+    console.log('Checking .gitignore and adding lines if necessary...');
+    // The lines to be added to gitignore
+    const requiredLines = [
+        '# playwright',
+        '/app/design/frontend/{vendor}/{theme}/web/playwright/*',
+        '!/app/design/frontend/{vendor}/{theme}/web/playwright/tests/',
+        '!/app/design/frontend/{vendor}/{theme}/web/playwright/package.json',
+        '!/app/design/frontend/{vendor}/{theme}/web/playwright/package-lock.json',
+    ];
+
+    // Get the current file's directory and go 7 levels up
+    let gitignorePath = __dirname;
+    // for (let i = 0; i < 7; i++) {
+    //     gitignorePath = path.dirname(gitignorePath);
+    // }
+
+    gitignorePath = path.join(gitignorePath, '.gitignore');
+
+    // Read existing content if file exists
+    let existingLines = [];
+    if (fs.existsSync(gitignorePath)) {
+        const content = fs.readFileSync(gitignorePath, 'utf-8');
+        existingLines = content.split(/\r?\n/);
+    }
+
+    // Append missing lines
+    let updated = false;
+    for (const line of requiredLines) {
+        if (!existingLines.includes(line)) {
+            existingLines.push(line);
+            updated = true;
+        }
+    }
+
+    // Write back if updated
+    if (updated) {
+        fs.writeFileSync(gitignorePath, existingLines.join('\n'), 'utf-8');
+        console.log('.gitignore updated.');
+    } else {
+        console.log('.gitignore already contains all required lines.');
+    }
+}
+
+
+install().then(appendGitIgnore);
+

@@ -12,3 +12,9 @@ node_modules/
 /*.config.ts
 /.env
 /tsconfig.json
+
+# playwright
+/app/design/frontend/{vendor}/{theme}/web/playwright/*
+!/app/design/frontend/{vendor}/{theme}/web/playwright/tests/
+!/app/design/frontend/{vendor}/{theme}/web/playwright/package.json
+!/app/design/frontend/{vendor}/{theme}/web/playwright/package-lock.json
