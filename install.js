@@ -9,9 +9,9 @@ class Install {
 
   rl = '';
   currentUser = '';
-
   isCi = false;
   useDefaults = false;
+  pathToMagentoRoot = '../../../../../../../../../../'; // default: when installed via npm
 
   envVars = {
     'PLAYWRIGHT_BASE_URL': { default: 'https://hyva-demo.elgentos.io/' },
@@ -47,6 +47,11 @@ class Install {
     this.useDefaults = true
     this.isCi = process.env.CI === 'true';
     this.currentUser = execSync('whoami').toString().trim();
+    const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
+
+    if (isLocalDev) {
+      this.pathToMagentoRoot = './'; // we're in the root of the dev repo
+    }
 
     this.rl = readline.createInterface({
       input: process.stdin,
@@ -68,7 +73,7 @@ class Install {
   }
 
   async askQuestion(query) {
-    new Promise((resolve) => this.rl.question(query, resolve))
+    return new Promise((resolve) => this.rl.question(query, resolve))
   }
 
   async setEnvVariables() {
@@ -96,13 +101,7 @@ class Install {
   async appendToGitIgnore() {
     console.log('Checking .gitignore and adding lines if necessary...');
 
-    // Get the current file's directory and go 7 levels up
-    let gitignorePath = __dirname;
-    // for (let i = 0; i < 7; i++) {
-    //     gitignorePath = path.dirname(gitignorePath);
-    // }
-
-    gitignorePath = path.join(gitignorePath, '.gitignore');
+    const gitignorePath = path.join(this.pathToMagentoRoot, '.gitignore');
 
     // Read existing content if file exists
     let existingLines = [];
