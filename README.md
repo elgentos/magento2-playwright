@@ -81,7 +81,7 @@ npx playwright test --grep "@setup" --trace on
 After that - you’re all set! 🥳 You can run the testing suite - feel free to skip the setup at this point:
 
 ```bash
-npx playrwight test --grep-invert "@setup" --trace on
+npx playwright test --grep-invert "@setup" --trace on
 ```
 
 ---
