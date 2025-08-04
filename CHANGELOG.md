@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2025-08-04
+
+### Added
+- Added a console.log utility tool to prevent having to use ‘console.log’.
+
+
+### Changed
+- Rewritten setup.spec.ts for better legibility. Setup will also now check if elements are present and active (e.g. coupon codes), and no longer writes to .env.
+- Improved the capability of the magewire loading utility to better handle various states of the magewire loading element 
+- Improved using @ tags for example @utils, @poms and more for ease of customization and maintainability.
+- Updated README to reflect new updates.
+
+
+### Removed
+- Removed setup toggles to avoid the use of `.only()` as this can easily lead to mistakes. Use ‘grep’ instead.
+
+
+### Fixed
+- Fixed various ‘false negatives’ where tests would fail due to poor hydration methods. Among these is the country selection and the state selection field, which changes based on the selected country.
+- Fixed ‘race condition’ in the `change_quantity_in_cart` test which sometimes caused the quantity to not be properly updated.
+- Minor fixes for ‘multimatch’ selector errors
+
+
 ## [2.1.0-alpha] - 2025-07-08
 
 ### Added
