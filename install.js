@@ -37,10 +37,10 @@ class Install {
 
   rulesToAddToIgnore = [
     '# playwright',
-    '/app/design/frontend/Elgentos/default/web/playwright/*',
-    '!/app/design/frontend/Elgentos/default/web/playwright/tests/',
-    '!/app/design/frontend/Elgentos/default/web/playwright/package.json',
-    '!/app/design/frontend/Elgentos/default/web/playwright/package-lock.json'
+    '/app/design/frontend/<vendor>/<theme>/web/playwright/*',
+    '!/app/design/frontend/<vendor>/<theme>/web/playwright/tests/',
+    '!/app/design/frontend/<vendor>/<theme>/web/playwright/package.json',
+    '!/app/design/frontend/<vendor>/<theme>/web/playwright/package-lock.json'
   ]
 
   constructor() {
@@ -110,10 +110,16 @@ class Install {
       existingLines = content.split(/\r?\n/);
     }
 
-    // Append missing lines
+    // Get vendor and theme
+    const { vendor, theme } = await this.setVendorAndTheme(__dirname);
+
+      // Append missing lines
     let updated = false;
-    for (const line of this.rulesToAddToIgnore) {
-      if (!existingLines.includes(line)) {
+    for (let line of this.rulesToAddToIgnore) {
+        // Replace placeholders with actual values
+        line = line.replace('<vendor>', vendor).replace('<theme>', theme);
+
+        if (!existingLines.includes(line)) {
         existingLines.push(line);
         updated = true;
       }
@@ -126,6 +132,13 @@ class Install {
     } else {
       console.log('.gitignore already contains all required lines.');
     }
+  }
+  async setVendorAndTheme() {
+      // Ask user for input if path structure is invalid
+      const vendor = await this.askQuestion('Enter the vendor name: ');
+      const theme = await this.askQuestion('Enter the theme name: ');
+
+      return { vendor, theme };
   }
 }
 
