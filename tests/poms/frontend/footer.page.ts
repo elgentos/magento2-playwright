@@ -15,7 +15,10 @@ class Footer {
 
     async goToFooterElement () {
         await this.page.getByText(UIReference.footerPage.currencyLabel).scrollIntoViewIfNeeded();
-        await expect(this.footerElement).toBeVisible();
+        await expect(
+          this.footerElement,
+          'Footer is visible'
+        ).toBeVisible();
     }
 
     async switchCurrency () {
@@ -31,7 +34,8 @@ class Footer {
         await this.page.getByRole('button', { name: currencyToOpen }).click();
 
         await expect(
-          this.page.getByRole('navigation', { name: UIReference.footerPage.currencyLabel })
+          this.page.getByRole('navigation', { name: UIReference.footerPage.currencyLabel }),
+          'Footer navigation is visible'
         ).toBeVisible();
 
         await this.page.getByRole('link', { name: currencyToSelect }).click();
@@ -39,7 +43,8 @@ class Footer {
         await this.goToFooterElement();
 
         await expect(
-          this.page.getByRole('button', { name: currencyToSelect })
+          this.page.getByRole('button', { name: currencyToSelect }),
+          'Currency selector is visible'
         ).toBeVisible();
     }
 }
