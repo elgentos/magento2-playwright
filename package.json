@@ -1,6 +1,6 @@
 {
   "name": "@elgentos/magento2-playwright",
-  "version": "2.1.0-alpha",
+  "version": "2.2.0",
   "author": "elgentos",
   "license": "ISC",
   "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
