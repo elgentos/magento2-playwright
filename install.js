@@ -5,26 +5,21 @@ const path = require('path');
 const readline = require('readline');
 const { execSync } = require('child_process');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+class Install {
 
-const question = (query) => new Promise((resolve) => rl.question(query, resolve));
+  rl = '';
+  currentUser = '';
 
-async function install() {
+  isCi = false;
+  useDefaults = false;
 
-  // Get current user
-  const currentUser = execSync('whoami').toString().trim();
-
-  // Environment variables with defaults
-  const envVars = {
+  envVars = {
     'PLAYWRIGHT_BASE_URL': { default: 'https://hyva-demo.elgentos.io/' },
     'PLAYWRIGHT_PRODUCTION_URL': { default: 'https://hyva-demo.elgentos.io/' },
     'PLAYWRIGHT_REVIEW_URL': { default: 'https://hyva-demo.elgentos.io/' },
 
     'MAGENTO_ADMIN_SLUG': { default: 'admin' },
-    'MAGENTO_ADMIN_USERNAME': { default: currentUser },
+    'MAGENTO_ADMIN_USERNAME': { default: this.currentUser },
     'MAGENTO_ADMIN_PASSWORD': { default: 'Test1234!' },
     'MAGENTO_THEME_LOCALE': { default: 'nl_NL' },
 
@@ -38,49 +33,68 @@ async function install() {
     'MAGENTO_COUPON_CODE_CHROMIUM': { default: 'CHROMIUM321' },
     'MAGENTO_COUPON_CODE_FIREFOX': { default: 'FIREFOX321' },
     'MAGENTO_COUPON_CODE_WEBKIT': { default: 'WEBKIT321' }
-  };
-
-  // Add initial question to allow user to simply use defaults
-  const isCI = process.env.CI === 'true';
-  let useDefaults = true;
-
-  // Check if user
-  if (!isCI) {
-    const initialAnswer = await question('Do you want to customize environment variables? (y/N): ');
-    useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
   }
 
-  // Read and update .env file
-  const envPath = path.join('.env');
-  let envContent = '';
+  rulesToAddToIgnore = [
+    '# playwright',
+    '/app/design/frontend/Elgentos/default/web/playwright/*',
+    '!/app/design/frontend/Elgentos/default/web/playwright/tests/',
+    '!/app/design/frontend/Elgentos/default/web/playwright/package.json',
+    '!/app/design/frontend/Elgentos/default/web/playwright/package-lock.json'
+  ]
 
-  for (const [key, value] of Object.entries(envVars)) {
+  constructor() {
+    this.useDefaults = true
+    this.isCi = process.env.CI === 'true';
+    this.currentUser = execSync('whoami').toString().trim();
+
+    this.rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+
+    this.init();
+  }
+
+  async init() {
+    // Check if user
+    if (!this.isCi) {
+      const initialAnswer = await this.askQuestion('Do you want to customize environment variables? (y/N): ');
+      this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
+    }
+
+    await this.appendToGitIgnore();
+    await this.setEnvVariables();
+  }
+
+  async askQuestion(query) {
+    new Promise((resolve) => this.rl.question(query, resolve))
+  }
+
+  async setEnvVariables() {
+    // Read and update .env file
+    const envPath = path.join('.env');
+    let envContent = '';
+
+    for (const [key, value] of Object.entries(this.envVars)) {
       let userInput = '';
-      if (!isCI && !useDefaults) {
-          userInput = await question(`Enter ${key} (default: ${value.default}): `);
+      if (!this.isCi && !this.useDefaults) {
+        userInput = await this.askQuestion(`Enter ${ key } (default: ${ value.default }): `);
       }
-      envContent += `${key}=${userInput || value.default}\n`;
+      envContent += `${ key }=${ userInput || value.default }\n`;
+    }
+
+    fs.writeFileSync(envPath, envContent);
+
+    console.log('\nInstallation completed successfully!');
+    console.log('\nFor more information, please visit:');
+    console.log('https://wiki.elgentos.nl/doc/stappenplan-testing-suite-implementeren-voor-klanten-hCGe4hVQvN');
+
+    this.rl.close();
   }
 
-  fs.writeFileSync(envPath, envContent);
-
-  console.log('\nInstallation completed successfully!');
-  console.log('\nFor more information, please visit:');
-  console.log('https://wiki.elgentos.nl/doc/stappenplan-testing-suite-implementeren-voor-klanten-hCGe4hVQvN');
-
-  rl.close();
-}
-
-async function appendGitIgnore() {
+  async appendToGitIgnore() {
     console.log('Checking .gitignore and adding lines if necessary...');
-    // The lines to be added to gitignore
-    const requiredLines = [
-        '# playwright',
-        '/app/design/frontend/{vendor}/{theme}/web/playwright/*',
-        '!/app/design/frontend/{vendor}/{theme}/web/playwright/tests/',
-        '!/app/design/frontend/{vendor}/{theme}/web/playwright/package.json',
-        '!/app/design/frontend/{vendor}/{theme}/web/playwright/package-lock.json',
-    ];
 
     // Get the current file's directory and go 7 levels up
     let gitignorePath = __dirname;
@@ -93,28 +107,27 @@ async function appendGitIgnore() {
     // Read existing content if file exists
     let existingLines = [];
     if (fs.existsSync(gitignorePath)) {
-        const content = fs.readFileSync(gitignorePath, 'utf-8');
-        existingLines = content.split(/\r?\n/);
+      const content = fs.readFileSync(gitignorePath, 'utf-8');
+      existingLines = content.split(/\r?\n/);
     }
 
     // Append missing lines
     let updated = false;
-    for (const line of requiredLines) {
-        if (!existingLines.includes(line)) {
-            existingLines.push(line);
-            updated = true;
-        }
+    for (const line of this.rulesToAddToIgnore) {
+      if (!existingLines.includes(line)) {
+        existingLines.push(line);
+        updated = true;
+      }
     }
 
     // Write back if updated
     if (updated) {
-        fs.writeFileSync(gitignorePath, existingLines.join('\n'), 'utf-8');
-        console.log('.gitignore updated.');
+      fs.writeFileSync(gitignorePath, existingLines.join('\n'), 'utf-8');
+      console.log('.gitignore updated.');
     } else {
-        console.log('.gitignore already contains all required lines.');
+      console.log('.gitignore already contains all required lines.');
     }
+  }
 }
 
-
-install().then(appendGitIgnore);
-
+new Install();
