@@ -39,6 +39,10 @@
   "customerOverviewPage": {
     "searchResultsFoundText": "records found"
   },
+  "footerPage": {
+    "newsletterSubscription": "Thank you for your subscription.",
+    "newsletterAlreadySubscribed": "This email address is already subscribed."
+  },
   "homePage": {
     "firstProductName": "Aim Analog Watch"
   },
