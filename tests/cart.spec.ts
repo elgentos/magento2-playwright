@@ -7,7 +7,7 @@ import CartPage from '@poms/frontend/cart.page';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
-import NotificationValidator from '@utils/notification.validator';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 test.describe('Cart functionalities (guest)', () => {
   /**
@@ -26,8 +26,8 @@ test.describe('Cart functionalities (guest)', () => {
     await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
 
     const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
-    const notificationValidator = new NotificationValidator(page, testInfo);
-    await notificationValidator.validate(productAddedNotification);
+    const notificationValidator = new NotificationValidatorUtils(page, testInfo);
+    await notificationValidator.validate('beforeEach add product to cart', productAddedNotification);
 
     // await mainMenu.openMiniCart();
     // await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();

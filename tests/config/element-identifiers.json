@@ -149,6 +149,15 @@
   "customerOverviewPage": {
     "tableSearchFieldLabel": "Search by keyword"
   },
+  "footerPage": {
+    "footerLocator": ".page-footer",
+    "currencyIdentifier": "#currency-heading",
+    "currencyLabel": "Currency",
+    "currencyDollar": "USD - US Dollar",
+    "currencyEuro": "EUR - Euro",
+    "newsletterInputElementLabel": "Email Address",
+    "newsletterSubscribeButtonLabel": "Subscribe"
+  },
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",

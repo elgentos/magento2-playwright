@@ -1,7 +1,8 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from '@config';
+import { UIReference, outcomeMarker, inputValues } from '@config';
+import { faker } from '@faker-js/faker'
 
 class NewsletterSubscriptionPage {
   readonly page: Page;
@@ -15,15 +16,14 @@ class NewsletterSubscriptionPage {
   }
 
   async updateNewsletterSubscription(){
-    
-    if(await this.newsletterCheckElement.isChecked()) {
-      // user is already subscribed, test runs unsubscribe 
-      var subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification; 
 
+    let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
+    let subscribed = false;
+
+    if(await this.newsletterCheckElement.isChecked()) {
+      // user is already subscribed, test runs unsubscribe
       await this.newsletterCheckElement.uncheck();
       await this.saveSubscriptionsButton.click();
-      
-      var subscribed = false;
       
     } else {
       // user is not yet subscribed, test runs subscribe
@@ -37,6 +37,12 @@ class NewsletterSubscriptionPage {
 
     await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
     return subscribed;
+  }
+
+  async footerSubscribeToNewsletter() {
+    await expect(this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel})).toBeVisible();
+    await this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel}).fill(faker.internet.email());
+    await this.page.getByRole('button', {name: UIReference.footerPage.newsletterSubscribeButtonLabel}).click();
   }
 }
 
