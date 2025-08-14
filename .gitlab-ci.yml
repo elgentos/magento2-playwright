@@ -79,7 +79,7 @@ test_mirror_pipeline:
         "attachments": [
           {
             "title": "Playwright: Test gitlab mirror",
-            "text": "Testing gitlab mirror, pipeline status: ${CI_JOB_STATUS}"
+            "text": "Testing gitlab mirror, pipeline status: ${CI_JOB_STATUS}",
             "color": "${COLOR}"
           }
         ]
