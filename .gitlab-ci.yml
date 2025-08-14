@@ -71,7 +71,7 @@ test_mirror_pipeline:
         "attachments": [
           {
             "title": "Test gitlab mirror",
-            "text": "Testing gitlab mirror"
+            "text": "Testing gitlab mirror, pipeline status: ${CI_PIPELINE_STATUS}"
           }
         ]
       }
