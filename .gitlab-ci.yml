@@ -51,9 +51,9 @@ variables:
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "${EMOJI} Playwright",
+            "title": "Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "Job:  ${CI_JOB_NAME}\nStatus: ${CI_JOB_STATUS}",
+            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\n Job: ${CI_JOB_NAME}",
             "color": "${COLOR}"
           }
         ]
@@ -96,7 +96,6 @@ test_mirror_pipeline:
     - git config --global user.email "developer@elgentos.nl"
   script:
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
-  extends: .slack-notification
 
 create_testing_suite:
   stage: testing_suite
@@ -108,7 +107,6 @@ create_testing_suite:
     # Check what files are present
     - ls -l base-tests
     - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
-  extends: .slack-notification
   allow_failure: false
   artifacts:
     when: always
@@ -131,7 +129,6 @@ run_testing_suite:
     - echo 'Running test suite'
     - npx playwright install --with-deps
     - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
-  extends: .slack-notification
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
     - create_testing_suite
