@@ -67,10 +67,13 @@ test_mirror_pipeline:
     - |-
       if [ "$CI_JOB_STATUS" = "success" ]; then
         COLOR="good"
+        EMOJI=":white_check_mark:"
       elif [ "$CI_JOB_STATUS" = "failed" ]; then
         COLOR="danger"
+        EMOJI=":x:"
       else
         COLOR="warning"
+        EMOJI=":warning:"
       fi
       
       PAYLOAD=$(cat << JSON
@@ -79,7 +82,8 @@ test_mirror_pipeline:
         "attachments": [
           {
             "title": "Playwright: test_mirror_pipeline",
-            "text": "Testing gitlab mirror",
+            "title_link": "${CI_PIPELINE_URL}",
+            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
             "color": "${COLOR}"
           }
         ]
@@ -106,10 +110,13 @@ create_testing_suite:
     - |-
       if [ "$CI_JOB_STATUS" = "success" ]; then
         COLOR="good"
+        EMOJI=":white_check_mark:"
       elif [ "$CI_JOB_STATUS" = "failed" ]; then
         COLOR="danger"
+        EMOJI=":x:"
       else
         COLOR="warning"
+        EMOJI=":warning:"
       fi
 
       PAYLOAD=$(cat << JSON
@@ -118,7 +125,8 @@ create_testing_suite:
         "attachments": [
           {
             "title": "Playwright: creating_testing_suite",
-            "text": "Creating testing suite",
+            "title_link": "${CI_PIPELINE_URL}",
+            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
             "color": "${COLOR}"
           }
         ]
@@ -156,10 +164,13 @@ run_testing_suite:
     - |-
       if [ "$CI_JOB_STATUS" = "success" ]; then
         COLOR="good"
+        EMOJI=":white_check_mark:"
       elif [ "$CI_JOB_STATUS" = "failed" ]; then
         COLOR="danger"
+        EMOJI=":x:"
       else
         COLOR="warning"
+        EMOJI=":warning:"
       fi
 
       PAYLOAD=$(cat << JSON
@@ -168,7 +179,8 @@ run_testing_suite:
         "attachments": [
           {
             "title": "Playwright: run_testing_suite",
-            "text": "Running testingsuite is ${CI_JOB_STATUS}",
+            "title_link": "${CI_PIPELINE_URL}",
+            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
             "color": "${COLOR}"
           }
         ]
