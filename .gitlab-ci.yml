@@ -72,7 +72,7 @@ create_testing_suite:
     - npx playwright install-deps
     # Check what files are present
     - ls -l base-tests
-    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4
+    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
   allow_failure: false
   artifacts:
     when: always
