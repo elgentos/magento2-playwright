@@ -65,14 +65,22 @@ test_mirror_pipeline:
   after_script:
     # Slack notification
     - |-
+      if [ "$CI_JOB_STATUS" = "success" ]; then
+        COLOR="good"
+      elif [ "$CI_JOB_STATUS" = "failed" ]; then
+        COLOR="danger"
+      else
+        COLOR="warning"
+      fi
+      
       PAYLOAD=$(cat << JSON
       {
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
             "title": "Playwright: Test gitlab mirror",
-            "text": "Testing gitlab mirror, pipeline status: ${CI_PIPELINE_STATUS}"
-            "type": "success"
+            "text": "Testing gitlab mirror, pipeline status: ${CI_JOB_STATUS}"
+            "color": "${COLOR}"
           }
         ]
       }
