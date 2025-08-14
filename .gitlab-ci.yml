@@ -72,7 +72,7 @@ test_mirror_pipeline:
           {
             "title": "Playwright: Test gitlab mirror",
             "text": "Testing gitlab mirror, pipeline status: ${CI_PIPELINE_STATUS}"
-            "type": success
+            "type": "success"
           }
         ]
       }
