@@ -31,6 +31,40 @@ variables:
 
   CAPTCHA_BYPASS: true
 
+.slack-notification:
+  after_script:
+    # Slack notification
+    - |-
+      if [ "$CI_JOB_STATUS" = "success" ]; then
+        COLOR="good"
+        EMOJI=":white_check_mark:"
+      elif [ "$CI_JOB_STATUS" = "failed" ]; then
+        COLOR="danger"
+        EMOJI=":x:"
+      else
+        COLOR="warning"
+        EMOJI=":warning:"
+      fi
+      
+      PAYLOAD=$(cat << JSON
+      {
+        "channel": "${SLACK_CHANNEL}",
+        "attachments": [
+          {
+            "title": "${EMOJI} Playwright",
+            "title_link": "${CI_PIPELINE_URL}",
+            "text": "Job: test_mirror_pipeline ${CI_JOB_STATUS}",
+            "color": "${COLOR}"
+          }
+        ]
+      }
+      JSON
+      )
+    - >
+      curl -X POST ${SLACK_WEBHOOK}
+      --header 'Content-Type: application/json; charset=utf-8'
+      --data-binary "$PAYLOAD"
+
 mirror_to_github:
   stage: mirror
   only:
@@ -62,38 +96,7 @@ test_mirror_pipeline:
     - git config --global user.email "developer@elgentos.nl"
   script:
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
-  after_script:
-    # Slack notification
-    - |-
-      if [ "$CI_JOB_STATUS" = "success" ]; then
-        COLOR="good"
-        EMOJI=":white_check_mark:"
-      elif [ "$CI_JOB_STATUS" = "failed" ]; then
-        COLOR="danger"
-        EMOJI=":x:"
-      else
-        COLOR="warning"
-        EMOJI=":warning:"
-      fi
-      
-      PAYLOAD=$(cat << JSON
-      {
-        "channel": "${SLACK_CHANNEL}",
-        "attachments": [
-          {
-            "title": "${EMOJI} Playwright",
-            "title_link": "${CI_PIPELINE_URL}",
-            "text": "Job: test_mirror_pipeline",
-            "color": "${COLOR}"
-          }
-        ]
-      }
-      JSON
-      )
-    - >
-      curl -X POST ${SLACK_WEBHOOK}
-      --header 'Content-Type: application/json; charset=utf-8'
-      --data-binary "$PAYLOAD"
+  extends: .slack-notification
 
 create_testing_suite:
   stage: testing_suite
@@ -126,7 +129,7 @@ create_testing_suite:
           {
             "title": "${EMOJI} Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "Job: create_testing_suite",
+            "text": "Job: create_testing_suite ${CI_JOB_STATUS}",
             "color": "${COLOR}"
           }
         ]
@@ -180,7 +183,7 @@ run_testing_suite:
           {
             "title": "${EMOJI} Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "Job: run_testing_suite",
+            "text": "Job: run_testing_suite ${CI_JOB_STATUS}",
             "color": "${COLOR}"
           }
         ]
