@@ -81,9 +81,9 @@ test_mirror_pipeline:
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "Playwright: test_mirror_pipeline",
+            "title": "${EMOJI} Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
+            "text": "Job: test_mirror_pipeline",
             "color": "${COLOR}"
           }
         ]
@@ -118,15 +118,15 @@ create_testing_suite:
         COLOR="warning"
         EMOJI=":warning:"
       fi
-
+      
       PAYLOAD=$(cat << JSON
       {
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "Playwright: creating_testing_suite",
+            "title": "${EMOJI} Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
+            "text": "Job: create_testing_suite",
             "color": "${COLOR}"
           }
         ]
@@ -172,15 +172,15 @@ run_testing_suite:
         COLOR="warning"
         EMOJI=":warning:"
       fi
-
+      
       PAYLOAD=$(cat << JSON
       {
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "Playwright: run_testing_suite",
+            "title": "${EMOJI} Playwright",
             "title_link": "${CI_PIPELINE_URL}",
-            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\nBranch: ${CI_COMMIT_BRANCH}\nCommit: ${CI_COMMIT_SHORT_SHA}\nPipeline: #${CI_PIPELINE_ID}",
+            "text": "Job: run_testing_suite",
             "color": "${COLOR}"
           }
         ]
