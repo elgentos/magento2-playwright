@@ -78,8 +78,8 @@ test_mirror_pipeline:
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "Playwright: Test gitlab mirror",
-            "text": "Testing gitlab mirror, pipeline status: ${CI_JOB_STATUS}",
+            "title": "Playwright: test_mirror_pipeline",
+            "text": "Testing gitlab mirror",
             "color": "${COLOR}"
           }
         ]
@@ -101,6 +101,34 @@ create_testing_suite:
     # Check what files are present
     - ls -l base-tests
     - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
+  after_script:
+    # Slack notification
+    - |-
+      if [ "$CI_JOB_STATUS" = "success" ]; then
+        COLOR="good"
+      elif [ "$CI_JOB_STATUS" = "failed" ]; then
+        COLOR="danger"
+      else
+        COLOR="warning"
+      fi
+
+      PAYLOAD=$(cat << JSON
+      {
+        "channel": "${SLACK_CHANNEL}",
+        "attachments": [
+          {
+            "title": "Playwright: creating_testing_suite",
+            "text": "Creating testing suite",
+            "color": "${COLOR}"
+          }
+        ]
+      }
+      JSON
+      )
+    - >
+      curl -X POST ${SLACK_WEBHOOK}
+      --header 'Content-Type: application/json; charset=utf-8'
+      --data-binary "$PAYLOAD"
   allow_failure: false
   artifacts:
     when: always
@@ -123,15 +151,25 @@ run_testing_suite:
     - echo 'Running test suite'
     - npx playwright install --with-deps
     - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+  after_script:
     # Slack notification
     - |-
+      if [ "$CI_JOB_STATUS" = "success" ]; then
+        COLOR="good"
+      elif [ "$CI_JOB_STATUS" = "failed" ]; then
+        COLOR="danger"
+      else
+        COLOR="warning"
+      fi
+
       PAYLOAD=$(cat << JSON
       {
         "channel": "${SLACK_CHANNEL}",
         "attachments": [
           {
-            "title": "Creating Testingsuite",
-            "text": "Creating Testingsuite is complete"
+            "title": "Playwright: run_testing_suite",
+            "text": "Running testingsuite is ${CI_JOB_STATUS}",
+            "color": "${COLOR}"
           }
         ]
       }
