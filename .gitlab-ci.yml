@@ -5,6 +5,8 @@ stages:
   - mirror
 
 variables:
+  SLACK_CHANNEL: "#_qatesting_stream"
+
   GIT_DEPTH: 0
   GIT_TRACE: 1
   
