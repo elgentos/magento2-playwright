@@ -95,6 +95,24 @@ run_testing_suite:
     - echo 'Running test suite'
     - npx playwright install --with-deps
     - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+    # Slack notification
+    - |-
+      PAYLOAD=$(cat << JSON
+      {
+        "channel": "${SLACK_CHANNEL}",
+        "attachments": [
+          {
+            "title": "Creating Testingsuite",
+            "text": "Creating Testingsuite is complete"
+          }
+        ]
+      }
+      JSON
+      )
+    - >
+      curl -X POST ${SLACK_WEBHOOK}
+      --header 'Content-Type: application/json; charset=utf-8'
+      --data-binary "$PAYLOAD"
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
     - create_testing_suite
