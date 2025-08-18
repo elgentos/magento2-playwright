@@ -72,7 +72,7 @@
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
-    "updateItemButtonLabel": "shopping-cart Update item",
+    "updateItemButtonLabel": "Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"
   },
   "cartPriceRulesPage": {
