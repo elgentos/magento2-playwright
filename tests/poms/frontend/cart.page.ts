@@ -109,22 +109,30 @@ class CartPage {
   // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
-    // Open minicart based on amount of products in cart
-    let cartItemAmount = await this.page.locator(UIReference.miniCart.minicartAmountBubbleLocator).count();
-    if(cartItemAmount == 1) {
-      await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelCont}`).click();
-    } else {
-      await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelContMultiple}`).click();
+    const checkoutCartDetails = this.page.locator('#checkout-cart-details');
+    const openCartDetailsButton = this.page.locator('button[aria-controls="checkout-cart-details"]');
+
+    if(await checkoutCartDetails.isHidden()) {
+      await openCartDetailsButton.click();
     }
+
+    // // Open minicart based on amount of products in cart
+    // let cartItemAmount = await this.page.locator(UIReference.miniCart.minicartAmountBubbleLocator).count();
+    // if(cartItemAmount == 1) {
+    //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelCont}`).click();
+    // } else {
+    //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelContMultiple}`).click();
+    // }
 
     // Get values from checkout page
     let productInCheckout = this.page.locator(UIReference.checkout.cartDetailsLocator).filter({ hasText: productName }).nth(1);
-    this.productPriceInCheckout = await productInCheckout.getByText(UIReference.general.genericPriceSymbol).innerText();
+    this.productPriceInCheckout = await productInCheckout.getByText(UIReference.general.genericPriceSymbol).last().innerText();
     this.productPriceInCheckout = this.productPriceInCheckout.trim();
-    let productImage = this.page.locator(UIReference.checkout.cartDetailsLocator)
-    .filter({ has: this.page.getByRole('img', { name: productName })});
-    this.productQuantityInCheckout = await productImage.locator('> span').innerText();
-
+    // let productImage = this.page.locator(UIReference.checkout.cartDetailsLocator)
+    // .filter({ has: this.page.getByRole('img', { name: productName })});
+    // this.productQuantityInCheckout = await productImage.locator('> span').innerText();
+    this.productQuantityInCheckout = await productInCheckout.locator('.product-price').getByText('x').innerText();
+    this.productQuantityInCheckout = this.productQuantityInCheckout.substring(0,1);
     return [this.productPriceInCheckout, this.productQuantityInCheckout];
   }
 
@@ -132,7 +140,7 @@ class CartPage {
     // perform magic to calculate price * amount and mold it into the correct form again
     pricePDP = pricePDP.replace(UIReference.general.genericPriceSymbol,'');
     let pricePDPInt = Number(pricePDP);
-    let quantityPDPInt = +amountPDP;
+    let quantityPDPInt = parseInt(amountPDP);
     let calculatedPricePDP = `${UIReference.general.genericPriceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
 
     expect(amountPDP,`Amount on PDP (${amountPDP}) equals amount in checkout (${amountCheckout})`).toEqual(amountCheckout);

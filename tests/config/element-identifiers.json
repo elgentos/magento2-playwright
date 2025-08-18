@@ -32,7 +32,7 @@
     "saveSubscriptionsButton": "Save"
   },
   "productPage": {
-    "addToCartButtonLocator": "shopping-cart Add to Cart",
+    "addToCartButtonLocator": "Add to Cart",
     "addToCompareButtonLabel": "Add to Compare",
     "addToWishlistButtonLabel": "Add to Wish List",
     "simpleProductTitle": "Push It Messenger Bag",
