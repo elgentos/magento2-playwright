@@ -7,7 +7,7 @@
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
     "addressBookArea": ".block-addresses-list",
-    "addressDeleteIconButton": "trash",
+    "addressDeleteIconButton": "Delete",
     "editAddressIconButton": "pencil-alt",
     "accountInformationFieldLocator": ".column > div > div > .flex",
     "links": {
