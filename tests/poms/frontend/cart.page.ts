@@ -109,8 +109,8 @@ class CartPage {
   // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
-    const checkoutCartDetails = this.page.locator('#checkout-cart-details');
-    const openCartDetailsButton = this.page.locator('button[aria-controls="checkout-cart-details"]');
+    const checkoutCartDetails = this.page.locator(UIReference.checkout.checkoutCartDetailsLocator);
+    const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
 
     if(await checkoutCartDetails.isHidden()) {
       await openCartDetailsButton.click();
