@@ -36,23 +36,21 @@ class Install {
       'PLAYWRIGHT_BASE_URL': { default: 'https://hyva-demo.elgentos.io/' },
       'PLAYWRIGHT_PRODUCTION_URL': { default: 'https://hyva-demo.elgentos.io/' },
       'PLAYWRIGHT_REVIEW_URL': { default: 'https://hyva-demo.elgentos.io/' },
-
       'MAGENTO_ADMIN_SLUG': { default: 'admin' },
       'MAGENTO_ADMIN_USERNAME': { default: this.currentUser },
       'MAGENTO_ADMIN_PASSWORD': { default: 'Test1234!' },
       'MAGENTO_THEME_LOCALE': { default: 'nl_NL' },
-
       'MAGENTO_NEW_ACCOUNT_PASSWORD': { default: 'NewTest1234!' },
       'MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM': { default: 'user-CHROMIUM@elgentos.nl' },
       'MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX': { default: 'user-FIREFOX@elgentos.nl' },
       'MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT': { default: 'user-WEBKIT@elgentos.nl' },
       'MAGENTO_EXISTING_ACCOUNT_PASSWORD': { default: 'Test1234!' },
       'MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD': { default: 'AanpassenKan@0212' },
-
       'MAGENTO_COUPON_CODE_CHROMIUM': { default: 'CHROMIUM321' },
       'MAGENTO_COUPON_CODE_FIREFOX': { default: 'FIREFOX321' },
       'MAGENTO_COUPON_CODE_WEBKIT': { default: 'WEBKIT321' }
     }
+
 
     this.rl = readline.createInterface({
       input: process.stdin,
