@@ -98,6 +98,10 @@ class TranslateJson {
   // Function to find CSV files recursively
   findCsvFiles(dir, locale) {
     let results = [];
+    if (!fs.statSync(dir).isDirectory()) {
+      return results;
+    }
+
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
@@ -155,8 +159,7 @@ class TranslateJson {
   // Function to translate values in an object recursively
   translateObject(obj, translations) {
     if (typeof obj === 'string') {
-      const translatedValue = translations[obj];
-      return translatedValue !== undefined ? translatedValue : null;
+      return translations[obj] ?? obj;
     }
 
     if (Array.isArray(obj)) {
