@@ -222,6 +222,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
     if(await deleteAddressButton.isHidden()) {
       // The delete address button was not found, add another address first.
+      await page.goto(slugs.account.addressNewSlug);
       await accountPage.addNewAddress();
     }
     await accountPage.deleteFirstAddressFromAddressBook();
@@ -242,7 +243,6 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @and My subscription option should be updated.
    */
   test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page, browserName}) => {
-    test.skip(browserName === 'webkit', '.click() does not work, still searching for a workaround');
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
     const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);

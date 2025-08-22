@@ -212,7 +212,7 @@ class CheckoutPage extends MagewireUtils {
     await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).first().fill(faker.location.streetAddress());
     await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.location.zipCode());
     await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
-    await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number());
+    await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number({style: 'national'}));
 
     // Select country (if needed)
     // await this.page.getByLabel('Country').selectOption('US');

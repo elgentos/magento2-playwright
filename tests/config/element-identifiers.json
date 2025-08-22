@@ -7,7 +7,7 @@
     "accountSideBarLabel": "Sidebar Main",
     "addAddressButtonLabel": "ADD NEW ADDRESS",
     "addressBookArea": ".block-addresses-list",
-    "addressDeleteIconButton": "trash",
+    "addressDeleteIconButton": "Delete",
     "editAddressIconButton": "pencil-alt",
     "accountInformationFieldLocator": ".column > div > div > .flex",
     "links": {
@@ -32,7 +32,7 @@
     "saveSubscriptionsButton": "Save"
   },
   "productPage": {
-    "addToCartButtonLocator": "shopping-cart Add to Cart",
+    "addToCartButtonLocator": "Add to Cart",
     "addToCompareButtonLabel": "Add to Compare",
     "addToWishlistButtonLabel": "Add to Wish List",
     "simpleProductTitle": "Push It Messenger Bag",
@@ -72,7 +72,7 @@
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
-    "updateItemButtonLabel": "shopping-cart Update item",
+    "updateItemButtonLabel": "Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"
   },
   "cartPriceRulesPage": {
@@ -99,10 +99,12 @@
     "openCartButtonLabel": "Cart",
     "openCartButtonLabelCont": "item",
     "openCartButtonLabelContMultiple": "items",
+    "openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
     "openDiscountFormLabel": "Apply Discount Code",
     "paymentOptionCheckLabel": "Check / Money order Free",
     "paymentOptionCreditCardLabel": "Credit Card",
     "paymentOptionPaypalLabel": "PayPal",
+    "checkoutCartDetailsLocator": "#checkout-cart-details",
     "creditCardNumberLabel": "Credit Card Number",
     "creditCardExpiryLabel": "Expiration Date",
     "creditCardCVVLabel": "Card Verification Number",

@@ -44,7 +44,8 @@ class AccountPage {
     this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
     this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
-    this.companyNameField = page.getByLabel(UIReference.newAddress.companyNameLabel);
+    // this.companyNameField = page.getByLabel(UIReference.newAddress.companyNameLabel);
+    this.companyNameField = page.getByRole('textbox', {name: UIReference.newAddress.companyNameLabel});
     this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
     this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, { exact: true });
     this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
@@ -98,7 +99,7 @@ class AccountPage {
     await expect(this.firstNameField, `first name should be pre-filled`).not.toBeEmpty();
     await expect(this.lastNameField, `last name should be pre-filled`).not.toBeEmpty();
 
-    const phone = values?.phone || faker.phone.number();
+    const phone = values?.phone || faker.phone.number({style: 'national'}); // Use 'national' style to prevent input errors
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
@@ -165,7 +166,7 @@ class AccountPage {
     const firstName = values?.firstName || faker.person.firstName();
     const lastName = values?.lastName || faker.person.lastName();
     const companyName = values?.company || faker.company.name();
-    const phone = values?.phone || faker.phone.number();
+    const phone = values?.phone || faker.phone.number({style: 'national'}); // Use 'national' style to prevent input errors
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
     const cityName = values?.city || faker.location.city();
