@@ -13,7 +13,7 @@ class ProductPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.addToCartButton = page.getByRole('button', { name: UIReference.productPage.addToCartButtonLocator });
+    this.addToCartButton = page.getByRole('button', { name: UIReference.productPage.addToCartButtonLocator, exact:true });
     this.addToCompareButton = page.getByLabel(UIReference.productPage.addToCompareButtonLabel, { exact: true });
     this.addToWishlistButton = page.getByLabel(UIReference.productPage.addToWishlistButtonLabel, { exact: true });
   }
@@ -138,9 +138,9 @@ class ProductPage {
       await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
     }
 
-    // Webkit workaround: wait for button to be visible, then force the click.
-    await this.addToCartButton.waitFor();
-    await this.addToCartButton.click({force: true});
+    // assert visibility to ensure we can click the add to cart button.
+    await expect(this.addToCartButton).toBeVisible();
+    await this.addToCartButton.click();
     await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
   }
 

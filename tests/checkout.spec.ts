@@ -133,10 +133,15 @@ test.describe('Checkout (guest)', () => {
       await checkoutPage.shippingMethodOptionFixed.check();
 
       // Wait for totals to update
-      await page.waitForFunction(() => {
-        const element = document.querySelector('.magewire\\.messenger');
-        return element && getComputedStyle(element).height === '0px';
-      });
+      await expect(async () => {
+        await page.locator('.magewire\\.messenger').waitFor({state: "hidden"});
+      }).toPass();
+
+      // // Wait for totals to update
+      // await page.waitForFunction(() => {
+      //   const element = document.querySelector('.magewire\\.messenger');
+      //   return element && getComputedStyle(element).height === '0px';
+      // });
 
       // Get all price components using the verifyPriceCalculations method from the CheckoutPage fixture
       await checkoutPage.verifyPriceCalculations();

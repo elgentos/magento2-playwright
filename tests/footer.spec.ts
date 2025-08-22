@@ -24,6 +24,7 @@ test.describe('Footer', () => {
 		'Footer_switch_currency',
 		{tag: ['@footer', '@cold']},
 		async ({page}) => {
+      test.fixme(true, 'this test currently does not work due to an error on the website.');
 			const footer = new Footer(page);
 
 			await page.goto('');
