@@ -58,7 +58,7 @@ jobs:
             npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
         shell: bash
         env:
-            CI: true
+          CI: true
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
