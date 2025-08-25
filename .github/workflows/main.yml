@@ -51,7 +51,7 @@ jobs:
         run: |
             set -euo pipefail
             echo 'Setting up the testing environment'
-            mkdir -p base-tests
+            mkdir base-tests
             npm install
             npx playwright install-deps
             ls -l base-tests
