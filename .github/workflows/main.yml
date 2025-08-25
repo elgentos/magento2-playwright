@@ -54,7 +54,7 @@ jobs:
           cp tsconfig.example.json tsconfig.json
 
       - name: Create testing suite environment
-        run:
+        run: |
             echo 'Setting up the testing environment'
             mkdir base-tests
             npm install
@@ -71,7 +71,7 @@ jobs:
             retention-days: 30
 
       - name: Run Playwright tests
-        run:
+        run: |
             echo "Running tests from testing suite"
             npx playwright install --with-deps
             npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
