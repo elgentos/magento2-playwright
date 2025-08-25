@@ -51,7 +51,6 @@ jobs:
         run: |
           cp playwright.config.example.ts playwright.config.ts
           cp bypass-captcha.config.example.ts bypass-captcha.config.ts
-          cp tests.config.example.ts tests.config.ts
           cp tsconfig.example.json tsconfig.json
 
       - name: Run Playwright setup test
