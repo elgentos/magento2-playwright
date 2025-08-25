@@ -56,11 +56,12 @@ jobs:
       - name: Create testing suite environment
         run: |
             echo 'Setting up the testing environment'
-            mkdir base-tests || true
+            mkdir -p base-tests
             npm install
             npx playwright install-deps
             ls -l base-tests
             npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
+        shell: bash
         env:
           CI: true
       - uses: actions/upload-artifact@v4
