@@ -50,7 +50,7 @@ jobs:
       - name: Create testing suite environment
         run: |
             echo 'Setting up the testing environment'
-            mkdir base-tests
+            mkdir -p base-tests
             npm install
             npx playwright install-deps
             ls -l base-tests
