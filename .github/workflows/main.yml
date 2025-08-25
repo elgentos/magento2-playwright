@@ -49,7 +49,6 @@ jobs:
 
       - name: Create testing suite environment
         run: |
-            set -euo pipefail
             echo 'Setting up the testing environment'
             mkdir base-tests
             npm install
@@ -68,7 +67,6 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-            set -euo pipefail
             echo "Running tests from testing suite"
             npx playwright install --with-deps
             npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
