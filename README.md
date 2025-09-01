@@ -86,6 +86,40 @@ npx playwright test --grep-invert "@setup" --trace on
 
 ---
 
+## 🌐 Generate Translations
+
+The Magento 2 Playwright Testing Suite supports translations, allowing you to run tests in multiple languages. This is particularly useful for international stores with multilingual sites.
+
+### Setting Up Translations
+
+1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/Vendor/theme/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
+
+
+2. **(Optional) Create Test Files**: Go to step 3 when this is the NPM installed package. Create the following directories and file:
+   - `i18n/app/nl_NL.csv`
+   - `i18n/vendor/`
+
+   After creating these, populate `nl_NL.csv` with entries that match texts from `./config/element-identifiers.json`. For instance, you might add `"Password", "Wachtwoord"`. Alternatively, you can copy a translation file from Magento into the `i18n/app` directory. 
+
+3. **Generate translation files**: run following command: `node translate-json.js nl_NL`. `nl_NL` is the language you want to translate to. For example; it will look for nl_NL.csv
+
+3. **Configuration**: Add or Update `MAGENTO_THEME_LOCALE` configuration in your `.env` file to specify which translations to use during testing.
+
+By following these steps, you can seamlessly integrate language support into your testing workflow, ensuring that your Magento 2 store is thoroughly tested across different languages.
+
+### Troubleshooting
+
+When getting the following error:
+
+```
+Translating file:  i18n/nl_NL.csv
+Error: Invalid Record Length: expect 2, got 1 on line 284
+```
+
+Go to line 284 to find what is wrong in your csv file.
+
+---
+
 ## 🚀 How to use the testing suite
 
 The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit.

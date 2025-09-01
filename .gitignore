@@ -6,6 +6,7 @@ node_modules/
 /auth-storage/
 /playwright-report/
 /base-tests/
+/i18n/
 
 #files
 /*.config.ts
