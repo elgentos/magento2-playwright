@@ -24,6 +24,9 @@ class LoginPage {
     // usage of .press("Enter") to prevent webkit issues with button.click();
     await this.loginButton.press("Enter");
 
+    // wait for page to be done loading
+    await this.page.waitForURL('/customer/account/');
+
     // Open the menu, then check the 'Sign Out' button is visible
     const mainmenu = new MainmenuPage(this.page);
     await mainmenu.mainMenuAccountButton.click();
