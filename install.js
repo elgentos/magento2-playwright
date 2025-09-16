@@ -136,6 +136,7 @@ class Install {
       console.log('.gitignore already contains all required lines.');
     }
   }
+
   async setVendorAndTheme() {
       // Ask user for input if path structure is invalid
       const vendor = await this.askQuestion('Enter the vendor name: ');
