@@ -51,7 +51,6 @@ class Install {
       'MAGENTO_COUPON_CODE_WEBKIT': { default: 'WEBKIT321' }
     }
 
-
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -61,18 +60,15 @@ class Install {
   }
 
   async init() {
-
-    console.log(this.envVars);
-
-
-    // Check if user
-    if (!this.isCi) {
-      const initialAnswer = await this.askQuestion('Do you want to customize environment variables? (y/N): ');
-      this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
-    }
-
-    await this.appendToGitIgnore();
     await this.setEnvVariables();
+    await this.appendToGitIgnore();
+
+    console.log('\nInstallation completed successfully!');
+    console.log('\nFor more information, please visit:');
+    console.log('https://wiki.elgentos.nl/doc/stappenplan-testing-suite-implementeren-voor-klanten-hCGe4hVQvN');
+
+    // Close rl when no questions are asked
+    this.rl.close();
   }
 
   async askQuestion(query) {
@@ -80,6 +76,12 @@ class Install {
   }
 
   async setEnvVariables() {
+    // Check if user
+    if (!this.isCi) {
+      const initialAnswer = await this.askQuestion('Do you want to customize environment variables? (y/N): ');
+      this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
+    }
+
     // Read and update .env file
     const envPath = path.join('.env');
     let envContent = '';
@@ -93,15 +95,16 @@ class Install {
     }
 
     fs.writeFileSync(envPath, envContent);
-
-    console.log('\nInstallation completed successfully!');
-    console.log('\nFor more information, please visit:');
-    console.log('https://wiki.elgentos.nl/doc/stappenplan-testing-suite-implementeren-voor-klanten-hCGe4hVQvN');
-
-    this.rl.close();
   }
 
   async appendToGitIgnore() {
+    if (!this.isCi) {
+      const initialAnswer = await this.askQuestion('Do you want to add lines to gitignore of your project? (y/N): ');
+      if (initialAnswer.trim().toLowerCase() !== 'y') {
+        return;
+      }
+    }
+
     console.log('Checking .gitignore and adding lines if necessary...');
 
     const gitignorePath = path.join(this.pathToMagentoRoot, '.gitignore');
