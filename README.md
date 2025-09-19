@@ -59,7 +59,7 @@ Lastly, simply run the command to install the elgentos Magento2 Playwright packa
 npm install @elgentos/magento2-playwright
 ```
 
-4. **Building .env file (optional)**
+4. **Generate .env file and add playwright to .gitignore (optional)**
 
 Normally, you should be prompted to provide values for the .env variables during installation.
 Each variable also comes with sensible default values.
@@ -71,6 +71,11 @@ If you want to (re)generate the .env file and configure your environment variabl
 ```bash
 node node_modules/@elgentos/magento2-playwright/install.js
 ```
+
+After running the command, you will be asked:
+
+- Do you want to customize environment variables? (y/N)
+- Do you want to add lines to the .gitignore of your project? (y/N)
 
 ---
 
