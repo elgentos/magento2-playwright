@@ -11,7 +11,7 @@ class Install {
   currentUser = '';
   isCi = false;
   useDefaults = false;
-  pathToMagentoRoot = '../../../../../../../../../../'; // default: when installed via npm
+  pathToMagentoRootGitignore = '../../../../../../../'; // default: when installed via npm
   envVars = {};
 
   rulesToAddToIgnore = [
@@ -29,7 +29,7 @@ class Install {
     const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
 
     if (isLocalDev) {
-      this.pathToMagentoRoot = './'; // we're in the root of the dev repo
+      this.pathToMagentoRootGitignore = './'; // we're in the root of the dev repo
     }
 
     this.envVars = {
@@ -107,7 +107,7 @@ class Install {
 
     console.log('Checking .gitignore and adding lines if necessary...');
 
-    const gitignorePath = path.join(this.pathToMagentoRoot, '.gitignore');
+    const gitignorePath = path.join(this.pathToMagentoRootGitignore, '.gitignore');
 
     // Read existing content if file exists
     let existingLines = [];

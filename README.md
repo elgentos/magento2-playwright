@@ -53,10 +53,23 @@ npm init -y
 
 3. **Install the test suite package**
 
-Lastly, simply run the command to install the elgentos Magento2 Playwright package, and the installation script will set things up for you! You will be prompted to input values for the `.env` variables, but these also come with default values.
+Lastly, simply run the command to install the elgentos Magento2 Playwright package, and the installation script will set things up for you! 
 
 ```bash
 npm install @elgentos/magento2-playwright
+```
+
+4. **Building .env file (optional)**
+
+Normally, you should be prompted to provide values for the .env variables during installation.
+Each variable also comes with sensible default values.
+
+<mark>⚠️ Due to limitations in how npm runs dependency install scripts, the install.js script is not executed automatically when this package is installed as a dependency.</mark>
+
+If you want to (re)generate the .env file and configure your environment variables, run the following command manually from your playwright root folder:
+
+```bash
+node node_modules/@elgentos/magento2-playwright/install.js
 ```
 
 ---
