@@ -180,7 +180,6 @@ test.describe('User tests (logged in)', () => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToAddressBook();
   });
-
 });
 
 
