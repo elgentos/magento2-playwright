@@ -32,7 +32,6 @@ class MainMenuPage {
     this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myOrdersButtonLabel});
     this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.addressBookButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
-
   }
 
   /**
