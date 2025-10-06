@@ -10,7 +10,7 @@ import { requireEnv } from '@utils/env.utils';
 test.describe('Product page tests',{ tag: '@product',}, () => {
   test('Add_product_to_compare',{ tag: '@cold'}, async ({page}) => {
     const productPage = new ProductPage(page);
-    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   });
 
   test('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
@@ -25,24 +25,24 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
 
     await test.step('Add product to wishlist', async () =>{
       const productPage = new ProductPage(page);
-      await productPage.addProductToWishlist(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+      await productPage.addProductToWishlist(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
     });
   });
 
 
   test.fixme('Leave a product review (Test currently fails due to error on website)',{ tag: '@cold'}, async ({page}) => {
     // const productPage = new ProductPage(page);
-    // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   });
 
   test('Open_pictures_in_lightbox_and_scroll', async ({page}) => {
     const productPage = new ProductPage(page);
-    await productPage.openLightboxAndScrollThrough(slugs.productpage.configurableProductSlug);
+    await productPage.openLightboxAndScrollThrough(slugs.productPage.configurableProductSlug);
   });
 
   test('Change_number_of_reviews_shown_on_product_page', async ({page}) => {
     const productPage = new ProductPage(page);
-    await productPage.changeReviewCountAndVerify(slugs.productpage.simpleProductSlug);
+    await productPage.changeReviewCountAndVerify(slugs.productPage.simpleProductSlug);
   });
 });
 

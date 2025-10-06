@@ -27,8 +27,8 @@ test.beforeEach(async ({ page }) => {
 
   const productPage = new ProductPage(page);
 
-  await page.goto(slugs.productpage.simpleProductSlug);
-  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  await page.goto(slugs.productPage.simpleProductSlug);
+  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   await page.goto(slugs.checkout.checkoutSlug);
 });
 
@@ -126,7 +126,7 @@ test.describe('Checkout (guest)', () => {
       const checkoutPage = new CheckoutPage(page);
 
       // Add product to cart and go to checkout
-      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
       await page.goto(slugs.checkout.checkoutSlug);
 
       // Select shipping method to trigger price calculations
