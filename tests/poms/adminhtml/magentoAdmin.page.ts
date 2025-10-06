@@ -51,17 +51,26 @@ class MagentoAdminPage {
     const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
     await addCartPriceRuleButton.waitFor();
 
-    const couponCellField = this.page.getByRole('cell', {name: magentoCouponCode});
+    const couponSearchField = this.page.locator(UIReference.magentoAdminPage.couponSearchFieldLocator);
+    await couponSearchField.fill(magentoCouponCode);
+    await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
 
-    if(await couponCellField.isVisible()){
-      const couponStatusField = this.page.locator('tr').filter({hasText:magentoCouponCode});
+    await expect(this.page.getByText(UIReference.magentoAdminPage.searchResultsText)).toBeVisible();
+
+    const couponCellField = this.page.getByRole('cell', { name: outcomeMarker.magentoAdmin.noResultsFoundText });
+
+    // const couponCellField = this.page.getByRole('cell', {name: magentoCouponCode});
+
+    if(await couponCellField.isHidden()){
+    // if(await couponCellField.isVisible()){
+      const couponStatusField = this.page.locator('tr').filter({hasText:magentoCouponCode}).first();
       const couponStatus = await couponStatusField.innerText();
       if(couponStatus.includes(UIReference.cartPriceRulesPage.couponCodeActiveStatusText)){
           console.log('Coupon already exists and is active');
           return 'Coupon already exists and is active.';
       } else {
         // coupon has been found, but is not active.
-        await couponCellField.click();
+        await couponStatusField.click();
         const activeStatusSwitcher = this.page.locator(UIReference.cartPriceRulesPage.activeStatusSwitcherLocator).first();
         const activeStatusLabel = this.page.locator(UIReference.cartPriceRulesPage.activeStatusLabelLocator).first();
 
@@ -71,7 +80,9 @@ class MagentoAdminPage {
         const saveCouponButton = this.page.getByRole('button', {name:UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact:true});
         await saveCouponButton.click();
 
-        await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+        await expect(this.page.locator(
+          UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
+        ), "Message 'you saved the rule' is visible").toBeVisible();
         return `Coupon code ${magentoCouponCode} has been activated.`;
       }
     } else {
@@ -96,6 +107,7 @@ class MagentoAdminPage {
         select.dispatchEvent(new Event('change'));
       });
 
+      await this.page.getByRole('textbox', { name: UIReference.cartPriceRulesPage.ruleNameFieldLabel }).fill(magentoCouponCode);
       await this.page.locator(UIReference.cartPriceRulesPage.couponTypeSelectField).selectOption({ label: inputValues.coupon.couponType });
       await this.page.getByLabel(UIReference.cartPriceRulesPage.couponCodeFieldLabel).fill(magentoCouponCode);
 
@@ -105,7 +117,9 @@ class MagentoAdminPage {
       const couponSaveButton = this.page.getByRole('button', { name: UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact: true });
       await couponSaveButton.scrollIntoViewIfNeeded();
       await couponSaveButton.click({force:true});
-      await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+      await expect(this.page.locator(
+          UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
+      ), "Message 'you saved the rule' is visible").toBeVisible();
       return `Coupon code ${magentoCouponCode} has been set and activated.`;
     }
   };
@@ -186,7 +200,8 @@ class MagentoAdminPage {
     await customerConfigurationLink.waitFor();
     await customerConfigurationLink.click();
 
-    const captchaSettingsBlock = this.page.getByRole('link', { name: UIReference.configurationPage.captchaSectionLabel });
+    const captchaSettingsBlock = this.page.getByRole('link', { name: UIReference.configurationPage.captchaSectionLabel })
+      .filter({hasNotText: 'documentation'});
     const captchaSettingsSystemValueCheckbox = this.page.locator(UIReference.configurationPage.captchaSettingSystemCheckbox);
 
     await captchaSettingsBlock.waitFor();
@@ -209,7 +224,7 @@ class MagentoAdminPage {
       const saveConfigButton = this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel });
       await saveConfigButton.click();
 
-      await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+      await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.configurationSavedText})).toBeVisible();
     }
   }
 
@@ -269,7 +284,7 @@ class MagentoAdminPage {
       const saveConfigButton = this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel });
       await saveConfigButton.click();
 
-      await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+      await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.configurationSavedText})).toBeVisible();
     }
   }
 

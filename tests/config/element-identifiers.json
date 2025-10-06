@@ -179,6 +179,7 @@
     "homePageTitleText": "Hyvä Themes"
   },
   "magentoAdminPage": {
+    "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
     "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",
     "navigation": {
@@ -187,6 +188,7 @@
       "storesButtonLabel": "Stores"
     },
     "passwordFieldLabel": "Password",
+    "searchResultsText" : "records found",
     "subNavigation": {
       "allCustomersButtonLabel": "All Customers",
       "cartPriceRulesButtonLabel": "Cart Price Rules",
