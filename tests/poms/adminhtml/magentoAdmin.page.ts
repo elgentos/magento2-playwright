@@ -186,7 +186,7 @@ class MagentoAdminPage {
     await customerConfigurationLink.waitFor();
     await customerConfigurationLink.click();
 
-    const captchaSettingsBlock = this.page.getByRole('link', { name: UIReference.configurationPage.captchaSectionLabel });
+    const captchaSettingsBlock = this.page.getByRole('link', { name: UIReference.configurationPage.captchaSectionLabel }).filter({hasNotText: 'documentation'});
     const captchaSettingsSystemValueCheckbox = this.page.locator(UIReference.configurationPage.captchaSettingSystemCheckbox);
 
     await captchaSettingsBlock.waitFor();
