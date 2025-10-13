@@ -24,6 +24,20 @@ test.describe('Guest tests (not logged in)', () => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToLoginPage();
   });
+
+  /**
+   * @feature navigate to create account page
+   * @scenario user click 'create an account' button in main menu
+   * @given I am not logged in
+   * @and I am on any Magento 2 page
+   * @when I click on the user icon in the main menu
+   * @and I click the 'create an account' button
+   * @then I should navigate to the create account page
+   */
+  test('User_navigates_to_create_account', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.goToCreateAccountPage();
+  });
 });
 
 test.describe('User tests (logged in)', () => {

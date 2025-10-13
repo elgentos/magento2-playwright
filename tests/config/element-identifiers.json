@@ -195,6 +195,7 @@
     "usernameFieldLabel": "Username"
   },
   "mainMenu": {
+    "createAccountButtonLabel" : "Create an Account",
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
     "loginButtonLabel" : "Sign In",

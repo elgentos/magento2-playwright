@@ -11,6 +11,7 @@ class MainMenuPage {
   readonly mainMenuMiniCartButton: Locator;
   readonly mainMenuMyAccountItem: Locator;
   readonly mainMenuLoginItem: Locator;
+  readonly mainMenuCreateAccountButton: Locator;
   readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
@@ -19,6 +20,7 @@ class MainMenuPage {
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
     this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.loginButtonLabel});
+    this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.createAccountButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
   }
@@ -40,6 +42,17 @@ class MainMenuPage {
     await this.mainMenuLoginItem.click();
     await this.page.waitForURL(`${slugs.account.loginSlug}/**`);
     await expect(loginHeader, 'Login header text is visible').toBeVisible();
+  }
+
+  async goToCreateAccountPage() {
+    const createAccountHeader = this.page.getByRole('heading', {name: outcomeMarker.account.createAccountHeaderText, exact:true});
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+    await this.mainMenuAccountButton.click();
+
+    await this.mainMenuCreateAccountButton.click();
+    await this.page.waitForURL(slugs.account.createAccountSlug);
+    await expect(createAccountHeader, 'Create account header text is visible').toBeVisible();
   }
 
   async gotoAddressBook() {
