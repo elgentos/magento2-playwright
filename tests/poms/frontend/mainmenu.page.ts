@@ -28,6 +28,16 @@ class MainMenuPage {
   async goToCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
+    await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
+
+    await this.page.waitForURL(slugs.categoryPage.categorySlug);
+    await expect(
+      this.page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
+      `Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
+  }
+  async goToSubCategoryPage() {
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
 
     await this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true }).hover();
     await expect(this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel})).toBeVisible();

@@ -40,7 +40,7 @@ test.describe('Guest tests (not logged in)', () => {
   });
 
   /**
-   * @feature Navigate to category page
+   * @feature Navigate to subcategory page
    * @scenario User hover over menu link to navigate to category page
    * @given I am not logged in
    * @and I am on any Magento 2 page
@@ -52,6 +52,21 @@ test.describe('Guest tests (not logged in)', () => {
   test('Navigate_to_category_page', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToCategoryPage();
+  });
+
+  /**
+   * @feature Navigate to category page
+   * @scenario User hover over menu link to navigate to category page
+   * @given I am not logged in
+   * @and I am on any Magento 2 page
+   * @when I hover over an item in the main menu
+   * @then A dropdown menu should appear
+   * @when I click an item
+   * @then I should navigate to the page
+   */
+  test('Navigate_to_subcategory_page', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.goToSubCategoryPage();
   });
 });
 
