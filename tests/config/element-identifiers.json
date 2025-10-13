@@ -197,6 +197,7 @@
   "mainMenu": {
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
+    "loginButtonLabel" : "Sign In",
     "myAccountLogoutItem": "Sign Out"
   },
   "miniCart": {

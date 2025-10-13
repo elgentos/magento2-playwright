@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
 
 class MainMenuPage {
   readonly page: Page;
@@ -9,6 +10,7 @@ class MainMenuPage {
   readonly mainMenuAccountButton: Locator;
   readonly mainMenuMiniCartButton: Locator;
   readonly mainMenuMyAccountItem: Locator;
+  readonly mainMenuLoginItem: Locator;
   readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
@@ -16,6 +18,7 @@ class MainMenuPage {
     this.mainMenuElement = page.locator('header');
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.loginButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
   }
@@ -26,6 +29,17 @@ class MainMenuPage {
     await this.mainMenuMyAccountItem.click();
 
     await expect(this.page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel })).toBeVisible();
+  }
+
+  async goToLoginPage() {
+    const loginHeader = this.page.getByRole('heading', {name: outcomeMarker.login.loginHeaderText, exact:true});
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+    await this.mainMenuAccountButton.click();
+
+    await this.mainMenuLoginItem.click();
+    await this.page.waitForURL(`${slugs.account.loginSlug}/**`);
+    await expect(loginHeader, 'Login header text is visible').toBeVisible();
   }
 
   async gotoAddressBook() {

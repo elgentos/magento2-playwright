@@ -61,6 +61,7 @@
     "simpleProductAddedNotification": "You added"
   },
   "login": {
+    "loginHeaderText" : "Login",
     "invalidCredentialsMessage": "The account sign-in was incorrect or your account is disabled temporarily. Please wait and try again later."
   },
   "search": {
