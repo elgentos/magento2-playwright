@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, inputValues, outcomeMarker } from '@config';
+import { requireEnv } from '@utils/env.utils';
 
 class MagentoAdminPage {
   readonly page: Page;
@@ -147,7 +148,7 @@ class MagentoAdminPage {
     await allCustomersLink.click();
 
     // Wait for URL. If loading symbol is visible, wait for it to go away
-    await this.page.waitForURL('**/beheer/customer/index/**');
+    await this.page.waitForURL(`**/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/**`);
     if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
       await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
     }
