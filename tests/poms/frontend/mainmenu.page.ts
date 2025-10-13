@@ -25,12 +25,28 @@ class MainMenuPage {
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
   }
 
+  async goToCategoryPage() {
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+
+    await this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true }).hover();
+    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel})).toBeVisible();
+
+    await this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel}).click();
+    await this.page.waitForURL(slugs.categoryPage.fitnessEquipmentSlug);
+
+    await expect(this.page.getByRole('heading',
+      { name: outcomeMarker.categoryPage.fitnessEquipmentTitle }).locator('span'),
+      `Category page title "${outcomeMarker.categoryPage.fitnessEquipmentTitle}" is visible`).toBeVisible();
+  }
+
   async gotoMyAccount(){
-    await this.page.goto(slugs.productpage.simpleProductSlug);
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
 
-    await expect(this.page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel }), 'Account dashboard is visible').toBeVisible();
   }
 
   async goToLoginPage() {

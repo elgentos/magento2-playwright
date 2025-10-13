@@ -21,6 +21,9 @@
     "incorrectCouponCodeNotificationTwo": "is not valid.",
     "priceReducedSymbols": "- $"
   },
+  "categoryPage" : {
+    "fitnessEquipmentTitle" : "Fitness Equipment"
+  },
   "checkout": {
     "checkoutPriceReducedSymbol": "-$",
     "couponAppliedNotification": "Your coupon was successfully applied",

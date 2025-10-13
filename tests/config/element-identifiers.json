@@ -196,10 +196,12 @@
   },
   "mainMenu": {
     "createAccountButtonLabel" : "Create an Account",
+    "fitnessEquipmentLinkLabel" : "Fitness Equipment",
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
     "loginButtonLabel" : "Sign In",
-    "myAccountLogoutItem": "Sign Out"
+    "myAccountLogoutItem": "Sign Out",
+    "gearCategoryItemText" : "Gear"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
