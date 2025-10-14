@@ -10,6 +10,7 @@ class MainMenuPage {
   readonly mainMenuAccountButton: Locator;
   readonly mainMenuMiniCartButton: Locator;
   readonly mainMenuMyAccountItem: Locator;
+  readonly mainMenuSearchButton: Locator;
   readonly mainMenuLoginItem: Locator;
   readonly mainMenuCreateAccountButton: Locator;
   readonly mainMenuWishListButton: Locator;
@@ -23,6 +24,8 @@ class MainMenuPage {
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
+    this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});
+
     this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.loginButtonLabel});
     this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.createAccountButtonLabel});
     this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.wishListButtonLabel});
@@ -164,6 +167,27 @@ class MainMenuPage {
 
     let miniCartDrawer = this.page.locator("#cart-drawer-title");
     await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+  }
+
+  /**
+   * Used for function User_searches_for_product
+   * @param searchTerm
+   */
+  async searchForProduct(searchTerm :string) {
+    const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+
+    await this.mainMenuSearchButton.click();
+    await expect(searchField, 'Search field is visible').toBeVisible();
+    await searchField.fill(searchTerm);
+    await expect(this.page.getByText(UIReference.search.searchTermDropdownText, { exact: true }), 'Dropdown with results is visible').toBeVisible();
+    await searchField.press('Enter');
+
+    await this.page.waitForURL(`**/?q=${searchTerm}`);
+    await expect(this.page.getByRole('heading',
+      { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }).locator('span'),
+      `Title contains search term: "${searchTerm}"`).toBeVisible();
   }
 
   /**

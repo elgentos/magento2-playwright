@@ -1,7 +1,7 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { UIReference, slugs } from '@config';
+import {UIReference, slugs, inputValues} from '@config';
 
 import LoginPage from '@poms/frontend/login.page';
 import MainMenuPage from '@poms/frontend/mainmenu.page';
@@ -71,7 +71,7 @@ test.describe('Guest tests (not logged in)', () => {
 
   /**
    * @feature open the minicart
-   * @scenario guess opens the minicart
+   * @scenario guest opens the minicart
    * @given I am on any page
    * @when I click the minicart button
    * @then the minicart should show up
@@ -79,6 +79,22 @@ test.describe('Guest tests (not logged in)', () => {
   test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.openMiniCart();
+  });
+
+  /**
+   * @feature Search Field
+   * @scenario guest uses the search field
+   * @given I am on any page
+   * @when I click the search button
+   * @then a search field should show up
+   * @when I type in a search term
+   * @and I click search
+   * @then I should be navigated to a results page
+   * @and I should see my search term in the title of the page
+   */
+  test('User_searches_for_product', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.searchForProduct(inputValues.search.queryMultipleResults);
   });
 });
 
@@ -150,6 +166,16 @@ test.describe('User tests (logged in)', () => {
     await mainMenu.goToOrders();
   });
 
+  /**
+   * @feature Navigate to address book
+   * @scenario user navigates to their address book
+   * @given I am logged in
+   * @and I am on any Magento 2 page
+   * @when I open the account menu
+   * @and I click on the 'Address book' button
+   * @then I should be navigated to the page with my order history
+   * @and I should see an appropriate title based on whether an address has been added
+   */
   test('Navigate_to_address_book', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToAddressBook();
