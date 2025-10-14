@@ -64,6 +64,9 @@ class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
+    const notificationBanner = this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.cart.discountAppliedNotification});
+    await notificationBanner.waitFor();
+
     await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
