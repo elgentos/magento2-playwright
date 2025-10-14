@@ -14,6 +14,7 @@ class MainMenuPage {
   readonly mainMenuCreateAccountButton: Locator;
   readonly mainMenuWishListButton: Locator;
   readonly mainMenuMyOrdersButton: Locator;
+  readonly mainMenuAddressBookButton: Locator;
   readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
@@ -26,6 +27,7 @@ class MainMenuPage {
     this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.createAccountButtonLabel});
     this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.wishListButtonLabel});
     this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myOrdersButtonLabel});
+    this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.addressBookButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
 
   }
@@ -101,8 +103,24 @@ class MainMenuPage {
     await expect(createAccountHeader, 'Create account header text is visible').toBeVisible();
   }
 
-  async gotoAddressBook() {
-    // create function to navigate to Address Book through the header menu links
+  async goToAddressBook() {
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+    await this.mainMenuAccountButton.click();
+
+    await this.mainMenuAddressBookButton.click();
+
+    await this.page.waitForURL(`${slugs.account.addressBookSlug}/**`);
+    if(this.page.url().includes('new')) {
+      // no address has been added yet
+      await expect(this.page.getByRole(
+          'heading', {name: UIReference.newAddress.addNewAddressTitle, level: 1, exact:true}),
+        `Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
+    } else {
+      await expect(this.page.getByRole(
+          'heading', {name: UIReference.address.addressBookTitle, level: 1, exact: true}),
+        `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+    }
   }
 
   /**

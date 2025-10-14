@@ -150,6 +150,11 @@ test.describe('User tests (logged in)', () => {
     await mainMenu.goToOrders();
   });
 
+  test('Navigate_to_address_book', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.goToAddressBook();
+  });
+
 });
 
 

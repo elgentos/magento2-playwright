@@ -14,6 +14,9 @@
       "newsletterLink": "Newsletter Subscriptions"
     }
   },
+  "address" : {
+    "addressBookTitle" : "Address Book"
+  },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
     "cityNameLabel": "City",
@@ -202,6 +205,7 @@
     "loginButtonLabel" : "Sign In",
     "myAccountLogoutItem": "Sign Out",
     "myOrdersButtonLabel" : "My Orders",
+    "addressBookButtonLabel" : "Address Book",
     "gearCategoryItemText" : "Gear",
     "wishListButtonLabel" : "My Wish List"
   },
