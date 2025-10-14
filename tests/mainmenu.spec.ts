@@ -136,6 +136,20 @@ test.describe('User tests (logged in)', () => {
     await mainMenu.goToWishList();
   });
 
+  /**
+   * @feature Navigate to orders overview
+   * @scenario user navigates to their order history
+   * @given I am logged in
+   * @and I am on any magento 2 page
+   * @when I open the account menu
+   * @and I click on the 'My orders' button
+   * @then I should be navigated to the page with my order history
+   */
+  test('Navigate_to_orders', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.goToOrders();
+  });
+
 });
 
 

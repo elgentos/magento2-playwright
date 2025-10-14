@@ -201,6 +201,7 @@
     "myAccountButtonLabel": "My Account",
     "loginButtonLabel" : "Sign In",
     "myAccountLogoutItem": "Sign Out",
+    "myOrdersButtonLabel" : "My Orders",
     "gearCategoryItemText" : "Gear",
     "wishListButtonLabel" : "My Wish List"
   },
@@ -222,6 +223,9 @@
     "searchToggleLocator": "#menu-search-icon",
     "searchInputLocator": "#search",
     "suggestionBoxLocator": "#search_autocomplete"
+  },
+  "orderHistoryPage" : {
+    "orderHistoryTitle": "My Orders"
   },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",

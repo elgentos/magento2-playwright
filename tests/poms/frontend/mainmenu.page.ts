@@ -13,6 +13,7 @@ class MainMenuPage {
   readonly mainMenuLoginItem: Locator;
   readonly mainMenuCreateAccountButton: Locator;
   readonly mainMenuWishListButton: Locator;
+  readonly mainMenuMyOrdersButton: Locator;
   readonly mainMenuLogoutItem: Locator;
 
   constructor(page: Page) {
@@ -24,6 +25,7 @@ class MainMenuPage {
     this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.loginButtonLabel});
     this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.createAccountButtonLabel});
     this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.wishListButtonLabel});
+    this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myOrdersButtonLabel});
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
 
   }
@@ -101,6 +103,21 @@ class MainMenuPage {
 
   async gotoAddressBook() {
     // create function to navigate to Address Book through the header menu links
+  }
+
+  /**
+   * Function for the test Navigate_to_orders
+   */
+  async goToOrders() {
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuAccountButton.waitFor();
+    await this.mainMenuAccountButton.click();
+
+    await this.mainMenuMyOrdersButton.click();
+    await this.page.waitForURL(slugs.account.orderHistorySlug);
+    await expect(this.page.getByRole(
+        'heading', {name: UIReference.orderHistoryPage.orderHistoryTitle, level: 1, exact:true}),
+      `Heading "${UIReference.orderHistoryPage.orderHistoryTitle}" is visible`).toBeVisible();
   }
 
   /**
