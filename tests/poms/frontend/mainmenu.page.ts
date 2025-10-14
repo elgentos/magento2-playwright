@@ -86,17 +86,10 @@ class MainMenuPage {
   }
 
   async openMiniCart() {
-    // await this.page.reload();
-    // FIREFOX_WORKAROUND: wait for 3 seconds to allow minicart to be updated.
-    await this.page.waitForTimeout(3000);
-    const cartAmountBubble = this.mainMenuMiniCartButton.locator('span');
-    cartAmountBubble.waitFor();
-    const amountInCart = await cartAmountBubble.innerText();
-
-    // waitFor is added to ensure the minicart button is visible before clicking, mostly as a fix for Firefox.
-    // await this.mainMenuMiniCartButton.waitFor();
-
-    await this.mainMenuMiniCartButton.click();
+    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    await this.mainMenuMiniCartButton.waitFor();
+    // By adding 'force', we can bypass the 'aria-disabled' tag.
+    await this.mainMenuMiniCartButton.click({force: true});
 
     let miniCartDrawer = this.page.locator("#cart-drawer-title");
     await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();

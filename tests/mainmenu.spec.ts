@@ -95,18 +95,23 @@ test.describe('User tests (logged in)', () => {
     await mainMenu.logout();
   });
 
+  /**
+   * @feature Navigate to account page
+   * @scenario user navigates to account page
+   * @given I am logged in
+   * @and I am on any magento 2 page
+   * @when I open the account menu
+   * @and I click the account button
+   * @and I click the 'my account' button
+   * @then I should be navigated to my account
+   */
   test('Navigate_to_account_page', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.gotoMyAccount();
   });
 
-  test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}, testInfo) => {
-    testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`});
-
+  test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
-    const productPage = new ProductPage(page);
-
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
     await mainMenu.openMiniCart();
   });
 
