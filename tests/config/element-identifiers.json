@@ -201,7 +201,8 @@
     "myAccountButtonLabel": "My Account",
     "loginButtonLabel" : "Sign In",
     "myAccountLogoutItem": "Sign Out",
-    "gearCategoryItemText" : "Gear"
+    "gearCategoryItemText" : "Gear",
+    "wishListButtonLabel" : "My Wish List"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
@@ -230,6 +231,7 @@
   },
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form",
+    "wishListTitle" : "My Wish List",
     "updateCompareListButtonLabel": "Update Wish List"
   }
 }

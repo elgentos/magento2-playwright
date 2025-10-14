@@ -34,7 +34,8 @@
   "search": {
     "resultsSlug": "/catalogsearch/result/"
   },
-  "wishlist": {
+  "wishList": {
+    "wishListSlug": "wishlist/",
     "wishListRegex": ".*wishlist.*"
   }
 }

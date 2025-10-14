@@ -68,6 +68,18 @@ test.describe('Guest tests (not logged in)', () => {
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToSubCategoryPage();
   });
+
+  /**
+   * @feature open the minicart
+   * @scenario guess opens the minicart
+   * @given I am on any page
+   * @when I click the minicart button
+   * @then the minicart should show up
+   */
+  test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+    const mainMenu = new MainMenuPage(page);
+    await mainMenu.openMiniCart();
+  });
 });
 
 test.describe('User tests (logged in)', () => {
@@ -110,9 +122,18 @@ test.describe('User tests (logged in)', () => {
     await mainMenu.gotoMyAccount();
   });
 
-  test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+  /**
+   * @feature Navigate to wishlist
+   * @scenario user navigates to their wishlist
+   * @given I am logged in
+   * @and I am on any magento 2 page
+   * @when I open the account menu
+   * @and I click on the wishlist button
+   * @then I should be navigated to the wishlist page
+   */
+  test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
     const mainMenu = new MainMenuPage(page);
-    await mainMenu.openMiniCart();
+    await mainMenu.goToWishList();
   });
 
 });
