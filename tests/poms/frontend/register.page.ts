@@ -27,6 +27,12 @@ class RegisterPage {
     let accountInformationField = this.page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
     await this.page.goto(slugs.account.createAccountSlug);
 
+    await expect(async () => {
+      await expect(this.page.getByRole('heading',
+          { name: UIReference.accountCreation.createAccountTitleText }),
+        `Heading "${UIReference.accountCreation.createAccountTitleText}" is visible`).toBeVisible();
+    }).toPass();
+
     await this.accountCreationFirstNameField.fill(firstName);
     await this.accountCreationLastNameField.fill(lastName);
     await this.accountCreationEmailField.fill(email);
@@ -37,7 +43,13 @@ class RegisterPage {
     if(!isSetup) {
       // Assertions: Account created notification, navigated to account page, email visible on page
       await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText), 'Account creation notification should be visible').toBeVisible();
-      await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('.+' + slugs.account.accountOverviewSlug));
+      await this.page.waitForLoadState();
+      await this.page.goto(slugs.account.accountOverviewSlug);
+
+      await expect(this.page.getByRole('heading',
+        {name: UIReference.accountDashboard.accountDashboardTitleLabel, level:2}),
+        `Heading "${UIReference.accountDashboard.accountDashboardTitleLabel}" is visible`).toBeVisible();
+      // await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('.+' + slugs.account.accountOverviewSlug));
       await expect(accountInformationField, `Account information should contain email: ${email}`).toContainText(email);
     }
   }

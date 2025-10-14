@@ -1,8 +1,8 @@
 // @ts-check
 
-import { expect, type Locator, type Page } from '@playwright/test';
+import {expect, type Locator, type Page, test, TestInfo} from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, inputValues } from '@config';
+import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 
 import LoginPage from '@poms/frontend/login.page';
 
@@ -41,6 +41,7 @@ class AccountPage {
   constructor(page: Page) {
     this.page = page;
     this.loginPage = new LoginPage(page);
+
     this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
     this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
@@ -234,9 +235,18 @@ class AccountPage {
       }
     });
 
+    // Retrieve all text in the 'address book' section
     let addressBookArray = await addressBookSection.allInnerTexts();
+    // split by each new line
     let arraySplit = addressBookArray[0].split('\n');
-    let addressToBeDeleted = arraySplit[7];
+    // Retrieve index 8, because:
+    // index 0 to 5 are the table headers (i.e. Company, Name etc.)
+    // index 6 is company, index 7 is name, and index 8 is the first address value.
+    // if this table changes, the index number should change.
+    let addressToBeDeleted = arraySplit[8];
+
+    // Annotate the report so the user knows what address should be deleted
+    test.info().annotations.push({type: `Address to be deleted`, description: addressToBeDeleted});
 
     await this.deleteAddressButton.click();
     await this.page.waitForLoadState();
@@ -252,7 +262,8 @@ class AccountPage {
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
-    await this.page.waitForLoadState();
+
+    await this.page.waitForURL(slugs.account.loginSlug);
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
