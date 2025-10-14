@@ -103,15 +103,10 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     let randomNumberforEmail = Math.floor(Math.random() * 101);
     let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
     let updatedEmail = `updated-${randomNumberforEmail}-${browserEngine}@example.com`;
-    // let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
     let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()) {
       await mainMenu.logout();
-    }
-
-    if(!passwordInputValue) {
-      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
     }
 
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
@@ -236,7 +231,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}, testInfo) => {
+  test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressBookSlug);
 
