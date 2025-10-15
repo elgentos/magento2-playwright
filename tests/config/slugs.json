@@ -6,7 +6,7 @@
     "addressNewSlug": "customer/address/new",
     "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
-    "createAccountSlug": "/customer/account/create",
+    "createAccountSlug": "/customer/account/create/",
     "loginSlug": "/customer/account/login/",
     "orderHistorySlug": "/sales/order/history/"
   },
@@ -15,7 +15,8 @@
     "cartSlug": "/checkout/cart/"
   },
   "categoryPage": {
-    "categorySlug": "/women.html"
+    "categorySlug": "/women.html",
+    "fitnessEquipmentSlug" : "/gear/fitness-equipment.html"
   },
   "checkout": {
     "checkoutSlug": "/checkout/",
@@ -33,7 +34,8 @@
   "search": {
     "resultsSlug": "/catalogsearch/result/"
   },
-  "wishlist": {
+  "wishList": {
+    "wishListSlug": "wishlist/",
     "wishListRegex": ".*wishlist.*"
   }
 }

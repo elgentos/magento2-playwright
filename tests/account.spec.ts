@@ -103,7 +103,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     let randomNumberforEmail = Math.floor(Math.random() * 101);
     let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
     let updatedEmail = `updated-${randomNumberforEmail}-${browserEngine}@example.com`;
-    // let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
     let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()) {
