@@ -38,14 +38,19 @@ class ProductPage {
   }
 
   async addProductToWishlist(product:string, url: string){
+    /**
+     * Note that the test Add_product_to_wishlist is currently set to fixme
+     */
     let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
     await this.page.goto(url);
-    await this.addToWishlistButton.click();
-    await this.page.waitForLoadState();
+    await this.addToWishlistButton.waitFor();
+    this.addToWishlistButton.click();
 
     await expect(async () => {
-      await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
+      await this.page.waitForSelector(UIReference.general.messageLocator, { state: 'visible' });
     }).toPass();
+
+    await expect(this.page.getByText(addedToWishlistNotification), "Notification that product has been added is visible").toBeVisible();
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 

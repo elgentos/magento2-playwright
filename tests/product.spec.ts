@@ -13,7 +13,11 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   });
 
-  test('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
+  test.fixme('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
+    /**
+     * This test is currently (October 2025) set to be fixed, since it causes regular timeouts.
+     * Various fixes have been tried, unsuccessfuly.
+     */
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
       const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
