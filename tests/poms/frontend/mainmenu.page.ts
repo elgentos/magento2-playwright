@@ -21,7 +21,7 @@ class MainMenuPage {
   }
 
   async gotoMyAccount(){
-    await this.page.goto(slugs.productpage.simpleProductSlug);
+    await this.page.goto(slugs.productPage.simpleProductSlug);
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
 

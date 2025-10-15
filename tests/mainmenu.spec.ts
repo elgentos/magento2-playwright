@@ -46,6 +46,6 @@ test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}, testIn
   const mainMenu = new MainMenuPage(page);
   const productPage = new ProductPage(page);
 
-  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+  await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   await mainMenu.openMiniCart();
 });
