@@ -7,7 +7,7 @@
     "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create",
-    "loginSlug": "/customer/account/login",
+    "loginSlug": "/customer/account/login/",
     "orderHistorySlug": "/sales/order/history/"
   },
   "cart": {
