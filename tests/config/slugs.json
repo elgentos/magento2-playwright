@@ -7,7 +7,7 @@
     "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create",
-    "loginSlug": "/customer/account/login",
+    "loginSlug": "/customer/account/login/",
     "orderHistorySlug": "/sales/order/history/"
   },
   "cart": {
@@ -24,7 +24,7 @@
   "contact": {
     "contactSlug": "/contact"
   },
-  "productpage": {
+  "productPage": {
     "configurableProductSlug": "/inez-full-zip-jacket.html",
     "productComparisonSlug": "/catalog/product_compare/index/",
     "secondSimpleProductSlug": "/aim-analog-watch.html",

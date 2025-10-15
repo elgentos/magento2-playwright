@@ -1,6 +1,7 @@
 {
   "accountCreation": {
-    "createAccountButtonLabel": "Create an Account"
+    "createAccountButtonLabel": "Create an Account",
+    "createAccountTitleText" : "Create New Customer Account"
   },
   "accountDashboard": {
     "accountDashboardTitleLabel": "Account Information",
@@ -13,6 +14,9 @@
     "links": {
       "newsletterLink": "Newsletter Subscriptions"
     }
+  },
+  "address" : {
+    "addressBookTitle" : "Address Book"
   },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",

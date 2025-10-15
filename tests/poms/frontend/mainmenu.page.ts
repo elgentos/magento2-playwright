@@ -13,7 +13,7 @@ class MainMenuPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.mainMenuElement = page.locator('header');
+    this.mainMenuElement = page.locator('#header');
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
     this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
@@ -21,7 +21,7 @@ class MainMenuPage {
   }
 
   async gotoMyAccount(){
-    await this.page.goto(slugs.productpage.simpleProductSlug);
+    await this.page.goto(slugs.productPage.simpleProductSlug);
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
 
