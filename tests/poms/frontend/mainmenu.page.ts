@@ -48,6 +48,7 @@ class MainMenuPage {
       this.page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
       `Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
   }
+
   /**
    * Function for the test Navigate_to_subcategory_page
    */
