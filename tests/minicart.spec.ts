@@ -8,7 +8,7 @@ import ProductPage from '@poms/frontend/product.page';
 import MiniCartPage from '@poms/frontend/minicart.page';
 
 test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: 'Minicart simple product tests'},}, () => {
-  
+
   /**
    * @feature BeforeEach runs before each test in this group.
    * @scenario Add a product to the cart and confirm it's there.
@@ -24,8 +24,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    await page.goto(slugs.productpage.simpleProductSlug);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    await page.goto(slugs.productPage.simpleProductSlug);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
   });
@@ -114,8 +114,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    await page.goto(slugs.productpage.configurableProductSlug);
-    await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
+    await page.goto(slugs.productPage.configurableProductSlug);
+    await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();
   });

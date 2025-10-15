@@ -31,7 +31,7 @@ class ProductPage {
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
 
-    await this.page.goto(slugs.productpage.productComparisonSlug);
+    await this.page.goto(slugs.productPage.productComparisonSlug);
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
     await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
