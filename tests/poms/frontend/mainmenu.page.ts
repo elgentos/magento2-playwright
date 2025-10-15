@@ -20,7 +20,7 @@ class MainMenuPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.mainMenuElement = page.locator('header');
+    this.mainMenuElement = page.locator('#header');
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);

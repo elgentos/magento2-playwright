@@ -1,6 +1,7 @@
 {
   "accountCreation": {
-    "createAccountButtonLabel": "Create an Account"
+    "createAccountButtonLabel": "Create an Account",
+    "createAccountTitleText" : "Create New Customer Account"
   },
   "accountDashboard": {
     "accountDashboardTitleLabel": "Account Information",

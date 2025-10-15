@@ -26,6 +26,11 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
   test.beforeEach(async ({page}) => {
     await page.goto(slugs.account.accountOverviewSlug);
     await page.waitForLoadState();
+
+    await expect(async () => {
+        await expect(page.locator('span').filter({hasText: UIReference.address.addressBookTitle}),
+          `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+    }).toPass();
   });
 
   /**
@@ -63,11 +68,12 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), emailPasswordUpdatevalue, passwordInputValue);
 
     // Update password
-    await page.goto(slugs.account.changePasswordSlug);
-    await page.waitForLoadState();
+    await page.goto(slugs.account.changePasswordSlug, {waitUntil: "load"});
+    // Confirm we're on the right page
+    await expect(page.getByRole('textbox', { name: UIReference.credentials.currentPasswordFieldLabel })).toBeVisible();
     await accountPage.updatePassword(passwordInputValue, changedPasswordValue);
 
-    // If login with changePasswordValue is possible, then password change was succesful.
+    // If login with changePasswordValue is possible, then password change was successful.
     await loginPage.login(emailPasswordUpdatevalue, changedPasswordValue);
 
     // Logout again, login with original account
@@ -97,20 +103,20 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     let randomNumberforEmail = Math.floor(Math.random() * 101);
     let originalEmail = `emailupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
     let updatedEmail = `updated-${randomNumberforEmail}-${browserEngine}@example.com`;
-    let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    // let passwordInputValue = process.env.MAGENTO_EXISTING_ACCOUNT_PASSWORD;
+    let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     if(await page.getByRole('link', { name: UIReference.mainMenu.myAccountLogoutItem }).isVisible()) {
       await mainMenu.logout();
     }
 
-    if(!passwordInputValue) {
-      throw new Error('MAGENTO_EXISTING_ACCOUNT_PASSWORD in your .env file is not defined or could not be read.');
-    }
-
     await registerPage.createNewAccount(faker.person.firstName(), faker.person.lastName(), originalEmail, passwordInputValue);
 
-    await page.goto(slugs.account.accountEditSlug);
-    await page.waitForLoadState();
+    await page.goto(slugs.account.accountEditSlug, {waitUntil: "load"});
+    await expect(page.locator('#form-validate').
+      getByText(UIReference.accountDashboard.accountDashboardTitleLabel),
+      `Heading "${UIReference.accountDashboard.accountDashboardTitleLabel}" is visible`).toBeVisible();
+
     await accountPage.updateEmail(passwordInputValue, updatedEmail);
 
     await mainMenu.logout();
@@ -128,8 +134,20 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
 
   test.beforeEach(async ({page}) => {
-    await page.goto(slugs.account.addressIndexSlug);
-    await page.waitForLoadState();
+    await page.goto(slugs.account.addressIndexSlug, {waitUntil: "load"});
+    // if page navigated to new address, no address had been added yet.
+    if(page.url().includes('new')){
+      await expect(async () => {
+        await expect(page.getByText(UIReference.newAddress.addNewAddressTitle),
+          `Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
+      }).toPass();
+    } else {
+      await expect(async () => {
+        await expect(page.getByRole('heading',
+            { name: UIReference.address.addressBookTitle }).locator('span'),
+          `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+      }).toPass();
+    }
   });
 
   /**
@@ -214,7 +232,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
    * @then I should see a notification my address has been deleted.
    *  @and The address should be removed from the overview.
    */
-  test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}, testInfo) => {
+  test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
     const accountPage = new AccountPage(page);
     await page.goto(slugs.account.addressBookSlug);
 
