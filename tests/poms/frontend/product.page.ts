@@ -49,7 +49,7 @@ class ProductPage {
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 
-    await expect(this.page).toHaveURL(new RegExp(slugs.wishlist.wishListRegex));
+    await expect(this.page).toHaveURL(new RegExp(slugs.wishList.wishListRegex));
     await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     await expect(productNameInWishlist).toContainText(product);
   }

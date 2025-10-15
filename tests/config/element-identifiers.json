@@ -201,9 +201,17 @@
     "usernameFieldLabel": "Username"
   },
   "mainMenu": {
+    "addressBookButtonLabel" : "Address Book",
+    "createAccountButtonLabel" : "Create an Account",
+    "fitnessEquipmentLinkLabel" : "Fitness Equipment",
+    "gearCategoryItemText" : "Gear",
+    "loginButtonLabel" : "Sign In",
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
-    "myAccountLogoutItem": "Sign Out"
+    "myAccountLogoutItem": "Sign Out",
+    "myOrdersButtonLabel" : "My Orders",
+    "searchButtonLabel" : "Toggle search form",
+    "wishListButtonLabel" : "My Wish List"
   },
   "miniCart": {
     "checkOutButtonLabel": "Checkout",
@@ -220,9 +228,15 @@
     "toCartLinkLabel": "View and Edit Cart"
   },
   "search": {
+    "searchBoxPlaceholderText" : "Search entire store here...",
     "searchToggleLocator": "#menu-search-icon",
     "searchInputLocator": "#search",
-    "suggestionBoxLocator": "#search_autocomplete"
+    "suggestionBoxLocator": "#search_autocomplete",
+    "searchResultsTitle": "Search results for:",
+    "searchTermDropdownText" : "Search terms"
+  },
+  "orderHistoryPage" : {
+    "orderHistoryTitle": "My Orders"
   },
   "personalInformation": {
     "changePasswordCheckLabel": "Change Password",
@@ -232,6 +246,7 @@
   },
   "wishListPage": {
     "wishListItemGridLabel": "#wishlist-view-form",
+    "wishListTitle" : "My Wish List",
     "updateCompareListButtonLabel": "Update Wish List"
   }
 }
