@@ -23,7 +23,7 @@ test.describe('Cart functionalities (guest)', () => {
    */
   test.beforeEach(async ({ page }, testInfo) => {
     const productPage = new ProductPage(page);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
 
     const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
     const notificationValidator = new NotificationValidatorUtils(page, testInfo);
@@ -55,8 +55,8 @@ test.describe('Cart functionalities (guest)', () => {
   test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page, browserName}) => {
     await test.step('Add another product to cart', async () =>{
       const productpage = new ProductPage(page);
-      await page.goto(slugs.productpage.secondSimpleProductSlug);
-      await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productpage.secondSimpleProductSlug);
+      await page.goto(slugs.productPage.secondSimpleProductSlug);
+      await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productPage.secondSimpleProductSlug);
     });
 
     await test.step('Log in with account', async () =>{
@@ -179,13 +179,13 @@ test.describe('Price checking tests', () => {
 
     await test.step('Step: Add simple product to cart', async () =>{
       const productPage = new ProductPage(page);
-      await page.goto(slugs.productpage.simpleProductSlug);
+      await page.goto(slugs.productPage.simpleProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug, '2');
+      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug, '2');
 
     });
 
@@ -222,13 +222,13 @@ test.describe('Price checking tests', () => {
     await test.step('Step: Add configurable product to cart', async () =>{
       const productPage = new ProductPage(page);
       // Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-      await page.goto(slugs.productpage.configurableProductSlug);
+      await page.goto(slugs.productPage.configurableProductSlug);
       // set quantity to 2 so we can see that the math works
       await page.getByLabel('Quantity').fill('2');
 
       productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
       productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productpage.configurableProductSlug, '2');
+      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
 
     });
 

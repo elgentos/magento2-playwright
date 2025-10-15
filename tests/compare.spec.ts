@@ -12,12 +12,12 @@ import { requireEnv } from '@utils/env.utils';
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
   await test.step('Add products to compare', async () =>{
     const productPage = new ProductPage(page);
-    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
-    await productPage.addProductToCompare(UIReference.productPage.secondSimpleProducTitle, slugs.productpage.secondSimpleProductSlug);
+    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+    await productPage.addProductToCompare(UIReference.productPage.secondSimpleProducTitle, slugs.productPage.secondSimpleProductSlug);
   });
 
   await test.step('Navigate to product comparison page', async () =>{
-    await page.goto(slugs.productpage.productComparisonSlug);
+    await page.goto(slugs.productPage.productComparisonSlug);
     await expect(page.getByRole('heading', { name: UIReference.comparePage.comparisonPageTitleText }).locator('span')).toBeVisible();
   });
 });
@@ -69,11 +69,11 @@ test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', 
 
     await loginPage.login(emailInputValue, passwordInputValue);
   });
-  
+
   await test.step('Add product to compare', async () =>{
     const productPage = new ProductPage(page);
-    await page.goto(slugs.productpage.productComparisonSlug);
-    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productpage.simpleProductSlug);
+    await page.goto(slugs.productPage.productComparisonSlug);
+    await productPage.addProductToCompare(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   });
 
   await test.step('Add product to wishlist', async () =>{
@@ -88,7 +88,7 @@ test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', 
 
 test.afterEach('Remove products from compare', async ({ page }) => {
   // ensure we are on the right page
-  await page.goto(slugs.productpage.productComparisonSlug);
+  await page.goto(slugs.productPage.productComparisonSlug);
 
   page.on('dialog', dialog => dialog.accept());
   const comparePage = new ComparePage(page);

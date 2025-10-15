@@ -31,7 +31,7 @@ class ProductPage {
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
 
-    await this.page.goto(slugs.productpage.productComparisonSlug);
+    await this.page.goto(slugs.productPage.productComparisonSlug);
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
     await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
@@ -42,6 +42,10 @@ class ProductPage {
     await this.page.goto(url);
     await this.addToWishlistButton.click();
     await this.page.waitForLoadState();
+
+    await expect(async () => {
+      await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
+    }).toPass();
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 

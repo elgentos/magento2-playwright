@@ -27,6 +27,8 @@ class LoginPage {
     await this.loginButton.press("Enter");
     // await this.loginButton.click({force: true});
 
+    await this.page.waitForURL(slugs.account.accountOverviewSlug);
+
     // Open the menu, then check the 'Sign Out' button is visible
     await mainmenu.mainMenuAccountButton.waitFor();
     await mainmenu.mainMenuAccountButton.click();

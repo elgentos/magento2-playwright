@@ -34,8 +34,8 @@ test.describe('Page health checks', () => {
     });
 
     test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
-        const pdpResponsePromise = page.waitForResponse(slugs.productpage.simpleProductSlug);
-        await page.goto(slugs.productpage.simpleProductSlug);
+        const pdpResponsePromise = page.waitForResponse(slugs.productPage.simpleProductSlug);
+        await page.goto(slugs.productPage.simpleProductSlug);
         const pdpResponse = await pdpResponsePromise;
         expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
 
