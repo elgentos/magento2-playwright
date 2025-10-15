@@ -49,6 +49,11 @@
   "logout": {
     "logoutConfirmationText": "You have signed out"
   },
+  "magentoAdmin" : {
+    "configurationSavedText" : "You saved the configuration.",
+    "couponRuleSavedText" : "You saved the rule.",
+    "noResultsFoundText" : "We couldn't find any records."
+  },
   "miniCart": {
     "configurableProductMinicartTitle": "x Inez Full Zip Jacket",
     "miniCartTitle": "My Cart",

@@ -19,6 +19,28 @@ base.beforeEach(async ({ page }, testInfo) => {
 });
 
 base.describe('Setting up the testing environment', () => {
+  // Set tests to serial mode to ensure the order is followed.
+  base.describe.configure({mode:'serial'});
+
+  /**
+   * @feature Magento Admin Configuration (disable login CAPTCHA)
+   * @scenario Disable login CAPTCHA in admin settings via Chromium browser
+   * @given the test is running in a Chromium-based browser
+   * @when the admin logs in to the Magento dashboard
+   * @and the admin navigates to the security configuration section
+   * @and the "Enable CAPTCHA on Admin Login" setting is updated to "No"
+   * @then the configuration is saved successfully
+   * @but if the browser is not Chromium
+   * @then the test is skipped with an appropriate message
+   */
+  base('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
+    base.skip(browserName !== 'chromium', `Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`);
+
+    const magentoAdminPage = new MagentoAdminPage(page);
+    await magentoAdminPage.disableLoginCaptcha();
+  });
+
+
   /**
    * @feature Magento Admin Configuration (Enable multiple admin logins)
    * @scenario Enable multiple admin logins only in Chromium browser
@@ -33,37 +55,12 @@ base.describe('Setting up the testing environment', () => {
    * @then the test is skipped with an appropriate message
    */
   base('Enable_multiple_admin_logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    base.skip(browserName !== 'chromium', `Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`);
 
-    if (browserEngine !== "CHROMIUM") {
-      testInfo.skip(true, `Enabling multiple admin logins through Chromium. This is ${browserEngine}, therefore test is skipped.`);
-    } else {
-      const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.enableMultipleAdminLogins();
-    }
+    const magentoAdminPage = new MagentoAdminPage(page);
+    await magentoAdminPage.enableMultipleAdminLogins();
   });
-
-  /**
-   * @feature Magento Admin Configuration (disable login CAPTCHA)
-   * @scenario Disable login CAPTCHA in admin settings via Chromium browser
-   * @given the test is running in a Chromium-based browser
-   * @when the admin logs in to the Magento dashboard
-   * @and the admin navigates to the security configuration section
-   * @and the "Enable CAPTCHA on Admin Login" setting is updated to "No"
-   * @then the configuration is saved successfully
-   * @but if the browser is not Chromium
-   * @then the test is skipped with an appropriate message
-   */
-  base('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-
-    if (browserEngine !== "CHROMIUM") {
-      testInfo.skip(true, `Disabling login captcha through Chromium. This is ${browserEngine}, therefore test is skipped.`);
-    } else {
-      const magentoAdminPage = new MagentoAdminPage(page);
-      await magentoAdminPage.disableLoginCaptcha();
-    }
-  });
+  
 
   /**
    * @feature Cart Price Rules Configuration
