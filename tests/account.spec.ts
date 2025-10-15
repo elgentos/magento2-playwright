@@ -135,11 +135,19 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
   test.beforeEach(async ({page}) => {
     await page.goto(slugs.account.addressIndexSlug, {waitUntil: "load"});
-    await expect(async () => {
-      await expect(page.getByRole('heading',
-          { name: UIReference.address.addressBookTitle }).locator('span'),
-        `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
-    }).toPass();
+    // if page navigated to new address, no address had been added yet.
+    if(page.url().includes('new')){
+      await expect(async () => {
+        await expect(page.getByText(UIReference.newAddress.addNewAddressTitle),
+          `Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
+      }).toPass();
+    } else {
+      await expect(async () => {
+        await expect(page.getByRole('heading',
+            { name: UIReference.address.addressBookTitle }).locator('span'),
+          `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+      }).toPass();
+    }
   });
 
   /**
