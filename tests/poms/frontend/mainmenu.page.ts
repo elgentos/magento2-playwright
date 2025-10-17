@@ -88,7 +88,7 @@ class MainMenuPage {
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuLoginItem.click();
-    await this.page.waitForURL(`${slugs.account.loginSlug}/**`);
+    await this.page.waitForURL(`${slugs.account.loginSlug}**`);
     await expect(loginHeader, 'Login header text is visible').toBeVisible();
   }
 
@@ -160,7 +160,7 @@ class MainMenuPage {
    * Function for the test Open_the_minicart
    */
   async openMiniCart() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuMiniCartButton.waitFor();
     // By adding 'force', we can bypass the 'aria-disabled' tag.
     await this.mainMenuMiniCartButton.click({force: true});
