@@ -16,7 +16,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
   test.fixme('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
     /**
      * This test is currently (October 2025) set to be fixed, since it causes regular timeouts.
-     * Various fixes have been tried, unsuccessfuly.
+     * Various fixes have been tried, unsuccessfully.
      */
     await test.step('Log in with account', async () =>{
       const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
