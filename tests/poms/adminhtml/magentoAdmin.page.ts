@@ -31,6 +31,7 @@ class MagentoAdminPage {
    * @then the system displays a success message confirming the rule was saved
    */
   async addCartPriceRule(magentoCouponCode: string){
+    let resultMessage = "";
 
     // Force specific viewport size to deal with webkit issues
     await this.page.setViewportSize({
@@ -52,6 +53,7 @@ class MagentoAdminPage {
     const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
     await addCartPriceRuleButton.waitFor();
 
+    // Use search field to check for coupon codes.
     const couponSearchField = this.page.locator(UIReference.magentoAdminPage.couponSearchFieldLocator);
     await couponSearchField.fill(magentoCouponCode);
     await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
@@ -60,15 +62,11 @@ class MagentoAdminPage {
 
     const couponCellField = this.page.getByRole('cell', { name: outcomeMarker.magentoAdmin.noResultsFoundText });
 
-    // const couponCellField = this.page.getByRole('cell', {name: magentoCouponCode});
-
     if(await couponCellField.isHidden()){
-    // if(await couponCellField.isVisible()){
       const couponStatusField = this.page.locator('tr').filter({hasText:magentoCouponCode}).first();
       const couponStatus = await couponStatusField.innerText();
       if(couponStatus.includes(UIReference.cartPriceRulesPage.couponCodeActiveStatusText)){
-          console.log('Coupon already exists and is active');
-          return 'Coupon already exists and is active.';
+          resultMessage = 'Coupon already exists and is active.';
       } else {
         // coupon has been found, but is not active.
         await couponStatusField.click();
@@ -84,7 +82,7 @@ class MagentoAdminPage {
         await expect(this.page.locator(
           UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
         ), "Message 'you saved the rule' is visible").toBeVisible();
-        return `Coupon code ${magentoCouponCode} has been activated.`;
+        resultMessage = `Coupon code ${magentoCouponCode} has been activated.`;
       }
     } else {
       // coupon is not set
@@ -121,8 +119,16 @@ class MagentoAdminPage {
       await expect(this.page.locator(
           UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
       ), "Message 'you saved the rule' is visible").toBeVisible();
-      return `Coupon code ${magentoCouponCode} has been set and activated.`;
+      resultMessage = `Coupon code ${magentoCouponCode} has been set and activated.`;
     }
+
+    // Clear the search field
+    await couponSearchField.waitFor();
+    const clearSearchButton = this.page.getByRole('button', { name: UIReference.cartPriceRulesPage.clearSearchButtonLabel });
+    await clearSearchButton.click();
+    await expect(couponSearchField, `Coupon Code search field is empty`).toBeEmpty();
+
+    return resultMessage;
   };
 
   /**

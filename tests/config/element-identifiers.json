@@ -84,6 +84,7 @@
     "activeStatusLabelLocator": ".admin__actions-switch-text",
     "activeStatusSwitcherLocator": ".admin__actions-switch-label",
     "addCartPriceRuleButtonLabel": "Add New Rule",
+    "clearSearchButtonLabel" : "Reset Filter",
     "couponCodeFieldLabel": "Coupon Code",
     "couponCodeActiveStatusText": "Active",
     "couponTypeSelectField": "select[name='coupon_type']",
