@@ -184,6 +184,7 @@
     "homePageTitleText": "Hyvä Themes"
   },
   "magentoAdminPage": {
+    "captchaIncorrectText" : "Incorrect CAPTCHA.",
     "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
     "dashboardHeadingText": "Dashboard",
     "loginButtonLabel": "Sign In",

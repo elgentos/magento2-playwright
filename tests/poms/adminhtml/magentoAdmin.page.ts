@@ -41,11 +41,11 @@ class MagentoAdminPage {
 
     const mainMenuMarketingButton = this.page.getByRole('link', {name: UIReference.magentoAdminPage.navigation.marketingButtonLabel});
     const cartPriceRulesLink = this.page.getByRole('link', {name: UIReference.magentoAdminPage.subNavigation.cartPriceRulesButtonLabel});
-    await expect(mainMenuMarketingButton).toBeVisible();
+    await expect(mainMenuMarketingButton, `Button for Marketing is visible`).toBeVisible();
 
     await expect(async () => {
       await mainMenuMarketingButton.click();
-      await expect(cartPriceRulesLink).toBeVisible();
+      await expect(cartPriceRulesLink, `Button for Cart Price Rules is visible`).toBeVisible();
     }).toPass();
 
     await cartPriceRulesLink.click();
@@ -58,7 +58,7 @@ class MagentoAdminPage {
     await couponSearchField.fill(magentoCouponCode);
     await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
 
-    await expect(this.page.getByText(UIReference.magentoAdminPage.searchResultsText)).toBeVisible();
+    await expect(this.page.getByText(UIReference.magentoAdminPage.searchResultsText), `Search results text visible`).toBeVisible();
 
     const couponCellField = this.page.getByRole('cell', { name: outcomeMarker.magentoAdmin.noResultsFoundText });
 
@@ -73,7 +73,7 @@ class MagentoAdminPage {
         const activeStatusSwitcher = this.page.locator(UIReference.cartPriceRulesPage.activeStatusSwitcherLocator).first();
         const activeStatusLabel = this.page.locator(UIReference.cartPriceRulesPage.activeStatusLabelLocator).first();
 
-        await expect(activeStatusLabel).toBeVisible();
+        await expect(activeStatusLabel, `Active/Disable toggle is visible`).toBeVisible();
         await activeStatusSwitcher.click();
 
         const saveCouponButton = this.page.getByRole('button', {name:UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact:true});
@@ -148,7 +148,7 @@ class MagentoAdminPage {
     // loop clicking the 'Customers' button until clicking it show the subnavigation
     await expect(async() =>{
       await mainMenuCustomersButton.press('Enter');
-      await expect(allCustomersLink).toBeVisible({timeout: 5000});
+      await expect(allCustomersLink, `Link to "All Customers" is visible`).toBeVisible({timeout: 5000});
     }).toPass();
 
     await allCustomersLink.click();
@@ -196,7 +196,7 @@ class MagentoAdminPage {
 
     await expect(async () => {
       await mainMenuStoresButton.click();
-      await expect(storeSettingsConfigurationLink).toBeVisible();
+      await expect(storeSettingsConfigurationLink, `Link to Store Configuration is visible`).toBeVisible();
     }).toPass();
 
     await storeSettingsConfigurationLink.click();
@@ -231,7 +231,9 @@ class MagentoAdminPage {
       const saveConfigButton = this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel });
       await saveConfigButton.click();
 
-      await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.configurationSavedText})).toBeVisible();
+      await expect(this.page.locator(UIReference.general.messageLocator).filter(
+        {hasText: outcomeMarker.magentoAdmin.configurationSavedText}),
+        `Notification "${outcomeMarker.magentoAdmin.configurationSavedText}" is visible`).toBeVisible();
     }
   }
 
@@ -254,7 +256,7 @@ class MagentoAdminPage {
 
     await expect(async () => {
       await mainMenuStoresButton.click();
-      await expect(storeSettingsConfigurationLink).toBeVisible();
+      await expect(storeSettingsConfigurationLink, `Link to Store Configuration is visible`).toBeVisible();
     }).toPass();
 
     await storeSettingsConfigurationLink.click();
@@ -273,7 +275,7 @@ class MagentoAdminPage {
       await advancedConfigSecuritySection.click();
     }
 
-    await expect(multipleLoginsSystemCheckbox).toBeVisible();
+    await expect(multipleLoginsSystemCheckbox, `Checkbox for multiple admin logins is visible`).toBeVisible();
 
     // make sure the 'use system value' option is not checked
     const adminAccountSharingSystemValueCheckbox = this.page.locator(UIReference.configurationPage.allowMultipleLoginsSystemCheckbox);
@@ -291,7 +293,9 @@ class MagentoAdminPage {
       const saveConfigButton = this.page.getByRole('button', { name: UIReference.configurationPage.saveConfigButtonLabel });
       await saveConfigButton.click();
 
-      await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.configurationSavedText})).toBeVisible();
+      await expect(this.page.locator(UIReference.general.messageLocator).filter(
+        {hasText: outcomeMarker.magentoAdmin.configurationSavedText}),
+        `Notification "${outcomeMarker.magentoAdmin.configurationSavedText}" is visible`).toBeVisible();
     }
   }
 
@@ -305,12 +309,8 @@ class MagentoAdminPage {
    * @then the user should see the dashboard heading displayed
    */
   async login(username: string, password: string){
-    if(!process.env.MAGENTO_ADMIN_SLUG) {
-      throw new Error("MAGENTO_ADMIN_SLUG is not defined in your .env file.");
-    }
-
-    await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
-    await this.page.waitForURL(`**/${process.env.MAGENTO_ADMIN_SLUG}`);
+    await this.page.goto(requireEnv('MAGENTO_ADMIN_SLUG'));
+    await this.page.waitForURL(`**/${requireEnv('MAGENTO_ADMIN_SLUG')}`);
 
     if(await this.page.getByRole('heading', {name: UIReference.magentoAdminPage.dashboardHeadingText}).isVisible()) {
       // already logged in
@@ -321,11 +321,18 @@ class MagentoAdminPage {
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
 
+    const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter({hasText: UIReference.magentoAdminPage.captchaIncorrectText});
+
+    if(await captchaNotification.isVisible()) {
+      console.log('CAPTCHA field is visible, automated login not possible!');
+      throw new Error("CAPTCHA field is visible, automated login not possible!");
+    }
+
     const dashboardLabel = this.page.getByRole('heading',{level:1, name: UIReference.magentoAdminPage.dashboardHeadingText});
 
     // expect the H1 'Dashboard' to be visible
     await expect(async () => {
-      await expect(dashboardLabel).toBeVisible();
+      await expect(dashboardLabel, `Title "Dashboard" is visible`).toBeVisible();
     }).toPass();
   }
 }
