@@ -305,12 +305,8 @@ class MagentoAdminPage {
    * @then the user should see the dashboard heading displayed
    */
   async login(username: string, password: string){
-    if(!process.env.MAGENTO_ADMIN_SLUG) {
-      throw new Error("MAGENTO_ADMIN_SLUG is not defined in your .env file.");
-    }
-
-    await this.page.goto(process.env.MAGENTO_ADMIN_SLUG);
-    await this.page.waitForURL(`**/${process.env.MAGENTO_ADMIN_SLUG}`);
+    await this.page.goto(requireEnv('MAGENTO_ADMIN_SLUG'));
+    await this.page.waitForURL(`**/${requireEnv('MAGENTO_ADMIN_SLUG')}`);
 
     if(await this.page.getByRole('heading', {name: UIReference.magentoAdminPage.dashboardHeadingText}).isVisible()) {
       // already logged in
@@ -320,6 +316,13 @@ class MagentoAdminPage {
     await this.adminLoginEmailField.fill(username);
     await this.adminLoginPasswordField.fill(password);
     await this.adminLoginButton.click();
+
+    const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter({hasText: UIReference.magentoAdminPage.captchaIncorrectText});
+
+    if(await captchaNotification.isVisible()) {
+      console.log('CAPTCHA field is visible, automated login not possible!');
+      throw new Error("CAPTCHA field is visible, automated login not possible!");
+    }
 
     const dashboardLabel = this.page.getByRole('heading',{level:1, name: UIReference.magentoAdminPage.dashboardHeadingText});
 
