@@ -4,6 +4,7 @@ import { test as base } from '@playwright/test';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import { createLogger } from '@utils/logger';
+import { ApiClient } from '@utils/apiClient.utils';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
@@ -16,6 +17,9 @@ const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 base.beforeEach(async ({ page }, testInfo) => {
   const magentoAdminPage = new MagentoAdminPage(page);
   await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+
+  const api = ApiClient.create();
+  // client.get('/');
 });
 
 base.describe('Setting up the testing environment', () => {
