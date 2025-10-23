@@ -20,8 +20,8 @@ class ApiClient {
     this.context = await request.newContext({
       baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
       extraHTTPHeaders: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${this.token}`,
       },
     });
 
