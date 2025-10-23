@@ -1,11 +1,15 @@
 // @ts-check
 
 import { test } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import { createLogger } from '@utils/logger';
 
-import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
+import AdminLogin from '@poms/adminhtml/login.page';
+import AdminMarketing from '@poms/adminhtml/marketing.page';
+import AdminCustomers from '@poms/adminhtml/customers.page';
+
 import RegisterPage from '@poms/frontend/register.page';
 
 const logger = createLogger('Setup');
@@ -14,8 +18,8 @@ const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
 test.beforeEach(async ({ page }, testInfo) => {
-  const magentoAdminPage = new MagentoAdminPage(page);
-  await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
+  const adminLoginPage = new AdminLogin(page);
+  await adminLoginPage.login(magentoAdminUsername, magentoAdminPassword);
 });
 
 test.describe('Setting up the testing environment', () => {
@@ -36,8 +40,8 @@ test.describe('Setting up the testing environment', () => {
   test('Disable_login_captcha', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
     test.skip(browserName !== 'chromium', `Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`);
 
-    const magentoAdminPage = new MagentoAdminPage(page);
-    await magentoAdminPage.disableLoginCaptcha();
+    const adminLoginPage = new AdminLogin(page);
+    await adminLoginPage.disableLoginCaptcha();
   });
 
   /**
@@ -56,8 +60,8 @@ test.describe('Setting up the testing environment', () => {
   test('Enable_multiple_admin_logins', { tag: '@setup' }, async ({ page, browserName }, testInfo) => {
     test.skip(browserName !== 'chromium', `Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`);
 
-    const magentoAdminPage = new MagentoAdminPage(page);
-    await magentoAdminPage.enableMultipleAdminLogins();
+    const adminLoginPage = new AdminLogin(page);
+    await adminLoginPage.enableMultipleAdminLogins();
   });
 
   /**
@@ -69,11 +73,11 @@ test.describe('Setting up the testing environment', () => {
    * @then the coupon code is successfully saved and available for use
    */
   test('Set_up_coupon_codes', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
-    const magentoAdminPage = new MagentoAdminPage(page);
+    const adminMarketingPage = new AdminMarketing(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
-    const addCouponCodeResult = await magentoAdminPage.addCartPriceRule(couponCode);
+    const addCouponCodeResult = await adminMarketingPage.addCartPriceRule(couponCode);
     testInfo.annotations.push({type: 'notice', description: addCouponCodeResult});
   });
 
@@ -86,25 +90,25 @@ test.describe('Setting up the testing environment', () => {
    * @then a new customer account is successfully created for testing purposes
    */
   test('Create_test_accounts', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
-    const magentoAdminPage = new MagentoAdminPage(page);
-    const registerPage = new RegisterPage(page);
+    const adminCustomersPage = new AdminCustomers(page);
+	const registerPage = new RegisterPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-    const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+	const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-    await test.step(`Check if ${accountEmail} is already registered`, async () => {
-      const customerLookUp = await magentoAdminPage.checkIfCustomerExists(accountEmail);
+	await test.step(`Check if ${accountEmail} is already registered`, async () => {
+      const customerLookUp = await adminCustomersPage.checkIfCustomerExists(accountEmail);
       if(customerLookUp){
         testInfo.skip(true, `${accountEmail} was found in user table, this step is skipped. If you think this is incorrect, consider removing user from the table and try running the setup again.`);
       }
     });
 
-    await registerPage.createNewAccount(
-      inputValues.accountCreation.firstNameValue,
-      inputValues.accountCreation.lastNameValue,
-      accountEmail,
-      accountPassword,
-      true
-    );
+	await registerPage.createNewAccount(
+	  inputValues.accountCreation.firstNameValue,
+	  inputValues.accountCreation.lastNameValue,
+	  accountEmail,
+	  accountPassword,
+	  true
+	);
   });
 });
