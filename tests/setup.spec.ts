@@ -4,7 +4,6 @@ import { test as base } from '@playwright/test';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import { createLogger } from '@utils/logger';
-import ApiClient from '@utils/apiClient.utils';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
