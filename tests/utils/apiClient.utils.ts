@@ -15,17 +15,17 @@ class ApiClient {
    * @returns {Promise<ApiClient>} A Promise that resolves to an instance of ApiClient.
    */
   async create(): Promise<ApiClient> {
-	await this.ensureToken();
+    await this.ensureToken();
 
-	this.context = await request.newContext({
-	  baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
-	  extraHTTPHeaders: {
-		'Content-Type': 'application/json',
-		Authorization: `Bearer ${this.token}`,
-	  },
-	});
+    this.context = await request.newContext({
+      baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
+      extraHTTPHeaders: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${this.token}`,
+      },
+    });
 
-	return this;
+    return this;
   }
 
   /**
@@ -34,9 +34,9 @@ class ApiClient {
    * @returns {Promise<void>}
    */
   private async ensureToken(): Promise<void> {
-	if (!this.token || this.isTokenExpired()) {
-	  this.token = await this.refreshIntegrationToken();
-	}
+    if (!this.token || this.isTokenExpired()) {
+      this.token = await this.refreshIntegrationToken();
+    }
   }
 
   /**
@@ -46,36 +46,36 @@ class ApiClient {
    * @throws {Error} If token retrieval fails.
    */
   private async refreshIntegrationToken(): Promise<string> {
-	const tempContext = await request.newContext({
-	  baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
-	  extraHTTPHeaders: {
-		'Content-Type': 'application/json',
-	  },
-	});
+    const tempContext = await request.newContext({
+      baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
+      extraHTTPHeaders: {
+        'Content-Type': 'application/json',
+      },
+    });
 
-	const response = await tempContext.post('/rest/V1/integration/admin/token', {
-	  data: {
-		username: requireEnv('MAGENTO_API_USERNAME'),
-		password: requireEnv('MAGENTO_API_PASSWORD'),
-	  },
-	});
+    const response = await tempContext.post('/rest/V1/integration/admin/token', {
+      data: {
+        username: requireEnv('MAGENTO_API_USERNAME'),
+        password: requireEnv('MAGENTO_API_PASSWORD'),
+      },
+    });
 
-	if (!response.ok()) {
-	  const errorBody = await response.text();
-	  await tempContext.dispose();
-	  throw new Error(`Failed to obtain integration token: ${response.status()} ${errorBody}`);
-	}
+    if (!response.ok()) {
+      const errorBody = await response.text();
+      await tempContext.dispose();
+      throw new Error(`Failed to obtain integration token: ${response.status()} ${errorBody}`);
+    }
 
-	const token = await response.json();
-	const expiresHeader = response.headers()['expires'];
-	if (expiresHeader) {
-      this.tokenExpiry = new Date(expiresHeader).getTime();
-	} else {
-      this.tokenExpiry = Date.now() + (3600 * 1000);
-	}
+    const token = await response.json();
+    const expiresHeader = response.headers()['expires'];
+    if (expiresHeader) {
+        this.tokenExpiry = new Date(expiresHeader).getTime();
+    } else {
+        this.tokenExpiry = Date.now() + (3600 * 1000);
+    }
 
-	await tempContext.dispose();
-	return token;
+    await tempContext.dispose();
+    return token;
   }
 
   /**
@@ -84,7 +84,7 @@ class ApiClient {
    * @returns {boolean} True if the token is expired, otherwise false.
    */
   private isTokenExpired(): boolean {
-	return !this.tokenExpiry || Date.now() >= this.tokenExpiry;
+    return !this.tokenExpiry || Date.now() >= this.tokenExpiry;
   }
 
   /**
@@ -93,7 +93,7 @@ class ApiClient {
    * @returns {Promise<any>} A Promise that resolves to the response JSON.
    */
   async get(url: string): Promise<any> {
-	const response = await this.context.get(url);
+    const response = await this.context.get(url);
     return this.handleResponse(response);
   }
 
@@ -141,7 +141,7 @@ class ApiClient {
     if (!response.ok()) {
       const body = await response.text();
       throw new Error(`API call failed [${response.status()}]: ${body}`);
-	}
+    }
     return await response.json();
   }
 
