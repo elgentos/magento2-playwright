@@ -1,56 +1,92 @@
-// @ts-check
-
-import { APIRequestContext, request, expect } from '@playwright/test';
+import { request, expect, APIRequestContext, APIResponse } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 
-/**
- * Utility to create an api call.
- */
 class ApiClient {
-  private context: APIRequestContext;
+  private context!: APIRequestContext;
+  private token: string | undefined;
+  private tokenExpiry: number | undefined;
 
-  constructor(context: APIRequestContext) {
-	this.context = context;
-  }
+  constructor() {}
 
-  static async create(): Promise<ApiClient> {
-	const context = await request.newContext({
-	  baseURL: process.env.API_BASE_URL,
+  async create(): Promise<ApiClient> {
+    await this.ensureToken();
+
+    this.context = await request.newContext({
+	  baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
 	  extraHTTPHeaders: {
 		'Content-Type': 'application/json',
-		Authorization: `Bearer ${process.env.API_TOKEN || ''}`,
+        Authorization: `Bearer ${this.token}`,
 	  },
 	});
-	return new ApiClient(context);
+
+    return this;
+  }
+
+  private async ensureToken(): Promise<void> {
+    if (!this.token || this.isTokenExpired()) {
+      this.token = await this.refreshIntegrationToken();
+    }
+  }
+
+  private async refreshIntegrationToken(): Promise<string> {
+    const tempContext = await request.newContext({
+      baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
+      extraHTTPHeaders: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const response = await tempContext.post('/rest/V1/integration/admin/token', {
+      data: {
+        username: requireEnv('MAGENTO_API_USERNAME'),
+        password: requireEnv('MAGENTO_API_PASSWORD'),
+      },
+    });
+
+	if (!response.ok()) {
+      const errorBody = await response.text();
+      await tempContext.dispose();
+      throw new Error(`Failed to obtain integration token: ${response.status()} ${errorBody}`);
+	}
+
+    const token = await response.json();
+    await tempContext.dispose();
+
+    this.tokenExpiry = Date.now() + (3600 * 1000);
+    return token;
+  }
+
+  private isTokenExpired(): boolean {
+    return !this.tokenExpiry || Date.now() >= this.tokenExpiry;
   }
 
   async get(url: string) {
-	const response = await this.context.get(`${url}`);
-	expect(response.ok()).toBeTruthy();
-	return await response.json();
-  }
+    const response = await this.context.get(url);
+    expect(response.ok()).toBeTruthy();
+    return await response.json();
+}
 
   async post(url: string, payload: Record<string, unknown>) {
-	const response = await this.context.post(`${url}`, { data: payload });
-	expect(response.ok()).toBeTruthy();
-	return await response.json();
+    const response = await this.context.post(url, { data: payload });
+    expect(response.ok()).toBeTruthy();
+    return await response.json();
   }
 
   async delete(url: string) {
-	const response = await this.context.delete(`${url}`);
-	expect(response.ok()).toBeTruthy();
+    const response = await this.context.delete(url);
+    expect(response.ok()).toBeTruthy();
   }
 
   async handleResponse(response: APIResponse) {
-	if (!response.ok()) {
-	  const body = await response.text();
-	  throw new Error(`API call failed [${response.status()}]: ${body}`);
-	}
-	return await response.json();
+    if (!response.ok()) {
+      const body = await response.text();
+      throw new Error(`API call failed [${response.status()}]: ${body}`);
+    }
+    return await response.json();
   }
 
   async dispose() {
-	await this.context.dispose();
+    await this.context.dispose();
   }
 }
 

@@ -4,7 +4,7 @@ import { test as base } from '@playwright/test';
 import { inputValues } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import { createLogger } from '@utils/logger';
-import { ApiClient } from '@utils/apiClient.utils';
+import ApiClient from '@utils/apiClient.utils';
 
 import MagentoAdminPage from '@poms/adminhtml/magentoAdmin.page';
 import RegisterPage from '@poms/frontend/register.page';
@@ -14,12 +14,15 @@ const logger = createLogger('Setup');
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
-base.beforeEach(async ({ page }, testInfo) => {
+base.beforeEach(async ({page}, testInfo) => {
+  const apiClient = await new ApiClient().create();
+
+  const productSKU = '24-WB04';
+  const responseData = await apiClient.get(`/rest/V1/products/${productSKU}`);
+  console.log(responseData);
+
   const magentoAdminPage = new MagentoAdminPage(page);
   await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
-
-  const api = ApiClient.create();
-  // client.get('/');
 });
 
 base.describe('Setting up the testing environment', () => {
