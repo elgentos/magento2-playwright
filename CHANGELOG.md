@@ -29,7 +29,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Fixed typos and minor issues in multiple files for better stability.
 
 ### New Contributors
-- https://github.com/Vinai
+- [@Vinai](https://github.com/Vinai)
 
 ## [2.2.0] - 2025-08-04
 
@@ -117,7 +117,7 @@ Due to a difference in releases between the GitHub version and the npm package, 
 - Various fixes for stability, better adherence to the DRY-principle and separation of concerns.
 
 ### New Contributors
-- https://github.com/LS-Myron
+- [@LS-Myron](https://github.com/LS-Myron)
 
 ## [1.0.0-alpha] - 2025-01-29
 The initial Alpha Release!
@@ -130,5 +130,5 @@ The initial Alpha Release!
 - Example GitHub Actions workflow to show how easily our tool can be integrated into the CI/CD pipeline.
 
 ### New Contributors
-- https://github.com/shayfaber
-- https://github.com/dheesen
+- [@shayfaber](https://github.com/shayfaber)
+- [@dheesen](https://github.com/dheesen)
