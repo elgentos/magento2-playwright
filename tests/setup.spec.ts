@@ -13,7 +13,7 @@ const logger = createLogger('Setup');
 const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
-base.beforeEach(async ({page}, testInfo) => {
+base.beforeEach(async ({ page }, testInfo) => {
   const magentoAdminPage = new MagentoAdminPage(page);
   await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
 });
