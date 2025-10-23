@@ -117,7 +117,7 @@ class ApiClient {
    * @throws {Error} If the response indicates failure.
    */
   async put(url: string, payload: Record<string, unknown>): Promise<any> {
-	const response = await this.context.put(url, { data: payload });
+    const response = await this.context.put(url, { data: payload });
     return this.handleResponse(response);
   }
 
