@@ -15,12 +15,6 @@ const magentoAdminUsername = requireEnv('MAGENTO_ADMIN_USERNAME');
 const magentoAdminPassword = requireEnv('MAGENTO_ADMIN_PASSWORD');
 
 base.beforeEach(async ({page}, testInfo) => {
-  const apiClient = await new ApiClient().create();
-
-  const productSKU = '24-WB04';
-  const responseData = await apiClient.get(`/rest/V1/products/${productSKU}`);
-  console.log(responseData);
-
   const magentoAdminPage = new MagentoAdminPage(page);
   await magentoAdminPage.login(magentoAdminUsername, magentoAdminPassword);
 });
