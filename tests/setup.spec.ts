@@ -91,24 +91,26 @@ test.describe('Setting up the testing environment', () => {
    */
   test('Create_test_accounts', { tag: '@setup'}, async ({page, browserName}, testInfo) => {
     const adminCustomersPage = new AdminCustomers(page);
-	const registerPage = new RegisterPage(page);
+    const registerPage = new RegisterPage(page);
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
     const accountEmail = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-	const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+    const accountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-	await test.step(`Check if ${accountEmail} is already registered`, async () => {
+    await test.step(`Check if ${accountEmail} is already registered`, async () => {
       const customerLookUp = await adminCustomersPage.checkIfCustomerExists(accountEmail);
       if(customerLookUp){
         testInfo.skip(true, `${accountEmail} was found in user table, this step is skipped. If you think this is incorrect, consider removing user from the table and try running the setup again.`);
       }
     });
 
-	await registerPage.createNewAccount(
-	  inputValues.accountCreation.firstNameValue,
-	  inputValues.accountCreation.lastNameValue,
-	  accountEmail,
-	  accountPassword,
-	  true
-	);
+    await test.step('Create new customer', async () => {
+      await registerPage.createNewAccount(
+        inputValues.accountCreation.firstNameValue,
+        inputValues.accountCreation.lastNameValue,
+        accountEmail,
+        accountPassword,
+        true
+      );
+    });
   });
 });
