@@ -180,6 +180,7 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "headerLocator": "#header",
     "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "div.message",
     "removeLabel": "Remove",
@@ -222,6 +223,7 @@
     "wishListButtonLabel" : "My Wish List"
   },
   "miniCart": {
+    "cartDrawerLocator": "#cart-drawer-title",
     "checkOutButtonLabel": "Checkout",
     "editProductIconLabel": "Edit product",
     "minicartButtonLocator": "#menu-cart-icon",

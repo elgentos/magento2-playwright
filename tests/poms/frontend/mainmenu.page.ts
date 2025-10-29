@@ -20,7 +20,7 @@ class MainMenuPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.mainMenuElement = page.locator('#header');
+    this.mainMenuElement = page.locator(UIReference.general.headerLocator);
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
     this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
@@ -165,7 +165,7 @@ class MainMenuPage {
     // By adding 'force', we can bypass the 'aria-disabled' tag.
     await this.mainMenuMiniCartButton.click({force: true});
 
-    let miniCartDrawer = this.page.locator("#cart-drawer-title");
+    let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
     await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
   }
 
@@ -199,8 +199,8 @@ class MainMenuPage {
     await this.mainMenuLogoutItem.click();
 
     //assertions: notification that user is logged out & logout button no longer visible
-    await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true })).toBeVisible();
-    await expect(this.mainMenuLogoutItem).toBeHidden();
+    await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true }), "Message shown that confirms you're logged out").toBeVisible();
+    await expect(this.mainMenuLogoutItem, `Log out button is no longer visible`).toBeHidden();
   }
 }
 
