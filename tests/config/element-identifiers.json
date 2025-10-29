@@ -118,7 +118,9 @@
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
     "shippingMethodFixedLabel": "Fixed",
-    "shippingMethodTableRateLabel": "Table Rate"
+    "shippingMethodTableRateLabel": "Table Rate",
+    "shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
+    "taxPriceText": "Tax"
   },
   "comparePage": {
     "removeCompareLabel": "Remove Product",
@@ -155,6 +157,10 @@
   },
   "customerOverviewPage": {
     "tableSearchFieldLabel": "Search by keyword"
+  },
+  "financial" : {
+    "subTotal": "Subtotal",
+    "grandTotal": "Grand Total"
   },
   "footerPage": {
     "footerLocator": ".page-footer",
