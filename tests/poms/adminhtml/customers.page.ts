@@ -57,7 +57,17 @@ class AdminCustomers {
 	return await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
   }
 
-  async createNewCustomerAccount (
+  /**
+   * @feature Customer Management
+   * @scenario Create a new customer account
+   * @given the admin is on the Magento dashboard
+   * @when the admin navigates to Customers > All Customers
+   * @and clicks the 'Create New Customer' button
+   * @then the admin fills in the mandatory fields and optional fields for a new customer account
+   * @and the system saves the customer account and navigates to the account edit page
+   * @and displays a confirmation message that the customer was saved
+   */
+  async createNewCustomerAccount(
 	firstName: string,
 	lastName: string,
 	email: string
@@ -95,26 +105,20 @@ class AdminCustomers {
 	  ).toBeVisible();
 	}
 
-	// REMOVE THIS
-	// requires module
-	const passwordField =  this.page.locator("[name='new_customer_pwd']");
-	const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-	const updatePasswordButton = this.page.getByRole('button', {name: 'Update Password'})
-	// Adding password to customer user
-	await passwordField.fill(passwordInputValue);
-	await updatePasswordButton.click();
-	await expect(
-	  this.page
-		.locator(UIReference.general.messageLocator)
-		.filter({ hasText: 'Password has been updated successfully.' })
-	).toBeVisible();
-
-	await this.approveAccount(email)
-	// REMOVE THIS
+	await this.approveAccount(email);
   }
 
+  /**
+   * @feature Customer Management
+   * @scenario Approve a customer account
+   * @given the admin is on the Magento dashboard
+   * @when the admin navigates to Customers > All Customers
+   * @and searches for a specific email address
+   * @then the admin clicks on the 'Edit' link for the corresponding customer
+   * @and approves the customer account
+   * @and the system displays a confirmation message that the customer account has been approved
+   */
   async approveAccount(email: string) {
-	console.log('Approve Account Actions');
 
 	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
 	const editAccountButton = this.page.getByRole('link', {name: 'Edit'}).first()
