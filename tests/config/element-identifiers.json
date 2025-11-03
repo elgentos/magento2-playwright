@@ -18,6 +18,44 @@
   "address" : {
     "addressBookTitle" : "Address Book"
   },
+  "adminGeneral": {
+    "tableSearchFieldLabel": "Search by keyword",
+    "loadingSpinnerLocator": "#container .spinner",
+    "searchButtonLabel": "Search"
+  },
+  "adminCustomers": {
+    "createNewCustomerButtonLabel": "Add New Customer",
+    "edit": {
+      "passwordFieldLabel": "Enter Password"
+    },
+    "registration": {
+      "debtorNumberFieldLabel": "Debtor number",
+      "allowBulkPurchaseFieldLabel": "Allow bulk purchase",
+      "createAccountSaveButtonLabel": "Save Customer",
+      "createAccountSaveAndContinueButtonLabel": "Save and Continue Edit"
+    }
+  },
+  "adminPage": {
+    "captchaIncorrectText" : "Incorrect CAPTCHA.",
+    "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
+    "dashboardHeadingText": "Dashboard",
+    "loginButtonLabel": "Sign In",
+    "navigation": {
+      "customersButtonLabel": "Customers",
+      "marketingButtonLabel": "Marketing",
+      "storesButtonLabel": "Stores",
+      "salesButtonLabel": "Sales"
+    },
+    "passwordFieldLabel": "Password",
+    "searchResultsText" : "records found",
+    "subNavigation": {
+      "allCustomersButtonLabel": "All Customers",
+      "cartPriceRulesButtonLabel": "Cart Price Rules",
+      "configurationButtonLabel": "Configuration",
+      "ordersButtonLabel": "Orders"
+    },
+    "usernameFieldLabel": "Username"
+  },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
     "cityNameLabel": "City",
@@ -189,25 +227,6 @@
   },
   "homePage": {
     "homePageTitleText": "Hyvä Themes"
-  },
-  "magentoAdminPage": {
-    "captchaIncorrectText" : "Incorrect CAPTCHA.",
-    "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
-    "dashboardHeadingText": "Dashboard",
-    "loginButtonLabel": "Sign In",
-    "navigation": {
-      "customersButtonLabel": "Customers",
-      "marketingButtonLabel": "Marketing",
-      "storesButtonLabel": "Stores"
-    },
-    "passwordFieldLabel": "Password",
-    "searchResultsText" : "records found",
-    "subNavigation": {
-      "allCustomersButtonLabel": "All Customers",
-      "cartPriceRulesButtonLabel": "Cart Price Rules",
-      "configurationButtonLabel": "Configuration"
-    },
-    "usernameFieldLabel": "Username"
   },
   "mainMenu": {
     "addressBookButtonLabel" : "Address Book",

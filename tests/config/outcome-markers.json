@@ -14,6 +14,9 @@
     "addressDeletedNotification": "You deleted the address.",
     "newAddressAddedNotifcation": "You saved the address."
   },
+  "adminGeneral": {
+    "searchResultsFoundText": "records found"
+  },
   "cart": {
     "discountAppliedNotification": "You used coupon code",
     "discountRemovedNotification": "You canceled the coupon code.",
@@ -30,7 +33,7 @@
     "couponRemovedNotification": "Your coupon was successfully removed",
     "incorrectDiscountNotification": "The coupon code isn't valid. Verify the code and try again.",
     "orderPlacedNotification": "Thank you for your purchase!",
-    "orderPlacedNumberText": "Your order number is"
+    "orderPlacedNumberText": "Your order number is:"
   },
   "comparePage": {
     "productRemovedNotificationTextOne": "You removed product",
