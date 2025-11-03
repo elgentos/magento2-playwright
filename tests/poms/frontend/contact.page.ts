@@ -14,7 +14,7 @@ class ContactPage {
   constructor(page: Page){
     this.page = page;
     this.nameField = this.page.getByLabel(UIReference.credentials.nameFieldLabel);
-    this.emailField = this.page.getByPlaceholder('Email', { exact: true });
+    this.emailField = this.page.getByPlaceholder(UIReference.credentials.emailFieldLabel, { exact: true });
     this.messageField = this.page.locator(UIReference.contactPage.messageFieldSelector);
     this.sendFormButton = this.page.getByRole('button', { name: UIReference.general.genericSubmitButtonLabel });
   }
