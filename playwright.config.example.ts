@@ -72,8 +72,12 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://hyva-demo.elgentos.io/',
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    // Create a screenshot at the end of a test if the test fails.
+    // See https://playwright.dev/docs/api/class-testoptions#test-options-screenshot
+    screenshot: 'only-on-failure',
+
+    // Collect trace when retrying a failed test. See https://playwright.dev/docs/trace-viewer
+    trace: 'retain-on-failure',
 
     /* Ignore https errors if they apply (should only happen on local) */
     ignoreHTTPSErrors: true,
