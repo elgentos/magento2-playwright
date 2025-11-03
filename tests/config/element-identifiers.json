@@ -118,7 +118,9 @@
     "remove": "Remove",
     "shippingAddressRadioLocator": "#shipping-details input[type='radio']",
     "shippingMethodFixedLabel": "Fixed",
-    "shippingMethodTableRateLabel": "Table Rate"
+    "shippingMethodTableRateLabel": "Table Rate",
+    "shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
+    "taxPriceText": "Tax"
   },
   "comparePage": {
     "removeCompareLabel": "Remove Product",
@@ -156,6 +158,10 @@
   "customerOverviewPage": {
     "tableSearchFieldLabel": "Search by keyword"
   },
+  "financial" : {
+    "subTotal": "Subtotal",
+    "grandTotal": "Grand Total"
+  },
   "footerPage": {
     "footerLocator": ".page-footer",
     "currencyIdentifier": "#currency-heading",
@@ -174,6 +180,7 @@
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
     "genericSubmitButtonLabel": "Submit",
+    "headerLocator": "#header",
     "loadingSpinnerLocator": "#container .spinner",
     "messageLocator": "div.message",
     "removeLabel": "Remove",
@@ -216,6 +223,7 @@
     "wishListButtonLabel" : "My Wish List"
   },
   "miniCart": {
+    "cartDrawerLocator": "#cart-drawer-title",
     "checkOutButtonLabel": "Checkout",
     "editProductIconLabel": "Edit product",
     "minicartButtonLocator": "#menu-cart-icon",

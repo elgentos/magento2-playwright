@@ -34,10 +34,14 @@ class CheckoutPage extends MagewireUtils {
     this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
     this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
-    this.subtotalElement = page.getByText('Subtotal $');
-    this.shippingElement = page.getByText('Shipping & Handling (Flat Rate - Fixed) $');
-    this.taxElement = page.getByText('Tax $');
-    this.grandTotalElement = page.getByText('Grand Total $');
+    // this.subtotalElement = page.getByText('Subtotal $');
+    this.subtotalElement = page.getByText(`${UIReference.financial.subTotal} ${UIReference.general.genericPriceSymbol}`);
+    // this.shippingElement = page.getByText('Shipping & Handling (Flat Rate - Fixed) $');
+    this.shippingElement = page.getByText(`${UIReference.checkout.shippingPriceText} ${UIReference.general.genericPriceSymbol}`);
+    // this.taxElement = page.getByText('Tax $');
+    this.taxElement = page.getByText(`${UIReference.checkout.taxPriceText} ${UIReference.general.genericPriceSymbol}`);
+    // this.grandTotalElement = page.getByText('Grand Total $');
+    this.grandTotalElement = page.getByText(`${UIReference.financial.grandTotal} ${UIReference.general.genericPriceSymbol}`);
     this.paymentMethodOptionCreditCard = this.page.getByLabel(UIReference.checkout.paymentOptionCreditCardLabel);
     this.paymentMethodOptionPaypal = this.page.getByLabel(UIReference.checkout.paymentOptionPaypalLabel);
     this.creditCardNumberField = this.page.getByLabel(UIReference.checkout.creditCardNumberLabel);
@@ -218,7 +222,7 @@ class CheckoutPage extends MagewireUtils {
     // await this.page.getByLabel('Country').selectOption('US');
     const country = faker.helpers.arrayElement(inputValues.addressCountries);
     const countrySelectorField = this.page.getByLabel(UIReference.newAddress.countryLabel);
-    const stateInputField = this.page.getByRole('textbox', { name: 'State/Province' });
+    const stateInputField = this.page.getByRole('textbox', { name: UIReference.newAddress.provinceSelectLabel });
     const stateSelectorField = stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
 
 
