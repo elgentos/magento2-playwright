@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+Note that the points mentioned here are in the works, to be released in a future update.
+
+### Added
+- StorageStates to improve both speed and stability of tests that requires a logged-in user.
+
+### Changed
+- We will implement the APIClient in various tests.
+
+## [3.0.1] - 2025-11-04
+
+### Added
+- APIClient utility to improve the speed of setting up your testing environment.
+
+### Changed
+- Split `magentoAdmin.page.ts` for legibility and to better adhere to the separation of concerns philosophy.
+
+### Fixed
+- Moved some hardcoded selectors to `element-identifiers.json`
+
 ## [3.0.0] - 2025-10-23
 
 ### Added
@@ -16,7 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Improved usage of TypeScript `@` path aliases (e.g., `@utils`, `@poms`, `@config`) for easier customization and maintainability.
 - Updated `translate-json.js` and `install.js` to class-based files for consistency.
 - Updated README to reflect new updates.
-- Updated Magento Admin and frontend specs to ensure tests run successfully.
+- Updated Magento Admin and frontend specs to fix various race conditions, timeouts and other 'false negatives'.
 - Fixed GitHub workflow and installation scripts for reliability.
 
 ### Removed
@@ -39,7 +60,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 - Rewritten setup.spec.ts for better legibility. Setup will also now check if elements are present and active (e.g. coupon codes), and no longer writes to .env.
-- Improved the capability of the magewire loading utility to better handle various states of the magewire loading element 
+- Improved the capability of the magewire loading utility to better handle various states of the magewire loading element
 - Improved using @ tags for example @utils, @poms and more for ease of customization and maintainability.
 - Updated README to reflect new updates.
 
