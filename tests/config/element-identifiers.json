@@ -20,6 +20,7 @@
   },
   "adminGeneral": {
     "tableSearchFieldLabel": "Search by keyword",
+    "tableFilterResetLabel": "Clear All",
     "loadingSpinnerLocator": "#container .spinner",
     "searchButtonLabel": "Search"
   },
