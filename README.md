@@ -26,6 +26,86 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ---
 
+## Scenarios
+
+  | Spec file            | Group                              | Test                                                                                        |
+  |----------------------|------------------------------------|---------------------------------------------------------------------------------------------|
+  | account.spec.ts      | Account information actions        | :heavy_check_mark: Change_password                                                          |
+  |                      |                                    | :heavy_check_mark: Update_my_e-mail_address                                                 |
+  |                      | Account address book actions       | :heavy_check_mark: Add_an_address                                                           |
+  |                      |                                    | :heavy_check_mark: Edit_existing_address                                                    |
+  |                      |                                    | :heavy_check_mark: Missing_required_field_prevents_creation                                 |
+  |                      |                                    | :heavy_check_mark: Delete_an_address                                                        |
+  |                      | Newsletter actions                 | :heavy_check_mark: Update_newsletter_subscription                                           |
+  | category.spec.ts     | Category tests                     | :heavy_check_mark: Filter_category_on_size                                                  |
+  |                      |                                    | :heavy_check_mark: Sort_category_by_price                                                   |
+  |                      |                                    | :heavy_check_mark: Change_amount_of_products_shown                                          |
+  |                      |                                    | :heavy_check_mark: Switch_from_grid_to_list_view                                            |
+  | footer.spec.ts       | Footer                             | :heavy_check_mark: Footer_is_available                                                      |
+  |                      |                                    | :black_square_button: Footer_switch_currency (fixme: does not work due to error on website) |
+  |                      |                                    | :heavy_check_mark: Footer_newsletter_subscription                                           |
+  | mainmenu.spec.ts     | Guest tests (not logged in)        | :heavy_check_mark: User_navigates_to_login                                                  |
+  |                      |                                    | :heavy_check_mark: User_navigates_to_create_account                                         |
+  |                      |                                    | :heavy_check_mark: Navigate_to_category_page                                                |
+  |                      |                                    | :heavy_check_mark: Navigate_to_subcategory_page                                             |
+  |                      |                                    | :heavy_check_mark: Open_the_minicart                                                        |
+  |                      |                                    | :heavy_check_mark: User_searches_for_product                                                |
+  |                      | User tests (logged in)             | :heavy_check_mark: User_logs_out                                                            |
+  |                      |                                    | :heavy_check_mark: Navigate_to_account_page                                                 |
+  |                      |                                    | :heavy_check_mark: Navigate_to_wishlist                                                     |
+  |                      |                                    | :heavy_check_mark: Navigate_to_orders                                                       |
+  |                      |                                    | :heavy_check_mark: Navigate_to_address_book                                                 |
+  | healthcheck.spec.ts  | Page health checks                 | :heavy_check_mark: Homepage_returns_200                                                     |
+  |                      |                                    | :heavy_check_mark: Plp_returns_200                                                          |
+  |                      |                                    | :heavy_check_mark: Pdp_returns_200                                                          |
+  |                      |                                    | :heavy_check_mark: Checkout_returns_200                                                     |
+  | login.spec.ts        | Login tests                        | :heavy_check_mark: User_logs_in_with_valid_credentials                                      |
+  |                      |                                    | :heavy_check_mark: Invalid_credentials_are_rejected                                         |
+  |                      |                                    | :heavy_check_mark: Login_fails_with_missing_password                                        |
+  | home.spec.ts         | Homepage tests                     | :heavy_check_mark: Add_product_on_homepage_to_cart                                          |
+  | checkout.spec.ts     | Checkout (login required)          | :heavy_check_mark: Address_is_pre_filled_in_checkout                                        |
+  |                      |                                    | :heavy_check_mark: Place_order_for_simple_product                                           |
+  |                      | Checkout (guest)                   | :heavy_check_mark: Add_coupon_code_in_checkout                                              |
+  |                      |                                    | :heavy_check_mark: Verify_price_calculations_in_checkout                                    |
+  |                      |                                    | :heavy_check_mark: Remove_coupon_code_from_checkout                                         |
+  |                      |                                    | :heavy_check_mark: Invalid_coupon_code_in_checkout_is_rejected                              |
+  |                      |                                    | :heavy_check_mark: Guest_can_select_payment_methods                                         |
+  | minicart.spec.ts     | Minicart (simple products)         | :heavy_check_mark: Add_product_to_minicart_and_go_to_checkout                               |
+  |                      |                                    | :heavy_check_mark: Add_product_to_minicart_and_go_to_cart                                   |
+  |                      |                                    | :heavy_check_mark: Change_product_quantity_in_minicart                                      |
+  |                      |                                    | :heavy_check_mark: Delete_product_from_minicart                                             |
+  |                      |                                    | :heavy_check_mark: Pdp_price_matches_minicart_price                                         |
+  |                      | Minicart (configurable products)   | :heavy_check_mark: Configurable_pdp_price_matches_minicart_price                            |
+  | orderhistory.spec.ts | Order history tests                | :heavy_check_mark: Recent_order_is_visible_in_history                                       |
+  | compare.spec.ts      | Product comparison tests           | :heavy_check_mark: Add_product_to_cart_from_comparison_page                                 |
+  |                      |                                    | :heavy_check_mark: Guests_can_not_add_a_product_to_their_wishlist                           |
+  |                      |                                    | :heavy_check_mark: Add_product_to_wishlist_from_comparison_page                             |
+  | contact.spec.ts      | Contact form tests                 | :heavy_check_mark: Send_message_through_contact_form                                        |
+  | cart.spec.ts         | Cart functionalities (guest)       | :heavy_check_mark: Add_product_to_cart                                                      |
+  |                      |                                    | :heavy_check_mark: Product_remains_in_cart_after_login                                      |
+  |                      |                                    | :heavy_check_mark: Remove_product_from_cart                                                 |
+  |                      |                                    | :heavy_check_mark: Change_product_quantity_in_cart                                          |
+  |                      |                                    | :heavy_check_mark: Add_coupon_code_in_cart                                                  |
+  |                      |                                    | :heavy_check_mark: Remove_coupon_code_from_cart                                             |
+  |                      |                                    | :heavy_check_mark: Invalid_coupon_code_is_rejected                                          |
+  |                      | Price checking tests               | :heavy_check_mark: Simple_product_cart_data_consistent_from_PDP_to_checkout                 |
+  |                      |                                    | :heavy_check_mark: Configurable_product_cart_data_consistent_from_PDP_to_checkout           |
+  | register.spec.ts     | Account registration tests         | :heavy_check_mark: User_registers_an_account                                                |
+  | product.spec.ts      | Product page tests                 | :heavy_check_mark: Add_product_to_compare                                                   |
+  |                      |                                    | :black_square_button: Add_product_to_wishlist (fixme: causes regular timeouts)              |
+  |                      |                                    | :black_square_button: Leave_a_product_review (fixme: fails due to error on website)         |
+  |                      |                                    | :heavy_check_mark: Open_pictures_in_lightbox_and_scroll                                     |
+  |                      |                                    | :heavy_check_mark: Change_number_of_reviews_shown_on_product_page                           |
+  |                      | Simple product tests               | :black_square_button: Simple_tests_will_be_added_later (fixme)                              |
+  |                      | Configurable product tests         | :black_square_button: Configurable_tests_will_be_added_later (fixme)                        |
+  | search.spec.ts       | Search functionality               | :heavy_check_mark: Search_query_returns_multiple_results                                    |
+  |                      |                                    | :heavy_check_mark: User_can_find_a_specific_product_and_navigate_to_its_page                |
+  |                      |                                    | :heavy_check_mark: No_results_message_is_shown_for_unknown_query                            |
+  | setup.spec.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha                                                    |
+  |                      |                                    | :heavy_check_mark: Enable_multiple_admin_logins                                             |
+  |                      |                                    | :heavy_check_mark: Set_up_coupon_codes                                                      |
+  |                      |                                    | :heavy_check_mark: Create_test_accounts                                                     |
+
 ## Prerequisites
 
 * This testing suite has been designed to work within a Hÿva theme in Magento 2, but can work with other themes.
