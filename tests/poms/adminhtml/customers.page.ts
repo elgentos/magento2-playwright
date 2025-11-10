@@ -50,9 +50,10 @@ class AdminCustomers {
 	}
 
 	// Loop to ensure the 'results found' text is visible
-	await expect(async() =>{
-	  await this.page.getByText(outcomeMarker.customerOverviewPage.searchResultsFoundText).first();
-	}).toPass();
+	await expect(
+	  this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
+	  "There are active filters."
+	).toBeVisible();
 
 	// Return true (email found) or false (email not found)
 	const emailIsFound = await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
@@ -60,10 +61,15 @@ class AdminCustomers {
 	// Click 'Clear all' button on filtered table to reset the table state.
 	await this.page.getByRole('button', {name: UIReference.adminGeneral.tableFilterResetLabel}).click();
 
-	// Wait for the loader spinnter to be hidden
+	// Wait for the loader spinner to be hidden
 	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}
+
+	await expect(
+	  this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
+	  "There are no filters active."
+	).toBeHidden();
 
 	return emailIsFound;
   }
