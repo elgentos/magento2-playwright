@@ -56,7 +56,6 @@ class AdminCustomers {
 
 	// Return true (email found) or false (email not found)
 	const emailIsFound = await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
-	console.log('Email is found: ', emailIsFound);
 
 	// Click 'Clear all' button on filtered table to reset the table state.
 	await this.page.getByRole('button', {name: UIReference.adminGeneral.tableFilterResetLabel}).click();
