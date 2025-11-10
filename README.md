@@ -106,6 +106,64 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
   |                      |                                    | :heavy_check_mark: Set_up_coupon_codes                                                      |
   |                      |                                    | :heavy_check_mark: Create_test_accounts                                                     |
 
+## Roadmap
+
+  | Spec file        | Group                           | Test                                                                                                               | Priority |
+  |------------------|---------------------------------|--------------------------------------------------------------------------------------------------------------------|----------|
+  | account.spec.ts  | Account test creation           | :black_square_button: it can create an account to log in with                                                      | High     |
+  |                  | Account activities              | :black_square_button: it creates an account to log in with and use for further testing                             | High     |
+  |                  |                                 | :black_square_button: it can show the account information page and display the name of the customer                | High     |
+  |                  |                                 | :black_square_button: it can change the name of the customer on the account information page                       | High     |
+  |                  |                                 | :black_square_button: it can navigate to all customer account pages and displays the correct titles                | High     |
+  |                  |                                 | :black_square_button: it can navigate to order history and displays that there are no placed orders                | High     |
+  |                  |                                 | :black_square_button: it can add an address automatically when an order is placed                                  | High     |
+  |                  |                                 | :black_square_button: it can add a product to the wishlist of the logged in customer on a productpage              | High     |
+  |                  |                                 | :black_square_button: it can edit the wishlist on the wishlist page                                                | High     |
+  |                  |                                 | :black_square_button: it can reset the password when it is forgotten                                               | High     |
+  |                  | Do not login before these tests | :black_square_button: it can login from cart without making changes to the cart                                    | High     |
+  |                  |                                 | :black_square_button: it can login from checkout                                                                   | High     |
+  | search.spec.ts   | Perform searches                | :black_square_button: it can show suggestions when entering search terms                                           | Medium   |
+  | category.spec.ts | Category page tests             | :black_square_button: it checks if the breadcrumb is displayed correctly                                           | Medium   |
+  |                  |                                 | :black_square_button: it checks if the pagination is working                                                       | Medium   |
+  | home.spec.ts     | Home page tests                 | :black_square_button: it can navigate to the homepage                                                              | Medium   |
+  |                  |                                 | :black_square_button: it can perform search from homepage                                                          | Medium   |
+  |                  |                                 | :black_square_button: it can open a category                                                                       | Medium   |
+  |                  |                                 | :black_square_button: it can show the header correctly and all links work                                          | Medium   |
+  |                  |                                 | :black_square_button: it can show the footer correctly and all links work                                          | Medium   |
+  |                  |                                 | :black_square_button: it can show the main section of the homepage correctly and all links work                    | Low      |
+  |                  |                                 | :black_square_button: it shows the cookie banner when cookies are not accepted yet                                 | Low      |
+  | checkout.spec.ts | Checkout tests (guest)          | :black_square_button: it shows the correct products and quantities previously added to the cart                    | Medium   |
+  |                  |                                 | :black_square_button: it can properly choose and use all listed payment methods                                    | Medium   |
+  |                  |                                 | :black_square_button: it can properly choose and use all listed shipping methods                                   | Medium   |
+  |                  |                                 | :black_square_button: it a conformation mail is send to the customer after placing the order                       | Low      |
+  |                  |                                 | :black_square_button: it an invoice is created and sent to the customer after placing the order                    | Low      |
+  |                  |                                 | :black_square_button: it after placing the order it is properly processed in the backend                           | Medium   |
+  |                  | Checkout tests (logged in)      | :black_square_button: it can automatically fill in the name and address of the customer                            | Medium   |
+  | cart.spec.ts     | Cart tests                      | :black_square_button: it displays the correct product prices and totals                                            | Medium   |
+  |                  |                                 | :black_square_button: it merges an already existing cart when a customer logs in                                   | Medium   |
+  | product.spec.ts  | Product page tests              | :black_square_button: it can display the title and image of the product                                            | High     |
+  |                  |                                 | :black_square_button: it shows the product price                                                                   | High     |
+  |                  |                                 | :black_square_button: it can configure the product when it is an configurable product                              | High     |
+  |                  |                                 | :black_square_button: it can add the product to the cart                                                           | High     |
+  |                  |                                 | :black_square_button: it can't add the product to the cart if it is a configurable product and no options selected | High     |
+  |                  |                                 | :black_square_button: it shows the correct breadcrumb                                                              | Medium   |
+  |                  |                                 | :black_square_button: it can show reviews made by logged in customers                                              | Medium   |
+  |                  |                                 | :black_square_button: it can indicate if a product is in stock                                                     | High     |
+  |                  |                                 | :black_square_button: it can't add a product to the cart when the product is out of stock                          | High     |
+  |                  | Bundle products test            | :black_square_button: it can render the product name                                                               | High     |
+  |                  |                                 | :black_square_button: it can set the price to zero when every associated product qty is zero                       | High     |
+  |                  |                                 | :black_square_button: it can calculate the price based on selected options                                         | High     |
+  |                  |                                 | :black_square_button: it can display selection quantities                                                          | High     |
+  |                  |                                 | :black_square_button: it can add a bundled product to the cart                                                     | High     |
+  | cms-page.spec.ts | CMS page tests                  | :black_square_button: it shows the default 404 page on an non-existent route                                       | Low      |
+  |                  |                                 | :black_square_button: it can open the default CMS page correctly                                                   | Low      |
+  | contact.spec.ts  | Contact form tests              | :black_square_button: it shows the contact form correctly                                                          | Medium   |
+  |                  |                                 | :black_square_button: it cannot submit a form when no valid email address is entered                               | Medium   |
+  | backend.spec.ts  | Back-end tests                  | :black_square_button: it can login on the administration panel of the magento environment                          | Optional |
+  |                  |                                 | :black_square_button: it can show customer data                                                                    | Optional |
+  |                  |                                 | :black_square_button: it processes orders and invoices correctly                                                   | Optional |
+  |                  |                                 | :black_square_button: it can edit an order                                                                         | Optional |
+
 ## Prerequisites
 
 * This testing suite has been designed to work within a Hÿva theme in Magento 2, but can work with other themes.
