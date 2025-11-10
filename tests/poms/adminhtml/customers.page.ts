@@ -44,7 +44,7 @@ class AdminCustomers {
 	await customersSearchField.fill(email);
 	await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
 
-	// Wait for the loader spinnter to be hidden
+	// Wait for the loader spinner to be hidden
 	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}
