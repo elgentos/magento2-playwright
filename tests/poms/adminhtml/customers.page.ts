@@ -18,6 +18,7 @@ class AdminCustomers {
    * @when the admin navigates to Customers > All Customers
    * @and the customer table is fully loaded
    * @and the admin searches for a specific email address
+   * @then reset the table filter
    * @then the system returns whether a customer with that email exists in the customer list
    */
   async checkIfCustomerExists(email: string){
@@ -43,18 +44,34 @@ class AdminCustomers {
 	await customersSearchField.fill(email);
 	await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
 
-
+	// Wait for the loader spinner to be hidden
 	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}
 
 	// Loop to ensure the 'results found' text is visible
-	await expect(async() =>{
-	  await this.page.getByText(outcomeMarker.customerOverviewPage.searchResultsFoundText).first();
-	}).toPass();
+	await expect(
+	  this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
+	  "There are active filters."
+	).toBeVisible();
 
 	// Return true (email found) or false (email not found)
-	return await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
+	const emailIsFound = await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
+
+	// Click 'Clear all' button on filtered table to reset the table state.
+	await this.page.getByRole('button', {name: UIReference.adminGeneral.tableFilterResetLabel}).click();
+
+	// Wait for the loader spinner to be hidden
+	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
+	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	}
+
+	await expect(
+	  this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
+	  "There are no filters active."
+	).toBeHidden();
+
+	return emailIsFound;
   }
 
   /**

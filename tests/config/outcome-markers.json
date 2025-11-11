@@ -15,7 +15,8 @@
     "newAddressAddedNotifcation": "You saved the address."
   },
   "adminGeneral": {
-    "searchResultsFoundText": "records found"
+    "searchResultsFoundText": "records found",
+    "activeFiltersText": "Active filters"
   },
   "cart": {
     "discountAppliedNotification": "You used coupon code",
