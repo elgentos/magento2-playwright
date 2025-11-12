@@ -217,7 +217,7 @@
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
     "errorMessageLocator": "div.message.error",
-    "errorMessageRequiredFieldText": "This is a required field",
+    "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
