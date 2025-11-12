@@ -12,9 +12,9 @@ class AdminLogin {
 
   constructor(page: Page) {
     this.page = page;
-    this.adminLoginEmailField = page.getByLabel(UIReference.adminPage.usernameFieldLabel);
-    this.adminLoginPasswordField = page.getByLabel(UIReference.adminPage.passwordFieldLabel);
-    this.adminLoginButton = page.getByRole('button', {name: UIReference.adminPage.loginButtonLabel});
+    this.adminLoginEmailField = page.locator(UIReference.adminPage.usernameFieldId);
+    this.adminLoginPasswordField = page.locator(UIReference.adminPage.passwordFieldId);
+    this.adminLoginButton = page.locator(UIReference.adminPage.loginButtonClass);
   }
 
   /**

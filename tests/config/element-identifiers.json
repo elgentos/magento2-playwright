@@ -40,14 +40,12 @@
     "captchaIncorrectText" : "Incorrect CAPTCHA.",
     "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
     "dashboardHeadingText": "Dashboard",
-    "loginButtonLabel": "Sign In",
     "navigation": {
       "customersButtonLabel": "Customers",
       "marketingButtonLabel": "Marketing",
       "storesButtonLabel": "Stores",
       "salesButtonLabel": "Sales"
     },
-    "passwordFieldLabel": "Password",
     "searchResultsText" : "records found",
     "subNavigation": {
       "allCustomersButtonLabel": "All Customers",
@@ -55,7 +53,12 @@
       "configurationButtonLabel": "Configuration",
       "ordersButtonLabel": "Orders"
     },
-    "usernameFieldLabel": "Username"
+    "usernameFieldLabel": "Username",
+    "passwordFieldLabel": "Password",
+    "loginButtonLabel": "Sign In",
+    "usernameFieldId": "#username",
+    "passwordFieldId": "#login",
+    "loginButtonClass": ".action-login"
   },
   "newAddress": {
     "addNewAddressTitle": "Add New Address",
@@ -214,7 +217,7 @@
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
     "errorMessageLocator": "div.message.error",
-    "errorMessageRequiredFieldText": "This is a required field",
+    "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
     "genericSaveButtonLabel": "Save",
