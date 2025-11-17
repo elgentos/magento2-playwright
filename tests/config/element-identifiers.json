@@ -272,7 +272,7 @@
     "orderHistoryTitle": "My Orders"
   },
   "personalInformation": {
-    "changePasswordCheckLabel": "Change Password",
+    "changePasswordSwitchLabel": "Change Password",
     "changeEmailCheckLabel": "Change Email",
     "firstNameLabel": "First Name",
     "lastNameLabel": "Last Name"
