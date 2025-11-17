@@ -224,7 +224,7 @@
     "genericSubmitButtonLabel": "Submit",
     "headerLocator": "#header",
     "loadingSpinnerLocator": "#container .spinner",
-    "messageLocator": "#messages div",
+    "messageLocator": "#messages .messages div",
     "removeLabel": "Remove",
     "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"

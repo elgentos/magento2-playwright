@@ -149,7 +149,14 @@ class ProductPage {
     // assert visibility to ensure we can click the add to cart button.
     await expect(this.addToCartButton).toBeVisible();
     await this.addToCartButton.click();
-    await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: product})).toBeVisible();
+    // await expect(this.page.locator(UIReference.general.messageLocator).filter(
+    //   {hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`}),
+    //   `Product has been added to cart`
+    // ).toBeVisible();
+    await expect(this.page.locator(UIReference.general.successMessageLocator).filter(
+        {hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`}),
+      `Product has been added to cart`
+    ).toBeVisible();
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string) {

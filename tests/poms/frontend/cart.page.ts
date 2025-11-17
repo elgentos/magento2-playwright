@@ -16,7 +16,8 @@ class CartPage {
 
   async changeProductQuantity(amount: string){
     const productRow = this.page.getByRole('row', {name: UIReference.productPage.simpleProductTitle});
-    let currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    // let currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    let currentQuantity = await productRow.getByRole('spinbutton', {name: UIReference.cart.cartQuantityLabel}).inputValue();
 
     if(currentQuantity == amount){
       amount = '3';

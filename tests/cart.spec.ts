@@ -42,7 +42,7 @@ test.describe('Cart functionalities (guest)', () => {
    * @then I should see the name of the product in my cart
    */
   test('Add_product_to_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-    await expect(page.getByRole('strong').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+    await expect(page.getByRole('heading').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
   });
 
   /**
@@ -69,8 +69,8 @@ test.describe('Cart functionalities (guest)', () => {
     });
 
     await page.goto(slugs.cart.cartSlug);
-    await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
-    await expect(page.getByRole('strong').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
+    await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
+    await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
   });
 
   /**
