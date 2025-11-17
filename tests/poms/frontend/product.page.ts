@@ -138,26 +138,25 @@ class ProductPage {
 
     await this.page.goto(url);
 
-    this.simpleProductTitle = this.page.getByRole('heading', {name: product, exact:true});
-    expect(await this.simpleProductTitle.innerText()).toEqual(product);
-    await expect(this.simpleProductTitle.locator('span')).toBeVisible();
+    this.simpleProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
+    expect(await this.simpleProductTitle.innerText(), `Product title "${product}" is visible`).toEqual(product);
 
     if(quantity){
       // set quantity
-      await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
+      await this.page.getByRole('spinbutton', {name: UIReference.productPage.quantityFieldLabel}).fill('2');
     }
 
     // assert visibility to ensure we can click the add to cart button.
     await expect(this.addToCartButton).toBeVisible();
     await this.addToCartButton.click();
-    await expect(this.page.locator(UIReference.general.messageLocator)).toBeVisible();
+    await expect(this.page.locator(UIReference.general.messageLocator).filter({hasText: product})).toBeVisible();
   }
 
   async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
 
     await this.page.goto(url);
 
-    this.configurableProductTitle = this.page.getByRole('heading', {name: product, exact:true});
+    this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
 

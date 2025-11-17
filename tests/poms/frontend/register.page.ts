@@ -16,9 +16,9 @@ class RegisterPage {
     this.page = page;
     this.accountCreationFirstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
     this.accountCreationLastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
-    this.accountCreationEmailField = page.getByLabel(UIReference.credentials.emailFieldLabel, { exact: true});
-    this.accountCreationPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, { exact: true });
-    this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.credentials.passwordConfirmFieldLabel);
+    this.accountCreationEmailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
+    this.accountCreationPasswordField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel, exact:true});
+    this.accountCreationPasswordRepeatField = page.getByRole('textbox', {name: UIReference.credentials.passwordConfirmFieldLabel});
     this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.accountCreation.createAccountButtonLabel});
   }
 
