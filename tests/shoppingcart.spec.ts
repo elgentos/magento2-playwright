@@ -3,7 +3,7 @@
 import { test, expect } from '@playwright/test';
 import { UIReference, slugs, outcomeMarker } from '@config';
 
-import CartPage from '@poms/frontend/cart.page';
+import CartPage from '@poms/frontend/shoppingcart.page';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
