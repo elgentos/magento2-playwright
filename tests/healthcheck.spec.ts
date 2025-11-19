@@ -16,7 +16,7 @@ test.describe('Page health checks', () => {
         expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
 
         await expect(
-            page.getByRole('heading', {name: UIReference.homePage.homePageTitleText}),
+            page.getByRole('heading', {name: UIReference.homePage.homePageTitleText, level: 1}),
             'Homepage has a visible title'
         ).toBeVisible();
     });

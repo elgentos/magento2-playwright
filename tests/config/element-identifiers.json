@@ -230,7 +230,7 @@
     "successMessageLocator": "div.message.success"
   },
   "homePage": {
-    "homePageTitleText": "Hyvä Themes"
+    "homePageTitleText": "Hyvä Theme"
   },
   "mainMenu": {
     "addressBookButtonLabel" : "Address Book",
