@@ -52,6 +52,10 @@ class ProductPage {
 
     await expect(this.page.getByText(addedToWishlistNotification), "Notification that product has been added is visible").toBeVisible();
 
+    await expect(async () => {
+      await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
+    }).toPass();
+
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 
     await expect(this.page).toHaveURL(new RegExp(slugs.wishList.wishListRegex));
