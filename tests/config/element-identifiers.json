@@ -38,6 +38,7 @@
   },
   "adminPage": {
     "captchaIncorrectText" : "Incorrect CAPTCHA.",
+    "captchaDisabledLabel": "No",
     "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
     "dashboardHeadingText": "Dashboard",
     "navigation": {
@@ -235,8 +236,8 @@
   "mainMenu": {
     "addressBookButtonLabel" : "Address Book",
     "createAccountButtonLabel" : "Create an Account",
-    "fitnessEquipmentLinkLabel" : "Fitness Equipment",
-    "gearCategoryItemText" : "Gear",
+    "subCategoryItemText" : "Fitness Equipment",
+    "categoryItemText" : "Gear",
     "loginButtonLabel" : "Sign In",
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",

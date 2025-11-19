@@ -30,8 +30,6 @@ class ComparePage {
     const productCell = this.page.getByRole('cell', {name: product});
     const addToCartButton = productCell.getByRole('button', {name: UIReference.general.addToCartLabel});
 
-    // let addToCartbutton = this.page.getByLabel(`${UIReference.general.addToCartLabel} ${product}`);
-
     await addToCartButton.click();
     await successMessage.waitFor();
     await expect(productAddedNotification).toBeVisible();

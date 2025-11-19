@@ -76,7 +76,8 @@ class AdminLogin {
         {hasText: outcomeMarker.magentoAdmin.configurationSavedText}),
         `Notification "${outcomeMarker.magentoAdmin.configurationSavedText}" is visible`).toBeVisible();
     } else {
-      await expect(selectedOption,`CAPTCHA is disabled`).toEqual(expect.stringContaining('No'));
+      await expect(selectedOption,`CAPTCHA is disabled`)
+        .toEqual(expect.stringContaining(UIReference.adminPage.captchaDisabledLabel));
     }
   }
 

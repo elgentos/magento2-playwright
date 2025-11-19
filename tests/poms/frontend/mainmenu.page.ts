@@ -55,17 +55,17 @@ class MainMenuPage {
   async goToSubCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
-    const fitnessEquipmentLink = this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true });
+    const categoryLink = this.page.getByRole('link', { name: UIReference.mainMenu.categoryItemText, exact: true });
 
-    await fitnessEquipmentLink.hover();
-    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel})).toBeVisible();
+    await categoryLink.hover();
+    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
 
-    await this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel}).click();
-    await this.page.waitForURL(slugs.categoryPage.fitnessEquipmentSlug);
+    await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
+    await this.page.waitForURL(slugs.categoryPage.subcategorySlug);
 
     await expect(this.page.getByRole('heading',
-      { name: outcomeMarker.categoryPage.fitnessEquipmentTitle }),
-      `Category page title "${outcomeMarker.categoryPage.fitnessEquipmentTitle}" is visible`).toBeVisible();
+      { name: outcomeMarker.categoryPage.subCategoryPageTitle }),
+      `Category page title "${outcomeMarker.categoryPage.subCategoryPageTitle}" is visible`).toBeVisible();
   }
 
   /**
