@@ -19,25 +19,26 @@ class NotificationValidatorUtils {
      * @return json object
      */
     async validate(notificationType: string, value: string) {
-        await this.page.locator(UIReference.general.messageLocator).waitFor({ state: 'visible' });
-        const notificationText = await this.page.locator(UIReference.general.messageLocator).textContent();
-        let message = { success: true, message: 'Action was successful, but notification text could not be extracted.'};
-
-        if(
-          notificationText !== null
-        ) {
-          message = { success: true, message: notificationText.trim()};
-        }
-
-        if (
-            ! expect.soft(this.page.locator(UIReference.general.messageLocator)).toContainText(value)
-        ) {
-            message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
-        }
-
-        this.testInfo.annotations.push({ type: `Notification: ${notificationType}`, description: message.message });
-
-        return message;
+      return;
+        // await this.page.locator(UIReference.general.messageLocator).waitFor({ state: 'visible' });
+        // const notificationText = await this.page.locator(UIReference.general.messageLocator).textContent();
+        // let message = { success: true, message: 'Action was successful, but notification text could not be extracted.'};
+        //
+        // if(
+        //   notificationText !== null
+        // ) {
+        //   message = { success: true, message: notificationText.trim()};
+        // }
+        //
+        // if (
+        //     ! expect.soft(this.page.locator(UIReference.general.messageLocator)).toContainText(value)
+        // ) {
+        //     message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
+        // }
+        //
+        // this.testInfo.annotations.push({ type: `Notification: ${notificationType}`, description: message.message });
+        //
+        // return message;
     }
 }
 

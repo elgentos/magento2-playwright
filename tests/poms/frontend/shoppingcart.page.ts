@@ -11,12 +11,13 @@ class CartPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
+    // this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
+    this.showDiscountButton = this.page.locator('summary').filter({hasText: UIReference.cart.showDiscountFormButtonLabel});
   }
 
   async changeProductQuantity(amount: string){
-    const productRow = this.page.getByRole('row', {name: UIReference.productPage.simpleProductTitle});
-    let currentQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    const productRow = this.page.getByRole('listitem').filter({hasText: UIReference.productPage.simpleProductTitle});
+    let currentQuantity = await productRow.getByRole('spinbutton', {name: UIReference.cart.cartQuantityLabel}).inputValue();
 
     if(currentQuantity == amount){
       amount = '3';
@@ -64,7 +65,8 @@ class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
-    const notificationBanner = this.page.locator(UIReference.general.messageLocator).filter({hasText: outcomeMarker.cart.discountAppliedNotification});
+    const notificationBanner = this.page.locator(UIReference.general.successMessageLocator)
+      .filter({hasText: outcomeMarker.cart.discountAppliedNotification});
     await notificationBanner.waitFor();
 
     await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),`Notification that discount code ${code} has been applied`).toBeVisible();

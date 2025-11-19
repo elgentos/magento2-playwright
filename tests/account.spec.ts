@@ -54,7 +54,7 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     const loginPage = new LoginPage(page);
 
     const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    let randomNumberforEmail = Math.floor(Math.random() * 101);
+    let randomNumberforEmail = Math.floor(Math.random() * 1001);
     let emailPasswordUpdatevalue = `passwordupdate-${randomNumberforEmail}-${browserEngine}@example.com`;
     let passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
     let changedPasswordValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
@@ -143,7 +143,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
     } else {
       await expect(async () => {
         await expect(page.getByRole('heading',
-            { name: UIReference.address.addressBookTitle }).locator('span'),
+            { name: UIReference.address.addressBookTitle }),
           `Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
       }).toPass();
     }

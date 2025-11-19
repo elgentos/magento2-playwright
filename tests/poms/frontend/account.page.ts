@@ -24,7 +24,7 @@ class AccountPage {
   readonly addNewAddressButton: Locator;
   readonly deleteAddressButton: Locator;
   readonly editAddressButton: Locator;
-  readonly changePasswordCheck: Locator;
+  readonly changePasswordSwitch: Locator;
   readonly changeEmailCheck: Locator;
   readonly currentPasswordField: Locator;
   readonly newPasswordField: Locator;
@@ -59,8 +59,8 @@ class AccountPage {
     this.saveAddressButton = page.getByRole('button', { name: UIReference.newAddress.saveAdressButton });
 
     // Account Information elements
-    this.changePasswordCheck = page.getByRole('checkbox', { name: UIReference.personalInformation.changePasswordCheckLabel });
-    this.changeEmailCheck = page.getByRole('checkbox', { name: UIReference.personalInformation.changeEmailCheckLabel });
+    this.changePasswordSwitch = page.getByRole('switch', { name: UIReference.personalInformation.changePasswordSwitchLabel });
+    this.changeEmailCheck = page.getByRole('switch', { name: UIReference.personalInformation.changeEmailCheckLabel });
     this.currentPasswordField = page.getByLabel(UIReference.credentials.currentPasswordFieldLabel);
     this.newPasswordField = page.getByLabel(UIReference.credentials.newPasswordFieldLabel, { exact: true });
     this.confirmNewPasswordField = page.getByLabel(UIReference.credentials.newPasswordConfirmFieldLabel);
@@ -257,7 +257,7 @@ class AccountPage {
 
   async updatePassword(currentPassword: string, newPassword: string) {
     let passwordUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
-    await this.changePasswordCheck.check();
+    await this.changePasswordSwitch.check();
     await this.currentPasswordField.fill(currentPassword);
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);

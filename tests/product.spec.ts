@@ -34,7 +34,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
   });
 
 
-  test.fixme('Leave a product review (Test currently fails due to error on website)',{ tag: '@cold'}, async ({page}) => {
+  test.fixme('Leave a product review (Test currently fails due to error on website)',{ tag: '@cold'}, async ({}) => {
     // const productPage = new ProductPage(page);
     // await productPage.leaveProductReview(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
   });
@@ -48,12 +48,4 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
     const productPage = new ProductPage(page);
     await productPage.changeReviewCountAndVerify(slugs.productPage.simpleProductSlug);
   });
-});
-
-test.describe('Simple product tests',{ tag: '@simple-product',}, () => {
-  test.fixme('Simple tests will be added later', async ({ page }) => {});
-});
-
-test.describe('Configurable product tests',{ tag: '@conf-product',}, () => {
-  test.fixme('Configurable tests will be added later', async ({ page }) => {});
 });
