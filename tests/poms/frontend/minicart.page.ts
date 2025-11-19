@@ -37,9 +37,11 @@ class MiniCartPage {
   async removeProductFromMinicart(product: string) {
     let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
     let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.miniCart.removeProductIconLabel} "${UIReference.productPage.simpleProductTitle}"`);
+    // ensure button is visible
+    await removeProductMiniCartButton.waitFor();
     await removeProductMiniCartButton.click();
-    await expect.soft(this.page.getByText(productRemovedNotification)).toBeVisible();
-    await expect(removeProductMiniCartButton).toBeHidden();
+    await expect(removeProductMiniCartButton, `Button to move product from minicart is no longer visible`).toBeHidden();
+    await expect(this.page.getByText(UIReference.miniCart.cartEmptyText), `Minicart shows text "Cart is empty"`).toBeVisible();
   }
 
   async updateProduct(amount: string){

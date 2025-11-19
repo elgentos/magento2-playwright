@@ -22,7 +22,8 @@ class MainMenuPage {
     this.page = page;
     this.mainMenuElement = page.locator(UIReference.general.headerLocator);
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
-    this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    // this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
     this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});
 
@@ -161,13 +162,16 @@ class MainMenuPage {
    * Function for the test Open_the_minicart
    */
   async openMiniCart() {
-    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuMiniCartButton.waitFor();
+    // Trial first, since 'force' skips the actionability check
+    await this.mainMenuMiniCartButton.click({trial: true});
     // By adding 'force', we can bypass the 'aria-disabled' tag.
     await this.mainMenuMiniCartButton.click({force: true});
 
     let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
-    await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+    await expect(async() => {
+      await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+    }).toPass();
   }
 
   /**

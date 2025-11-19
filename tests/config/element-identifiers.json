@@ -247,6 +247,7 @@
   },
   "miniCart": {
     "cartDrawerLocator": "#cart-drawer-title",
+    "cartEmptyText": "Cart is empty",
     "checkOutButtonLabel": "Checkout",
     "editProductIconLabel": "Edit product",
     "minicartButtonLocator": "#menu-cart-icon",
