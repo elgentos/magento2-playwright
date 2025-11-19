@@ -64,7 +64,8 @@ test.describe('Guest tests (not logged in)', () => {
    * @when I click an item
    * @then I should navigate to the page
    */
-  test('Navigate_to_subcategory_page', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+  test('Navigate_to_subcategory_page', { tag: ['@mainmenu', '@cold'] }, async ({page, browserName}) => {
+    test.skip(browserName === 'firefox', 'Skipped due to known issue: https://github.com/microsoft/playwright/issues/27969');
     const mainMenu = new MainMenuPage(page);
     await mainMenu.goToSubCategoryPage();
   });

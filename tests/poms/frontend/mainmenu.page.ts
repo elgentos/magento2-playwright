@@ -54,15 +54,16 @@ class MainMenuPage {
   async goToSubCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
+    const fitnessEquipmentLink = this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true });
 
-    await this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true }).hover();
+    await fitnessEquipmentLink.hover();
     await expect(this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel})).toBeVisible();
 
     await this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel}).click();
     await this.page.waitForURL(slugs.categoryPage.fitnessEquipmentSlug);
 
     await expect(this.page.getByRole('heading',
-      { name: outcomeMarker.categoryPage.fitnessEquipmentTitle }).locator('span'),
+      { name: outcomeMarker.categoryPage.fitnessEquipmentTitle }),
       `Category page title "${outcomeMarker.categoryPage.fitnessEquipmentTitle}" is visible`).toBeVisible();
   }
 
@@ -186,7 +187,7 @@ class MainMenuPage {
 
     await this.page.waitForURL(`**/?q=${searchTerm}`);
     await expect(this.page.getByRole('heading',
-      { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }).locator('span'),
+      { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }),
       `Title contains search term: "${searchTerm}"`).toBeVisible();
   }
 
