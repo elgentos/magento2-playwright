@@ -216,7 +216,7 @@
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
-    "errorMessageLocator": "div.message.error",
+    "errorMessageLocator": "#messages div .messages div .error span",
     "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",

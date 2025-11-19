@@ -27,6 +27,7 @@ class ProductPage {
     const successMessage = this.page.locator(UIReference.general.successMessageLocator);
 
     await this.page.goto(url);
+
     await this.addToCompareButton.click();
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
