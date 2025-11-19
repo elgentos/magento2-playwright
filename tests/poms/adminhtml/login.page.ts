@@ -55,6 +55,7 @@ class AdminLogin {
 
     if(!await captchaSettingsSystemValueCheckbox.isVisible()) {
       await captchaSettingsBlock.click();
+      await expect(captchaSettingsSystemValueCheckbox, `Checkbox "Use system value" for CAPTCHA is visible`).toBeVisible();
     }
 
     if(await captchaSettingsSystemValueCheckbox.isChecked()){
@@ -74,6 +75,8 @@ class AdminLogin {
       await expect(this.page.locator(UIReference.general.messageLocator).filter(
         {hasText: outcomeMarker.magentoAdmin.configurationSavedText}),
         `Notification "${outcomeMarker.magentoAdmin.configurationSavedText}" is visible`).toBeVisible();
+    } else {
+      await expect(selectedOption,`CAPTCHA is disabled`).toEqual(expect.stringContaining('No'));
     }
   }
 
