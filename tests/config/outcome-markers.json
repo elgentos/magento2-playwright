@@ -26,7 +26,7 @@
     "priceReducedSymbols": "- $"
   },
   "categoryPage" : {
-    "fitnessEquipmentTitle" : "Fitness Equipment"
+    "subCategoryPageTitle" : "Fitness Equipment"
   },
   "checkout": {
     "checkoutPriceReducedSymbol": "-$",

@@ -17,8 +17,9 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
   });
 
   await test.step('Navigate to product comparison page', async () =>{
+    const comparePageTitle = page.getByRole('heading', { name: UIReference.comparePage.comparisonPageTitleText });
     await page.goto(slugs.productPage.productComparisonSlug);
-    await expect(page.getByRole('heading', { name: UIReference.comparePage.comparisonPageTitleText }).locator('span')).toBeVisible();
+    await expect(comparePageTitle, `Heading ${comparePageTitle} is visible`).toBeVisible();
   });
 });
 
@@ -43,13 +44,14 @@ test('Add_product_to_cart_from_comparison_page',{ tag: ['@comparison-page', '@co
  */
 test('Guests_can_not_add_a_product_to_their_wishlist',{ tag: ['@comparison-page', '@cold']}, async ({page}) => {
   const errorMessage = page.locator(UIReference.general.errorMessageLocator);
+
   let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
   let addToWishlistButton = page.getByLabel(`${UIReference.comparePage.addToWishListLabel} ${UIReference.productPage.simpleProductTitle}`);
   await addToWishlistButton.click();
   await errorMessage.waitFor();
   await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
 
-  await expect(page.url()).toContain(slugs.account.loginSlug);
+  await expect(page.url(), `Page has been redirect to login page`).toContain(slugs.account.loginSlug);
 });
 
 /**

@@ -22,7 +22,8 @@ class MainMenuPage {
     this.page = page;
     this.mainMenuElement = page.locator(UIReference.general.headerLocator);
     this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
-    this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    // this.mainMenuMiniCartButton = this.mainMenuElement.getByLabel(UIReference.mainMenu.miniCartLabel);
+    this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
     this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
     this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});
 
@@ -54,16 +55,17 @@ class MainMenuPage {
   async goToSubCategoryPage() {
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
+    const categoryLink = this.page.getByRole('link', { name: UIReference.mainMenu.categoryItemText, exact: true });
 
-    await this.page.getByRole('link', { name: UIReference.mainMenu.gearCategoryItemText, exact: true }).hover();
-    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel})).toBeVisible();
+    await categoryLink.hover();
+    await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
 
-    await this.page.getByRole('link', {name: UIReference.mainMenu.fitnessEquipmentLinkLabel}).click();
-    await this.page.waitForURL(slugs.categoryPage.fitnessEquipmentSlug);
+    await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
+    await this.page.waitForURL(slugs.categoryPage.subcategorySlug);
 
     await expect(this.page.getByRole('heading',
-      { name: outcomeMarker.categoryPage.fitnessEquipmentTitle }).locator('span'),
-      `Category page title "${outcomeMarker.categoryPage.fitnessEquipmentTitle}" is visible`).toBeVisible();
+      { name: outcomeMarker.categoryPage.subCategoryPageTitle }),
+      `Category page title "${outcomeMarker.categoryPage.subCategoryPageTitle}" is visible`).toBeVisible();
   }
 
   /**
@@ -160,13 +162,16 @@ class MainMenuPage {
    * Function for the test Open_the_minicart
    */
   async openMiniCart() {
-    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuMiniCartButton.waitFor();
+    // Trial first, since 'force' skips the actionability check
+    await this.mainMenuMiniCartButton.click({trial: true});
     // By adding 'force', we can bypass the 'aria-disabled' tag.
     await this.mainMenuMiniCartButton.click({force: true});
 
     let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
-    await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+    await expect(async() => {
+      await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
+    }).toPass();
   }
 
   /**
@@ -186,7 +191,7 @@ class MainMenuPage {
 
     await this.page.waitForURL(`**/?q=${searchTerm}`);
     await expect(this.page.getByRole('heading',
-      { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }).locator('span'),
+      { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }),
       `Title contains search term: "${searchTerm}"`).toBeVisible();
   }
 

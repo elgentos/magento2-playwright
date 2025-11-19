@@ -26,9 +26,11 @@ class ComparePage {
   async addToCart(product:string){
     const successMessage = this.page.locator(UIReference.general.successMessageLocator);
     let productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
-    let addToCartbutton = this.page.getByLabel(`${UIReference.general.addToCartLabel} ${product}`);
-    
-    await addToCartbutton.click();
+
+    const productCell = this.page.getByRole('cell', {name: product});
+    const addToCartButton = productCell.getByRole('button', {name: UIReference.general.addToCartLabel});
+
+    await addToCartButton.click();
     await successMessage.waitFor();
     await expect(productAddedNotification).toBeVisible();
   }

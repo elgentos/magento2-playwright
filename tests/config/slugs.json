@@ -16,7 +16,7 @@
   },
   "categoryPage": {
     "categorySlug": "/women.html",
-    "fitnessEquipmentSlug" : "/gear/fitness-equipment.html"
+    "subcategorySlug" : "/gear/fitness-equipment.html"
   },
   "checkout": {
     "checkoutSlug": "/checkout/",

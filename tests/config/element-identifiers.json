@@ -38,6 +38,7 @@
   },
   "adminPage": {
     "captchaIncorrectText" : "Incorrect CAPTCHA.",
+    "captchaDisabledLabel": "No",
     "couponSearchFieldLocator" : "#promo_quote_grid_filter_coupon_code",
     "dashboardHeadingText": "Dashboard",
     "navigation": {
@@ -216,7 +217,7 @@
   "general": {
     "addToCartLabel": "Add to Cart",
     "closeMessageLabel": "Close message",
-    "errorMessageLocator": "div.message.error",
+    "errorMessageLocator": "#messages div .messages div .error span",
     "errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
     "genericPriceLabel": "Price",
     "genericPriceSymbol": "$",
@@ -224,19 +225,19 @@
     "genericSubmitButtonLabel": "Submit",
     "headerLocator": "#header",
     "loadingSpinnerLocator": "#container .spinner",
-    "messageLocator": "div.message",
+    "messageLocator": "#messages .messages div",
     "removeLabel": "Remove",
     "searchButtonLabel": "Search",
     "successMessageLocator": "div.message.success"
   },
   "homePage": {
-    "homePageTitleText": "Hyvä Themes"
+    "homePageTitleText": "Hyvä Theme"
   },
   "mainMenu": {
     "addressBookButtonLabel" : "Address Book",
     "createAccountButtonLabel" : "Create an Account",
-    "fitnessEquipmentLinkLabel" : "Fitness Equipment",
-    "gearCategoryItemText" : "Gear",
+    "subCategoryItemText" : "Fitness Equipment",
+    "categoryItemText" : "Gear",
     "loginButtonLabel" : "Sign In",
     "miniCartLabel": "Toggle minicart",
     "myAccountButtonLabel": "My Account",
@@ -247,6 +248,7 @@
   },
   "miniCart": {
     "cartDrawerLocator": "#cart-drawer-title",
+    "cartEmptyText": "Cart is empty",
     "checkOutButtonLabel": "Checkout",
     "editProductIconLabel": "Edit product",
     "minicartButtonLocator": "#menu-cart-icon",
@@ -272,7 +274,7 @@
     "orderHistoryTitle": "My Orders"
   },
   "personalInformation": {
-    "changePasswordCheckLabel": "Change Password",
+    "changePasswordSwitchLabel": "Change Password",
     "changeEmailCheckLabel": "Change Email",
     "firstNameLabel": "First Name",
     "lastNameLabel": "Last Name"
