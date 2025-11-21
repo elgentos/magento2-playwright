@@ -203,7 +203,7 @@ npx playwright test –-grep-invert @coupon-code
 
 ### Customizing the testing suite
 
-The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, create a copy of `login.page.ts` and place it `tests/config/poms/frontend/` and make your edits in this file. The next time you run the testing suite, it will automatically use these custom files.
+The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, create a copy of `login.page.ts` and place it `tests/poms/frontend/` and make your edits in this file. The next time you run the testing suite, it will automatically use these custom files.
 
 ####  Module Imports
 
