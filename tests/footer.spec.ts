@@ -3,8 +3,9 @@
 import { test } from '@playwright/test';
 import { outcomeMarker } from '@config';
 import NotificationValidatorUtils from "@utils/notificationValidator.utils";
-
 import NewsletterPage from "@poms/frontend/newsletter.page";
+import {requireEnv} from "@utils/env.utils";
+
 import Footer from '@poms/frontend/footer.page';
 
 test.describe('Footer', () => {
@@ -37,7 +38,7 @@ test.describe('Footer', () => {
 		async ({page}, testInfo) => {
 			const newsletterPage = new NewsletterPage(page);
 
-			await page.goto('');
+			await page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
 			await newsletterPage.footerSubscribeToNewsletter();
 
 			const subscriptionOutput = outcomeMarker.footerPage.newsletterSubscription;

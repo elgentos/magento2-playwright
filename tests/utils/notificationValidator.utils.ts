@@ -19,26 +19,24 @@ class NotificationValidatorUtils {
      * @return json object
      */
     async validate(notificationType: string, value: string) {
-      return;
-        // await this.page.locator(UIReference.general.messageLocator).waitFor({ state: 'visible' });
-        // const notificationText = await this.page.locator(UIReference.general.messageLocator).textContent();
-        // let message = { success: true, message: 'Action was successful, but notification text could not be extracted.'};
-        //
-        // if(
-        //   notificationText !== null
-        // ) {
-        //   message = { success: true, message: notificationText.trim()};
-        // }
-        //
-        // if (
-        //     ! expect.soft(this.page.locator(UIReference.general.messageLocator)).toContainText(value)
-        // ) {
-        //     message = { success: false, message: `Notification text not found: ${value}. Found notification text: ${notificationText}` };
-        // }
-        //
-        // this.testInfo.annotations.push({ type: `Notification: ${notificationType}`, description: message.message });
-        //
-        // return message;
+		// wait for message to be visible.
+        await this.page.locator(UIReference.general.messageLocator).waitFor({ state: 'visible' });
+        const receivedNotification = await this.page.locator(UIReference.general.messageLocator).textContent();
+
+        let message = 'Action was successful, but notification text could not be extracted.';
+
+        if(receivedNotification !== null){
+          message = receivedNotification.trim();
+        }
+
+        if (! expect.soft(this.page.locator(UIReference.general.messageLocator),
+			`Message has been found`).toContainText(value)) {
+            message = `Notification text not found: ${value}. Found notification text: ${receivedNotification}`;
+        }
+
+        this.testInfo.annotations.push({ type: `Validator Note`, description: message });
+
+        return message;
     }
 }
 
