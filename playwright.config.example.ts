@@ -72,9 +72,13 @@ export default defineConfig({
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://hyva-demo.elgentos.io/',
 
+    // Record video based on PLAYWRIGHT_VIDEO environment variable
+    // See https://playwright.dev/docs/api/class-testoptions#test-options-video
+    video: (process.env.PLAYWRIGHT_VIDEO as 'on' | 'off' | 'retain-on-failure' | 'on-first-retry') || 'retain-on-failure',
+
     // Create a screenshot at the end of a test if the test fails.
     // See https://playwright.dev/docs/api/class-testoptions#test-options-screenshot
-    screenshot: 'only-on-failure',
+    screenshot: (process.env.PLAYWRIGHT_SCREENSHOT as 'on' | 'off' | 'only-on-failure' | 'on-first-failure') || 'only-on-failure',
 
     // Collect trace when retrying a failed test. See https://playwright.dev/docs/trace-viewer
     trace: 'retain-on-failure',
