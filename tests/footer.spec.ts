@@ -45,7 +45,7 @@ test.describe('Footer', () => {
 			const notificationType = 'Newsletter subscription notification';
 
 			const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-			await notificationValidator.validate(notificationType, subscriptionOutput);
+			await notificationValidator.validate(subscriptionOutput);
 		}
 	)
 })

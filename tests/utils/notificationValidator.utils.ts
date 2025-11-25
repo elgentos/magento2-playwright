@@ -40,7 +40,7 @@ class NotificationValidatorUtils {
 
 				} else {
 					if(!--iteration) {
-						// the message did not equal our value, and we've reached the last in our loop.
+						// the message did not equal our value, and we've reached the last item in list.
 						// Push to report...
 						this.testInfo.annotations.push({ type: `Validator Note`, description: msgContent });
 
