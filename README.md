@@ -2,7 +2,7 @@
 
 This package contains an end-to-end (E2E) testing suite for Magento 2, powered by [Playwright](https://playwright.dev/). It enables you to quickly set up, run, and extend automated browser tests for your Magento 2 store. Installation is simple via npm, allowing you to seamlessly integrate robust testing into your development workflow.
 
-<mark>⚠️ Please note: if you’re not sure what each test does, **then you should only run this in a testing environment**! Some tests involve the database, and for the suite to run `setup.spec.ts` will disable the CATPCHA of your webshop.</mark>
+<mark>⚠️ Please note: if you’re not sure what each test does, **then you should only run this in a testing environment**! Some tests involve the database, and for the suite to run `setup.spec.ts` will disable the CAPTCHA of your webshop.</mark>
 
 🏃**Just want to install and get going?**
 
