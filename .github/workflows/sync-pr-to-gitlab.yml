@@ -1,7 +1,6 @@
 name: Sync PR to GitLab
 
 on:
-  # Draait als je een label toevoegt op een PR
   pull_request_target:
     types: [labeled]
 
@@ -38,7 +37,6 @@ jobs:
       - name: Checkout PR head (unmerged)
         uses: actions/checkout@v4
         with:
-          # We zitten in pull_request_target, dus expliciet de PR-head referentie checken
           ref: refs/pull/${{ github.event.pull_request.number }}/head
           fetch-depth: 0
 
