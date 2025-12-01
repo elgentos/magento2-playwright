@@ -58,7 +58,7 @@ jobs:
           git remote add gitlab "$AUTHED_URL"
 
           echo "Pushing branch to GitLab as $PR_BRANCH"
-          git push gitlab HEAD:"$PR_BRANCH" --force
+          git push gitlab HEAD:refs/heads/"$PR_BRANCH" --force
 
       - name: Create Merge Request on GitLab
         run: |
