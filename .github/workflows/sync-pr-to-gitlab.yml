@@ -1,0 +1,79 @@
+name: Sync PR to GitLab
+
+on:
+  pull_request_target:
+    types: [labeled]
+
+jobs:
+  sync-pr-to-gitlab:
+    if: github.event.label.name == 'sync-to-gitlab'
+    runs-on: ubuntu-latest
+
+    env:
+      GITLAB_REPO_URL: ${{ secrets.GITLAB_REPO_URL }}           # bv. https://gitlab.com/elgentos/magento2-playwright.git
+      GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}                 # GitLab Personal Access Token (api scope)
+      GITLAB_PROJECT_ID: ${{ secrets.GITLAB_PROJECT_ID }}       # Numeriek project ID uit GitLab
+      GITLAB_API_URL: ${{ secrets.GITLAB_API_URL }}             # bv. https://gitlab.com/api/v4
+      GITLAB_TARGET_BRANCH: ${{ secrets.GITLAB_TARGET_BRANCH }} # bv. main
+
+    steps:
+      - name: Set defaults
+        id: defaults
+        run: |
+          # Fallbacks als secrets niet gezet zijn
+          if [ -z "$GITLAB_API_URL" ]; then
+            echo "GITLAB_API_URL=https://gitlab.com/api/v4" >> $GITHUB_ENV
+          fi
+
+          if [ -z "$GITLAB_TARGET_BRANCH" ]; then
+            echo "GITLAB_TARGET_BRANCH=main" >> $GITHUB_ENV
+          fi
+
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+          echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
+          echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
+          echo "PR_BRANCH=github-pr-${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+
+      - name: Checkout PR head (unmerged)
+        uses: actions/checkout@v4
+        with:
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+          fetch-depth: 0
+
+      - name: Push branch to GitLab
+        run: |
+          if [ -z "$GITLAB_REPO_URL" ]; then
+            echo "GITLAB_REPO_URL secret is not set"; exit 1;
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          echo "Adding GitLab remote: $GITLAB_REPO_URL"
+          git remote add gitlab "$GITLAB_REPO_URL"
+
+          echo "Pushing branch to GitLab as $PR_BRANCH"
+          git push gitlab HEAD:"$PR_BRANCH" --force
+
+      - name: Create Merge Request on GitLab
+        run: |
+          if [ -z "$GITLAB_PROJECT_ID" ]; then
+            echo "GITLAB_PROJECT_ID secret is not set"; exit 1;
+          fi
+
+          TITLE="GitHub PR #$PR_NUMBER: $PR_TITLE"
+          DESCRIPTION="Deze Merge Request is automatisch aangemaakt vanuit GitHub PR #$PR_NUMBER ($PR_URL)."
+
+          echo "Creating MR on GitLab:"
+          echo "  Project ID: $GITLAB_PROJECT_ID"
+          echo "  Source: $PR_BRANCH"
+          echo "  Target: $GITLAB_TARGET_BRANCH"
+
+          curl --fail -X POST "$GITLAB_API_URL/projects/$GITLAB_PROJECT_ID/merge_requests" \
+            --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+            --data-urlencode "source_branch=$PR_BRANCH" \
+            --data-urlencode "target_branch=$GITLAB_TARGET_BRANCH" \
+            --data-urlencode "title=$TITLE" \
+            --data-urlencode "description=$DESCRIPTION" \
+            --data "remove_source_branch=true" \
+            --data "labels=github,external"
