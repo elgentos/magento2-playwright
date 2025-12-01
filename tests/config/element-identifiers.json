@@ -149,7 +149,7 @@
     "openCartButtonLabelContMultiple": "items",
     "openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
     "openDiscountFormLabel": "Apply Discount Code",
-    "paymentOptionCheckLabel": "Check / Money order Free",
+    "paymentOptionCheckLabel": "Check / Money order",
     "paymentOptionCreditCardLabel": "Credit Card",
     "paymentOptionPaypalLabel": "PayPal",
     "checkoutCartDetailsLocator": "#checkout-cart-details",
