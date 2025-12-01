@@ -19,10 +19,8 @@ class ComparePage {
 
 	const comparisonPageProductTitle = this.page.getByRole('link', {name: product});
     let removeFromCompareButton = this.page.getByLabel(`${UIReference.comparePage.removeCompareLabel} ${product}`);
-    // let productRemovedNotification = this.page.getByText(`${outcomeMarker.comparePage.productRemovedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productRemovedNotificationTextTwo}`);
     await removeFromCompareButton.click();
 	await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
-    // await expect(productRemovedNotification).toBeVisible();
   }
 
   async addToCart(product:string){
