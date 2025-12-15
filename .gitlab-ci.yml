@@ -1,4 +1,4 @@
-image: node:18-bullseye
+image: node:22-bullseye
 
 stages:
   - testing_suite
