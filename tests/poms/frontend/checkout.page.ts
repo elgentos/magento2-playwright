@@ -30,7 +30,7 @@ class CheckoutPage extends MagewireUtils {
     super(page);
     this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
     this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.checkout.shippingMethodTableRateLabel);
-    this.paymentMethodOptionCheck = this.page.getByLabel(UIReference.checkout.paymentOptionCheckLabel);
+    this.paymentMethodOptionCheck = this.page.getByRole('radio', {name: UIReference.checkout.paymentOptionCheckLabel});
     this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
     this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
     this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
@@ -220,7 +220,7 @@ class CheckoutPage extends MagewireUtils {
 
     // Select country (if needed)
     // await this.page.getByLabel('Country').selectOption('US');
-    const country = faker.helpers.arrayElement(inputValues.addressCountries);
+    const country : string = faker.helpers.arrayElement(inputValues.addressCountries);
     const countrySelectorField = this.page.getByLabel(UIReference.newAddress.countryLabel);
     const stateInputField = this.page.getByRole('textbox', { name: UIReference.newAddress.provinceSelectLabel });
     const stateSelectorField = stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
