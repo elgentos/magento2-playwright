@@ -1,4 +1,4 @@
-image: node:18-bullseye
+image: node:22-bullseye
 
 stages:
   - testing_suite
@@ -126,7 +126,6 @@ create_testing_suite:
 run_testing_suite:
   stage: testing_suite
   script:
-    - node -v
     - echo 'Running test suite'
     - npx playwright install --with-deps
     - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
