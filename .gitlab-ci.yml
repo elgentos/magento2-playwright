@@ -106,7 +106,7 @@ create_testing_suite:
     - npx playwright install-deps
     # Check what files are present
     - ls -l base-tests
-    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=4 --max-failures=1
+    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=3 --max-failures=1
   allow_failure: false
   artifacts:
     when: always
@@ -128,7 +128,7 @@ run_testing_suite:
   script:
     - echo 'Running test suite'
     - npx playwright install --with-deps
-    - CI=true npx playwright test --workers=4 --grep-invert "@setup" --max-failures=1
+    - CI=true npx playwright test --workers=3 --grep-invert "@setup" --max-failures=1
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
     - create_testing_suite
