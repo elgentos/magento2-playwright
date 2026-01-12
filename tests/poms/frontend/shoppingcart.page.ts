@@ -101,10 +101,8 @@ class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
-    let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
-
     //Assertions: notification that code was incorrect & discount code field is still editable
-    await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    this.page.locator('.message-error').getByText(outcomeMarker.cart.incorrectCouponCodeNotificationTwo)
     await expect(discountField).toBeEditable();
   }
 

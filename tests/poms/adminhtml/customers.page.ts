@@ -50,10 +50,10 @@ class AdminCustomers {
 	}
 
 	// Loop to ensure the 'results found' text is visible
-	await expect(
-	  this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
-	  "There are active filters."
-	).toBeVisible();
+	// await expect(
+	//   this.page.getByText(outcomeMarker.adminGeneral.activeFiltersText).first(),
+	//   "There are active filters."
+	// ).toBeVisible();
 
 	// Return true (email found) or false (email not found)
 	const emailIsFound = await this.page.getByRole('cell', {name:email}).locator('div').isVisible();

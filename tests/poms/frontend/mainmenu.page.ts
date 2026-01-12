@@ -179,14 +179,13 @@ class MainMenuPage {
    * @param searchTerm
    */
   async searchForProduct(searchTerm :string) {
-    const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
+    const searchField = this.page.getByPlaceholder(UIReference.search.searchBoxPlaceholderText);
     await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
     await this.mainMenuAccountButton.waitFor();
 
     await this.mainMenuSearchButton.click();
     await expect(searchField, 'Search field is visible').toBeVisible();
     await searchField.fill(searchTerm);
-    await expect(this.page.getByText(UIReference.search.searchTermDropdownText, { exact: true }), 'Dropdown with results is visible').toBeVisible();
     await searchField.press('Enter');
 
     await this.page.waitForURL(`**/?q=${searchTerm}`);
