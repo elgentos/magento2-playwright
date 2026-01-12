@@ -98,8 +98,9 @@
   },
   "categoryPage":{
     "activeViewLocator": ".active",
-    "categoryPageTitleText": "Women",
-    "firstFilterOptionLocator": "#filter-option-0-content",
+    "categoryPageWithOptionsTitleText": "Top",
+    "categoryPageTitleText": "Tops",
+    "firstFilterOptionLocator": "#filter-option-2-title",
     "itemsOnPageAmountLocator": ".toolbar-number",
     "itemsPerPageButtonLabel": "Show items per page",
     "productGridLocator": ".products-grid",
