@@ -43,7 +43,7 @@ class MainMenuPage {
     await this.mainMenuAccountButton.waitFor();
     await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
 
-    await this.page.waitForURL(slugs.categoryPage.categorySlug);
+    await this.page.waitForURL(`**${slugs.categoryPage.categorySlug}`);
     await expect(
       this.page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
       `Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
@@ -61,7 +61,7 @@ class MainMenuPage {
     await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
 
     await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
-    await this.page.waitForURL(slugs.categoryPage.subcategorySlug);
+    await this.page.waitForURL(`**${slugs.categoryPage.subcategorySlug}`);
 
     await expect(this.page.getByRole('heading',
       { name: outcomeMarker.categoryPage.subCategoryPageTitle }),
@@ -90,7 +90,8 @@ class MainMenuPage {
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuLoginItem.click();
-    await this.page.waitForURL(`${slugs.account.loginSlug}**`);
+    const loginRegEx = new RegExp(`${slugs.account.loginSlugRegex}`);
+    await this.page.waitForURL(loginRegEx);
     await expect(loginHeader, 'Login header text is visible').toBeVisible();
   }
 
@@ -104,7 +105,7 @@ class MainMenuPage {
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuCreateAccountButton.click();
-    await this.page.waitForURL(slugs.account.createAccountSlug);
+    await this.page.waitForURL(`**${slugs.account.createAccountSlug}`);
     await expect(createAccountHeader, 'Create account header text is visible').toBeVisible();
   }
 
