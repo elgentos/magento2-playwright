@@ -20,6 +20,8 @@ class ComparePage {
 	const comparisonPageProductTitle = this.page.getByRole('link', {name: product});
     let removeFromCompareButton = this.page.getByLabel(`${UIReference.comparePage.removeCompareLabel} ${product}`);
     await removeFromCompareButton.click();
+    const messageLocator = this.page.locator(UIReference.general.messageLocator);
+    await messageLocator.waitFor();
 	await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
   }
 

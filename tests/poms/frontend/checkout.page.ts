@@ -95,7 +95,7 @@ class CheckoutPage extends MagewireUtils {
       await this.waitForMagewireRequests();
     }
 
-    if(await this.page.getByText(outcomeMarker.cart.priceReducedSymbols).isVisible()){
+    if(await this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`).isVisible()){
       // discount is already active.
       let cancelCouponButton = this.page.getByRole('button', { name: UIReference.checkout.cancelDiscountButtonLabel });
       await cancelCouponButton.click();
@@ -110,7 +110,7 @@ class CheckoutPage extends MagewireUtils {
     await this.waitForMagewireRequests();
 
     await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
-    await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should be visible on the page`).toBeVisible();
+    await expect(this.page.getByText(`-${outcomeMarker.checkout.checkoutPriceReducedSymbol}`),`'-$' should be visible on the page`).toBeVisible();
   }
 
   async enterWrongCouponCode(code: string){
@@ -143,6 +143,8 @@ class CheckoutPage extends MagewireUtils {
 
     await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
     await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
+    // await expect(this.page.locator('#quote-summary div').
+    //   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 
     let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
     await expect(checkoutDiscountField).toBeEditable();
@@ -234,6 +236,8 @@ class CheckoutPage extends MagewireUtils {
 
     if(country !== defaultSelectedCountry) {
       await countrySelectorField.selectOption({label: country});
+      // Add a 5 second wait to allow the region dropdown/field to update.
+      await this.page.waitForTimeout(5000);
     }
 
     const regionDropdown = this.page.getByLabel(UIReference.newAddress.provinceSelectLabel);

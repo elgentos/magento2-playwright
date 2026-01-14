@@ -4,7 +4,7 @@
     "accountOverviewRegex": "/.*\\/customer\\/account\\/.*/",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
-    "addressNewSlug": "customer/address/new",
+    "addressNewSlug": "/customer/address/new",
     "accountEditSlug": "/customer/account/edit/",
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create/",
@@ -37,7 +37,7 @@
     "resultsSlug": "/catalogsearch/result/"
   },
   "wishList": {
-    "wishListSlug": "wishlist/",
+    "wishListSlug": "/wishlist/",
     "wishListRegex": ".*wishlist.*"
   }
 }
