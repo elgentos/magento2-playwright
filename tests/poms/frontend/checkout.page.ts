@@ -74,7 +74,7 @@ class CheckoutPage extends MagewireUtils {
     await this.placeOrderButton.click();
     await this.waitForMagewireRequests();
 
-    await this.page.waitForURL(slugs.checkout.purchaseSuccessSlug);
+    await this.page.waitForURL(`**${slugs.checkout.purchaseSuccessSlug}`);
 
     await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
     let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });

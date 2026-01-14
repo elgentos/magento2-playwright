@@ -72,7 +72,9 @@ class MainMenuPage {
    * Function for the test User_navigates_account_page
    */
   async gotoMyAccount(){
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
@@ -85,7 +87,10 @@ class MainMenuPage {
    */
   async goToLoginPage() {
     const loginHeader = this.page.getByRole('heading', {name: outcomeMarker.login.loginHeaderText, exact:true});
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
@@ -100,7 +105,10 @@ class MainMenuPage {
    */
   async goToCreateAccountPage() {
     const createAccountHeader = this.page.getByRole('heading', {name: outcomeMarker.account.createAccountHeaderText, exact:true});
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
@@ -110,7 +118,10 @@ class MainMenuPage {
   }
 
   async goToAddressBook() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
@@ -133,7 +144,10 @@ class MainMenuPage {
    * Function for the test Navigate_to_orders
    */
   async goToOrders() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
@@ -148,7 +162,10 @@ class MainMenuPage {
    * Function for the test Navigate_to_wishlist
    */
   async goToWishList() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
@@ -181,7 +198,10 @@ class MainMenuPage {
    */
   async searchForProduct(searchTerm :string) {
     const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
 
     await this.mainMenuSearchButton.click();
