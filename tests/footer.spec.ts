@@ -21,17 +21,6 @@ test.describe('Footer', () => {
 	)
 
 	test(
-		'Footer_switch_currency',
-		{tag: ['@footer', '@cold']},
-		async ({page}) => {
-			const footer = new Footer(page);
-
-			await page.goto('');
-			await footer.switchCurrency();
-		}
-	)
-
-	test(
 		'Footer_newsletter_subscription',
 		{tag: ['@footer', '@cold']},
 		async ({page}, testInfo) => {

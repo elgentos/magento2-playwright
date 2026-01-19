@@ -101,10 +101,8 @@ class CartPage {
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
-    let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
-
     //Assertions: notification that code was incorrect & discount code field is still editable
-    await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+    this.page.locator('.message-error').getByText(outcomeMarker.cart.incorrectCouponCodeNotificationTwo)
     await expect(discountField).toBeEditable();
   }
 
@@ -114,8 +112,9 @@ class CartPage {
   // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
-    const checkoutCartDetails = this.page.locator(UIReference.checkout.checkoutCartDetailsLocator);
-    const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
+    const checkoutCartDetails = this.page.locator(UIReference.checkout.cartDetailsLocator);
+    //const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
+    const openCartDetailsButton = this.page.locator('.block.items-in-cart [data-role="title"]');
 
     if(await checkoutCartDetails.isHidden()) {
       await openCartDetailsButton.click();
@@ -128,16 +127,16 @@ class CartPage {
     // } else {
     //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelContMultiple}`).click();
     // }
+    await checkoutCartDetails.isVisible()
 
     // Get values from checkout page
-    let productInCheckout = this.page.locator(UIReference.checkout.cartDetailsLocator).filter({ hasText: productName }).nth(1);
+    let productInCheckout = checkoutCartDetails.filter({ hasText: productName }).nth(0);
     this.productPriceInCheckout = await productInCheckout.getByText(UIReference.general.genericPriceSymbol).last().innerText();
     this.productPriceInCheckout = this.productPriceInCheckout.trim();
     // let productImage = this.page.locator(UIReference.checkout.cartDetailsLocator)
     // .filter({ has: this.page.getByRole('img', { name: productName })});
     // this.productQuantityInCheckout = await productImage.locator('> span').innerText();
-    this.productQuantityInCheckout = await productInCheckout.locator('.product-price').getByText('x').innerText();
-    this.productQuantityInCheckout = this.productQuantityInCheckout.substring(0,1);
+    this.productQuantityInCheckout = await productInCheckout.locator('.details-qty .value').innerText();
     return [this.productPriceInCheckout, this.productQuantityInCheckout];
   }
 

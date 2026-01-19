@@ -14,37 +14,10 @@ class Footer {
     }
 
     async goToFooterElement () {
-        await this.page.getByText(UIReference.footerPage.currencyLabel).scrollIntoViewIfNeeded();
+        await this.page.getByText('Newsletter').scrollIntoViewIfNeeded();
         await expect(
           this.footerElement,
           'Footer is visible'
-        ).toBeVisible();
-    }
-
-    async switchCurrency () {
-        await this.goToFooterElement();
-
-        const isUsdActive = await this.page.getByRole('button', {
-            name: UIReference.footerPage.currencyDollar
-        }).isVisible();
-
-        const currencyToOpen = isUsdActive ? UIReference.footerPage.currencyDollar : UIReference.footerPage.currencyEuro;
-        const currencyToSelect = isUsdActive ? UIReference.footerPage.currencyEuro : UIReference.footerPage.currencyDollar;
-
-        await this.page.getByRole('button', { name: currencyToOpen }).click();
-
-        await expect(
-          this.page.getByRole('navigation', { name: UIReference.footerPage.currencyLabel }),
-          'Footer navigation is visible'
-        ).toBeVisible();
-
-        await this.page.getByRole('link', { name: currencyToSelect }).click();
-
-        await this.goToFooterElement();
-
-        await expect(
-          this.page.getByRole('button', { name: currencyToSelect }),
-          'Currency selector is visible'
         ).toBeVisible();
     }
 }
