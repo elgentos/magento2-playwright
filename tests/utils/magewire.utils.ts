@@ -55,7 +55,8 @@ class MagewireUtils {
   }
 
   private async waitForMagewireDomIdle(): Promise<void> {
-    const element = this.page.locator('.magewire.messenger');
+    // look for the magewire pop-up
+    const element = this.page.locator('.magewire.notification.messenger');
 
     // LocatorHandler will keep looking for pop-up
     await this.page.addLocatorHandler(element, async() => {
