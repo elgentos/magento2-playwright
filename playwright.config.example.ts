@@ -103,7 +103,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Chrome'],
-        storageState: './auth-storage/chromium-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 
@@ -112,7 +112,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Firefox'],
-        storageState: './auth-storage/firefox-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 
@@ -121,7 +121,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Safari'],
-        storageState: './auth-storage/webkit-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 
