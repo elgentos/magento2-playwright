@@ -154,8 +154,8 @@ class AdminLogin {
    */
   async login(username: string, password: string){
     await this.page.goto(requireEnv('MAGENTO_ADMIN_SLUG'));
-    const adminRegEx = new RegExp(/.*\/admin\/.*/);
-    await this.page.waitForURL(adminRegEx);
+    // const adminRegEx = new RegExp(/.*\/admin\/.*/);
+    await this.page.waitForURL(new RegExp(requireEnv('MAGENTO_ADMIN_SLUG')));
 
     if(await this.page.getByRole('heading', {name: UIReference.adminPage.dashboardHeadingText}).isVisible()) {
       // already logged in
