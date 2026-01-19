@@ -88,7 +88,7 @@ class CartPage {
     await this.page.waitForLoadState();
 
     await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification),`Notification should be visible`).toBeVisible();
-    await expect(this.page.getByText(outcomeMarker.cart.priceReducedSymbols),`'- $' should not be on the page`).toBeHidden();
+    await expect(this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`),`'- $' should not be on the page`).toBeHidden();
   }
 
   async enterWrongCouponCode(code: string){

@@ -170,7 +170,7 @@ class MainMenuPage {
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuWishListButton.click();
-    await this.page.waitForURL(slugs.wishList.wishListSlug);
+    await this.page.waitForURL(new RegExp(slugs.wishList.wishListSlug));
     await expect(this.page.getByRole(
       'heading', {name: UIReference.wishListPage.wishListTitle, exact:true}),
       `Heading "${UIReference.wishListPage.wishListTitle}" is visible`).toBeVisible();

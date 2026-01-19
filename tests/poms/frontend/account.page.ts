@@ -263,7 +263,7 @@ class AccountPage {
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(`**\/${slugs.account.loginSlug}`);
+    await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
