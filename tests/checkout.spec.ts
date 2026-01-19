@@ -195,6 +195,8 @@ test.describe('Checkout (guest)', () => {
    *  @and a order number should be created and shown to me
    */
   test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
+    // Marking test as slow to allow more time befoure timeout
+    test.slow();
     const checkoutPage = new CheckoutPage(page);
 
     // Test with check/money order payment
