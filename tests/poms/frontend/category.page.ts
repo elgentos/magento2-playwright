@@ -47,7 +47,6 @@ class CategoryPage {
 
     await expect(async() => {
       await sizeFilterButton.click();
-      await sizeLButton.waitFor();
       await expect(sizeLButton).toBeVisible();
     }).toPass();
 
