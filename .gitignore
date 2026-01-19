@@ -12,3 +12,4 @@ node_modules/
 /*.config.ts
 /.env
 /tsconfig.json
+.mcp.json

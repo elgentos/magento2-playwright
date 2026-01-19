@@ -13,7 +13,7 @@ import CheckoutPage from '@poms/frontend/checkout.page';
 /**
  * @feature BeforeEach runs before each test in this group.
  * @scenario Add product to the cart, confirm it's there, then move to checkout.
- * @given I am on any page
+ * @given I am on a page
  * @when I navigate to a (simple) product page
  *  @and I add it to my cart
  *  @then I should see a notification
