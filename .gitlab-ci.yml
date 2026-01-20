@@ -104,7 +104,7 @@ create_testing_suite:
   script:
     - echo 'Setting up the testing environment'
     - mkdir -p base-tests
-    - npm ci
+    - npm install
     # Check what files are present
     - ls -l base-tests
     - CI=true npx playwright test --grep "@setup" --reporter=line --workers=3 --max-failures=1
@@ -127,7 +127,7 @@ run_testing_suite:
   stage: testing_suite
   script:
     - echo 'Running test suite'
-    - npm ci
+    - npm install
     - CI=true npx playwright test --workers=3 --grep-invert "@setup" --max-failures=1
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
