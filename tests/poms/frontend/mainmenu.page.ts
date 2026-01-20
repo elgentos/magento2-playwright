@@ -227,6 +227,9 @@ class MainMenuPage {
     //assertions: notification that user is logged out & logout button no longer visible
     await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true }), "Message shown that confirms you're logged out").toBeVisible();
     await expect(this.mainMenuLogoutItem, `Log out button is no longer visible`).toBeHidden();
+
+    // since the page automatically navigates to the home page, wait until we're there
+    await this.page.waitForURL(requireEnv(`PLAYWRIGHT_BASE_URL`));
   }
 }
 
