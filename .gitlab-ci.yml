@@ -1,4 +1,4 @@
-image: node:22-bullseye
+image: mcr.microsoft.com/playwright:v1.57.0-jammy
 
 stages:
   - testing_suite
@@ -30,6 +30,8 @@ variables:
   MAGENTO_COUPON_CODE_WEBKIT: $MAGENTO_COUPON_CODE_WEBKIT
 
   CAPTCHA_BYPASS: true
+
+  PLAYWRIGHT_BROWSERS_PATH: /ms-playwright
 
 .slack-notification:
   after_script:
@@ -103,7 +105,6 @@ create_testing_suite:
     - echo 'Setting up the testing environment'
     - mkdir -p base-tests
     - npm install
-    - npx playwright install-deps
     # Check what files are present
     - ls -l base-tests
     - CI=true npx playwright test --grep "@setup" --reporter=line --workers=3 --max-failures=1
@@ -126,7 +127,6 @@ run_testing_suite:
   stage: testing_suite
   script:
     - echo 'Running test suite'
-    - npx playwright install --with-deps
     - CI=true npx playwright test --workers=3 --grep-invert "@setup" --max-failures=1
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
