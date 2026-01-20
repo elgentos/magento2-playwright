@@ -71,6 +71,11 @@ class CheckoutPage extends MagewireUtils {
 		await this.paymentMethodOptionCheck.check();
 		await this.waitForMagewireRequests();
 
+		await expect(async() => {
+			// Ensure the payment method is now checked.
+			expect(this.paymentMethodOptionCheck).toBeChecked();
+		}).toPass();
+
 		await this.placeOrderButton.click();
 		await this.waitForMagewireRequests();
 

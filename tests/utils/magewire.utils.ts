@@ -71,11 +71,15 @@ class MagewireUtils {
 
   private async waitForMagewireDomIdle(): Promise<void> {
     // 1. Check of de messenger height 0px is
-    await this.page.waitForFunction(() => {
-      const element = document.querySelector('#magewire-loader-notifications > div');
+    // await this.page.waitForFunction(() => {
+    //   // const element = document.querySelector('#magewire-loader-notifications > div');
+      
+    //   // magewire element "Saving Shipping Method"
+    //   //#magewire-loader-notifications > div > div > div
+
 	  // const element = document.querySelector('.magewire\\.messenger');
-      return element && getComputedStyle(element).height === '0px';
-    }, { timeout: 30000 });
+    //   return element && getComputedStyle(element).height === '0px';
+    // }, { timeout: 30000 });
 
     // 2. Check if there is no processing ongoing
     await this.page.waitForFunction(() => {
