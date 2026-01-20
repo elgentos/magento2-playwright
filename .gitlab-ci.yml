@@ -9,7 +9,7 @@ variables:
 
   GIT_DEPTH: 0
   GIT_TRACE: 1
-  
+
   PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
   PLAYWRIGHT_PRODUCTION_URL: https://hyva-demo.elgentos.io/
   PLAYWRIGHT_STAGING_URL: https://hyva-demo.elgentos.io/
@@ -45,7 +45,7 @@ variables:
         COLOR="warning"
         EMOJI=":warning:"
       fi
-      
+
       PAYLOAD=$(cat << JSON
       {
         "channel": "${SLACK_CHANNEL}",
@@ -111,7 +111,6 @@ create_testing_suite:
   artifacts:
     when: always
     paths:
-      - node_modules/
       - playwright-report/
       - test-results/
       - base-tests/
