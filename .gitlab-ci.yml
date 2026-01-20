@@ -125,10 +125,11 @@ create_testing_suite:
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
 run_testing_suite:
   stage: testing_suite
+  parallel: 4
   script:
     - echo 'Running test suite'
     - npm install
-    - CI=true npx playwright test --workers=3 --grep-invert "@setup" --max-failures=1
+    - CI=true npx playwright test --workers=6 --grep-invert "@setup" --max-failures=1 --shard=${CI_NODE_INDEX}/${CI_NODE_TOTAL}
   needs: [create_testing_suite] #optional, stage order already enforces this
   dependencies:
     - create_testing_suite
