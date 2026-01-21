@@ -241,7 +241,7 @@ run_testing_suite:
   script:
     - echo "Running test suite"
     - printf "elgentos\n" | npm install
-    - CI=true npx playwright test --workers=2 --grep-invert "@setup" --max-failures=1 --trace=retain-on-failure
+    - CI=true npx playwright test --workers=1 --grep-invert "@setup" --max-failures=1 --trace=retain-on-failure
   needs: [create_testing_suite]
   dependencies:
     - create_testing_suite
