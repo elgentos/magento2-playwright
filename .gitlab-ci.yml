@@ -9,8 +9,6 @@ variables:
 
   GIT_DEPTH: 0
   GIT_TRACE: 1
-  # Extra GitLab debug
-  CI_DEBUG_TRACE: "true"
 
   PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
   PLAYWRIGHT_PRODUCTION_URL: https://hyva-demo.elgentos.io/
