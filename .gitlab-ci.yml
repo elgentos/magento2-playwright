@@ -32,7 +32,7 @@ variables:
   # Note hat this should be API_USERNAME, b
   # but there are issues with creating the required CI/CD variable in Gitlab
   MAGENTO_API_USERNAME: $MAGENTO_ADMIN_USERNAME
-  MAGENTO_API_PASSWORD: $MAGENTO_ADMIN_PASSWORD
+  MAGENTO_API_PASSWORD: $MAGENTO_API_PASSWORD
 
   CAPTCHA_BYPASS: true
 
