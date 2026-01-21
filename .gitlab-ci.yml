@@ -236,7 +236,6 @@ create_testing_suite:
 
 run_testing_suite:
   stage: testing_suite
-  parallel: 4
   extends:
     - .debug-template
   script:
