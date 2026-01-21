@@ -121,10 +121,7 @@ create_testing_suite:
       - test-results/
       - base-tests/
       - tests/
-      - .env
-      - bypass-captcha.config.ts
       - playwright.config.ts
-      - tsconfig.json
 
 # Build and test suite using this new version of the suite
 # Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
