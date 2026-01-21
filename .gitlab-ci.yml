@@ -42,7 +42,7 @@ variables:
     - |-
       set -euo pipefail
 
-      echo "== CI context ==="
+      echo "=== CI context ==="
       echo "CI_PROJECT_PATH=${CI_PROJECT_PATH}"
       echo "CI_PIPELINE_URL=${CI_PIPELINE_URL}"
       echo "CI_JOB_NAME=${CI_JOB_NAME}"
