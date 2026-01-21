@@ -1,4 +1,4 @@
-image: node:22-bullseye
+image: mcr.microsoft.com/playwright:v1.57.0-jammy
 
 stages:
   - testing_suite
@@ -7,33 +7,144 @@ stages:
 variables:
   SLACK_CHANNEL: "#_qatesting_stream"
 
-  GIT_DEPTH: 0
-  GIT_TRACE: 1
-  
-  PLAYWRIGHT_BASE_URL: https://hyva-demo.elgentos.io/
-  PLAYWRIGHT_PRODUCTION_URL: https://hyva-demo.elgentos.io/
-  PLAYWRIGHT_STAGING_URL: https://hyva-demo.elgentos.io/
+  GIT_DEPTH: "0"
+  GIT_TRACE: "1"
 
-  MAGENTO_ADMIN_SLUG: $MAGENTO_ADMIN_SLUG
-  MAGENTO_ADMIN_USERNAME: $MAGENTO_ADMIN_USERNAME
-  MAGENTO_ADMIN_PASSWORD: $MAGENTO_ADMIN_PASSWORD
+  PLAYWRIGHT_BASE_URL: "https://hyva-demo.elgentos.io/"
+  PLAYWRIGHT_PRODUCTION_URL: "https://hyva-demo.elgentos.io/"
+  PLAYWRIGHT_STAGING_URL: "https://hyva-demo.elgentos.io/"
 
-  MAGENTO_NEW_ACCOUNT_PASSWORD: $MAGENTO_NEW_ACCOUNT_PASSWORD
-  MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM: $MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM
-  MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX: $MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX
-  MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT: $MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT
-  MAGENTO_EXISTING_ACCOUNT_PASSWORD: $MAGENTO_EXISTING_ACCOUNT_EMAIL_PASSWORD
-  MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: $MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD
+  MAGENTO_ADMIN_SLUG: "$MAGENTO_ADMIN_SLUG"
+  MAGENTO_ADMIN_USERNAME: "$MAGENTO_ADMIN_USERNAME"
+  MAGENTO_ADMIN_PASSWORD: "$MAGENTO_ADMIN_PASSWORD"
 
-  MAGENTO_COUPON_CODE_CHROMIUM: $MAGENTO_COUPON_CODE_CHROMIUM
-  MAGENTO_COUPON_CODE_FIREFOX: $MAGENTO_COUPON_CODE_FIREFOX
-  MAGENTO_COUPON_CODE_WEBKIT: $MAGENTO_COUPON_CODE_WEBKIT
+  MAGENTO_NEW_ACCOUNT_PASSWORD: "$MAGENTO_NEW_ACCOUNT_PASSWORD"
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM: "$MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM"
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX: "$MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX"
+  MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT: "$MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT"
 
-  CAPTCHA_BYPASS: true
+  # LET OP: dit lijkt een typo in jouw config; debug output maakt dit zichtbaar.
+  MAGENTO_EXISTING_ACCOUNT_PASSWORD: "$MAGENTO_EXISTING_ACCOUNT_EMAIL_PASSWORD"
+  MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: "$MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD"
+
+  MAGENTO_COUPON_CODE_CHROMIUM: "$MAGENTO_COUPON_CODE_CHROMIUM"
+  MAGENTO_COUPON_CODE_FIREFOX: "$MAGENTO_COUPON_CODE_FIREFOX"
+  MAGENTO_COUPON_CODE_WEBKIT: "$MAGENTO_COUPON_CODE_WEBKIT"
+
+  MAGENTO_API_USERNAME: "$MAGENTO_ADMIN_USERNAME"
+  MAGENTO_API_PASSWORD: "$MAGENTO_ADMIN_PASSWORD"
+
+  CAPTCHA_BYPASS: "true"
+  PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright"
+
+.debug-template:
+  before_script:
+    - |-
+      set -euo pipefail
+
+      echo "=== CI context ==="
+      echo "CI_PROJECT_PATH=${CI_PROJECT_PATH}"
+      echo "CI_PIPELINE_URL=${CI_PIPELINE_URL}"
+      echo "CI_JOB_NAME=${CI_JOB_NAME}"
+      echo "CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}"
+      echo "Runner=${CI_RUNNER_DESCRIPTION:-unknown} Executor=${CI_RUNNER_EXECUTOR:-unknown}"
+      echo
+
+      echo "== System =="
+      uname -a || true
+      node -v || true
+      npm -v || true
+      npx playwright --version || true
+      echo
+
+      echo "== Workspace =="
+      pwd
+      ls -la
+      echo
+
+      check_var () {
+        name="$1"
+        val="${!name-}"
+        if [ -z "${val}" ]; then
+          echo "VAR ${name} EMPTY"
+        else
+          echo "VAR ${name} SET len=${#val}"
+        fi
+      }
+
+      echo "== Env sanity =="
+      check_var PLAYWRIGHT_BASE_URL
+      check_var PLAYWRIGHT_STAGING_URL
+      check_var PLAYWRIGHT_PRODUCTION_URL
+      check_var CAPTCHA_BYPASS
+      check_var MAGENTO_ADMIN_SLUG
+
+      check_var MAGENTO_ADMIN_USERNAME
+      check_var MAGENTO_ADMIN_PASSWORD
+      check_var MAGENTO_API_USERNAME
+      check_var MAGENTO_API_PASSWORD
+
+      check_var MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM
+      check_var MAGENTO_EXISTING_ACCOUNT_EMAIL_FIREFOX
+      check_var MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT
+      check_var MAGENTO_EXISTING_ACCOUNT_PASSWORD
+      check_var MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD
+
+      check_var MAGENTO_COUPON_CODE_CHROMIUM
+      check_var MAGENTO_COUPON_CODE_FIREFOX
+      check_var MAGENTO_COUPON_CODE_WEBKIT
+      echo
+
+      echo "== Quick network checks =="
+      echo "curl HEAD base url"
+      curl -sS -I --max-time 15 "${PLAYWRIGHT_BASE_URL}" | head -n 25 || true
+      echo
+
+      echo "curl HEAD rest base"
+      curl -sS -I --max-time 15 "${PLAYWRIGHT_BASE_URL%/}/rest/V1/" | head -n 25 || true
+      echo
+
+      echo "curl HEAD admin slug"
+      if [ -n "${MAGENTO_ADMIN_SLUG:-}" ]; then
+        curl -sS -I --max-time 15 "${PLAYWRIGHT_BASE_URL%/}/${MAGENTO_ADMIN_SLUG}/" | head -n 25 || true
+      else
+        echo "MAGENTO_ADMIN_SLUG empty; skipping"
+      fi
+      echo
+
+      echo "== Token probe =="
+      if [ -z "${MAGENTO_API_USERNAME:-}" ] || [ -z "${MAGENTO_API_PASSWORD:-}" ]; then
+        echo "Skipping token probe; MAGENTO_API_USERNAME or MAGENTO_API_PASSWORD empty"
+      else
+        TOKEN_URL="${PLAYWRIGHT_BASE_URL%/}/rest/V1/integration/admin/token"
+        echo "POST ${TOKEN_URL}"
+
+        resp_headers="$(mktemp)"
+        resp_body="$(mktemp)"
+
+        http_code="$(curl -sS --max-time 20 \
+          -D "${resp_headers}" \
+          -o "${resp_body}" \
+          -w "%{http_code}" \
+          -H "Content-Type: application/json" \
+          -X POST \
+          --data "{\"username\":\"${MAGENTO_API_USERNAME}\",\"password\":\"${MAGENTO_API_PASSWORD}\"}" \
+          "${TOKEN_URL}" || echo "curl_failed")"
+
+        echo "HTTP_CODE=${http_code}"
+        echo "-- headers --"
+        head -n 30 "${resp_headers}" || true
+        echo "-- body (first 40 lines) --"
+        head -n 40 "${resp_body}" || true
+
+        rm -f "${resp_headers}" "${resp_body}"
+      fi
+
+  after_script:
+    - echo "== End of job debug =="
 
 .slack-notification:
   after_script:
-    # Slack notification
     - |-
       if [ "$CI_JOB_STATUS" = "success" ]; then
         COLOR="good"
@@ -45,25 +156,25 @@ variables:
         COLOR="warning"
         EMOJI=":warning:"
       fi
-      
-      PAYLOAD=$(cat << JSON
+
+      PAYLOAD=$(cat << 'JSON'
       {
-        "channel": "${SLACK_CHANNEL}",
+        "channel": "'"${SLACK_CHANNEL}"'",
         "attachments": [
           {
             "title": "Playwright",
-            "title_link": "${CI_PIPELINE_URL}",
-            "text": "${EMOJI} Status: ${CI_JOB_STATUS}\n Job: ${CI_JOB_NAME}",
-            "color": "${COLOR}"
+            "title_link": "'"${CI_PIPELINE_URL}"'",
+            "text": "'"${EMOJI} Status: ${CI_JOB_STATUS}\n Job: ${CI_JOB_NAME}"'",
+            "color": "'"${COLOR}"'"
           }
         ]
       }
       JSON
       )
-    - >
-      curl -X POST ${SLACK_WEBHOOK}
-      --header 'Content-Type: application/json; charset=utf-8'
-      --data-binary "$PAYLOAD"
+
+      curl -X POST "${SLACK_WEBHOOK}" \
+        -H "Content-Type: application/json; charset=utf-8" \
+        --data-binary "${PAYLOAD}"
 
 mirror_to_github:
   stage: mirror
@@ -99,37 +210,39 @@ test_mirror_pipeline:
 
 create_testing_suite:
   stage: testing_suite
+  extends:
+    - .debug-template
   script:
-    - echo 'Setting up the testing environment'
+    - echo "Setting up the testing environment"
     - mkdir -p base-tests
-    - npm install
-    - npx playwright install-deps
-    # Check what files are present
-    - ls -l base-tests
-    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=3 --max-failures=1
+    # Avoid interactive prompt in CI ("Enter the vendor name:")
+    - printf "elgentos\n" | npm install
+    - ls -l base-tests || true
+    - echo "ENV file check"
+    - if [ -f ".env" ]; then echo ".env exists"; else echo ".env missing"; fi
+    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=6 --max-failures=1 --trace=on
   allow_failure: false
   artifacts:
     when: always
     paths:
-      - node_modules/
       - playwright-report/
       - test-results/
       - base-tests/
       - tests/
-      - .env
       - bypass-captcha.config.ts
       - playwright.config.ts
       - tsconfig.json
+      - .env
 
-# Build and test suite using this new version of the suite
-# Ensure that you've enabled the 'pipeline must succeed' setting in your branch.
 run_testing_suite:
   stage: testing_suite
+  extends:
+    - .debug-template
   script:
-    - echo 'Running test suite'
-    - npx playwright install --with-deps
-    - CI=true npx playwright test --workers=3 --grep-invert "@setup" --max-failures=1
-  needs: [create_testing_suite] #optional, stage order already enforces this
+    - echo "Running test suite"
+    - printf "elgentos\n" | npm install
+    - CI=true npx playwright test --workers=1 --grep-invert "@setup" --max-failures=1 --trace=retain-on-failure
+  needs: [create_testing_suite]
   dependencies:
     - create_testing_suite
   allow_failure: false
@@ -138,3 +251,4 @@ run_testing_suite:
     paths:
       - playwright-report/
       - test-results/
+      - .env

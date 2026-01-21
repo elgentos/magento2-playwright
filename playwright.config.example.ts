@@ -63,7 +63,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // workers: process.env.CI ? 1 : undefined,
   /* Increase default timeout */
   timeout: 150_000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -103,7 +103,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Chrome'],
-        storageState: './auth-storage/chromium-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 
@@ -112,7 +112,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Firefox'],
-        storageState: './auth-storage/firefox-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 
@@ -121,7 +121,7 @@ export default defineConfig({
       testMatch: testFiles,
       use: {
         ...devices['Desktop Safari'],
-        storageState: './auth-storage/webkit-storage-state.json',
+        userAgent: 'Playwright'
       },
     },
 

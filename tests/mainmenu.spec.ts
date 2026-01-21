@@ -110,7 +110,13 @@ test.describe('User tests (logged in)', () => {
     const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
     const loginPage = new LoginPage(page);
-    await loginPage.login(emailInputValue, passwordInputValue);
+    await loginPage.login(emailInputValue, passwordInputValue)
+
+    // WORKAROUND only for local copy!
+    if(page.url().includes('localhost')) {
+      // local copy has an issue with the menu, so we need to navigate to another page
+      await page.goto(slugs.productPage.simpleProductSlug, {waitUntil: 'load'});
+    }
   });
 
   /**
