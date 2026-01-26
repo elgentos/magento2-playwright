@@ -47,7 +47,7 @@ class AdminLogin {
 		this.customerConfigurationLink = page.getByRole('link', { name: UIReference.admin.customerConfiguration });
 		this.adminSettingsLink = page.getByRole('link', {name: UIReference.admin.admin, exact: true});
 		// Settings
-		this.customerCaptchaAccordion = page.getByRole('link', { name: 'CAPTCHA' });
+		this.customerCaptchaAccordion = page.getByRole('link', { name: 'CAPTCHA' }).filter({hasNotText: 'documentation'});
 		this.adminSecurityAccordion = page.getByRole('link', { name: UIReference.general.security });
 		this.storeFrontCaptchaOption = page.getByLabel(UIReference.admin.captchaEnabled);
 		this.adminSharingOption = page.getByLabel(UIReference.admin.adminSharing);
