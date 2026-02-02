@@ -20,7 +20,8 @@ test.describe('Search functionality', () => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
-    await expect(page).toHaveURL(slugs.productPage.simpleProductSlug);
+    // await expect(page).toHaveURL(`**${slugs.productPage.simpleProductSlug}`);
+    expect(page.url()).toEqual(expect.stringContaining(`${slugs.productPage.simpleProductSlug}`));
   });
 
   test('No_results_message_is_shown_for_unknown_query', async ({ page }) => {

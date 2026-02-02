@@ -13,6 +13,22 @@ Note that the points mentioned here are in the works, to be released in a future
 ### Changed
 - We will implement the APIClient in various tests.
 
+## [4.0.0] - 2026-01-21
+
+### Changed
+- Renamed `adminhtml` folder to `admin`
+- Renamed admin `login.page.ts` to `adminlogin.page.ts` to prevent confusion.
+- `setup.spec.ts` now utilizes the APIClient.
+- Updated `playwright.config.ts
+  - Default timeout extended to 150_000
+  - Trace is now `retain-on-failure`
+  - Video and screenshot collection are now `.env` variables, defaulting to `retain-on-failure`
+
+### Fixed
+- Variety of locators and such to comply with changes made by Hyvä and/or Magento.
+- Improved stability of tests.
+- Small hotfix to accommodate a slight change in language if a field is missing.
+
 ## [3.0.1] - 2025-11-04
 
 ### Added

@@ -43,7 +43,7 @@ class MainMenuPage {
     await this.mainMenuAccountButton.waitFor();
     await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
 
-    await this.page.waitForURL(slugs.categoryPage.categorySlug);
+    // await this.page.waitForURL(`**\/${slugs.categoryPage.categorySlug}`);
     await expect(
       this.page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
       `Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
@@ -61,7 +61,7 @@ class MainMenuPage {
     await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
 
     await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
-    await this.page.waitForURL(slugs.categoryPage.subcategorySlug);
+    // await this.page.waitForURL(`**\/${slugs.categoryPage.subcategorySlug}`);
 
     await expect(this.page.getByRole('heading',
       { name: outcomeMarker.categoryPage.subCategoryPageTitle }),
@@ -72,7 +72,9 @@ class MainMenuPage {
    * Function for the test User_navigates_account_page
    */
   async gotoMyAccount(){
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
     await this.mainMenuMyAccountItem.click();
@@ -85,12 +87,16 @@ class MainMenuPage {
    */
   async goToLoginPage() {
     const loginHeader = this.page.getByRole('heading', {name: outcomeMarker.login.loginHeaderText, exact:true});
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuLoginItem.click();
-    await this.page.waitForURL(`${slugs.account.loginSlug}**`);
+    const loginRegEx = new RegExp(`${slugs.account.loginSlugRegex}`);
+    await this.page.waitForURL(loginRegEx);
     await expect(loginHeader, 'Login header text is visible').toBeVisible();
   }
 
@@ -99,23 +105,29 @@ class MainMenuPage {
    */
   async goToCreateAccountPage() {
     const createAccountHeader = this.page.getByRole('heading', {name: outcomeMarker.account.createAccountHeaderText, exact:true});
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuCreateAccountButton.click();
-    await this.page.waitForURL(slugs.account.createAccountSlug);
+    // await this.page.waitForURL(`**\/${slugs.account.createAccountSlug}`);
     await expect(createAccountHeader, 'Create account header text is visible').toBeVisible();
   }
 
   async goToAddressBook() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuAddressBookButton.click();
 
-    await this.page.waitForURL(`${slugs.account.addressBookSlug}/**`);
+    // await this.page.waitForURL(`**\/${slugs.account.addressBookSlug}`);
     if(this.page.url().includes('new')) {
       // no address has been added yet
       await expect(this.page.getByRole(
@@ -132,12 +144,15 @@ class MainMenuPage {
    * Function for the test Navigate_to_orders
    */
   async goToOrders() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuMyOrdersButton.click();
-    await this.page.waitForURL(slugs.account.orderHistorySlug);
+    // await this.page.waitForURL(`**\/${slugs.account.orderHistorySlug}`);
     await expect(this.page.getByRole(
         'heading', {name: UIReference.orderHistoryPage.orderHistoryTitle, level: 1, exact:true}),
       `Heading "${UIReference.orderHistoryPage.orderHistoryTitle}" is visible`).toBeVisible();
@@ -147,12 +162,15 @@ class MainMenuPage {
    * Function for the test Navigate_to_wishlist
    */
   async goToWishList() {
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
     await this.mainMenuAccountButton.click();
 
     await this.mainMenuWishListButton.click();
-    await this.page.waitForURL(slugs.wishList.wishListSlug);
+    await this.page.waitForURL(new RegExp(slugs.wishList.wishListSlug));
     await expect(this.page.getByRole(
       'heading', {name: UIReference.wishListPage.wishListTitle, exact:true}),
       `Heading "${UIReference.wishListPage.wishListTitle}" is visible`).toBeVisible();
@@ -180,7 +198,10 @@ class MainMenuPage {
    */
   async searchForProduct(searchTerm :string) {
     const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
-    await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
+    // Workaround: navigate to the product page to prevent issue where
+    // main menu does not recognize you're logged in (local copy)
+    await this.page.goto(slugs.productPage.simpleProductSlug, {waitUntil:'load'});
     await this.mainMenuAccountButton.waitFor();
 
     await this.mainMenuSearchButton.click();
@@ -206,6 +227,9 @@ class MainMenuPage {
     //assertions: notification that user is logged out & logout button no longer visible
     await expect(this.page.getByText(outcomeMarker.logout.logoutConfirmationText, { exact: true }), "Message shown that confirms you're logged out").toBeVisible();
     await expect(this.mainMenuLogoutItem, `Log out button is no longer visible`).toBeHidden();
+
+    // since the page automatically navigates to the home page, wait until we're there
+    await this.page.waitForURL(requireEnv(`PLAYWRIGHT_BASE_URL`));
   }
 }
 

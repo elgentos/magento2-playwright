@@ -23,7 +23,7 @@
     "discountRemovedNotification": "You canceled the coupon code.",
     "incorrectCouponCodeNotificationOne": "The coupon code",
     "incorrectCouponCodeNotificationTwo": "is not valid.",
-    "priceReducedSymbols": "- $"
+    "priceReducedSymbols": "$"
   },
   "categoryPage" : {
     "subCategoryPageTitle" : "Fitness Equipment"

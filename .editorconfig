@@ -1,12 +1,12 @@
+# Root to indicate this is the top-most EditorConfig file
 root = true
 
+# Overall rules for all files
+# Set charset to utf-8, and use Unix-style newlines with a newline ending every file.
+# Set the indent style to tab, and remove trailing whitespace.
 [*]
-charset = utf-8
+charset = utf-8 
 end_of_line = lf
-indent_size = 4
-indent_style = space
 insert_final_newline = true
+indent_style = tab
 trim_trailing_whitespace = true
-
-[*.{ts,json}]
-indent_size = 2

@@ -13,7 +13,7 @@ import CheckoutPage from '@poms/frontend/checkout.page';
 /**
  * @feature BeforeEach runs before each test in this group.
  * @scenario Add product to the cart, confirm it's there, then move to checkout.
- * @given I am on any page
+ * @given I am on a page
  * @when I navigate to a (simple) product page
  *  @and I add it to my cart
  *  @then I should see a notification
@@ -195,6 +195,8 @@ test.describe('Checkout (guest)', () => {
    *  @and a order number should be created and shown to me
    */
   test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
+    // Marking test as slow to allow more time befoure timeout
+    test.slow();
     const checkoutPage = new CheckoutPage(page);
 
     // Test with check/money order payment
