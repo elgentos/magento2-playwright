@@ -45,15 +45,20 @@ jobs:
           if [ -z "$GITLAB_REPO_URL" ]; then
             echo "GITLAB_REPO_URL secret is not set"; exit 1;
           fi
+          if [ -z "$GITLAB_TOKEN" ]; then
+            echo "GITLAB_TOKEN secret is not set"; exit 1;
+          fi
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          AUTHED_URL="${GITLAB_REPO_URL/https:\/\//https:\/\/oauth2:${GITLAB_TOKEN}@}"
 
-          echo "Adding GitLab remote: $GITLAB_REPO_URL"
-          git remote add gitlab "$GITLAB_REPO_URL"
+          echo "Adding GitLab remote"
+          git remote add gitlab "$AUTHED_URL"
 
           echo "Pushing branch to GitLab as $PR_BRANCH"
-          git push gitlab HEAD:"$PR_BRANCH" --force
+          git push gitlab HEAD:refs/heads/"$PR_BRANCH" --force
 
       - name: Create Merge Request on GitLab
         run: |
