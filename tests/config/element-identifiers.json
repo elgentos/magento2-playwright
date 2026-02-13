@@ -152,7 +152,7 @@
   "categoryPage":{
     "activeViewLocator": ".active",
     "categoryPageTitleText": "Tops",
-	  "categoryPageWithOptionsTitleText": "Top",
+    "categoryPageWithOptionsTitleText": "Top",
     "firstFilterOptionLocator": "#filter-option-2-title",
     "itemsOnPageAmountLocator": ".toolbar-number",
     "itemsPerPageButtonLabel": "Show items per page",
