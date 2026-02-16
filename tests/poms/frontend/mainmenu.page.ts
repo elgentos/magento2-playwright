@@ -222,6 +222,14 @@ class MainMenuPage {
   async logout(){
     await this.page.goto(slugs.account.accountOverviewSlug);
     await this.mainMenuAccountButton.click();
+
+	if(await this.mainMenuLoginItem.isVisible()) {
+		// login button found, we're logged out.
+		return;
+	} else {
+		await this.mainMenuLogoutItem.waitFor();
+	}
+
     await this.mainMenuLogoutItem.click();
 
     //assertions: notification that user is logged out & logout button no longer visible

@@ -1,6 +1,7 @@
 // @ts-check
 
-import { test, expect } from '@playwright/test';
+// Import test and expect from utils to ensure authenticated state.
+import { test, expect } from '@utils/fixtures.utils';
 import { UIReference, slugs } from '@config';
 import { requireEnv } from '@utils/env.utils';
 import MagewireUtils from '@utils/magewire.utils';
@@ -8,9 +9,14 @@ import MagewireUtils from '@utils/magewire.utils';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
+import MainMenuPage from '@poms/frontend/mainmenu.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
-/**
+
+
+
+test.describe('Checkout (login required)', () => {
+	/**
  * @feature BeforeEach runs before each test in this group.
  * @scenario Add product to the cart, confirm it's there, then move to checkout.
  * @given I am on a page
@@ -33,15 +39,14 @@ test.beforeEach(async ({ page }) => {
 });
 
 
-test.describe('Checkout (login required)', () => {
   // Before each test, log in
   test.beforeEach(async ({ page, browserName }) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-    const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+    // const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+    // const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+    // const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-    const loginPage = new LoginPage(page);
-    await loginPage.login(emailInputValue, passwordInputValue);
+    // const loginPage = new LoginPage(page);
+    // await loginPage.login(emailInputValue, passwordInputValue);
     await page.goto(slugs.checkout.checkoutSlug);
   });
 
@@ -101,6 +106,24 @@ test.describe('Checkout (login required)', () => {
 });
 
 test.describe('Checkout (guest)', () => {
+	test.beforeEach(async({page}) => {
+		// log out
+		const mainMenu = new MainMenuPage(page);
+		await mainMenu.logout();
+
+		// set up magewire monitoring
+		const magewire = new MagewireUtils(page);
+		magewire.startMonitoring();
+
+		// ensure product in cart
+		const productPage = new ProductPage(page);
+		await page.goto(slugs.productPage.simpleProductSlug);
+		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+
+		// to checkout
+		await page.goto(slugs.checkout.checkoutSlug);
+	});
+
   /**
    * @feature Discount Code
    * @scenario User adds a discount code to their cart
