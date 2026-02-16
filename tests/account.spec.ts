@@ -1,6 +1,7 @@
 // @ts-check
 
-import { test, expect } from '@playwright/test';
+// Import test and expect from utils to ensure authenticated state.
+import { test, expect } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues} from '@config';
 import { requireEnv } from '@utils/env.utils';
@@ -11,15 +12,15 @@ import MainMenuPage from '@poms/frontend/mainmenu.page';
 import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
 import RegisterPage from '@poms/frontend/register.page';
 
-// Before each test, log in
-test.beforeEach(async ({ page, browserName }) => {
-  const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-  const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+// // Before each test, log in
+// test.beforeEach(async ({ page, browserName }) => {
+//   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+//   const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
+//   const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-  const loginPage = new LoginPage(page);
-  await loginPage.login(emailInputValue, passwordInputValue);
-});
+//   const loginPage = new LoginPage(page);
+//   await loginPage.login(emailInputValue, passwordInputValue);
+// });
 
 test.describe('Account information actions', {annotation: {type: 'Account Dashboard', description: 'Test for Account Information'},}, () => {
 
@@ -76,10 +77,8 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     // If login with changePasswordValue is possible, then password change was successful.
     await loginPage.login(emailPasswordUpdatevalue, changedPasswordValue);
 
-    // Logout again, login with original account
+    // Logout again.
     await mainMenu.logout();
-    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-    await loginPage.login(emailInputValue, passwordInputValue);
   });
 
   /**
@@ -122,11 +121,6 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
     await loginPage.login(updatedEmail, passwordInputValue);
 
     await mainMenu.logout();
-    let emailInputValue = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
-    if(!emailInputValue) {
-      throw new Error(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine} and/or MAGENTO_EXISTING_ACCOUNT_PASSWORD have not defined in the .env file, or the account hasn't been created yet.`);
-    }
-    await loginPage.login(emailInputValue, passwordInputValue);
   });
 });
 
@@ -260,6 +254,10 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
    *  @and My subscription option should be updated.
    */
   test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page, browserName}) => {
+	// Navigate to a page.
+	await page.goto(slugs.account.accountOverviewSlug);
+    await page.waitForLoadState();
+
     const newsletterPage = new NewsletterSubscriptionPage(page);
     let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
     const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);

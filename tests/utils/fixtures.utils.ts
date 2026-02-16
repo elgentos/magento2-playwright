@@ -32,10 +32,10 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			});
 
 			const page = await context.newPage();
-			await page.goto('/customer/account', { waitUntil: 'domcontentloaded' });
+			await page.goto(slugs.account.accountOverviewSlug, { waitUntil: 'domcontentloaded' });
 
 			const loggedIn =
-				!page.url().includes('/customer/account/login');
+				!page.url().includes(slugs.account.loginSlug);
 
 			await context.close();
 			console.log(`Is user considered logged in? ${loggedIn}`);
@@ -65,12 +65,12 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			'password': requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`)
 		};
 
-		const emailField = page.getByRole('textbox', {name: 'Email', exact:true});
-		const pwField = page.getByRole('textbox', {name: 'Password'});
-		const loginButton = page.getByRole('button', { name: 'Sign In' });
+		const emailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
+		const pwField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel});
+		const loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
 
 		// Perform authentication steps. Replace these actions with your own.
-		await page.goto('/customer/account/login');
+		await page.goto(slugs.account.loginSlug);
 		await emailField.waitFor();
 
 		await emailField.fill(account.username);
@@ -88,7 +88,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			await expect(
 				page.locator(UIReference.general.headingOneLocator),
 				`Homepage has the expected text in title`
-			).toContainText('My Account');
+			).toContainText(UIReference.titles.accountHeading);
 		}).toPass();
 
 		// End of authentication steps.
