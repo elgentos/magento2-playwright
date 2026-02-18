@@ -39,8 +39,6 @@ class Install {
       'MAGENTO_ADMIN_SLUG': { default: 'admin' },
       'MAGENTO_ADMIN_USERNAME': { default: this.currentUser },
       'MAGENTO_ADMIN_PASSWORD': { default: 'Test1234!' },
-      'MAGENTO_API_USERNAME': { default: this.currentUser },
-      'MAGENTO_API_PASSWORD': { default: 'Test1234!'},
       'MAGENTO_THEME_LOCALE': { default: 'nl_NL' },
       'MAGENTO_NEW_ACCOUNT_PASSWORD': { default: 'NewTest1234!' },
       'MAGENTO_EXISTING_ACCOUNT_EMAIL_CHROMIUM': { default: 'user-CHROMIUM@elgentos.nl' },
