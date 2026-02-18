@@ -13,7 +13,7 @@ import { requireEnv } from '@utils/env.utils';
 test.describe('User tests (logged in)', () => {
 	// Before each test, log in
 	test.beforeEach(async ({ page, browserName }) => {
-		await page.goto(slugs.productPage.simpleProductSlug, {waitUntil: 'load'});
+		await page.goto(slugs.account.accountOverviewSlug, {waitUntil: 'load'});
 		// const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		// const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
 		// const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
