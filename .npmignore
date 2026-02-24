@@ -14,3 +14,4 @@ node_modules/
 /*.config.ts
 /.env
 /tsconfig.json
+.gitlab-ci.yml
