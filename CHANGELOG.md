@@ -8,12 +8,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 Note that the points mentioned here are in the works, to be released in a future update.
 
 ### Added
-- StorageStates to improve both speed and stability of tests that requires a logged-in user.
+- StorageStates to improve both speed and stability of tests that requires a logged-in user. `fixtures.utils.ts` is available, but contains some hard-coded elements which will need to be updated.
 
 ### Changed
 - We will implement the APIClient in various tests.
 
+
+## [5.0.0] - 2026-02-24
+
+### Changed
+- Updated `@faker-js/faker`, `csv-parse`, and `dotenv` to their next major versions.
+- `apiClient.utils.ts` no longer requires specific `.env` credentials, instead uses the provided admin credentials.
+- `setup.spec.ts` now uses the API-driven approach for account creation and coupon code setup.
+- `outcome-markers.json` changed `cart.priceReducedSymbols` from `"- $"` to `"$"` for more flexible discount assertions (for example: spacing is not consistent between projects).
+- `mainmenu.page.ts` reworked navigation: uses product page instead of base URL to prevent menu login-state issues.
+- `checkout.page.ts` adds payment method check assertion before placing order, reworked discount verification to check for "Cancel Coupon" button, and adds a wait after
+country selection for region dropdown update to allow UI changes to take effect.
+
+### Fixed
+- `search.spec.ts` URL assertion changed from exact match to `stringContaining` to prevent false negatives.
+- `checkout.spec.ts` marks `Guest_can_select_payment_methods` as `test.slow()` to prevent timeouts.
+- `mainmenu.spec.ts` adds localhost workaround for menu login-state recognition after login.
+
+### Deprecated
+- Previous versions of `setup.spec.ts` used Playwright functionality to log in to the admin environment and update the necessary settings. This is now mostly replaced with API calls. The old functionality is currently commented out, meaning you can still use it - but this will be removed in future versions.
+- We are currently working on overhauling various JSON files within `config`. Several variables are already under a deprecation notice, and the next update to this npm will continue to rework these.
+
+
 ## [4.0.0] - 2026-01-21
+
+### Added
+- We've added `fixtures.utils.ts`. More on this in a future update!
 
 ### Changed
 - Renamed `adminhtml` folder to `admin`
