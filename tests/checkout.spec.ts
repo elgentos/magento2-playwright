@@ -194,7 +194,7 @@ test.describe('Checkout (guest)', () => {
    * @then I should see a confirmation that my order has been placed
    *  @and a order number should be created and shown to me
    */
-  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
+  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
     // Marking test as slow to allow more time befoure timeout
     test.slow();
     const checkoutPage = new CheckoutPage(page);
