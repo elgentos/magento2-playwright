@@ -143,11 +143,21 @@ class Install {
   }
 
   async setVendorAndTheme() {
-      // Ask user for input if path structure is invalid
-      const vendor = await this.askQuestion('Enter the vendor name: ');
-      const theme = await this.askQuestion('Enter the theme name: ');
+      // Try to derive vendor and theme from the directory structure
+      // Expected: .../app/design/frontend/<vendor>/<theme>/web/playwright/node_modules/@elgentos/magento2-playwright/
+      const projectDir = path.resolve(__dirname, this.pathToBaseDir);
+      const theme = path.basename(path.resolve(projectDir, '../../'));
+      const vendor = path.basename(path.resolve(projectDir, '../../../'));
 
-      return { vendor, theme };
+      if (vendor && theme && vendor !== '.' && theme !== '.') {
+        return { vendor, theme };
+      }
+
+      // Fall back to asking the user if path structure is invalid
+      const vendorInput = await this.askQuestion('Enter the vendor name: ');
+      const themeInput = await this.askQuestion('Enter the theme name: ');
+
+      return { vendor: vendorInput, theme: themeInput };
   }
 }
 
