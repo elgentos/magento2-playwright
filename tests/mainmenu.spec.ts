@@ -112,7 +112,7 @@ test.describe('Guest tests (not logged in)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Navigate_to_subcategory_page', { tag: ['@mainmenu', '@cold'] }, async ({page, browserName}) => {
-		// test.skip(browserName === 'firefox', 'Skipped due to known issue: https://github.com/microsoft/playwright/issues/27969');
+		test.skip(browserName === 'firefox', 'Skipped due to known issue: https://github.com/microsoft/playwright/issues/27969');
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.goToSubCategoryPage();
 	});

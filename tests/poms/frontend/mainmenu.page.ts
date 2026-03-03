@@ -77,6 +77,9 @@ class MainMenuPage {
 		await this.mainMenuAccountButton.waitFor();
 		const categoryLink = this.page.getByRole('link', { name: UIReference.mainMenu.categoryItemText, exact: true });
 
+		// FIREFOX_WORKAROUND: focus on element first (note: does not always work)
+		// See: https://github.com/microsoft/playwright/issues/27969
+		await categoryLink.focus();
 		await categoryLink.hover();
 		await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
 		await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
