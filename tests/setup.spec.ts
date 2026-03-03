@@ -64,20 +64,26 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 
 });
 
+/**
+ * Set up test accounts through the Magento API
+ * @param browserName - used to identify the browser the test is running in.
+ * @param testInfo - Playwright class that allows annotations to the report and more.
+ */
+test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName }, testInfo) => {
+	test.slow(); // Mark as slow to double test time.
 
-test(`Create_test_accounts`, {
-	tag: ['@setup', '@api']}, async ({ browserName }, testInfo) => {
-	// Mark as slow to double test time.
-	test.slow();
-
-	test.skip( browserName !== 'chromium',
-		`Accounts are made through API call - only one browser is required.`
-	);
+	// Skip if not Chromium
+	test.skip( browserName !== 'chromium', `Accounts are made through API call - only one browser is required.`);
 
 	// Start by checking if the accounts already exist
-	const allCustomers = await APIClient.get(`/rest/V1/customers/search?searchCriteria=all`);
-	const testAccountsPresent = allCustomers.items.filter((item: { email: string; }) => item.email.includes('playwright_user'));
+	const allCustomers = await APIClient.get(
+		`/rest/V1/customers/search` +
+		`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+		`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright_user%25` +
+		`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`);
+	const testAccountsPresent = allCustomers.items ?? [];
 
+	// Check for test accounts, create them if not found
 	if(testAccountsPresent.length > 0) {
 		testInfo.annotations.push({
 			type: `test accounts found`,
@@ -85,7 +91,6 @@ test(`Create_test_accounts`, {
 			${JSON.stringify(testAccountsPresent, null, 2)}`}
 		);
 	} else {
-		// Create 12 test accounts for 12 workers.
 		for(let accountId = 0; accountId < 13; accountId++) {
 			const customerPayload = {
 				customer : {
@@ -104,6 +109,13 @@ test(`Create_test_accounts`, {
 			);
 		}
 	}
+
+	// // Now do the same for password test accounts
+	// for(let credentialId = 0; credentialId < 4; credentialId++) {
+	// 	const credentialCustomerPayload = {
+
+	// 	}
+	// }
 });
 
 

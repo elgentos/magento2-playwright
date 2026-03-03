@@ -47,6 +47,11 @@ test.describe('Account information actions', {annotation: {type: 'Account Dashbo
    * @and I should be able to login with my new credentials.
    */
   test('Change_password',{ tag: ['@account-credentials', '@hot'] }, async ({page, browserName}, testInfo) => {
+	test.fixme(true, `Currently takes too long. We need to set up test accounts through API.`);
+
+	// TODO for fixme:
+	// Add test.use({ storageState: { cookies: [], origins: [] } });
+	// This will reset authentication.
 
     // Create instances and set variables
     const mainMenu = new MainMenuPage(page);
