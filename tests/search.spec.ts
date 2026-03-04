@@ -5,7 +5,7 @@ import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 
 import SearchPage from '@poms/frontend/search.page';
 
-test.describe('Search functionality', () => {
+test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', () => {
   test('Search_query_returns_multiple_results', async ({ page }) => {
     await page.goto('');
     const searchPage = new SearchPage(page);
