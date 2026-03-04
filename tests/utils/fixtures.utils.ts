@@ -38,13 +38,13 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 				!page.url().includes(slugs.account.loginSlug);
 
 			await context.close();
-			console.log(`Is user considered logged in? ${loggedIn}`);
+			// console.log(`Is user considered logged in? ${loggedIn}`);
 			return loggedIn;
 		}
 
 		// If storage file exists *and* user is considered logged in, you can use!
 		if (fs.existsSync(fileName) && await userIsLoggedIn(fileName)) {
-			console.log(`authentication file exists, and user is considered logged in!`);
+			// console.log(`authentication file exists, and user is considered logged in!`);
 			await use(fileName);
 			return;
 		}
@@ -82,7 +82,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 		await page.waitForURL('**/', {waitUntil: 'networkidle'});
 
 		// Confirm by checking page.url() returns https://hyva-demo.magento2.localhost/default/customer/account/
-		console.log(page.url());
+		// console.log(page.url());
 
 		await expect(async () => {
 			await expect(
