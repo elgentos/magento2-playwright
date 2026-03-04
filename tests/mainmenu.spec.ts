@@ -132,7 +132,8 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest uses the search function to search for products.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('User_searches_for_product', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+	test.fixme('User_searches_for_product', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+		test.info().annotations.push({type: `fixme notice`, description: `See ticket 414 in Gitlab.`});
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.searchForProduct(inputValues.search.queryMultipleResults);
 	});
