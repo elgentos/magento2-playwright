@@ -91,12 +91,6 @@ export default defineConfig({
     httpCredentials: getHttpCredentials(),
   },
 
-  /*
-   * Setup for global cookie to bypass CAPTCHA, remove '.example' when used.
-   * If this is disabled remove storageState from all project objects.
-   */
-  globalSetup: require.resolve('./bypass-captcha.config.ts'),
-
   /* Configure projects for major browsers */
   projects: [
     // Import our auth.setup.ts file
