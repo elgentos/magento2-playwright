@@ -151,6 +151,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 
 /**
  * Test Group: Account address book actions
+ * @assume we're using the fixture with an authenticated account
  */
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
 
@@ -259,6 +260,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
 /**
  * Test Group: Newsletter tests
+ * @assume we're using the fixture with an authenticated account
  */
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
 
