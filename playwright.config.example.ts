@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from "node:fs";
+import { getHttpCredentials } from '@utils/env.utils';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
@@ -85,6 +86,9 @@ export default defineConfig({
 
     /* Ignore https errors if they apply (should only happen on local) */
     ignoreHTTPSErrors: true,
+
+    /* HTTP Basic Auth for environments behind HTTP authentication (e.g. review sites) */
+    httpCredentials: getHttpCredentials(),
   },
 
   /*
