@@ -19,8 +19,9 @@ export function requireEnv(varName: string): string {
  * Returns undefined when not configured, so it's safe to spread into context options.
  */
 export function getHttpCredentials(): { username: string; password: string } | undefined {
-	const username = requireEnv(`HTTP_AUTH_USERNAME`);
-	const password = requireEnv(`HTTP_AUTH_PASSWORD`);
+	// Note: since these are *not* required, we can't use the requireEnv() function
+	const username = process.env.HTTP_AUTH_USERNAME;
+	const password = process.env.HTTP_AUTH_PASSWORD;
 	if (username && password) {
 		return { username, password };
 	}
