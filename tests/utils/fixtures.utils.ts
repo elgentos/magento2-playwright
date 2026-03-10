@@ -9,7 +9,7 @@
 import { test as baseTest, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import {requireEnv} from "@utils/env.utils";
+import {requireEnv, getHttpCredentials} from "@utils/env.utils";
 import {slugs, UIReference} from "@config";
 
 export * from '@playwright/test';
@@ -29,6 +29,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 				baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
 				storageState,
 				ignoreHTTPSErrors: true,
+				httpCredentials: getHttpCredentials(),
 			});
 
 			const page = await context.newPage();
@@ -54,6 +55,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			storageState: undefined,
 			baseURL: requireEnv(`PLAYWRIGHT_BASE_URL`),
 			ignoreHTTPSErrors: true,
+			httpCredentials: getHttpCredentials(),
 		});
 
 		// Acquire a unique account, for example create a new one.
