@@ -15,7 +15,6 @@ import ApiClient from '@utils/apiClient.utils';
 import { inputValues } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
-import AdminMarketing from '@poms/admin/marketing.page';
 
 /**
  * Set variables we'll be using throughout the file.
@@ -126,7 +125,7 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName },
  * @param browserName - used to create the specific coupon code
  */
 test(`Set_coupon_codes`, {
-	tag: ['@setup', '@api']}, async ({ browserName }, ) => {
+	tag: ['@setup', '@api']}, async ({ browserName } ) => {
 
 	// TODO: Clean up code
 	// TODO: Move to marketing.page.ts
@@ -135,9 +134,15 @@ test(`Set_coupon_codes`, {
 	const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 	const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
-	// Find all coupon codes, then check if testing coupon exists
-	const couponCheckResponse = await APIClient.get(`/rest/V1/coupons/search?searchCriteria=all`);
-	const codePresent = couponCheckResponse.items.some((item: { code: string; }) => item.code === `${couponCode}`);
+	// Try to find our coupon codes, then check if testing coupon exists
+	const couponCheckResponse = await APIClient.get(
+		`/rest/V1/coupons/search` +
+		`?searchCriteria[filter_groups][0][filters][0][field]=code` +
+		`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
+		`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`
+	);
+	const codePresent = couponCheckResponse.items.some(
+		(item: { code: string; }) => item.code === `${couponCode}`);
 
 	// If coupon is present, check if it's enabled.
 	if(codePresent) {
@@ -163,7 +168,6 @@ test(`Set_coupon_codes`, {
 
 	} else {
 		// Not present. Set coupon code, then check.
-		const rules = await APIClient.get(`/rest/V1/salesRules/search?searchCriteria=all`);
 		const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
 		const customerGroups = await APIClient.get(`/rest/V1/customerGroups/search?searchCriteria=all`);
 		let websiteIds: any[] = [];
@@ -180,10 +184,10 @@ test(`Set_coupon_codes`, {
 		});
 
 		const newRule = {
-			name : 'Test Coupon',
+			name : inputValues.coupon.couponCodeRuleName,
 			website_ids: websiteIds,
 			customer_group_ids: customerGroupsIds,
-			from_date: '2025-01-20',
+			from_date: new Date().toISOString().split('T')[0],
 			uses_per_customer: 0,
 			is_active: true,
 			stop_rules_processing: true,
@@ -194,7 +198,7 @@ test(`Set_coupon_codes`, {
 			apply_to_shipping: false,
 			times_used: 0,
 			is_rss: true,
-			coupon_type: 'SPECIFIC_COUPON',
+			coupon_type: 2, // 2 is 'SPECIFIC_COUPON'
 			use_auto_generation: false,
 			uses_per_coupon: 0
 		};
