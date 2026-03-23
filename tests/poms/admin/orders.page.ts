@@ -33,7 +33,7 @@ class AdminOrders {
 	const ordersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(`**/${requireEnv('MAGENTO_ADMIN_SLUG')}/sales/order/index/**`);
+	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/sales/order/index/`));
 	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}

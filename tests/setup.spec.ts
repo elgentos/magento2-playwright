@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
-import { inputValues } from '@config';
+import { inputValues, UIReference } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
 
@@ -37,9 +37,32 @@ test.beforeAll(`Initialize API Client`, async() => {
 test('Disable_login_captcha_and_enable_multiple_login', {
 	tag: '@setup'}, async ({ page, browserName }) => {
 
+	// Set test to skip if the browser isn't Chromium.
 	test.skip( browserName !== 'chromium',
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
+
+	// Locator Handler array. Add locators to this to close pop-ups during the setup.
+	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection
+	const popUpHandlers = [
+		{
+			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
+			action: () => page.getByRole('button', { name: UIReference.admin.declineDontAllowButton }).click(),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteNewsletterLabel),
+			action: () => page.getByRole('button', { name: UIReference.admin.declineNoThanksButton }).click(),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
+			action: () => page.getByRole('button', { name: UIReference.admin.okButtonLabel }).click(),
+		},
+	];
+
+	// Add playwright 'listeners'
+	for (const {locator, action} of popUpHandlers) {
+		await page.addLocatorHandler(locator, action);
+	};
 
 	const adminLoginPage = new AdminLogin(page);
 

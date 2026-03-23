@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 
 class CheckoutPage extends MagewireUtils {
@@ -79,7 +80,7 @@ class CheckoutPage extends MagewireUtils {
 		await this.placeOrderButton.click();
 		await this.waitForMagewireRequests();
 
-		await this.page.waitForURL(new RegExp(slugs.checkout.purchaseSuccessSlug));
+		await this.page.waitForURL(slugToRegex(slugs.checkout.purchaseSuccessSlug));
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
 		let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });

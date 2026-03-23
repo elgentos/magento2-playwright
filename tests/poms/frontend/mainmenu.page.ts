@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import { requireEnv } from '@utils/env.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 // Timeout used to check our authenticated state.
 const CUSTOMER_DATA_TIMEOUT = 10_000;
@@ -106,8 +107,7 @@ class MainMenuPage {
 		await this.openAccountMenu();
 
 		await this.mainMenuLoginItem.click();
-		const loginRegEx = new RegExp(`${slugs.account.loginSlugRegex}`);
-		await this.page.waitForURL(loginRegEx);
+		await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
 		await expect(loginHeader, 'Login header text is visible').toBeVisible();
 	}
 
@@ -156,7 +156,7 @@ class MainMenuPage {
 	 */
 	async goToWishList() {
 		await this.mainMenuWishListButton.click();
-		await this.page.waitForURL(new RegExp(slugs.wishList.wishListSlug));
+		await this.page.waitForURL(slugToRegex(slugs.wishList.wishListSlug));
 
 		await expect(this.page.getByRole('heading', {name: UIReference.wishListPage.wishListTitle, exact:true}),
 		`Heading "${UIReference.wishListPage.wishListTitle}" is visible`).toBeVisible();
@@ -193,7 +193,7 @@ class MainMenuPage {
 		await expect(this.page.getByText(UIReference.search.searchTermDropdownText, { exact: true }), 'Dropdown with results is visible').toBeVisible();
 		await searchField.press('Enter');
 
-		await this.page.waitForURL(`**/?q=${searchTerm}`);
+		await this.page.waitForURL(new RegExp(`[?&]q=${searchTerm}`));
 		await expect(this.page.getByRole('heading', { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }),
 		`Title contains search term: "${searchTerm}"`).toBeVisible();
 	}
@@ -220,7 +220,7 @@ class MainMenuPage {
 		await expect(this.mainMenuLogoutItem, `Log out button is no longer visible`).toBeHidden();
 
 		// since the page automatically navigates to the home page, wait until we're there.
-		await this.page.waitForURL(requireEnv(`PLAYWRIGHT_BASE_URL`));
+		await this.page.waitForURL(slugToRegex(requireEnv(`PLAYWRIGHT_BASE_URL`)));
 	}
 }
 

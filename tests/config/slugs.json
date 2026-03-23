@@ -1,7 +1,6 @@
 {
   "account": {
     "accountOverviewSlug": "/customer/account/",
-    "accountOverviewRegex": "/.*\\/customer\\/account\\/.*/",
     "addressBookSlug": "/customer/address",
     "addressIndexSlug": "/customer/address/index",
     "addressNewSlug": "/customer/address/new",
@@ -9,7 +8,6 @@
     "changePasswordSlug": "/customer/account/edit/changepass/1/",
     "createAccountSlug": "/customer/account/create/",
     "loginSlug": "/customer/account/login/",
-    "loginSlugRegex": ".*\\/customer\\/account\\/login.*",
     "orderHistorySlug": "/sales/order/history/"
   },
   "cart": {
@@ -37,7 +35,6 @@
     "resultsSlug": "/catalogsearch/result/"
   },
   "wishList": {
-    "wishListSlug": "/wishlist/",
-    "wishListRegex": ".*wishlist.*"
+    "wishListSlug": "/wishlist/"
   }
 }

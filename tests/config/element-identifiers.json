@@ -38,6 +38,7 @@
   "admin" : {
 		"admin": "Admin",
 		"adminSharing": "Admin Account Sharing",
+		"adobeDataCollectionText": "Allow Adobe to collect usage data to improve user experience",
 		"advanced": "Advanced",
 		"captchaEnabled": "Enable CAPTCHA on Storefront",
 		"configuration": "Configuration",
@@ -47,6 +48,11 @@
 		"customerInheritLocator": "#admin_security_admin_account_sharing_inherit",
 		"customers": "Customers",
 		"customerConfiguration": "Customer Configuration",
+		"declineDontAllowButton": "Don't Allow",
+		"declineNoThanksButton": "No thanks",
+		"elasticSuiteNewsletterLabel": "Introducing the Elasticsuite newsletter",
+		"elasticSuiteTelemetryLabel": "Help Us Improve Elasticsuite",
+		"okButtonLabel": "Ok",
 		"recordsFoundLocator": "#promo_quote_grid-total-count",
 		"storesButton" : "Stores"
   },
