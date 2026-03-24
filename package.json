@@ -4,6 +4,9 @@
   "author": "elgentos",
   "license": "ISC",
   "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
+  "bin": {
+    "magento2-playwright": "./bin/cli.js"
+  },
   "scripts": {
     "postinstall": "node build.js; node install.js; npx playwright install",
     "translate": "node translate-json.js nl_NL"

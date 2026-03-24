@@ -9,7 +9,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { requireEnv } from '@utils/env.utils';
+import { requireEnv, getCouponCode } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
 import { inputValues } from '@config';
@@ -127,12 +127,7 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName },
 test(`Set_coupon_codes`, {
 	tag: ['@setup', '@api']}, async ({ browserName } ) => {
 
-	// TODO: Clean up code
-	// TODO: Move to marketing.page.ts
-	// TODO: Remove the use of the requireEnv(), since it's not necessary anymore.
-
-	const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-	const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+	const couponCode = getCouponCode(browserName);
 
 	// Try to find our coupon codes, then check if testing coupon exists
 	const couponCheckResponse = await APIClient.get(
