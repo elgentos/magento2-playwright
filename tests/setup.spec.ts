@@ -11,7 +11,6 @@ import { test, expect } from '@playwright/test';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
-
 import { inputValues } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
