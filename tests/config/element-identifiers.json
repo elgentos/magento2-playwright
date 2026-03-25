@@ -179,6 +179,7 @@
     "cartTitleText": "Shopping Cart",
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
+	"discountBoxLabel": "Discount Code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
     "updateItemButtonLabel": "Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"

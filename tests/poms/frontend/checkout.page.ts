@@ -117,12 +117,14 @@ class CheckoutPage extends MagewireUtils {
 		await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
 		const discountString = `Discount (${code})`;
 		// await expect(this.page.getByText(`-${outcomeMarker.checkout.checkoutPriceReducedSymbol}`),`'-$' should be visible on the page`).toBeVisible();
-	
+
 		// Alternate checking method: the button 'Cancel Coupon' should become visible.
-		await expect(this.page.getByRole('button', {name: 'Cancel Coupon'})).toBeVisible();
+		await expect(this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel})).toBeVisible();
+
+		const discountBox = this.page.getByRole('textbox', {name: UIReference.cart.discountBoxLabel});
 
 		await expect(async() => {
-			await expect(this.page.getByText(discountString),`discount marker is visible`).toBeVisible();
+			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
 		}).toPass();
 	}
 
