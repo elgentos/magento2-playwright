@@ -23,6 +23,13 @@ class CheckoutPage extends MagewireUtils {
 	readonly creditCardExpiryField: Locator;
 	readonly creditCardCVVField: Locator;
 	readonly creditCardNameField: Locator;
+	// Customer name and address
+	readonly newAddressButton: Locator;
+	readonly firstNameField: Locator;
+	readonly lastNameField: Locator;
+	readonly streetAddressField: Locator;
+	readonly stateDropDown: Locator;
+	readonly phoneNumberField: Locator;
 
 	constructor(
 			page: Page
@@ -48,12 +55,23 @@ class CheckoutPage extends MagewireUtils {
 		this.creditCardExpiryField = this.page.getByLabel(UIReference.checkout.creditCardExpiryLabel);
 		this.creditCardCVVField = this.page.getByLabel(UIReference.checkout.creditCardCVVLabel);
 		this.creditCardNameField = this.page.getByLabel(UIReference.checkout.creditCardNameLabel);
+		// Customer name and address
+		this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
+		this.firstNameField = page.getByRole('textbox', {name: UIReference.personalInformation.firstNameLabel});
+		this.lastNameField = page.getByRole('textbox', {name: UIReference.personalInformation.lastNameLabel});
+		this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, { exact: true });
+		this.stateDropDown = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
+		this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
 	}
 
 	// ==============================================
 	// Order-related methods
 	// ==============================================
 
+	/**
+	 * Function to place order for a test user.
+	 * @returns {string} Ordernumber - the order to confirm the test with
+	 */
 	async placeOrder(){
 		let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
 
@@ -87,6 +105,7 @@ class CheckoutPage extends MagewireUtils {
 		await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
 		return orderNumber;
 	}
+
 
 
 	// ==============================================
@@ -232,7 +251,7 @@ class CheckoutPage extends MagewireUtils {
 		await this.page.getByLabel(UIReference.personalInformation.lastNameLabel).fill(faker.person.lastName());
 		await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).first().fill(faker.location.streetAddress());
 		await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.location.zipCode());
-		await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city());
+		await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
 		await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number({style: 'national'}));
 
 		// Select country (if needed)
