@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
-import { inputValues } from '@config';
+import { inputValues, UIReference } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
 
@@ -37,9 +37,42 @@ test.beforeAll(`Initialize API Client`, async() => {
 test('Disable_login_captcha_and_enable_multiple_login', {
 	tag: '@setup'}, async ({ page, browserName }) => {
 
+	// Set test to skip if the browser isn't Chromium.
 	test.skip( browserName !== 'chromium',
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
+
+	// Pop-up definitions. Each entry maps a trigger locator to its dismiss button.
+	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection
+	const popUpDismissals = [
+		{
+			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
+			button: page.getByRole('button', { name: UIReference.admin.declineDontAllowButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteNewsletterLabel),
+			button: page.getByRole('button', { name: UIReference.admin.declineNoThanksButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
+			button: page.getByRole('button', { name: UIReference.admin.okButtonLabel }),
+		},
+	];
+
+	// Dismiss all visible pop-ups using dispatchEvent to bypass actionability checks.
+	// This avoids getting stuck when one pop-up overlaps another's dismiss button.
+	const dismissAllVisiblePopUps = async () => {
+		for (const { locator, button } of popUpDismissals) {
+			if (await locator.isVisible()) {
+				await button.dispatchEvent('click');
+			}
+		}
+	};
+
+	// Register the same dismiss-all handler for each trigger locator.
+	for (const { locator } of popUpDismissals) {
+		await page.addLocatorHandler(locator, dismissAllVisiblePopUps);
+	}
 
 	const adminLoginPage = new AdminLogin(page);
 
