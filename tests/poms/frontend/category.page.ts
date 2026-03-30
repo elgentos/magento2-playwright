@@ -57,7 +57,7 @@ class CategoryPage {
 
     // Click on the XS filter option
     await sizeXSButton.click();
-    await this.page.waitForURL(/\?size=166/);
+    await this.page.waitForURL(/[?&]size=166/);
 
     // Verify active filtering is shown and Clear All link is available
     await expect(activeFilteringButton, 'Active filtering button should be visible').toBeVisible();
@@ -76,7 +76,7 @@ class CategoryPage {
   async sortProducts(attribute:string){
     const sortButton = this.page.getByLabel(UIReference.categoryPage.sortByButtonLabel);
     await sortButton.selectOption(attribute);
-    const sortRegex = new RegExp(`\\?product_list_order=${attribute}$`);
+    const sortRegex = new RegExp(`[?&]product_list_order=${attribute}`);
     await this.page.waitForURL(sortRegex);
 
     const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => (sel as HTMLSelectElement).value);
@@ -100,7 +100,7 @@ class CategoryPage {
     const productGrid = this.page.locator(UIReference.categoryPage.productGridLocator);
 
     await itemsPerPageButton.selectOption('36');
-    const itemsRegex = /\?product_list_limit=36$/;
+    const itemsRegex = /[?&]product_list_limit=36/;
     await this.page.waitForURL(itemsRegex);
 
     const amountOfItems = await productGrid.locator('li').count();
@@ -127,7 +127,7 @@ class CategoryPage {
       await this.page.getByLabel(UIReference.categoryPage.viewGridLabel).click();
     }
 
-    const viewRegex = /\?product_list_mode=list$/;
+    const viewRegex = /[?&]product_list_mode=list/;
     await this.page.waitForURL(viewRegex);
 
     const newActiveView = await viewSwitcher.getAttribute('title');

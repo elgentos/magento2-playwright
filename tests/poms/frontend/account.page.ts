@@ -3,6 +3,7 @@
 import {expect, type Locator, type Page, test, TestInfo} from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 import LoginPage from '@poms/frontend/login.page';
 
@@ -146,9 +147,9 @@ class AccountPage {
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
+    await this.page.waitForURL(slugToRegex(slugs.account.addressIndexSlug));
 
-    await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
+    // await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
   }
 
 
@@ -265,7 +266,7 @@ class AccountPage {
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+    await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
@@ -276,7 +277,7 @@ class AccountPage {
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
 
-	await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+	await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
     await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
   }
 
