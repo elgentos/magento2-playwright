@@ -5,9 +5,9 @@ import { test, expect } from '@utils/fixtures.utils';
 
 import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
-import MainMenuPage from '@poms/frontend/mainmenu.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
+import { faker } from '@faker-js/faker';
 import { requireEnv } from '@utils/env.utils';
 import MagewireUtils from '@utils/magewire.utils';
 import { UIReference, slugs } from '@config';
@@ -67,11 +67,14 @@ test.describe('Checkout (logged in user)', () => {
 
 	/**
 	 * Test: The user places an order for a (simple) product
-	 * @assume the user already has an item in their cart.
+	 * @assume the user already has an item in their cart and is on the checkout page.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}) => {
 		const checkoutPage = new CheckoutPage(page);
+		const accountPage = new AccountPage(page);
+		await accountPage.ensureCustomerDetails();
+
 		let orderNumber = await checkoutPage.placeOrder();
 		test.info().annotations.push({ type: 'Order number', description: `${orderNumber}` });
 	});
