@@ -1,8 +1,9 @@
 // @ts-check
 
 import { expect, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from '@config';
+import { UIReference, outcomeMarker, slugs } from '@config';
 import { requireEnv } from '@utils/env.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 class AdminOrders {
   readonly page: Page;
@@ -33,7 +34,7 @@ class AdminOrders {
 	const ordersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/sales/order/index/`));
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.orderIndexSlug}`));
 	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}

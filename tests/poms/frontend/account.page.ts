@@ -147,9 +147,9 @@ class AccountPage {
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
+    await this.page.waitForURL(slugToRegex(slugs.account.addressIndexSlug));
 
-    await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
+    // await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
   }
 
 

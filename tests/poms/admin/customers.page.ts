@@ -1,8 +1,9 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, inputValues, outcomeMarker } from '@config';
+import { UIReference, inputValues, outcomeMarker, slugs } from '@config';
 import { requireEnv } from "@utils/env.utils";
+import { slugToRegex } from '@utils/url.utils';
 
 class AdminCustomers {
   readonly page: Page;
@@ -35,7 +36,7 @@ class AdminCustomers {
 	await allCustomersLink.click();
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/`));
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerIndexSlug}`));
 	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}
@@ -93,7 +94,7 @@ class AdminCustomers {
 	await createNewCustomersLink.click();
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/new/`));
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerNewSlug}`));
 	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
 	}
@@ -113,7 +114,7 @@ class AdminCustomers {
 	await allowBulkPurchaseSwitcher.click();
 	await accountCreationConfirmButton.click();
 
-	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/edit/`));
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
 	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
 	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
 
@@ -161,7 +162,7 @@ class AdminCustomers {
 	  editAccountButton.click();
 	}).toPass();
 
-	await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/edit/`));
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
 	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 	  console.log('Spinner is visible');
 	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
@@ -171,7 +172,7 @@ class AdminCustomers {
 	if (await approvalButtonAccountEdit.isVisible()) {
 	  await approvalButtonAccountEdit.click();
 
-	  await this.page.waitForURL(new RegExp(`/${requireEnv('MAGENTO_ADMIN_SLUG')}/customer/index/edit/`));
+	  await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
 	  if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
 		console.log('Spinner is visible');
 		await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});

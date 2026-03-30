@@ -36,5 +36,11 @@
   },
   "wishList": {
     "wishListSlug": "/wishlist/"
+  },
+  "admin": {
+    "customerIndexSlug": "/customer/index/",
+    "customerNewSlug": "/customer/index/new/",
+    "customerEditSlug": "/customer/index/edit/",
+    "orderIndexSlug": "/sales/order/index/"
   }
 }
