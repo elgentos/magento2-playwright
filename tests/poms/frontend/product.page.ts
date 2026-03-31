@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 class ProductPage {
   readonly page: Page;
@@ -59,7 +60,7 @@ class ProductPage {
 
     let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
 
-    await expect(this.page).toHaveURL(new RegExp(slugs.wishList.wishListRegex));
+    await expect(this.page).toHaveURL(slugToRegex(slugs.wishList.wishListSlug));
     await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     await expect(productNameInWishlist).toContainText(product);
   }
@@ -118,7 +119,7 @@ class ProductPage {
 
     // Select 20 reviews per page
     await reviewCountSelector.selectOption('20');
-    await this.page.waitForURL(/.*limit=20.*/);
+    await this.page.waitForURL(/[?&]limit=20/);
 
     // Verify URL contains the new limit
     const urlAfterFirstChange = this.page.url();
@@ -127,7 +128,7 @@ class ProductPage {
 
     // Select 50 reviews per page
     await reviewCountSelector.selectOption('50');
-    await this.page.waitForURL(/.*limit=50.*/);
+    await this.page.waitForURL(/[?&]limit=50/);
 
     // Verify URL contains the new limit
     const urlAfterSecondChange = this.page.url();

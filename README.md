@@ -28,7 +28,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ## Prerequisites
 
-* This testing suite has been designed to work within a Hÿva theme in Magento 2, but can work with other themes.
+* This testing suite has been designed to work within a Hyvä theme in Magento 2, but can work with other themes.
 * **Magento 2 instance:** A running instance of Magento 2 for testing purposes. Elgentos sponsors a [Hyvä demo website](https://hyva-demo.elgentos.io/) for this project.
 
 ---

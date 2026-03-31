@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference,  outcomeMarker, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 class MiniCartPage {
   readonly page: Page;
@@ -26,12 +27,12 @@ class MiniCartPage {
 
   async goToCheckout(){
     await this.toCheckoutButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.checkout.checkoutSlug}.*`));
+    await expect(this.page).toHaveURL(slugToRegex(slugs.checkout.checkoutSlug));
   }
 
   async goToCart(){
     await this.toCartButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartSlug}.*`));
+    await expect(this.page).toHaveURL(slugToRegex(slugs.cart.cartSlug));
   }
 
   async removeProductFromMinicart(product: string) {
@@ -47,7 +48,7 @@ class MiniCartPage {
   async updateProduct(amount: string){
     let productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
     await this.editProductButton.click();
-    await expect(this.page).toHaveURL(new RegExp(`${slugs.cart.cartProductChangeSlug}.*`));
+    await expect(this.page).toHaveURL(slugToRegex(slugs.cart.cartProductChangeSlug));
 
     await this.productQuantityField.click();
     await this.productQuantityField.fill(amount);

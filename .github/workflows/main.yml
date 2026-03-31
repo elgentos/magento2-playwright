@@ -53,7 +53,6 @@ jobs:
       - name: Copy config files
         run: |
           cp playwright.config.example.ts playwright.config.ts
-          cp bypass-captcha.config.example.ts bypass-captcha.config.ts
           cp tsconfig.example.json tsconfig.json
 
       - name: Create testing suite environment
