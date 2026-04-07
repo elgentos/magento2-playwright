@@ -12,6 +12,7 @@ class Install {
   isCi = false;
   useDefaults = false;
   pathToMagentoRootGitignore = '../../../../../../../'; // default: when installed via npm
+  pathToBaseDir = '../../../'; // default: when installed via npm
   envVars = {};
 
   rulesToAddToIgnore = [
@@ -30,6 +31,7 @@ class Install {
 
     if (isLocalDev) {
       this.pathToMagentoRootGitignore = './'; // we're in the root of the dev repo
+      this.pathToBaseDir = './';
     }
 
     this.envVars = {
@@ -85,7 +87,7 @@ class Install {
     }
 
     // Read and update .env file
-    const envPath = path.join('.env');
+    const envPath = path.resolve(__dirname, this.pathToBaseDir, '.env');
     let envContent = '';
 
     for (const [key, value] of Object.entries(this.envVars)) {
@@ -143,11 +145,21 @@ class Install {
   }
 
   async setVendorAndTheme() {
-      // Ask user for input if path structure is invalid
-      const vendor = await this.askQuestion('Enter the vendor name: ');
-      const theme = await this.askQuestion('Enter the theme name: ');
+      // Try to derive vendor and theme from the directory structure
+      // Expected: .../app/design/frontend/<vendor>/<theme>/web/playwright/node_modules/@elgentos/magento2-playwright/
+      const projectDir = path.resolve(__dirname, this.pathToBaseDir);
+      const theme = path.basename(path.resolve(projectDir, '../../'));
+      const vendor = path.basename(path.resolve(projectDir, '../../../'));
 
-      return { vendor, theme };
+      if (vendor && theme && vendor !== '.' && theme !== '.') {
+        return { vendor, theme };
+      }
+
+      // Fall back to asking the user if path structure is invalid
+      const vendorInput = await this.askQuestion('Enter the vendor name: ');
+      const themeInput = await this.askQuestion('Enter the theme name: ');
+
+      return { vendor: vendorInput, theme: themeInput };
   }
 }
 

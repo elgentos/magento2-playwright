@@ -165,21 +165,29 @@ test.describe('Checkout (guest)', () => {
 		await checkout.enterWrongCouponCode("incorrect discount code");
 	});
 
-	/**
-	 * Test: A guest can select payment methods in the checkout.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
-		// Marking test as slow to allow more time before timeout
-		test.slow();
-		const checkoutPage = new CheckoutPage(page);
-		await page.goto(slugs.checkout.checkoutSlug);
+  /**
+   * @feature Payment Method Selection
+   * @scenario Guest user selects different payment methods during checkout
+   * @given I have a product in my cart
+   *  @and I am on the checkout page as a guest
+   * @when I select a payment method
+   *  @and I complete the checkout process
+   * @then I should see a confirmation that my order has been placed
+   *  @and a order number should be created and shown to me
+   */
+  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
+    // Marking test as slow to allow more time befoure timeout
+    test.slow();
+    const checkoutPage = new CheckoutPage(page);
 
-		await checkoutPage.fillShippingAddress();
-		await checkoutPage.selectShippingMethod('fixed');
-		await checkoutPage.selectPaymentMethod('check');
-
-		let orderNumber = await checkoutPage.placeOrder();
-		expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
-	});
+    // Test with check/money order payment
+    await test.step('Place order with check/money order payment', async () => {
+      await page.goto(slugs.checkout.checkoutSlug);
+      await checkoutPage.fillShippingAddress();
+      await checkoutPage.selectShippingMethod('fixed');
+      await checkoutPage.selectPaymentMethod('check');
+      let orderNumber = await checkoutPage.placeOrder();
+      expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
+    });
+  });
 });
