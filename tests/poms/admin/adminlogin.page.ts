@@ -67,6 +67,9 @@ class AdminLogin {
 
 		await this.customerConfigurationLink.click();
 
+		// wait for Captcha Accordion to be visible before continuing.
+		await this.customerCaptchaAccordion.waitFor();
+
 		if(!await this.storeFrontCaptchaOption.isVisible()){
 			// option not visible, tab is closed.
 			await this.customerCaptchaAccordion.click();
@@ -124,6 +127,9 @@ class AdminLogin {
 		}).toPass();
 
 		await this.adminSettingsLink.click();
+
+		// wait for adminSecurityAccordion to be visible before continuing.
+		await this.adminSecurityAccordion.waitFor();
 
 		if(!await this.adminSharingOption.isVisible()){
 			// tab is closed.
@@ -188,6 +194,10 @@ class AdminLogin {
 		await expect(async() => {
 			await expect(dashboardLabel, `Dashboard Title is visible`).toBeVisible();
 		}).toPass();
+
+		// WORKAROUND
+		// Add a timeout to ensure Magento has time to bind JS to buttons
+		await this.page.waitForTimeout(3000);
 	}
 }
 

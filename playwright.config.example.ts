@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from "node:fs";
+import { getHttpCredentials } from '@utils/env.utils';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
@@ -85,13 +86,10 @@ export default defineConfig({
 
     /* Ignore https errors if they apply (should only happen on local) */
     ignoreHTTPSErrors: true,
-  },
 
-  /*
-   * Setup for global cookie to bypass CAPTCHA, remove '.example' when used.
-   * If this is disabled remove storageState from all project objects.
-   */
-  globalSetup: require.resolve('./bypass-captcha.config.ts'),
+    /* HTTP Basic Auth for environments behind HTTP authentication (e.g. review sites) */
+    httpCredentials: getHttpCredentials(),
+  },
 
   /* Configure projects for major browsers */
   projects: [

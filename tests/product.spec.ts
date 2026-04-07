@@ -19,12 +19,12 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
      * Various fixes have been tried, unsuccessfully.
      */
     await test.step('Log in with account', async () =>{
-      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-      const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-      const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+		const id = test.info().parallelIndex;
+		let user = `playwright_user_${id}@elgentos.nl`;
+		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
       const loginPage = new LoginPage(page);
-      await loginPage.login(emailInputValue, passwordInputValue);
+      await loginPage.login(user, password);
     });
 
     await test.step('Add product to wishlist', async () =>{
