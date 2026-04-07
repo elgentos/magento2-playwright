@@ -34,7 +34,6 @@ variables:
   MAGENTO_API_USERNAME: "$MAGENTO_ADMIN_USERNAME"
   MAGENTO_API_PASSWORD: "$MAGENTO_ADMIN_PASSWORD"
 
-  CAPTCHA_BYPASS: "true"
   PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright"
 
 .debug-template:
@@ -76,7 +75,6 @@ variables:
       check_var PLAYWRIGHT_BASE_URL
       check_var PLAYWRIGHT_STAGING_URL
       check_var PLAYWRIGHT_PRODUCTION_URL
-      check_var CAPTCHA_BYPASS
       check_var MAGENTO_ADMIN_SLUG
 
       check_var MAGENTO_ADMIN_USERNAME
@@ -229,7 +227,6 @@ create_testing_suite:
       - test-results/
       - base-tests/
       - tests/
-      - bypass-captcha.config.ts
       - playwright.config.ts
       - tsconfig.json
       - .env

@@ -9,8 +9,9 @@
 import { test as baseTest, expect } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
-import {requireEnv} from "@utils/env.utils";
+import {requireEnv, getHttpCredentials} from "@utils/env.utils";
 import {slugs, UIReference} from "@config";
+import { slugToRegex } from '@utils/url.utils';
 
 export * from '@playwright/test';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -29,22 +30,23 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 				baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
 				storageState,
 				ignoreHTTPSErrors: true,
+				httpCredentials: getHttpCredentials(),
 			});
 
 			const page = await context.newPage();
-			await page.goto('/customer/account', { waitUntil: 'domcontentloaded' });
+			await page.goto(slugs.account.accountOverviewSlug, { waitUntil: 'domcontentloaded' });
 
 			const loggedIn =
-				!page.url().includes('/customer/account/login');
+				!page.url().includes(slugs.account.loginSlug);
 
 			await context.close();
-			console.log(`Is user considered logged in? ${loggedIn}`);
+			// console.log(`Is user considered logged in? ${loggedIn}`);
 			return loggedIn;
 		}
 
 		// If storage file exists *and* user is considered logged in, you can use!
 		if (fs.existsSync(fileName) && await userIsLoggedIn(fileName)) {
-			console.log(`authentication file exists, and user is considered logged in!`);
+			// console.log(`authentication file exists, and user is considered logged in!`);
 			await use(fileName);
 			return;
 		}
@@ -54,6 +56,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			storageState: undefined,
 			baseURL: requireEnv(`PLAYWRIGHT_BASE_URL`),
 			ignoreHTTPSErrors: true,
+			httpCredentials: getHttpCredentials(),
 		});
 
 		// Acquire a unique account, for example create a new one.
@@ -65,12 +68,12 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 			'password': requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`)
 		};
 
-		const emailField = page.getByRole('textbox', {name: 'Email', exact:true});
-		const pwField = page.getByRole('textbox', {name: 'Password'});
-		const loginButton = page.getByRole('button', { name: 'Sign In' });
+		const emailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
+		const pwField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel});
+		const loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
 
 		// Perform authentication steps. Replace these actions with your own.
-		await page.goto('/customer/account/login');
+		await page.goto(slugs.account.loginSlug, {waitUntil: 'load'});
 		await emailField.waitFor();
 
 		await emailField.fill(account.username);
@@ -79,16 +82,16 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 
 		// Wait until the page receives the cookies.
 		// We do this by waiting for the page to be done loading. This should navigate to the customer account page.
-		await page.waitForURL('**/', {waitUntil: 'networkidle'});
+		await page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug), {waitUntil: 'networkidle'});
 
 		// Confirm by checking page.url() returns https://hyva-demo.magento2.localhost/default/customer/account/
-		console.log(page.url());
+		// console.log(page.url());
 
 		await expect(async () => {
 			await expect(
 				page.locator(UIReference.general.headingOneLocator),
 				`Homepage has the expected text in title`
-			).toContainText('My Account');
+			).toContainText(UIReference.titles.accountHeading);
 		}).toPass();
 
 		// End of authentication steps.
