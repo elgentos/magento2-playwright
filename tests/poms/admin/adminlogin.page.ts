@@ -19,8 +19,11 @@ class AdminLogin {
 	readonly storesConfigurationButton: Locator;
 	readonly storesCustomersTab: Locator;
 	readonly advancedSettingsTab: Locator;
+	// Use CSS locators instead of getByRole — sidebar nav links are inside
+	// aria-hidden="true" containers and are invisible to ARIA queries until the tab is clicked.
+	// Reading the href directly lets us navigate without expanding the tab first.
 	readonly customerConfigurationLink: Locator;
-	readonly adminSettingsLink:Locator;
+	readonly adminSettingsLink: Locator;
 	// Settings
 	readonly customerCaptchaAccordion: Locator;
 	readonly adminSecurityAccordion: Locator;
@@ -40,14 +43,17 @@ class AdminLogin {
 		this.adminLoginPasswordField = page.locator(UIReference.authentication.adminPasswordFieldId);
 		this.adminLoginButton = page.locator(UIReference.authentication.adminLoginButtonClass);
 		// Navigation
-		this.mainMenuStoresButton = page.getByRole('link', {name: UIReference.admin.storesButton});
-		this.storesConfigurationButton = page.getByRole('link', {name: UIReference.admin.configuration}).first();
+		// Use data-ui-id selectors — more stable than role/name matching for the admin menu.
+		this.mainMenuStoresButton = page.locator('[data-ui-id="menu-magento-backend-stores"]');
+		this.storesConfigurationButton = page.locator('[data-ui-id="menu-magento-config-system-config"] a');
 		this.storesCustomersTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.admin.customers);
-		this.advancedSettingsTab = page.getByRole('strong').filter({hasText: UIReference.admin.advanced});
-		this.customerConfigurationLink = page.getByRole('link', { name: UIReference.admin.customerConfiguration });
-		this.adminSettingsLink = page.getByRole('link', {name: UIReference.admin.admin, exact: true});
+		this.advancedSettingsTab = page.getByRole('strong').filter({ hasText: UIReference.admin.advanced });
+		// CSS selector ignores aria-hidden on the parent <ul> — allows getAttribute('href')
+		// without needing to click the tab to reveal the link first.
+		this.customerConfigurationLink = page.locator('a.admin__page-nav-link[href*="/section/customer/"]');
+		this.adminSettingsLink = page.locator('a.admin__page-nav-link[href*="/section/admin/"]');
 		// Settings
-		this.customerCaptchaAccordion = page.getByRole('link', { name: 'CAPTCHA' }).filter({hasNotText: 'documentation'});
+		this.customerCaptchaAccordion = page.getByRole('link', { name: 'CAPTCHA' }).filter({ hasNotText: 'documentation' });
 		this.adminSecurityAccordion = page.getByRole('link', { name: UIReference.general.security });
 		this.storeFrontCaptchaOption = page.getByLabel(UIReference.admin.captchaEnabled);
 		this.adminSharingOption = page.getByLabel(UIReference.admin.adminSharing);
@@ -56,21 +62,37 @@ class AdminLogin {
 	}
 
 	/**
-	 * Disable the CAPTCHAs that prevent Playwright tests from functioning.
+	 * Navigate to the Stores Settings in Magento Admin.
+	 * The base version clicks through the admin nav menu, which is unreliable
+	 * because sidebar links are in aria-hidden containers. Instead we read the href
+	 * directly from the always-present DOM link and navigate via goto().
 	 */
-	async disableLoginCaptcha(){
-		await this.storesCustomersTab.click();
-		// Confirm the link for customer configuration is visible.
+	async navigateToStoreSettings() {
+		const configUrl = await this.storesConfigurationButton.getAttribute('href');
+		if (!configUrl) throw new Error('Could not find Configuration link href');
+		await this.page.goto(configUrl, { waitUntil: 'load' });
+
+		// Confirm the page has loaded correctly by checking for the presence of text.
 		await expect(async() => {
-			await expect(this.customerConfigurationLink, `"Customer Configuration" link is visible`).toBeVisible();
+			await expect(this.pageHeadingOne, `Page title is '${UIReference.admin.configuration}'`)
+				.toContainText(UIReference.admin.configuration);
+			await expect(this.page.getByRole('link', { name: UIReference.general.general }),
+				`"General options" under General section is visible.`).toBeVisible();
 		}).toPass();
+	}
 
-		await this.customerConfigurationLink.click();
+	/**
+	 * Disable the CAPTCHAs that prevent Playwright tests from functioning.
+	 * Navigates directly to the Customer Configuration section via URL
+	 * instead of clicking through the Customers tab in the sidebar.
+	 */
+	async disableLoginCaptcha() {
+		// Read href from the DOM link (CSS selector bypasses aria-hidden) and navigate directly.
+		const customerConfigUrl = await this.customerConfigurationLink.getAttribute('href');
+		if (!customerConfigUrl) throw new Error('Could not find Customer Configuration link href');
+		await this.page.goto(customerConfigUrl, { waitUntil: 'load' });
 
-		// wait for Captcha Accordion to be visible before continuing.
-		await this.customerCaptchaAccordion.waitFor();
-
-		if(!await this.storeFrontCaptchaOption.isVisible()){
+		if (!await this.storeFrontCaptchaOption.isVisible()) {
 			// option not visible, tab is closed.
 			await this.customerCaptchaAccordion.click();
 			// Confirm captcha option is now open
@@ -78,16 +100,16 @@ class AdminLogin {
 		}
 
 		// if the 'use system value' checkbox is checked, uncheck it.
-		if(await this.customerCAPTCHAInheritCheckbox.isChecked()) {
+		if (await this.customerCAPTCHAInheritCheckbox.isChecked()) {
 			await this.customerCAPTCHAInheritCheckbox.uncheck();
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA option can be changed`).toBeEnabled();
 		}
 
 		// check if CAPTCHA is already disabled
-		if(await this.storeFrontCaptchaOption.inputValue() == '0'){
+		if (await this.storeFrontCaptchaOption.inputValue() == '0') {
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 		} else {
-			// Disabled the CAPTCHA
+			// Disable the CAPTCHA
 			await this.storeFrontCaptchaOption.selectOption('0');
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 
@@ -98,53 +120,30 @@ class AdminLogin {
 	}
 
 	/**
-	 * Navigate to the Stores Settings in Magento Admin.
-	 */
-	async navigateToStoreSettings() {
-		const configurationPageLabel = UIReference.admin.configuration;
-		await this.mainMenuStoresButton.click();
-		await this.storesConfigurationButton.click();
-
-		// Confirm the page has loaded correctly by checking for the presence of text.
-		await expect(async () => {
-			await expect(this.pageHeadingOne, `Page title is '${configurationPageLabel}'`)
-				.toContainText(`${configurationPageLabel}`);
-
-			await expect(this.page.getByRole('link', {name: UIReference.general.general}),
-				`"General options" under General section is visible.`).toBeVisible();
-		}).toPass();
-	}
-
-	/**
 	 * Enable multiple admin logins
-	 * Assumption is that we're in the 'Store Settings'.
+	 * Navigates directly to the Advanced > Admin section via URL
+	 * instead of clicking through the Advanced tab in the sidebar.
 	 */
 	async enableMultipleAdminLogins() {
-		await this.advancedSettingsTab.click();
-		// Confirm the link for 'admin' settings is visible.
-		await expect(async() => {
-			await expect(this.adminSettingsLink, `"Admin" link under "Advanced" is visible`).toBeVisible();
-		}).toPass();
+		// Read href from the DOM link (CSS selector bypasses aria-hidden) and navigate directly.
+		const adminSectionUrl = await this.adminSettingsLink.getAttribute('href');
+		if (!adminSectionUrl) throw new Error('Could not find Admin section link href');
+		await this.page.goto(adminSectionUrl, { waitUntil: 'load' });
 
-		await this.adminSettingsLink.click();
-
-		// wait for adminSecurityAccordion to be visible before continuing.
-		await this.adminSecurityAccordion.waitFor();
-
-		if(!await this.adminSharingOption.isVisible()){
+		if (!await this.adminSharingOption.isVisible()) {
 			// tab is closed.
 			await this.adminSecurityAccordion.click();
 			await expect(this.adminSharingOption, `Security tab is opened`).toBeVisible();
 		}
 
 		// if the 'use system value' checkbox is checked, uncheck it.
-		if(await this.adminInheritCheckbox.isChecked()) {
+		if (await this.adminInheritCheckbox.isChecked()) {
 			await this.adminInheritCheckbox.uncheck();
 			await expect(this.adminSharingOption, `Admin Account Sharing option can be changed`).toBeEnabled();
 		}
 
 		// check if Admin Account Sharing is already available
-		if(await this.adminSharingOption.inputValue() == '1'){
+		if (await this.adminSharingOption.inputValue() == '1') {
 			await expect(this.adminSharingOption, `Account sharing option enabled`).toHaveValue('1');
 		} else {
 			// Enable account sharing
@@ -155,7 +154,6 @@ class AdminLogin {
 			await expect(this.page.locator(UIReference.general.adminMessageLocator),
 				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
 		}
-
 	}
 
 	/**
@@ -163,19 +161,19 @@ class AdminLogin {
 	 * @param username - admin's username, sourced from .env
 	 * @param password - admin's password, sourced from .env
 	 */
-	async loginAdmin(username:string, password:string){
-		const dashboardLabel = this.page.getByRole('heading', {name: UIReference.titles.adminDashboardHeading});
+	async loginAdmin(username: string, password: string) {
+		const dashboardLabel = this.page.getByRole('heading', { name: UIReference.titles.adminDashboardHeading });
 		const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter(
-			{hasText : UIReference.errors.captchaIncorrect}
+			{ hasText: UIReference.errors.captchaIncorrect }
 		);
 		const adminLoginHeading = this.page.getByText(UIReference.authentication.adminLoginText);
 
-		if(await dashboardLabel.isVisible()){
+		if (await dashboardLabel.isVisible()) {
 			// already logged in
 			return;
 		}
 
-		await this.page.goto(`${requireEnv(`MAGENTO_ADMIN_SLUG`)}`, { waitUntil: 'load'});
+		await this.page.goto(`${requireEnv('MAGENTO_ADMIN_SLUG')}`, { waitUntil: 'load' });
 
 		// Confirm the page has loaded correctly by checking for the presence of text.
 		await expect(async() => {
@@ -186,7 +184,7 @@ class AdminLogin {
 		await this.adminLoginPasswordField.fill(password);
 		await this.adminLoginButton.click();
 
-		if(await captchaNotification.isVisible()){
+		if (await captchaNotification.isVisible()) {
 			throw new Error(`CAPTCHA field found, automated login failed.`);
 		}
 
@@ -194,10 +192,6 @@ class AdminLogin {
 		await expect(async() => {
 			await expect(dashboardLabel, `Dashboard Title is visible`).toBeVisible();
 		}).toPass();
-
-		// WORKAROUND
-		// Add a timeout to ensure Magento has time to bind JS to buttons
-		await this.page.waitForTimeout(3000);
 	}
 }
 
