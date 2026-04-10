@@ -100,16 +100,16 @@ class AdminLogin {
 		}
 
 		// if the 'use system value' checkbox is checked, uncheck it.
-		if(await this.customerCAPTCHAInheritCheckbox.isChecked()) {
+		if (await this.customerCAPTCHAInheritCheckbox.isChecked()) {
 			await this.customerCAPTCHAInheritCheckbox.uncheck();
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA option can be changed`).toBeEnabled();
 		}
 
 		// check if CAPTCHA is already disabled
-		if(await this.storeFrontCaptchaOption.inputValue() == '0'){
+		if (await this.storeFrontCaptchaOption.inputValue() == '0') {
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 		} else {
-			// Disabled the CAPTCHA
+			// Disable the CAPTCHA
 			await this.storeFrontCaptchaOption.selectOption('0');
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 
@@ -154,7 +154,6 @@ class AdminLogin {
 			await expect(this.page.locator(UIReference.general.adminMessageLocator),
 				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
 		}
-
 	}
 
 	/**
@@ -162,19 +161,19 @@ class AdminLogin {
 	 * @param username - admin's username, sourced from .env
 	 * @param password - admin's password, sourced from .env
 	 */
-	async loginAdmin(username:string, password:string){
-		const dashboardLabel = this.page.getByRole('heading', {name: UIReference.titles.adminDashboardHeading});
+	async loginAdmin(username: string, password: string) {
+		const dashboardLabel = this.page.getByRole('heading', { name: UIReference.titles.adminDashboardHeading });
 		const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter(
-			{hasText : UIReference.errors.captchaIncorrect}
+			{ hasText: UIReference.errors.captchaIncorrect }
 		);
 		const adminLoginHeading = this.page.getByText(UIReference.authentication.adminLoginText);
 
-		if(await dashboardLabel.isVisible()){
+		if (await dashboardLabel.isVisible()) {
 			// already logged in
 			return;
 		}
 
-		await this.page.goto(`${requireEnv(`MAGENTO_ADMIN_SLUG`)}`, { waitUntil: 'load'});
+		await this.page.goto(`${requireEnv('MAGENTO_ADMIN_SLUG')}`, { waitUntil: 'load' });
 
 		// Confirm the page has loaded correctly by checking for the presence of text.
 		await expect(async() => {
@@ -185,7 +184,7 @@ class AdminLogin {
 		await this.adminLoginPasswordField.fill(password);
 		await this.adminLoginButton.click();
 
-		if(await captchaNotification.isVisible()){
+		if (await captchaNotification.isVisible()) {
 			throw new Error(`CAPTCHA field found, automated login failed.`);
 		}
 
@@ -193,10 +192,6 @@ class AdminLogin {
 		await expect(async() => {
 			await expect(dashboardLabel, `Dashboard Title is visible`).toBeVisible();
 		}).toPass();
-
-		// WORKAROUND
-		// Add a timeout to ensure Magento has time to bind JS to buttons
-		await this.page.waitForTimeout(3000);
 	}
 }
 
