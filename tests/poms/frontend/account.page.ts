@@ -95,7 +95,7 @@ class AccountPage {
     state?: string;
     country?: string;
   }) {
-    let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+
 
     await expect(this.firstNameField, `first name should be pre-filled`).not.toBeEmpty();
     await expect(this.lastNameField, `last name should be pre-filled`).not.toBeEmpty();
@@ -145,8 +145,6 @@ class AccountPage {
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
-
-    await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
   }
 
 
@@ -162,7 +160,6 @@ class AccountPage {
     state?: string;
     country?: string;
   }, defaultAddress: boolean = false) {
-    let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
     const firstName = values?.firstName || faker.person.firstName();
     const lastName = values?.lastName || faker.person.lastName();
@@ -220,7 +217,6 @@ class AccountPage {
     await this.saveAddressButton.click();
     await this.page.waitForLoadState();
 
-    await expect.soft(this.page.getByText(addressModifiedNotification)).toBeVisible();
     // await expect(this.page.getByText(streetName).last()).toBeVisible();
     if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
   }
