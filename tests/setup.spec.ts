@@ -12,7 +12,7 @@ import { test, expect } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
-import { inputValues } from '@config';
+import { inputValues, UIReference } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
 
@@ -22,6 +22,15 @@ import AdminLogin from '@poms/admin/adminlogin.page';
 const magentoAdminUsername = requireEnv(`MAGENTO_ADMIN_USERNAME`);
 const magentoAdminPassword = requireEnv(`MAGENTO_ADMIN_PASSWORD`);
 let APIClient : ApiClient;
+
+/**
+ * WORKAROUND
+ * To prevent issues where API calls are made *before* the CAPTCHA can be disabled, run tests in serial mode.
+ * setup.spec.ts will be updated to a project dependency in future versions of the testing suite to fix this.
+ */
+test.describe.configure({
+    mode: 'serial'
+});
 
 // Set up an API Client
 test.beforeAll(`Initialize API Client`, async() => {
@@ -41,6 +50,43 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
 
+
+	// Pop-up definitions. Each entry maps a trigger locator to its dismiss button.
+	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection, Magento Incoming Message
+	const popUpDismissals = [
+		{
+			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
+			button: page.getByRole('button', { name: UIReference.admin.declineDontAllowButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteNewsletterLabel),
+			button: page.getByRole('button', { name: UIReference.admin.declineNoThanksButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
+			button: page.getByRole('button', { name: UIReference.admin.okButtonLabel }),
+		},
+		{
+			locator: page.getByRole('heading', {name: UIReference.admin.magentoIncomingMessageLabel}),
+			button: page.locator(UIReference.admin.magentoModelHeaderLocator).getByRole('button'),
+		},
+	];
+
+	// Dismiss all visible pop-ups using dispatchEvent to bypass actionability checks.
+	// This avoids getting stuck when one pop-up overlaps another's dismiss button.
+	const dismissAllVisiblePopUps = async () => {
+		for (const { locator, button } of popUpDismissals) {
+			if (await locator.isVisible()) {
+				await button.dispatchEvent('click');
+			}
+		}
+	};
+
+	// Register the same dismiss-all handler for each trigger locator.
+	for (const { locator } of popUpDismissals) {
+		await page.addLocatorHandler(locator, dismissAllVisiblePopUps);
+	}
+
 	const adminLoginPage = new AdminLogin(page);
 
 	await test.step(`Step: Login to admin environment`, async() => {
@@ -49,6 +95,7 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 
 	await test.step(`Step: Disable login CAPTCHA`, async() => {
 		await adminLoginPage.navigateToStoreSettings();
+		await adminLoginPage.disableReCAPTCHA();
 		await adminLoginPage.disableLoginCaptcha();
 	});
 
