@@ -3,6 +3,7 @@
 import {expect, type Locator, type Page, test, TestInfo} from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 import LoginPage from '@poms/frontend/login.page';
 
@@ -37,6 +38,7 @@ class AccountPage {
   readonly accountCreationPasswordRepeatField: Locator;
   readonly accountCreationConfirmButton: Locator;
   readonly accountInformationField: Locator;
+  readonly newAddressButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -58,6 +60,8 @@ class AccountPage {
     this.stateSelectorField = page.locator(UIReference.newAddress.regionDropdownLocator);
 
     this.saveAddressButton = page.getByRole('button', { name: UIReference.newAddress.saveAdressButton });
+
+	this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
 
     // Account Information elements
     this.changePasswordSwitch = page.getByRole('switch', { name: UIReference.personalInformation.changePasswordSwitchLabel });
@@ -274,7 +278,7 @@ class AccountPage {
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+    await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
@@ -285,7 +289,7 @@ class AccountPage {
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
 
-	await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+	await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
     await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
   }
 
@@ -304,6 +308,27 @@ class AccountPage {
       await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
     }
   }
+
+
+  	/**
+	 * Checks that customer details have been filled in.
+	 * Fills in faker() values otherwise.
+	 */
+	async ensureCustomerDetails() {
+		// the button 'New Address' is only visible if there is a default address.
+		if (await this.newAddressButton.isHidden()) {
+			await this.firstNameField.fill(faker.person.firstName());
+			await this.lastNameField.fill(faker.person.lastName());
+			await this.streetAddressField.fill(faker.location.streetAddress());
+			await this.stateSelectorField.selectOption(faker.location.state());
+			await this.zipCodeField.fill(faker.location.zipCode());
+			await this.cityField.fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
+			await this.phoneNumberField.fill(faker.phone.number());
+		}
+
+		return;
+	}
+
 }
 
 export default AccountPage;

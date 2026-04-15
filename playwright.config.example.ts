@@ -56,7 +56,10 @@ const testFiles = getTestFiles(
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  /* Directory containing the test files */
   testDir: '.',
+  /* Set an output directory */
+  outputDir: path.join(__dirname, 'test-results'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */

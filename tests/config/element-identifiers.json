@@ -56,7 +56,7 @@
 		"magentoModelHeaderLocator": ".modal-header",
 		"okButtonLabel": "Ok",
 		"recordsFoundLocator": "#promo_quote_grid-total-count",
-		"storesButton" : " Stores"
+		"storesButton" : "Stores"
   },
   "adminMarketing" : {
 		"cartPriceRules": "Cart Price Rules",
@@ -181,6 +181,7 @@
     "cartTitleText": "Shopping Cart",
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
+	"discountBoxLabel": "Discount Code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
     "updateItemButtonLabel": "Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"

@@ -46,6 +46,7 @@ test.beforeAll(`Initialize API Client`, async() => {
 test('Disable_login_captcha_and_enable_multiple_login', {
 	tag: '@setup'}, async ({ page, browserName }) => {
 
+	// Set test to skip if the browser isn't Chromium.
 	test.skip( browserName !== 'chromium',
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
