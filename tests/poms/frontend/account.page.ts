@@ -54,7 +54,8 @@ class AccountPage {
     this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
 
     this.stateInputField = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
-    this.stateSelectorField = this.stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
+    // Target the <select> directly: filtering by option text races the JS that populates the options.
+    this.stateSelectorField = page.locator(UIReference.newAddress.regionDropdownLocator);
 
     this.saveAddressButton = page.getByRole('button', { name: UIReference.newAddress.saveAdressButton });
 
@@ -115,8 +116,9 @@ class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
 
-    // If default selected country == country we want to use for the test,
-    // don't re-select it.
+    // Wait for the country selector to hydrate before reading its value, otherwise the
+    // short-circuit below can compare against a stale default.
+    await expect(this.countrySelectorField).toBeEnabled();
     const defaultSelectedCountry = await this.countrySelectorField.evaluate(
       (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
     );
@@ -128,23 +130,28 @@ class AccountPage {
     const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     if(country !== 'United States') {
-      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
 
       await regionInputField.fill(stateName);
+      await expect(regionInputField).toHaveValue(stateName);
     } else {
-      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
-      // await regionDropdown.selectOption(stateName);
-      await this.stateSelectorField.selectOption(stateName);
-      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
-      // Standard debounce is 250ms.
-      await this.page.waitForTimeout(1000);
+      await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
+      await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
+
+      // The state list is populated by JS after the country switches; wait for real options.
+      await expect(regionDropdown.locator('option')).not.toHaveCount(1);
+
+      await this.stateSelectorField.selectOption({label: stateName});
+      // Replaces a hardcoded 1s wait for Alpine's input debounce — assert the value committed.
+      await expect(this.stateSelectorField).toHaveValue(/.+/);
     }
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
+    // wait for the address index url
+	await this.page.waitForURL(/customer\/address\/(index|)/, {waitUntil: "load"});
   }
 
 
@@ -190,8 +197,9 @@ class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
 
-    // If default selected country == country we want to use for the test,
-    // don't re-select it.
+    // Wait for the country selector to hydrate before reading its value, otherwise the
+    // short-circuit below can compare against a stale default.
+    await expect(this.countrySelectorField).toBeEnabled();
     const defaultSelectedCountry = await this.countrySelectorField.evaluate( (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text);
     if(country !== defaultSelectedCountry) {
       await this.countrySelectorField.selectOption({label: country});
@@ -201,21 +209,27 @@ class AccountPage {
     const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     if(country !== 'United States') {
-      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
 
       await regionInputField.fill(stateName);
+      await expect(regionInputField).toHaveValue(stateName);
     } else {
-      // await regionDropdown.selectOption(stateName);
-      await this.stateSelectorField.selectOption(stateName);
-      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
-      // Standard debounce is 250ms.
-      await this.page.waitForTimeout(1000);
+      await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
+      await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
+
+      // The state list is populated by JS after the country switches; wait for real options.
+      await expect(regionDropdown.locator('option')).not.toHaveCount(1);
+
+      await this.stateSelectorField.selectOption({label: stateName});
+      // Replaces a hardcoded 1s wait for Alpine's input debounce — assert the value committed.
+      await expect(this.stateSelectorField).toHaveValue(/.+/);
     }
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
+    await this.page.waitForURL(/customer\/address\//, {waitUntil: "load"});
 
     // await expect(this.page.getByText(streetName).last()).toBeVisible();
     if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
@@ -245,7 +259,8 @@ class AccountPage {
     test.info().annotations.push({type: `Address to be deleted`, description: addressToBeDeleted});
 
     await this.deleteAddressButton.click();
-    await this.page.waitForLoadState();
+    // wait for the address index url
+	await this.page.waitForURL(/customer\/address\/(index|)/, {waitUntil: "load"});
 
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
     await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
