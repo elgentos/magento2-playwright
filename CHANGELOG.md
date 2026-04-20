@@ -3,15 +3,40 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-Note that the points mentioned here are in the works, to be released in a future update.
+## [6.0.0] - 2026-04-20
 
 ### Added
-- StorageStates to improve both speed and stability of tests that requires a logged-in user. `fixtures.utils.ts` is available, but contains some hard-coded elements which will need to be updated.
+- StorageState/fixture-based authentication (`fixtures.utils.ts`) for reusing login sessions across tests, improving speed and stability of `mainmenu`, `account`, and `checkout` specs.
+- HTTP Basic Authentication support for environments behind HTTP auth (e.g. review sites). New `HTTP_AUTH_USERNAME` / `HTTP_AUTH_PASSWORD` `.env` variables, wired into `playwright.config`, `apiClient.utils.ts`, and fixtures via a new `getHttpCredentials()` helper in `env.utils.ts`.
+- `url.utils.ts` with `slugToRegex()` helper to standardize `page.waitForURL()` calls using `slugs.json` entries instead of hard-coded regex strings.
+- `admin` slug group in `slugs.json` (`customerIndexSlug`, `customerNewSlug`, `customerEditSlug`, `orderIndexSlug`).
+- `outputDir` in `playwright.config.example.ts` so test artifacts land in a predictable location.
+- Locator handlers for admin pop-ups (Adobe data collection, Elasticsuite newsletter/telemetry, incoming-message modals) to improve admin login stability.
+- `install.js` now auto-derives vendor/theme from the directory structure (falls back to prompting).
 
 ### Changed
-- We will implement the APIClient in various tests.
+- Rewrote `AGENTS.md`.
+- Moved many hard-coded locators and strings into `element-identifiers.json` (category size filter, discount box, admin pop-up labels, reCAPTCHA options, storefront labels).
+- Renamed `changedPasswordNotificationText` → `changedCredentialsInformation` in `outcome-markers.json`.
+- `account.spec.ts`: moved soft expectations for `addNewAddress` / `editExistingAddress` into the spec to enforce correct assertion order; relocated address notification check to match the actual UI timing.
+- `adminlogin.page.ts`: fixed race conditions and added `dispatchEvent` fallbacks to reliably close pop-ups.
+- `magewire.utils.ts`: simplified idle-wait — removed fixed `waitForTimeout(500)` in favor of a loader element count check.
+- `setup.spec.ts`: multiple stability fixes; added locator handlers for pop-ups.
+- `tsconfig.example.json`: removed `baseUrl`; path aliases now use explicit `./` prefix.
+- Suppressed noisy `console.log` calls in `fixtures.utils.ts`; `dotenv.config` now uses `quiet: true`.
+
+### Fixed
+- Checkout tests stabilized by ensuring the address is filled in and by updating a changed checkout locator.
+- Fixed API call for coupon codes and several related vulnerabilities.
+- Standardized use of `slugToRegex` across `waitForURL` calls; fixed error in `account.page.ts`.
+- `category.spec.ts` `filter_on_size` test fixed; subcategory test skipped on Firefox due to a known issue.
+- Marked `Guest_can_select_payment_methods` as a hot test; `search.spec` and `mainmenu.spec` search tests marked `fixme` (see ticket 414).
+
+### Removed
+- `bypass-captcha.config.example.ts` and all `CAPTCHA_BYPASS` CI/config references (replaced with proper test accounts).
+- `auth.setup.ts` (superseded by fixtures).
+- `tests/config/test-toggles.json` (unused).
+- Regex slug entries (`accountOverviewRegex`, `loginSlugRegex`, `wishListRegex`) in favor of `slugToRegex()`.
 
 
 ## [5.0.0] - 2026-02-24
