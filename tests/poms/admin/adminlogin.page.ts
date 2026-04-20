@@ -46,7 +46,7 @@ class AdminLogin {
 		this.adminLoginPasswordField = page.locator(UIReference.authentication.adminPasswordFieldId);
 		this.adminLoginButton = page.locator(UIReference.authentication.adminLoginButtonClass);
 		// Navigation
-		this.mainMenuStoresButton = page.locator('.admin__menu').getByRole('link', {name: UIReference.admin.storesButton});
+		this.mainMenuStoresButton = page.locator(UIReference.admin.adminMenuLocator).getByRole('link', {name: UIReference.admin.storesButton});
 		this.storesConfigurationButton = page.getByRole('link', {name: UIReference.admin.configuration}).first();
 		this.storesCustomersTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.admin.customers);
 		this.advancedSettingsTab = page.getByRole('strong').filter({hasText: UIReference.admin.advanced});
@@ -61,10 +61,10 @@ class AdminLogin {
 		this.adminInheritCheckbox = page.locator(UIReference.admin.customerInheritLocator);
 		// reCAPTCHA settings
 		this.storesSecurityTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.general.security, {exact:true});
-		this.googleReCaptchaStorefrontLink = page.getByRole('link', { name: 'Google reCAPTCHA Storefront' });
-		this.storefrontReCaptchaAccordion = page.getByRole('link', { name: 'Storefront'}).filter({hasNotText: 'Google'});
-		this.customerCreateReCaptchaOption = page.locator('#recaptcha_frontend_type_for_customer_create');
-		this.customerCreateReCaptchaInheritCheckbox = page.locator('#recaptcha_frontend_type_for_customer_create_inherit');
+		this.googleReCaptchaStorefrontLink = page.getByRole('link', { name: UIReference.admin.googleReCAPTCHALink });
+		this.storefrontReCaptchaAccordion = page.getByRole('link', { name: UIReference.admin.storeFrontLabel }).filter({hasNotText: 'Google'});
+		this.customerCreateReCaptchaOption = page.locator(UIReference.admin.customerReCAPTCHAOption);
+		this.customerCreateReCaptchaInheritCheckbox = page.locator(UIReference.admin.customerReCAPTCHAInherit);
 	}
 
 	/**
@@ -164,7 +164,7 @@ class AdminLogin {
      */
     async navigateToStoreSettings() {
         const configurationPageLabel = UIReference.admin.configuration;
-        const generalTab = this.page.getByRole('tab', { name: 'General ' });
+        const generalTab = this.page.getByRole('tab', { name: UIReference.admin.generalTabLabel });
         const generalOptions = this.page.getByRole('link', {name: UIReference.general.general});
 
         await this.mainMenuStoresButton.click();
