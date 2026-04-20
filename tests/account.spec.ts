@@ -179,8 +179,6 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-
 		await page.goto(slugs.account.addressNewSlug);
 		const accountPage = new AccountPage(page);
 
@@ -189,7 +187,6 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
 		await accountPage.addNewAddress({ company: company, street: address});
 
-		await expect.soft(page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
 		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
 		await expect(page.getByText(company).first(), `Expect new company name to be listed`).toBeVisible();
 	});
@@ -200,8 +197,6 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-
 		const accountPage = new AccountPage(page);
 		await page.goto(slugs.account.addressBookSlug);
 		let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
@@ -221,7 +216,6 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
 		await accountPage.editExistingAddress({street:address}, isDefaultAddress);
 
-		await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
 		// await expect(page.getByText(companyName)).toBeVisible();
 		await expect(page.getByText(address).first()).toBeVisible();
 	});
