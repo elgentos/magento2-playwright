@@ -291,6 +291,8 @@ This package, and therefore the testing suite, is part of our open-source initia
 
 ## Scenarios
 
+Up-to-date for version `4.0.0`.
+
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|
 | account.spec.ts      | Account information actions        | :heavy_check_mark: Change_password                                                |
@@ -305,7 +307,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 |                      |                                    | :heavy_check_mark: Change_amount_of_products_shown                                |
 |                      |                                    | :heavy_check_mark: Switch_from_grid_to_list_view                                  |
 | footer.spec.ts       | Footer                             | :heavy_check_mark: Footer_is_available                                            |
-|                      |                                    | :warning: Footer_switch_currency (fixme: does not work due to error on website)   |
+|                      |                                    | :heavy_check_mark: Footer_switch_currency                                         |
 |                      |                                    | :heavy_check_mark: Footer_newsletter_subscription                                 |
 | mainmenu.spec.ts     | Guest tests (not logged in)        | :heavy_check_mark: User_navigates_to_login                                        |
 |                      |                                    | :heavy_check_mark: User_navigates_to_create_account                               |
@@ -344,7 +346,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 |                      |                                    | :heavy_check_mark: Guests_can_not_add_a_product_to_their_wishlist                 |
 |                      |                                    | :heavy_check_mark: Add_product_to_wishlist_from_comparison_page                   |
 | contact.spec.ts      |                                    | :heavy_check_mark: Send_message_through_contact_form                              |
-| cart.spec.ts         | Cart functionalities (guest)       | :heavy_check_mark: Add_product_to_cart                                            |
+| shoppingcart.spec.ts | Cart functionalities (guest)       | :heavy_check_mark: Add_product_to_cart                                            |
 |                      |                                    | :heavy_check_mark: Product_remains_in_cart_after_login                            |
 |                      |                                    | :heavy_check_mark: Remove_product_from_cart                                       |
 |                      |                                    | :heavy_check_mark: Change_product_quantity_in_cart                                |
@@ -356,17 +358,14 @@ This package, and therefore the testing suite, is part of our open-source initia
 | register.spec.ts     |                                    | :heavy_check_mark: User_registers_an_account                                      |
 | product.spec.ts      | Product page tests                 | :heavy_check_mark: Add_product_to_compare                                         |
 |                      |                                    | :warning: Add_product_to_wishlist (fixme: causes regular timeouts)                |
-|                      |                                    | :warning: Leave_a_product_review (fixme: fails due to error on website)           |
+|                      |                                    | :warning: Leave a product review (Test currently fails due to error on website)   |
 |                      |                                    | :heavy_check_mark: Open_pictures_in_lightbox_and_scroll                           |
 |                      |                                    | :heavy_check_mark: Change_number_of_reviews_shown_on_product_page                 |
-|                      | Simple product tests               | :warning: Simple_tests_will_be_added_later                                        |
-|                      | Configurable product tests         | :warning: Configurable_tests_will_be_added_later                                  |
 | search.spec.ts       | Search functionality               | :heavy_check_mark: Search_query_returns_multiple_results                          |
 |                      |                                    | :heavy_check_mark: User_can_find_a_specific_product_and_navigate_to_its_page      |
 |                      |                                    | :heavy_check_mark: No_results_message_is_shown_for_unknown_query                  |
-| setup.spec.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha                                          |
-|                      |                                    | :heavy_check_mark: Enable_multiple_admin_logins                                   |
-|                      |                                    | :heavy_check_mark: Set_up_coupon_codes                                            |
+| setup.spec.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha_and_enable_multiple_login                |
+|                      |                                    | :heavy_check_mark: Set_coupon_codes                                               |
 |                      |                                    | :heavy_check_mark: Create_test_accounts                                           |
 
 ## Roadmap
@@ -384,7 +383,7 @@ The list below shows tests that will be written in the future. The list is subje
 |                      |                       | Add_comment_to_item_in_wishlist                             | Medium   |
 |                      |                       | User_can_share_wishlist                                     | Low      |
 |                      |                       | Add_all_wishlist_item_to_cart                               | High     |
-| cart.spec.ts         | Guest to user         | Carts_are_merged_from_guest_to_user                         | Medium   |
+| shoppingcart.spec.ts | Guest to user         | Carts_are_merged_from_guest_to_user                         | Medium   |
 | checkout.spec.ts     |                       | Login_from_checkout_keeps_cart                              | Medium   |
 |                      |                       | All_payment_methods_work                                    | Medium   |
 |                      |                       | All_shipping_methods_work                                   | Medium   |
@@ -411,6 +410,8 @@ The list below shows tests that will be written in the future. The list is subje
 |                      |                       | Price_is_correct_sum_of_parts                               | Low      |
 |                      |                       | Qty_of_products_in_bundle_are_shown                         | Low      |
 |                      |                       | Add_bundled_product_to_cart                                 | Low      |
+| product.spec.ts      | Simple product        | Simple_tests_will_be_added_later                            | Low      |
+| product.spec.ts      | Configurable product  | Configurable_tests_will_be_added_later                      | Low      |
 | cmspages.spec.ts     | General               | Default_404_is_shown_on_nonexistent_url                     | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_missing_field                 | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_incorrect_emailaddress_format | Medium   |
