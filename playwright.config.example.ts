@@ -6,7 +6,7 @@ import path from 'path';
 import fs from "node:fs";
 import { getHttpCredentials } from '@utils/env.utils';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
 
 function getTestFiles(baseDir: string, customDir?: string): string[] {
   const baseFiles = new Set(

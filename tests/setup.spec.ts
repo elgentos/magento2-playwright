@@ -23,6 +23,15 @@ const magentoAdminUsername = requireEnv(`MAGENTO_ADMIN_USERNAME`);
 const magentoAdminPassword = requireEnv(`MAGENTO_ADMIN_PASSWORD`);
 let APIClient : ApiClient;
 
+/**
+ * WORKAROUND
+ * To prevent issues where API calls are made *before* the CAPTCHA can be disabled, run tests in serial mode.
+ * setup.spec.ts will be updated to a project dependency in future versions of the testing suite to fix this.
+ */
+test.describe.configure({
+    mode: 'serial'
+});
+
 // Set up an API Client
 test.beforeAll(`Initialize API Client`, async() => {
 	APIClient = await new ApiClient().create();
@@ -42,8 +51,9 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
 
+
 	// Pop-up definitions. Each entry maps a trigger locator to its dismiss button.
-	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection
+	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection, Magento Incoming Message
 	const popUpDismissals = [
 		{
 			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
@@ -56,6 +66,10 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 		{
 			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
 			button: page.getByRole('button', { name: UIReference.admin.okButtonLabel }),
+		},
+		{
+			locator: page.getByRole('heading', {name: UIReference.admin.magentoIncomingMessageLabel}),
+			button: page.locator(UIReference.admin.magentoModelHeaderLocator).getByRole('button'),
 		},
 	];
 
@@ -82,6 +96,7 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 
 	await test.step(`Step: Disable login CAPTCHA`, async() => {
 		await adminLoginPage.navigateToStoreSettings();
+		await adminLoginPage.disableReCAPTCHA();
 		await adminLoginPage.disableLoginCaptcha();
 	});
 
