@@ -6,7 +6,7 @@ import path from 'path';
 import fs from "node:fs";
 import { getHttpCredentials } from '@utils/env.utils';
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
 
 function getTestFiles(baseDir: string, customDir?: string): string[] {
   const baseFiles = new Set(
@@ -56,7 +56,10 @@ const testFiles = getTestFiles(
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  /* Directory containing the test files */
   testDir: '.',
+  /* Set an output directory */
+  outputDir: path.join(__dirname, 'test-results'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -90,12 +93,6 @@ export default defineConfig({
     /* HTTP Basic Auth for environments behind HTTP authentication (e.g. review sites) */
     httpCredentials: getHttpCredentials(),
   },
-
-  /*
-   * Setup for global cookie to bypass CAPTCHA, remove '.example' when used.
-   * If this is disabled remove storageState from all project objects.
-   */
-  globalSetup: require.resolve('./bypass-captcha.config.ts'),
 
   /* Configure projects for major browsers */
   projects: [

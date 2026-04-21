@@ -11,6 +11,7 @@ import fs from 'fs';
 import path from 'path';
 import {requireEnv, getHttpCredentials} from "@utils/env.utils";
 import {slugs, UIReference} from "@config";
+import { slugToRegex } from '@utils/url.utils';
 
 export * from '@playwright/test';
 export const test = baseTest.extend<{}, { workerStorageState: string }>({
@@ -72,7 +73,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 		const loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
 
 		// Perform authentication steps. Replace these actions with your own.
-		await page.goto(slugs.account.loginSlug);
+		await page.goto(slugs.account.loginSlug, {waitUntil: 'load'});
 		await emailField.waitFor();
 
 		await emailField.fill(account.username);
@@ -81,7 +82,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 
 		// Wait until the page receives the cookies.
 		// We do this by waiting for the page to be done loading. This should navigate to the customer account page.
-		await page.waitForURL('**/', {waitUntil: 'networkidle'});
+		await page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug), {waitUntil: 'networkidle'});
 
 		// Confirm by checking page.url() returns https://hyva-demo.magento2.localhost/default/customer/account/
 		// console.log(page.url());

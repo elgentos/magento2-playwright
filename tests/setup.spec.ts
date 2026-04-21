@@ -12,10 +12,9 @@ import { test, expect } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
-import { inputValues } from '@config';
+import { inputValues, UIReference } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
-import AdminMarketing from '@poms/admin/marketing.page';
 
 /**
  * Set variables we'll be using throughout the file.
@@ -23,6 +22,15 @@ import AdminMarketing from '@poms/admin/marketing.page';
 const magentoAdminUsername = requireEnv(`MAGENTO_ADMIN_USERNAME`);
 const magentoAdminPassword = requireEnv(`MAGENTO_ADMIN_PASSWORD`);
 let APIClient : ApiClient;
+
+/**
+ * WORKAROUND
+ * To prevent issues where API calls are made *before* the CAPTCHA can be disabled, run tests in serial mode.
+ * setup.spec.ts will be updated to a project dependency in future versions of the testing suite to fix this.
+ */
+test.describe.configure({
+    mode: 'serial'
+});
 
 // Set up an API Client
 test.beforeAll(`Initialize API Client`, async() => {
@@ -38,9 +46,47 @@ test.beforeAll(`Initialize API Client`, async() => {
 test('Disable_login_captcha_and_enable_multiple_login', {
 	tag: '@setup'}, async ({ page, browserName }) => {
 
+	// Set test to skip if the browser isn't Chromium.
 	test.skip( browserName !== 'chromium',
 		`Disabling login captcha through Chromium. This is ${browserName}, therefore test is skipped.`
 	);
+
+
+	// Pop-up definitions. Each entry maps a trigger locator to its dismiss button.
+	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection, Magento Incoming Message
+	const popUpDismissals = [
+		{
+			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
+			button: page.getByRole('button', { name: UIReference.admin.declineDontAllowButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteNewsletterLabel),
+			button: page.getByRole('button', { name: UIReference.admin.declineNoThanksButton }),
+		},
+		{
+			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
+			button: page.getByRole('button', { name: UIReference.admin.okButtonLabel }),
+		},
+		{
+			locator: page.getByRole('heading', {name: UIReference.admin.magentoIncomingMessageLabel}),
+			button: page.locator(UIReference.admin.magentoModelHeaderLocator).getByRole('button'),
+		},
+	];
+
+	// Dismiss all visible pop-ups using dispatchEvent to bypass actionability checks.
+	// This avoids getting stuck when one pop-up overlaps another's dismiss button.
+	const dismissAllVisiblePopUps = async () => {
+		for (const { locator, button } of popUpDismissals) {
+			if (await locator.isVisible()) {
+				await button.dispatchEvent('click');
+			}
+		}
+	};
+
+	// Register the same dismiss-all handler for each trigger locator.
+	for (const { locator } of popUpDismissals) {
+		await page.addLocatorHandler(locator, dismissAllVisiblePopUps);
+	}
 
 	const adminLoginPage = new AdminLogin(page);
 
@@ -50,6 +96,7 @@ test('Disable_login_captcha_and_enable_multiple_login', {
 
 	await test.step(`Step: Disable login CAPTCHA`, async() => {
 		await adminLoginPage.navigateToStoreSettings();
+		await adminLoginPage.disableReCAPTCHA();
 		await adminLoginPage.disableLoginCaptcha();
 	});
 
@@ -126,7 +173,7 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName },
  * @param browserName - used to create the specific coupon code
  */
 test(`Set_coupon_codes`, {
-	tag: ['@setup', '@api']}, async ({ browserName }, ) => {
+	tag: ['@setup', '@api']}, async ({ browserName } ) => {
 
 	// TODO: Clean up code
 	// TODO: Move to marketing.page.ts
@@ -135,9 +182,15 @@ test(`Set_coupon_codes`, {
 	const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 	const couponCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
 
-	// Find all coupon codes, then check if testing coupon exists
-	const couponCheckResponse = await APIClient.get(`/rest/V1/coupons/search?searchCriteria=all`);
-	const codePresent = couponCheckResponse.items.some((item: { code: string; }) => item.code === `${couponCode}`);
+	// Try to find our coupon codes, then check if testing coupon exists
+	const couponCheckResponse = await APIClient.get(
+		`/rest/V1/coupons/search` +
+		`?searchCriteria[filter_groups][0][filters][0][field]=code` +
+		`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
+		`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`
+	);
+	const codePresent = couponCheckResponse.items.some(
+		(item: { code: string; }) => item.code === `${couponCode}`);
 
 	// If coupon is present, check if it's enabled.
 	if(codePresent) {
@@ -163,7 +216,6 @@ test(`Set_coupon_codes`, {
 
 	} else {
 		// Not present. Set coupon code, then check.
-		const rules = await APIClient.get(`/rest/V1/salesRules/search?searchCriteria=all`);
 		const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
 		const customerGroups = await APIClient.get(`/rest/V1/customerGroups/search?searchCriteria=all`);
 		let websiteIds: any[] = [];
@@ -180,10 +232,10 @@ test(`Set_coupon_codes`, {
 		});
 
 		const newRule = {
-			name : 'Test Coupon',
+			name : inputValues.coupon.couponCodeRuleName,
 			website_ids: websiteIds,
 			customer_group_ids: customerGroupsIds,
-			from_date: '2025-01-20',
+			from_date: new Date().toISOString().split('T')[0],
 			uses_per_customer: 0,
 			is_active: true,
 			stop_rules_processing: true,
@@ -194,7 +246,7 @@ test(`Set_coupon_codes`, {
 			apply_to_shipping: false,
 			times_used: 0,
 			is_rss: true,
-			coupon_type: 'SPECIFIC_COUPON',
+			coupon_type: 2, // 2 is 'SPECIFIC_COUPON'
 			use_auto_generation: false,
 			uses_per_coupon: 0
 		};
