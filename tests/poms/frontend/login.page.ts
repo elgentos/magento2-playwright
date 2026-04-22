@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 import MainmenuPage from '@poms/frontend/mainmenu.page';
 
 class LoginPage {
@@ -28,11 +29,7 @@ class LoginPage {
     // await this.loginButton.click({force: true});
 
     await this.page.waitForLoadState();
-    // await this.page.waitForURL(new RegExp(`${slugs.account.accountOverviewRegex}`));
-    // await this.page.waitForURL(`**${slugs.account.accountOverviewSlug}`);
-
-    // wait for page to be done loading
-    // await this.page.waitForURL('/customer/account/');
+    await this.page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug));
 
     // Open the menu, then check the 'Sign Out' button is visible
     await mainmenu.mainMenuAccountButton.waitFor();
@@ -47,7 +44,7 @@ class LoginPage {
     await this.loginButton.press('Enter');
     await this.page.waitForLoadState('networkidle');
 
-    await expect(this.page, 'Should stay on login page').toHaveURL(new RegExp(slugs.account.loginSlug));
+    await expect(this.page, 'Should stay on login page').toHaveURL(slugToRegex(slugs.account.loginSlug));
   }
 }
 

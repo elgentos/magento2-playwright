@@ -32,7 +32,6 @@ test('User_registers_an_account', { tag: ['@account-creation', '@hot'] }, async 
   let emailHandle = inputValues.accountCreation.emailHandleValue;
   let emailHost = inputValues.accountCreation.emailHostValue;
   const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
-  //const accountEmail = process.env[`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`];
 
   if (!accountEmail) {
     throw new Error(`Generated account email is invalid.`);

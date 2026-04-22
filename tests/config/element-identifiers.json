@@ -38,6 +38,8 @@
   "admin" : {
 		"admin": "Admin",
 		"adminSharing": "Admin Account Sharing",
+		"adminMenuLocator": ".admin__menu",
+		"adobeDataCollectionText": "Allow Adobe to collect usage data to improve user experience",
 		"advanced": "Advanced",
 		"captchaEnabled": "Enable CAPTCHA on Storefront",
 		"configuration": "Configuration",
@@ -45,10 +47,22 @@
 		"configurationSavedText": "You saved the configuration.",
 		"customerCAPTCHAInheritLocator": "#customer_captcha_enable_inherit",
 		"customerInheritLocator": "#admin_security_admin_account_sharing_inherit",
+		"customerReCAPTCHAOption": "#recaptcha_frontend_type_for_customer_create",
+		"customerReCAPTCHAInherit" : "#recaptcha_frontend_type_for_customer_create_inherit",
 		"customers": "Customers",
 		"customerConfiguration": "Customer Configuration",
+		"declineDontAllowButton": "Don't Allow",
+		"declineNoThanksButton": "No thanks",
+		"elasticSuiteNewsletterLabel": "Introducing the Elasticsuite newsletter",
+		"elasticSuiteTelemetryLabel": "Help Us Improve Elasticsuite",
+		"generalTabLabel" : "General ",
+		"googleReCAPTCHALink": "Google reCAPTCHA Storefront",
+		"magentoIncomingMessageLabel": "Incoming Message",
+		"magentoModelHeaderLocator": ".modal-header",
+		"okButtonLabel": "Ok",
 		"recordsFoundLocator": "#promo_quote_grid-total-count",
-		"storesButton" : "Stores"
+		"storesButton" : "Stores",
+		"storeFrontLabel" : "Storefront"
   },
   "adminMarketing" : {
 		"cartPriceRules": "Cart Price Rules",
@@ -173,6 +187,7 @@
     "cartTitleText": "Shopping Cart",
     "cartQuantityLabel": "Qty",
     "discountInputFieldLabel": "Enter discount code",
+	"discountBoxLabel": "Discount Code",
     "showDiscountFormButtonLabel": "Apply Discount Code",
     "updateItemButtonLabel": "Update item",
     "updateShoppingCartButtonLabel": "Update Shopping Cart"

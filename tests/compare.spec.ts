@@ -64,12 +64,12 @@ test('Guests_can_not_add_a_product_to_their_wishlist',{ tag: ['@comparison-page'
  */
 test('Add_product_to_wishlist_from_comparison_page',{ tag: ['@comparison-page', '@hot']}, async ({page, browserName}) => {
   await test.step('Log in with account', async () =>{
-    const loginPage = new LoginPage(page);
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-    const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+	const id = test.info().parallelIndex;
+	let user = `playwright_user_${id}@elgentos.nl`;
+	let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-    await loginPage.login(emailInputValue, passwordInputValue);
+	const loginPage = new LoginPage(page);
+	await loginPage.login(user, password);
   });
 
   await test.step('Add product to compare', async () =>{
