@@ -119,7 +119,7 @@ Version 7.0 moves setup from a tagged spec (`setup.spec.ts`) to a Playwright pro
    - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
    - the `setup` project block at the top of `projects:`
    - the `dependencies: [‘setup’]` line on each browser project
-2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). The package ships defaults in `base-tests/config/input-values.json` from v7 onward; the deep-merge config loader picks them up automatically if you don't override them, but you must check that the entries exist after upgrading.
+2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
 3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
 4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
 
@@ -316,7 +316,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 
 ## Scenarios
 
-Up-to-date for version `7.0.0`.
+Up-to-date as of the `[Unreleased]` CHANGELOG entry.
 
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|
