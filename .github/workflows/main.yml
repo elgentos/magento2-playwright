@@ -55,11 +55,9 @@ jobs:
         run: |
             set -euo pipefail
             echo "Running testing suite (setup runs as project dependency)"
-            mkdir -p base-tests
             npm install
             npx playwright install --with-deps
-            ls -l base-tests
-            CI=true npx playwright test --workers=4 --max-failures=1
+            npx playwright test --workers=4 --max-failures=1
         shell: bash
         env:
             CI: true
