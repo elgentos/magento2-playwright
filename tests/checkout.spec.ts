@@ -113,6 +113,7 @@ test.describe('Checkout (guest)', () => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 	});
@@ -150,6 +151,7 @@ test.describe('Checkout (guest)', () => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 		await checkout.removeDiscountCode();

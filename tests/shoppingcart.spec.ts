@@ -106,6 +106,7 @@ test.describe('Cart functionalities (guest)', () => {
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
 		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await cart.applyDiscountCode(discountCode);
 	});
@@ -119,6 +120,7 @@ test.describe('Cart functionalities (guest)', () => {
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
 		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await cart.applyDiscountCode(discountCode);
 		await cart.removeDiscountCode();
