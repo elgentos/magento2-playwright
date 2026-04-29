@@ -21,7 +21,12 @@
   },
   "coupon": {
     "couponCodeRuleName": "Test coupon",
-    "couponType": "Specific Coupon"
+    "couponType": "Specific Coupon",
+    "codes": {
+      "CHROMIUM": "CHROMIUM321",
+      "FIREFOX": "FIREFOX321",
+      "WEBKIT": "WEBKIT321"
+    }
   },
   "addressCountries": [
     "Netherlands",
