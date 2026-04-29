@@ -190,59 +190,58 @@ test(`Set_coupon_codes`, { tag: '@api' }, async () => {
 						description: `Your code "${coupon.code}" was found. Active status: ${rule.is_active}.`
 					});
 				}
-				return;
+			} else {
+				// Not present. Create the rule + coupon.
+				const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
+				const customerGroups = await APIClient.get(`/rest/V1/customerGroups/search?searchCriteria=all`);
+				const websiteIds: any[] = [];
+				const customerGroupsIds: any[] = [];
+
+				websiteInfo.forEach((website: { name: string; id: any; }) => {
+					if (website.name !== 'admin') {
+						websiteIds.push(website.id);
+					}
+				});
+
+				customerGroups.items.forEach((customerGroup: { id: any; }) => {
+					customerGroupsIds.push(customerGroup.id);
+				});
+
+				const newRule = {
+					name : inputValues.coupon.couponCodeRuleName,
+					website_ids: websiteIds,
+					customer_group_ids: customerGroupsIds,
+					from_date: new Date().toISOString().split('T')[0],
+					uses_per_customer: 0,
+					is_active: true,
+					stop_rules_processing: true,
+					is_advanced: true,
+					sort_order: 0,
+					discount_amount: 10,
+					discount_step: 0,
+					apply_to_shipping: false,
+					times_used: 0,
+					is_rss: true,
+					coupon_type: 2, // 2 is 'SPECIFIC_COUPON'
+					use_auto_generation: false,
+					uses_per_coupon: 0
+				};
+
+				const newCouponRule = await APIClient.post(`/rest/V1/salesRules`, { rule: newRule });
+
+				const couponAPIJSON = {
+					rule_id: newCouponRule.rule_id,
+					code: couponCode,
+					times_used: 0,
+					is_primary: true
+				};
+
+				const createNewCoupon = await APIClient.post(`/rest/V1/coupons`, { coupon: couponAPIJSON });
+				test.info().annotations.push({
+					type: `Coupon Created`,
+					description: `Created coupon: ${JSON.stringify(createNewCoupon)}`
+				});
 			}
-
-			// Not present. Create the rule + coupon.
-			const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
-			const customerGroups = await APIClient.get(`/rest/V1/customerGroups/search?searchCriteria=all`);
-			const websiteIds: any[] = [];
-			const customerGroupsIds: any[] = [];
-
-			websiteInfo.forEach((website: { name: string; id: any; }) => {
-				if (website.name !== 'admin') {
-					websiteIds.push(website.id);
-				}
-			});
-
-			customerGroups.items.forEach((customerGroup: { id: any; }) => {
-				customerGroupsIds.push(customerGroup.id);
-			});
-
-			const newRule = {
-				name : inputValues.coupon.couponCodeRuleName,
-				website_ids: websiteIds,
-				customer_group_ids: customerGroupsIds,
-				from_date: new Date().toISOString().split('T')[0],
-				uses_per_customer: 0,
-				is_active: true,
-				stop_rules_processing: true,
-				is_advanced: true,
-				sort_order: 0,
-				discount_amount: 10,
-				discount_step: 0,
-				apply_to_shipping: false,
-				times_used: 0,
-				is_rss: true,
-				coupon_type: 2, // 2 is 'SPECIFIC_COUPON'
-				use_auto_generation: false,
-				uses_per_coupon: 0
-			};
-
-			const newCouponRule = await APIClient.post(`/rest/V1/salesRules`, { rule: newRule });
-
-			const couponAPIJSON = {
-				rule_id: newCouponRule.rule_id,
-				code: couponCode,
-				times_used: 0,
-				is_primary: true
-			};
-
-			const createNewCoupon = await APIClient.post(`/rest/V1/coupons`, { coupon: couponAPIJSON });
-			test.info().annotations.push({
-				type: `Coupon Created`,
-				description: `Created coupon: ${JSON.stringify(createNewCoupon)}`
-			});
 		});
 	}
 });
