@@ -96,7 +96,7 @@ After the installation, a variety of folders will have been created. Most notabl
 npx playwright test --trace on
 ```
 
-The first time you run on a fresh environment, Playwright executes the `setup` project automatically. It disables the admin login CAPTCHA, creates the test accounts, and ensures the coupon codes exist — once, before any browser tests run. Subsequent runs reuse the existing setup; the steps are idempotent, so re-running `setup` on top of an already-configured environment is safe.
+`npx playwright test` always runs the `setup` project first — Playwright wires this in automatically as a project dependency. Setup disables the admin login CAPTCHA, creates the test accounts, and ensures the coupon codes exist before any browser test starts. The setup steps are idempotent, so re-running on an already-configured environment is safe.
 
 You can run a subset by adding `--project=`, `--grep`, or a filename:
 
@@ -119,7 +119,7 @@ Version 7.0 moves setup from a tagged spec (`setup.spec.ts`) to a Playwright pro
    - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
    - the `setup` project block at the top of `projects:`
    - the `dependencies: [‘setup’]` line on each browser project
-2. Add `coupon.codes` to your `tests/config/input-values.json` (or rely on the defaults from the package’s `base-tests/config/input-values.json`).
+2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). The package ships defaults in `base-tests/config/input-values.json` from v7 onward; the deep-merge config loader picks them up automatically if you don't override them, but you must check that the entries exist after upgrading.
 3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
 4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
 
@@ -316,7 +316,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 
 ## Scenarios
 
-Up-to-date for version `4.0.0`.
+Up-to-date for version `7.0.0`.
 
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|
