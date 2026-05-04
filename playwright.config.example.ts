@@ -8,10 +8,17 @@ import { getHttpCredentials } from '@utils/env.utils';
 
 dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
 
+// Files that should never be matched by the regular browser projects.
+// setup.spec.ts is excluded because setup now runs as the 'setup' project
+// (see init.setup.ts and the project block below). Defensive guard for any
+// stray legacy or user copies as well.
+const EXCLUDED_SPEC_FILES = new Set(['setup.spec.ts']);
+
 function getTestFiles(baseDir: string, customDir?: string): string[] {
   const baseFiles = new Set(
       fs.readdirSync(baseDir)
           .filter(file => file.endsWith('.spec.ts'))
+          .filter(file => !EXCLUDED_SPEC_FILES.has(file))
           .map(file => path.join(baseDir, file))
   );
 
@@ -21,6 +28,7 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
 
   const customFiles = fs.readdirSync(customDir)
       .filter(file => file.endsWith('.spec.ts'))
+      .filter(file => !EXCLUDED_SPEC_FILES.has(file))
       .map(file => path.join(customDir, file));
 
   if (customFiles.length === 0) {
@@ -47,7 +55,48 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
   return Array.from(testFiles);
 }
 
+function getSetupFiles(baseDir: string, customDir?: string): string[] {
+  const baseFiles = new Set(
+      fs.readdirSync(baseDir)
+          .filter(file => file.endsWith('.setup.ts'))
+          .map(file => path.join(baseDir, file))
+  );
+
+  if (!customDir || !fs.existsSync(customDir)) {
+    return Array.from(baseFiles);
+  }
+
+  const customFiles = fs.readdirSync(customDir)
+      .filter(file => file.endsWith('.setup.ts'))
+      .map(file => path.join(customDir, file));
+
+  if (customFiles.length === 0) {
+    return Array.from(baseFiles);
+  }
+
+  const setupFiles = new Set<string>();
+
+  for (const file of baseFiles) {
+    const baseFilePath = path.join(baseDir, path.basename(file));
+    const customFilePath = path.join(customDir, path.basename(file));
+    setupFiles.add(fs.existsSync(customFilePath) ? customFilePath : baseFilePath);
+  }
+
+  for (const file of customFiles) {
+    if (!baseFiles.has(path.basename(file))) {
+      setupFiles.add(file);
+    }
+  }
+
+  return Array.from(setupFiles);
+}
+
 const testFiles = getTestFiles(
+    path.join(__dirname, 'base-tests'),
+    path.join(__dirname, 'tests'),
+);
+
+const setupFiles = getSetupFiles(
     path.join(__dirname, 'base-tests'),
     path.join(__dirname, 'tests'),
 );
@@ -96,12 +145,20 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // Import our auth.setup.ts file
-    //{ name: 'setup', testMatch: /.*\.setup\.ts/ },
+    {
+      name: 'setup',
+      testMatch: setupFiles,
+      use: {
+        ...devices['Desktop Chrome'],
+        userAgent: 'Playwright',
+        trace: 'on',
+      },
+    },
 
     {
       name: 'chromium',
       testMatch: testFiles,
+      dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
         userAgent: 'Playwright'
@@ -111,6 +168,7 @@ export default defineConfig({
     {
       name: 'firefox',
       testMatch: testFiles,
+      dependencies: ['setup'],
       use: {
         ...devices['Desktop Firefox'],
         userAgent: 'Playwright'
@@ -120,6 +178,7 @@ export default defineConfig({
     {
       name: 'webkit',
       testMatch: testFiles,
+      dependencies: ['setup'],
       use: {
         ...devices['Desktop Safari'],
         userAgent: 'Playwright'

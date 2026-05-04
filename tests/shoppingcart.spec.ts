@@ -15,7 +15,7 @@ import ProductPage from '@poms/frontend/product.page';
 
 import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
-import { UIReference, slugs, outcomeMarker } from '@config';
+import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
 
 /**
  * Test Group: Cart functionalities for guests
@@ -105,7 +105,8 @@ test.describe('Cart functionalities (guest)', () => {
 	test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
-		const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await cart.applyDiscountCode(discountCode);
 	});
@@ -118,7 +119,8 @@ test.describe('Cart functionalities (guest)', () => {
 	test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
-		const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await cart.applyDiscountCode(discountCode);
 		await cart.removeDiscountCode();
