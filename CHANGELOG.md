@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+- Setup is now a Playwright **project dependency**, not a tagged spec. `npx playwright test` runs `init.setup.ts` (the `setup` project) once automatically before any browser test. The separate `npx playwright test --grep "@setup"` step is no longer required.
+- Coupon codes moved from per-browser env vars (`MAGENTO_COUPON_CODE_*`) to a `coupon.codes` map in `input-values.json` (keyed by uppercase browser name). Adding a new browser is now a one-line config change.
+- CI pipelines (both `.gitlab-ci.yml` and `.github/workflows/main.yml`) collapsed from two stages to one — Playwright's project dependency handles ordering.
+
+### Removed
+- `tests/setup.spec.ts` (replaced by `tests/init.setup.ts`).
+- `MAGENTO_COUPON_CODE_CHROMIUM`, `MAGENTO_COUPON_CODE_FIREFOX`, `MAGENTO_COUPON_CODE_WEBKIT` env vars.
+- `@setup` tag (no longer needed; setup is gated by project dependency, not by tag filtering).
+
+### Breaking Changes
+- Existing installs upgrading to this version must update their root `playwright.config.ts` to mirror `playwright.config.example.ts` (new `setup` project + `getSetupFiles()` helper + `dependencies: ['setup']` on browser projects). Without this update, setup will not run and downstream tests will fail. See README → "Migrating from 6.x".
+- CI pipelines that filter on `@setup` (e.g. `--grep @setup`, `--grep-invert @setup`) no longer match anything — replace with the appropriate flag-less invocation.
+
 ## [6.0.0] - 2026-04-20
 
 ### Added
