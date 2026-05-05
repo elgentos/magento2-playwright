@@ -243,7 +243,7 @@ class AdminLogin {
 		const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter(
 			{hasText : UIReference.errors.captchaIncorrect}
 		);
-		const adminLoginHeading = this.page.getByText(UIReference.authentication.adminLoginText);
+		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.authentication.adminLoginText);
 
 		if(await dashboardLabel.isVisible()){
 			// already logged in
