@@ -8,9 +8,8 @@ import AccountPage from '@poms/frontend/account.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
 import { faker } from '@faker-js/faker';
-import { requireEnv } from '@utils/env.utils';
 import MagewireUtils from '@utils/magewire.utils';
-import { UIReference, slugs } from '@config';
+import { UIReference, slugs, inputValues } from '@config';
 
 /**
  * Test Group: Checkout tests
@@ -113,7 +112,8 @@ test.describe('Checkout (guest)', () => {
 	test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-		const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 	});
@@ -150,7 +150,8 @@ test.describe('Checkout (guest)', () => {
 	test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-		const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 		await checkout.removeDiscountCode();
