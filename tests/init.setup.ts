@@ -105,9 +105,8 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
 /**
  * Set up test accounts through the Magento API.
  *
- * @param testInfo - Playwright class that allows annotations to the report.
  */
-test(`Create_test_accounts`, { tag: '@api' }, async ({}, testInfo) => {
+test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 	test.slow(); // Mark as slow to double test time.
 
 	await test.step(`Creating accounts for general testing`, async() => {
@@ -131,7 +130,19 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}, testInfo) => {
 					customer : {
 						email: `playwright_user_${accountId}@elgentos.nl`,
 						firstname: `${inputValues.account.firstName}`,
-						lastname: `${inputValues.account.lastName}`
+						lastname: `${inputValues.account.lastName}`,
+						addresses: [{
+							firstname: `${inputValues.account.firstName}`,
+							lastname: `${inputValues.account.lastName}`,
+							street: [inputValues.firstAddress.firstStreetAddressValue],
+							city: inputValues.firstAddress.firstCityValue,
+							region: { region: inputValues.firstAddress.firstProvinceValue },
+							postcode: inputValues.firstAddress.firstZipCodeValue,
+							country_id: inputValues.firstAddress.firstCountryId,
+							telephone: inputValues.firstAddress.firstPhoneNumberValue,
+							default_billing: true,
+							default_shipping: true,
+						}]
 					},
 					password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`
 				};

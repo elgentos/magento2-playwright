@@ -46,9 +46,10 @@
   },
   "firstAddress": {
     "firstCityValue": "Testing Valley",
+    "firstCountryId": "NL",
     "firstNonDefaultCountry": "Netherlands",
     "firstPhoneNumberValue": "0622000000",
-    "firstProvinceValue": "Idaho",
+    "firstProvinceValue": "Noord-Holland",
     "firstStreetAddressValue": "Testingstreet 1",
     "firstZipCodeValue": "12345"
   },
