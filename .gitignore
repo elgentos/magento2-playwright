@@ -1,6 +1,8 @@
 #folders
 .idea
 .vscode
+.claude
+.auth/*
 node_modules/
 /test-results/
 /auth-storage/
@@ -13,3 +15,5 @@ node_modules/
 /.env
 /tsconfig.json
 .mcp.json
+/.gitlab-ci.yml
+/.auth

@@ -1,7 +1,7 @@
 // @ts-check
 
 import { request, expect, APIRequestContext, APIResponse } from '@playwright/test';
-import { requireEnv } from '@utils/env.utils';
+import { requireEnv, getHttpCredentials } from '@utils/env.utils';
 
 class ApiClient {
   private context!: APIRequestContext;
@@ -23,6 +23,7 @@ class ApiClient {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${this.token}`,
       },
+      httpCredentials: getHttpCredentials(),
     });
 
     return this;
@@ -51,12 +52,13 @@ class ApiClient {
       extraHTTPHeaders: {
         'Content-Type': 'application/json',
       },
+      httpCredentials: getHttpCredentials(),
     });
 
     const response = await tempContext.post('/rest/V1/integration/admin/token', {
       data: {
-        username: requireEnv('MAGENTO_API_USERNAME'),
-        password: requireEnv('MAGENTO_API_PASSWORD'),
+        username: requireEnv('MAGENTO_ADMIN_USERNAME'),
+        password: requireEnv('MAGENTO_ADMIN_PASSWORD'),
       },
     });
 

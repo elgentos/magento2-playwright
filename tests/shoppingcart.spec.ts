@@ -1,246 +1,220 @@
 // @ts-check
 
+/**
+ * Copyright Elgentos. All rights reserved.
+ * https://elgentos.nl/
+ *
+ * @fileoverview Various tests to ensure shopping-cart functions remain working.
+ */
+
 import { test, expect } from '@playwright/test';
-import { UIReference, slugs, outcomeMarker } from '@config';
 
 import CartPage from '@poms/frontend/shoppingcart.page';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
+
 import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
 
+/**
+ * Test Group: Cart functionalities for guests
+ */
 test.describe('Cart functionalities (guest)', () => {
-  /**
-   * @feature BeforeEach runs before each test in this group.
-   * @scenario Add a product to the cart and confirm it's there.
-   * @given I am on any page
-   * @when I navigate to a (simple) product page
-   *  @and I add it to my cart
-   *  @then I should see a notification
-   * @when I click the cart in the main menu
-   *  @then the minicart should become visible
-   *  @and I should see the product in the minicart
-   */
-  test.beforeEach(async ({ page }, testInfo) => {
-    const productPage = new ProductPage(page);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+	/**
+	 * Before each test: add a product to the cart, navigate to the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 * @param testInfo -  Playwright class that allows interaction with the report.
+	 */
+	test.beforeEach(async ({ page }, testInfo) => {
+		const productPage = new ProductPage(page);
+		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
 
-    const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
-    const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-    await notificationValidator.validate(productAddedNotification);
-    
-    await page.goto(slugs.cart.cartSlug);
-  });
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
+		const notificationValidator = new NotificationValidatorUtils(page, testInfo);
+		await notificationValidator.validate(productAddedNotification);
 
-  /**
-   * @feature Product can be added to cart
-   * @scenario User adds a product to their cart
-   * @given I have added a product to my cart
-   *  @and I am on the cart page
-   * @then I should see the name of the product in my cart
-   */
-  test('Add_product_to_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-    await expect(page.getByRole('heading').getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
-  });
+		await page.goto(slugs.cart.cartSlug);
+	});
 
-  /**
-   * @feature Product permanence after login
-   * @scenario A product added to the cart should still be there after user has logged in
-   * @given I have a product in my cart
-   * @when I log in
-   * @then I should still have that product in my cart
-   */
-  test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page, browserName}) => {
-    await test.step('Add another product to cart', async () =>{
-      const productpage = new ProductPage(page);
-      await page.goto(slugs.productPage.secondSimpleProductSlug);
-      await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productPage.secondSimpleProductSlug);
-    });
+	/**
+	 * Test: A guest adds a product to their cart
+	 * @assume we have already added a product to the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Add_product_to_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
+		await expect(page.getByRole('heading')
+			.getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+	});
 
-    await test.step('Log in with account', async () =>{
-      const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-      const loginPage = new LoginPage(page);
-      const emailInputValue = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserEngine}`);
-      const passwordInputValue = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+	/**
+	 * Test: a guest's cart remains after they log in.
+	 * @assume we have already added a product to the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page}) => {
+		await test.step('Add another product to cart', async () =>{
+			const productpage = new ProductPage(page);
+			await page.goto(slugs.productPage.secondSimpleProductSlug);
+			await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productPage.secondSimpleProductSlug);
+		});
 
-      await loginPage.login(emailInputValue, passwordInputValue);
-    });
+		await test.step('Log in with account', async () =>{
+			const loginPage = new LoginPage(page);
 
-    await page.goto(slugs.cart.cartSlug);
-    await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
-    await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
-  });
+			const parallelIndex = test.info().parallelIndex;
+			const email = `playwright_user_${parallelIndex}@elgentos.nl`;
+			const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-  /**
-   * @feature Remove product from cart
-   * @scenario User has added a product and wants to remove it from the cart page
-   * @given I have added a product to my cart
-   *  @and I am on the cart page
-   * @when I click the delete button
-   * @then I should see a notification that the product has been removed from my cart
-   *  @and I should no longer see the product in my cart
-   */
-  test('Remove_product_from_cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
-    const cart = new CartPage(page);
-    await cart.removeProduct(UIReference.productPage.simpleProductTitle);
-  });
+			await loginPage.login(email, password);
+		});
 
-  /**
-   * @feature Change quantity of products in cart
-   * @scenario User has added a product and changes the quantity
-   * @given I have a product in my cart
-   * @and I am on the cart page
-   * @when I change the quantity of the product
-   * @and I click the update button
-   * @then the quantity field should have the new amount
-   * @and the subtotal/grand total should update
-   */
-  test('Change_product_quantity_in_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-    const cart = new CartPage(page);
-    await cart.changeProductQuantity('2');
-  });
+		await page.goto(slugs.cart.cartSlug);
 
-  /**
-   * @feature Discount Code
-   * @scenario User adds a discount code to their cart
-   * @given I have a product in my cart
-   *  @and I am on my cart page
-   * @when I click on the 'add discount code' button
-   * @then I fill in a code
-   *  @and I click on 'apply code'
-   * @then I should see a confirmation that my code has been added
-   *  @and the code should be visible in the cart
-   *  @and a discount should be applied to the product
-   */
-  test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const cart = new CartPage(page);
-    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),
+			`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
+		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),
+			`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
+	});
 
-    await cart.applyDiscountCode(discountCode);
-  });
+	/**
+	 * Test: Remove the product that was added to the cart in beforeEach().
+	 * @assume there's already a product in the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Remove_product_from_cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
+		const cart = new CartPage(page);
+		await cart.removeProduct(UIReference.productPage.simpleProductTitle);
+	});
 
-  /**
-   * @feature Remove discount code from cart
-   * @scenario User has added a discount code, then removes it
-   * @given I have a product in my cart
-   * @and I am on my cart page
-   * @when I add a discount code
-   * @then I should see a notification
-   * @and the code should be visible in the cart
-   * @and a discount should be applied to a product
-   * @when I click the 'cancel coupon' button
-   * @then I should see a notification the discount has been removed
-   * @and the discount should no longer be visible.
-   */
-  test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
-    const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-    const cart = new CartPage(page);
-    const discountCode = requireEnv(`MAGENTO_COUPON_CODE_${browserEngine}`);
+	/**
+	 * Test: A guest changes the quantity of a product in their cart
+	 * @assume there's already a product in the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Change_product_quantity_in_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
+		const cart = new CartPage(page);
+		await cart.changeProductQuantity('2');
+	});
 
-    await cart.applyDiscountCode(discountCode);
-    await cart.removeDiscountCode();
-  });
+	/**
+	 * Test: A guest adds a coupon code in the cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
+	 */
+	test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
+		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+		const cart = new CartPage(page);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
-  /**
-   * @feature Incorrect discount code check
-   * @scenario The user provides an incorrect discount code, the system should reflect that
-   * @given I have a product in my cart
-   * @and I am on the cart page
-   * @when I enter a wrong discount code
-   * @then I should get a notification that the code did not work.
-   */
+		await cart.applyDiscountCode(discountCode);
+	});
 
-  test('Invalid_coupon_code_is_rejected',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page}) => {
-    const cart = new CartPage(page);
-    await cart.enterWrongCouponCode("Incorrect Coupon Code");
-  });
-})
+	/**
+	 * Test: A guest removes a coupon code from their cart.
+	 * @param page - Playwright page instance used to interact with the website.
+	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
+	 */
+	test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
+		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+		const cart = new CartPage(page);
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
+		await cart.applyDiscountCode(discountCode);
+		await cart.removeDiscountCode();
+	});
+
+	/**
+	 * Test: If a guest uses an invalid coupon code, it should not work.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Invalid_coupon_code_is_rejected',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page}) => {
+		const cart = new CartPage(page);
+		await cart.enterWrongCouponCode("Incorrect Coupon Code");
+	});
+});
+
+/**
+ * Test Group: Tests that check prices are consistent and correct.
+ */
 test.describe('Price checking tests', () => {
+	/**
+	 * Test: the data of a simple product in cart is consistent through the checkout
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Simple_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
+		let productPagePrice: string;
+		let productPageAmount: string;
+		let checkoutProductDetails: string[];
 
-  /**
-   * @feature Simple Product price/amount check from PDP to Checkout
-   * @given none
-   * @when I go to a (simple) product page
-   *  @and I add one or more to my cart
-   * @when I go to the checkout
-   * @then the amount of the product should be the same
-   *  @and the price in the checkout should equal the price of the product * the amount of the product
-   */
-  test('Simple_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-    let productPagePrice: string;
-    let productPageAmount: string;
-    let checkoutProductDetails: string[];
+		const cart = new CartPage(page);
 
-    const cart = new CartPage(page);
+		await test.step('Step: Add simple product to cart', async () =>{
+			const productPage = new ProductPage(page);
+			await page.goto(slugs.productPage.simpleProductSlug);
+			// set quantity to 2 so we can see that the math works
+			await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
 
-    await test.step('Step: Add simple product to cart', async () =>{
-      const productPage = new ProductPage(page);
-      await page.goto(slugs.productPage.simpleProductSlug);
-      // set quantity to 2 so we can see that the math works
-      await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
+			productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
+			productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
+			await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug, '2');
+		});
 
-      productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-      productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug, '2');
+		await test.step('Step: go to checkout, get values', async () =>{
+			await page.goto(slugs.checkout.checkoutSlug);
+			await page.waitForLoadState();
 
-    });
+			// returns productPriceInCheckout and productQuantityInCheckout
+			checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.simpleProductTitle, productPagePrice, productPageAmount);
+		});
 
-    await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
+		await test.step('Step: Calculate and check expectations', async () =>{
+			await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
+		});
+	});
 
-      // returns productPriceInCheckout and productQuantityInCheckout
-      checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.simpleProductTitle, productPagePrice, productPageAmount);
-    });
+	/**
+	 * Test: the data of a configurable product in cart is consistent through the checkout
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Configurable_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
+		var productPagePrice: string;
+		var productPageAmount: string;
+		var checkoutProductDetails: string[];
 
-    await test.step('Step: Calculate and check expectations', async () =>{
-      await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
-    });
+		const cart = new CartPage(page);
 
-  });
+		await test.step('Step: Add configurable product to cart', async () =>{
+			const productPage = new ProductPage(page);
+			// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
+			await page.goto(slugs.productPage.configurableProductSlug);
+			// set quantity to 2 so we can see that the math works
+			await page.getByLabel('Quantity').fill('2');
 
-  /**
-   * @feature Configurable Product price/amount check from PDP to Checkout
-   * @given none
-   * @when I go to a (configurable) product page
-   *  @and I add one or more to my cart
-   * @when I go to the checkout
-   * @then the amount of the product should be the same
-   *  @and the price in the checkout should equal the price of the product * the amount of the product
-   */
-  test('Configurable_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-    var productPagePrice: string;
-    var productPageAmount: string;
-    var checkoutProductDetails: string[];
+			productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
+			productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
 
-    const cart = new CartPage(page);
+			await productPage.addConfigurableProductToCart(
+				UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2'
+			);
+		});
 
-    await test.step('Step: Add configurable product to cart', async () =>{
-      const productPage = new ProductPage(page);
-      // Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-      await page.goto(slugs.productPage.configurableProductSlug);
-      // set quantity to 2 so we can see that the math works
-      await page.getByLabel('Quantity').fill('2');
+		await test.step('Step: go to checkout, get values', async () =>{
+			await page.goto(slugs.checkout.checkoutSlug);
+			await page.waitForLoadState();
 
-      productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-      productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-      await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
+			// returns productPriceInCheckout and productQuantityInCheckout
+			checkoutProductDetails = await cart.getCheckoutValues(
+				UIReference.productPage.configurableProductTitle, productPagePrice, productPageAmount
+			);
+		});
 
-    });
-
-    await test.step('Step: go to checkout, get values', async () =>{
-      await page.goto(slugs.checkout.checkoutSlug);
-      await page.waitForLoadState();
-
-      // returns productPriceInCheckout and productQuantityInCheckout
-      checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.configurableProductTitle, productPagePrice, productPageAmount);
-    });
-
-    await test.step('Step: Calculate and check expectations', async () =>{
-      await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
-    });
-
-  });
+		await test.step('Step: Calculate and check expectations', async () =>{
+			await cart.calculateProductPricesAndCompare(
+				productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]
+			);
+		});
+	});
 });

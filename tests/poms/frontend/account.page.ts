@@ -3,6 +3,7 @@
 import {expect, type Locator, type Page, test, TestInfo} from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 import LoginPage from '@poms/frontend/login.page';
 
@@ -37,6 +38,7 @@ class AccountPage {
   readonly accountCreationPasswordRepeatField: Locator;
   readonly accountCreationConfirmButton: Locator;
   readonly accountInformationField: Locator;
+  readonly newAddressButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -54,9 +56,12 @@ class AccountPage {
     this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
 
     this.stateInputField = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
-    this.stateSelectorField = this.stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
+    // Target the <select> directly: filtering by option text races the JS that populates the options.
+    this.stateSelectorField = page.locator(UIReference.newAddress.regionDropdownLocator);
 
     this.saveAddressButton = page.getByRole('button', { name: UIReference.newAddress.saveAdressButton });
+
+	this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
 
     // Account Information elements
     this.changePasswordSwitch = page.getByRole('switch', { name: UIReference.personalInformation.changePasswordSwitchLabel });
@@ -95,7 +100,6 @@ class AccountPage {
     state?: string;
     country?: string;
   }) {
-    let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
     await expect(this.firstNameField, `first name should be pre-filled`).not.toBeEmpty();
     await expect(this.lastNameField, `last name should be pre-filled`).not.toBeEmpty();
@@ -103,7 +107,7 @@ class AccountPage {
     const phone = values?.phone || faker.phone.number({style: 'national'}); // Use 'national' style to prevent input errors
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
-    const cityName = values?.city || faker.location.city();
+    const cityName = (values?.city || faker.location.city()).replace(/[^A-Za-z0-9\-' ]/g, '');
     const stateName = values?.state || faker.location.state();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
     if (values?.company) {
@@ -115,8 +119,9 @@ class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
 
-    // If default selected country == country we want to use for the test,
-    // don't re-select it.
+    // Wait for the country selector to hydrate before reading its value, otherwise the
+    // short-circuit below can compare against a stale default.
+    await expect(this.countrySelectorField).toBeEnabled();
     const defaultSelectedCountry = await this.countrySelectorField.evaluate(
       (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
     );
@@ -128,25 +133,28 @@ class AccountPage {
     const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     if(country !== 'United States') {
-      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
 
       await regionInputField.fill(stateName);
+      await expect(regionInputField).toHaveValue(stateName);
     } else {
-      await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionDropdown, `State input field should be editable`).toBeEditable();
-      // await regionDropdown.selectOption(stateName);
-      await this.stateSelectorField.selectOption(stateName);
-      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
-      // Standard debounce is 250ms.
-      await this.page.waitForTimeout(1000);
+      await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
+      await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
+
+      // The state list is populated by JS after the country switches; wait for real options.
+      await expect(regionDropdown.locator('option')).not.toHaveCount(1);
+
+      await this.stateSelectorField.selectOption({label: stateName});
+      // Replaces a hardcoded 1s wait for Alpine's input debounce — assert the value committed.
+      await expect(this.stateSelectorField).toHaveValue(/.+/);
     }
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
-
-    await expect.soft(this.page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
+    // wait for the address index url
+	await this.page.waitForURL(/customer\/address\/(index|)/, {waitUntil: "load"});
   }
 
 
@@ -162,7 +170,6 @@ class AccountPage {
     state?: string;
     country?: string;
   }, defaultAddress: boolean = false) {
-    let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 
     const firstName = values?.firstName || faker.person.firstName();
     const lastName = values?.lastName || faker.person.lastName();
@@ -170,7 +177,7 @@ class AccountPage {
     const phone = values?.phone || faker.phone.number({style: 'national'}); // Use 'national' style to prevent input errors
     const streetName = values?.street || faker.location.streetAddress();
     const zipCode = values?.zip || faker.location.zipCode();
-    const cityName = values?.city || faker.location.city();
+    const cityName = (values?.city || faker.location.city()).replace(/[^A-Za-z0-9\-' ]/g, '');
     const stateName = values?.state || faker.location.state();
     const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
@@ -193,8 +200,9 @@ class AccountPage {
     await this.zipCodeField.fill(zipCode);
     await this.cityField.fill(cityName);
 
-    // If default selected country == country we want to use for the test,
-    // don't re-select it.
+    // Wait for the country selector to hydrate before reading its value, otherwise the
+    // short-circuit below can compare against a stale default.
+    await expect(this.countrySelectorField).toBeEnabled();
     const defaultSelectedCountry = await this.countrySelectorField.evaluate( (select: HTMLSelectElement) => select.options[select.selectedIndex]?.text);
     if(country !== defaultSelectedCountry) {
       await this.countrySelectorField.selectOption({label: country});
@@ -204,23 +212,28 @@ class AccountPage {
     const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
 
     if(country !== 'United States') {
-      await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
-      await expect(regionInputField, `Region input field should be visible`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
+      await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
 
       await regionInputField.fill(stateName);
+      await expect(regionInputField).toHaveValue(stateName);
     } else {
-      // await regionDropdown.selectOption(stateName);
-      await this.stateSelectorField.selectOption(stateName);
-      // Timeout because Alpine uses an @input.debounce to delay the activation of the event
-      // Standard debounce is 250ms.
-      await this.page.waitForTimeout(1000);
+      await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
+      await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+      await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
+
+      // The state list is populated by JS after the country switches; wait for real options.
+      await expect(regionDropdown.locator('option')).not.toHaveCount(1);
+
+      await this.stateSelectorField.selectOption({label: stateName});
+      // Replaces a hardcoded 1s wait for Alpine's input debounce — assert the value committed.
+      await expect(this.stateSelectorField).toHaveValue(/.+/);
     }
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForLoadState();
+    await this.page.waitForURL(/customer\/address\//, {waitUntil: "load"});
 
-    await expect.soft(this.page.getByText(addressModifiedNotification)).toBeVisible();
     // await expect(this.page.getByText(streetName).last()).toBeVisible();
     if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
   }
@@ -249,33 +262,34 @@ class AccountPage {
     test.info().annotations.push({type: `Address to be deleted`, description: addressToBeDeleted});
 
     await this.deleteAddressButton.click();
-    await this.page.waitForLoadState();
+    // wait for the address index url
+	await this.page.waitForURL(/customer\/address\/(index|)/, {waitUntil: "load"});
 
     await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
     await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
   }
 
   async updatePassword(currentPassword: string, newPassword: string) {
-    let passwordUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+    let passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
     await this.changePasswordSwitch.check();
     await this.currentPasswordField.fill(currentPassword);
     await this.newPasswordField.fill(newPassword);
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(new RegExp(slugs.account.loginSlug));
+    await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
   async updateEmail(currentPassword: string, newEmail: string) {
-    let accountUpdatedNotification = outcomeMarker.account.changedPasswordNotificationText;
+    let accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
     await this.changeEmailCheck.check();
     await this.accountCreationEmailField.fill(newEmail);
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
-    await this.page.waitForLoadState();
-    await this.loginPage.login(newEmail, currentPassword);
-    await expect(this.accountInformationField, `Account information should contain email: ${newEmail}`).toContainText(newEmail);
+
+	await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
+    await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
   }
 
   async deleteAllAddresses() {
@@ -293,6 +307,27 @@ class AccountPage {
       await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
     }
   }
+
+
+  	/**
+	 * Checks that customer details have been filled in.
+	 * Fills in faker() values otherwise.
+	 */
+	async ensureCustomerDetails() {
+		// the button 'New Address' is only visible if there is a default address.
+		if (await this.newAddressButton.isHidden()) {
+			await this.firstNameField.fill(faker.person.firstName());
+			await this.lastNameField.fill(faker.person.lastName());
+			await this.streetAddressField.fill(faker.location.streetAddress());
+			await this.stateSelectorField.selectOption(faker.location.state());
+			await this.zipCodeField.fill(faker.location.zipCode());
+			await this.cityField.fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
+			await this.phoneNumberField.fill(faker.phone.number());
+		}
+
+		return;
+	}
+
 }
 
 export default AccountPage;

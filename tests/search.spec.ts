@@ -2,15 +2,16 @@
 
 import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
 import SearchPage from '@poms/frontend/search.page';
 
-test.describe('Search functionality', () => {
+test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', () => {
   test('Search_query_returns_multiple_results', async ({ page }) => {
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryMultipleResults);
-    await expect(page).toHaveURL(new RegExp(slugs.search.resultsSlug));
+    await expect(page).toHaveURL(slugToRegex(slugs.search.resultsSlug));
     const results = page.locator(`${UIReference.categoryPage.productGridLocator} li`);
     const resultCount = await results.count();
     expect(resultCount).toBeGreaterThan(1);
