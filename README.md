@@ -2,7 +2,7 @@
 
 This package contains an end-to-end (E2E) testing suite for Magento 2, powered by [Playwright](https://playwright.dev/). It enables you to quickly set up, run, and extend automated browser tests for your Magento 2 store. Installation is simple via npm, allowing you to seamlessly integrate robust testing into your development workflow.
 
-<mark>⚠️ Please note: if you’re not sure what each test does, **then you should only run this in a testing environment**! Some tests involve the database, and for the suite to run `setup.spec.ts` will disable the CAPTCHA of your webshop.</mark>
+<mark>⚠️ Please note: if you’re not sure what each test does, **then you should only run this in a testing environment**! Some tests involve the database, and the suite's `setup` project (`init.setup.ts`) will disable the CAPTCHA of your webshop on first run.</mark>
 
 🏃**Just want to install and get going?**
 
@@ -15,7 +15,8 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 - [Prerequisites](#Prerequisites)
 - [Installing the suite](#-installing-the-suite)
 - [Before your run](#-before-you-run)
-- [Running the setup](#-run-setup-then-you-can-run-the-suite)
+- [Running the suite](#-running-the-suite)
+- [Migrating from 6.x](#-migrating-from-6x)
 - [How to use the testing suite](#-how-to-use-the-testing-suite)
     - [Running tests](#running-tests)
     - [Skipping specific tests](#skipping-specific-tests)
@@ -28,7 +29,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ## Prerequisites
 
-* This testing suite has been designed to work within a Hÿva theme in Magento 2, but can work with other themes.
+* This testing suite has been designed to work within a Hyvä theme in Magento 2, but can work with other themes.
 * **Magento 2 instance:** A running instance of Magento 2 for testing purposes. Elgentos sponsors a [Hyvä demo website](https://hyva-demo.elgentos.io/) for this project.
 
 ---
@@ -87,20 +88,42 @@ After the installation, a variety of folders will have been created. Most notabl
 
 ---
 
-## 🤖 Run setup… then you can run the suite!
+## 🤖 Running the suite
 
-Finally, before running the testing suite, you must run `setup.spec.ts`. This must be done as often as your server resets. You can run this using the following command:
-
-
-```bash
-npx playwright test --grep "@setup" --trace on
-```
-
-After that - you’re all set! 🥳 You can run the testing suite - feel free to skip the setup at this point:
+`npx playwright test` is all you need:
 
 ```bash
-npx playwright test --grep-invert "@setup" --trace on
+npx playwright test --trace on
 ```
+
+`npx playwright test` always runs the `setup` project first — Playwright wires this in automatically as a project dependency. Setup disables the admin login CAPTCHA, creates the test accounts, and ensures the coupon codes exist before any browser test starts. The setup steps are idempotent, so re-running on an already-configured environment is safe.
+
+You can run a subset by adding `--project=`, `--grep`, or a filename:
+
+```bash
+npx playwright test login.spec.ts
+npx playwright test --grep "@hot"
+npx playwright test --project=chromium
+```
+
+In every case Playwright pulls the `setup` project in automatically as a dependency.
+
+---
+
+## 🔁 Migrating from 6.x
+
+Version 7.0 moves setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
+
+1. Open `playwright.config.example.ts` (refreshed by the new package). Copy these into your own `playwright.config.ts`:
+   - the `getSetupFiles()` helper
+   - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
+   - the `setup` project block at the top of `projects:`
+   - the `dependencies: [‘setup’]` line on each browser project
+2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
+3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
+4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
+
+After these changes, `npx playwright test` runs setup automatically and you no longer need a separate `--grep "@setup"` invocation.
 
 ---
 
@@ -147,7 +170,7 @@ The Testing Suite offers a variety of tests for your Magento 2 application in Ch
 To run all tests, run the following command:
 
 ```bash
-npx playwright test --grep-invert "@setup"
+npx playwright test
 ```
 
 This command will run all tests located in the `base-tests` directory. If you have custom tests in the `tests` folder, these will be used instead of their `base-tests` counterpart.
@@ -172,11 +195,13 @@ npx playwright test --trace on
 
 ### Skipping specific tests
 
-Certain `spec` files and specific tests are used as a setup. For example, all setup tests (such as creating an account and setting a coupon code in your Magento 2 environment) have the tag ‘@setup’. Since these only have to be used once (or in the case of our demo website every 24 hours), most of the time you can skip these. These means most of the time, using the following command is best. These tests, including `user_can_register_an_account` and all tests in `base-tests/setup.spec.ts` (or any custom setup in `tests/setup.spec.ts`), can be skipped most of the time.
+Use `--grep` and `--grep-invert` to run subsets by tag. For example, to skip coupon-related tests:
 
 ```bash
-npx playwright test –-grep-invert @setup
+npx playwright test --grep-invert @coupon-code
 ```
+
+Setup tests no longer need to be skipped — they run as a project dependency, not as part of the regular suite. (See "Running the suite" above.)
 
 ### Tags and Annotations
 
@@ -291,6 +316,8 @@ This package, and therefore the testing suite, is part of our open-source initia
 
 ## Scenarios
 
+Up-to-date as of the `[Unreleased]` CHANGELOG entry.
+
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|
 | account.spec.ts      | Account information actions        | :heavy_check_mark: Change_password                                                |
@@ -305,7 +332,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 |                      |                                    | :heavy_check_mark: Change_amount_of_products_shown                                |
 |                      |                                    | :heavy_check_mark: Switch_from_grid_to_list_view                                  |
 | footer.spec.ts       | Footer                             | :heavy_check_mark: Footer_is_available                                            |
-|                      |                                    | :warning: Footer_switch_currency (fixme: does not work due to error on website)   |
+|                      |                                    | :heavy_check_mark: Footer_switch_currency                                         |
 |                      |                                    | :heavy_check_mark: Footer_newsletter_subscription                                 |
 | mainmenu.spec.ts     | Guest tests (not logged in)        | :heavy_check_mark: User_navigates_to_login                                        |
 |                      |                                    | :heavy_check_mark: User_navigates_to_create_account                               |
@@ -344,7 +371,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 |                      |                                    | :heavy_check_mark: Guests_can_not_add_a_product_to_their_wishlist                 |
 |                      |                                    | :heavy_check_mark: Add_product_to_wishlist_from_comparison_page                   |
 | contact.spec.ts      |                                    | :heavy_check_mark: Send_message_through_contact_form                              |
-| cart.spec.ts         | Cart functionalities (guest)       | :heavy_check_mark: Add_product_to_cart                                            |
+| shoppingcart.spec.ts | Cart functionalities (guest)       | :heavy_check_mark: Add_product_to_cart                                            |
 |                      |                                    | :heavy_check_mark: Product_remains_in_cart_after_login                            |
 |                      |                                    | :heavy_check_mark: Remove_product_from_cart                                       |
 |                      |                                    | :heavy_check_mark: Change_product_quantity_in_cart                                |
@@ -356,17 +383,14 @@ This package, and therefore the testing suite, is part of our open-source initia
 | register.spec.ts     |                                    | :heavy_check_mark: User_registers_an_account                                      |
 | product.spec.ts      | Product page tests                 | :heavy_check_mark: Add_product_to_compare                                         |
 |                      |                                    | :warning: Add_product_to_wishlist (fixme: causes regular timeouts)                |
-|                      |                                    | :warning: Leave_a_product_review (fixme: fails due to error on website)           |
+|                      |                                    | :warning: Leave a product review (Test currently fails due to error on website)   |
 |                      |                                    | :heavy_check_mark: Open_pictures_in_lightbox_and_scroll                           |
 |                      |                                    | :heavy_check_mark: Change_number_of_reviews_shown_on_product_page                 |
-|                      | Simple product tests               | :warning: Simple_tests_will_be_added_later                                        |
-|                      | Configurable product tests         | :warning: Configurable_tests_will_be_added_later                                  |
 | search.spec.ts       | Search functionality               | :heavy_check_mark: Search_query_returns_multiple_results                          |
 |                      |                                    | :heavy_check_mark: User_can_find_a_specific_product_and_navigate_to_its_page      |
 |                      |                                    | :heavy_check_mark: No_results_message_is_shown_for_unknown_query                  |
-| setup.spec.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha                                          |
-|                      |                                    | :heavy_check_mark: Enable_multiple_admin_logins                                   |
-|                      |                                    | :heavy_check_mark: Set_up_coupon_codes                                            |
+| init.setup.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha_and_enable_multiple_login                |
+|                      |                                    | :heavy_check_mark: Set_coupon_codes                                               |
 |                      |                                    | :heavy_check_mark: Create_test_accounts                                           |
 
 ## Roadmap
@@ -384,7 +408,7 @@ The list below shows tests that will be written in the future. The list is subje
 |                      |                       | Add_comment_to_item_in_wishlist                             | Medium   |
 |                      |                       | User_can_share_wishlist                                     | Low      |
 |                      |                       | Add_all_wishlist_item_to_cart                               | High     |
-| cart.spec.ts         | Guest to user         | Carts_are_merged_from_guest_to_user                         | Medium   |
+| shoppingcart.spec.ts | Guest to user         | Carts_are_merged_from_guest_to_user                         | Medium   |
 | checkout.spec.ts     |                       | Login_from_checkout_keeps_cart                              | Medium   |
 |                      |                       | All_payment_methods_work                                    | Medium   |
 |                      |                       | All_shipping_methods_work                                   | Medium   |
@@ -411,6 +435,8 @@ The list below shows tests that will be written in the future. The list is subje
 |                      |                       | Price_is_correct_sum_of_parts                               | Low      |
 |                      |                       | Qty_of_products_in_bundle_are_shown                         | Low      |
 |                      |                       | Add_bundled_product_to_cart                                 | Low      |
+| product.spec.ts      | Simple product        | Simple_tests_will_be_added_later                            | Low      |
+| product.spec.ts      | Configurable product  | Configurable_tests_will_be_added_later                      | Low      |
 | cmspages.spec.ts     | General               | Default_404_is_shown_on_nonexistent_url                     | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_missing_field                 | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_incorrect_emailaddress_format | Medium   |

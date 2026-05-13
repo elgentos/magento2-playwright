@@ -5,12 +5,11 @@ import { test, expect } from '@utils/fixtures.utils';
 
 import ProductPage from '@poms/frontend/product.page';
 import AccountPage from '@poms/frontend/account.page';
-import MainMenuPage from '@poms/frontend/mainmenu.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
-import { getCouponCode } from '@utils/env.utils';
+import { faker } from '@faker-js/faker';
 import MagewireUtils from '@utils/magewire.utils';
-import { UIReference, slugs } from '@config';
+import { UIReference, slugs, inputValues } from '@config';
 
 /**
  * Test Group: Checkout tests
@@ -67,11 +66,14 @@ test.describe('Checkout (logged in user)', () => {
 
 	/**
 	 * Test: The user places an order for a (simple) product
-	 * @assume the user already has an item in their cart.
+	 * @assume the user already has an item in their cart and is on the checkout page.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}) => {
 		const checkoutPage = new CheckoutPage(page);
+		const accountPage = new AccountPage(page);
+		await accountPage.ensureCustomerDetails();
+
 		let orderNumber = await checkoutPage.placeOrder();
 		test.info().annotations.push({ type: 'Order number', description: `${orderNumber}` });
 	});
@@ -109,7 +111,9 @@ test.describe('Checkout (guest)', () => {
 	 */
 	test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
 		const checkout = new CheckoutPage(page);
-		const discountCode = getCouponCode(browserName);
+		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 	});
@@ -145,7 +149,9 @@ test.describe('Checkout (guest)', () => {
 	 */
 	test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
 		const checkout = new CheckoutPage(page);
-		const discountCode = getCouponCode(browserName);
+		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
+		const discountCode = inputValues.coupon.codes[browserEngine];
+		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
 
 		await checkout.applyDiscountCodeCheckout(discountCode);
 		await checkout.removeDiscountCode();
@@ -160,21 +166,29 @@ test.describe('Checkout (guest)', () => {
 		await checkout.enterWrongCouponCode("incorrect discount code");
 	});
 
-	/**
-	 * Test: A guest can select payment methods in the checkout.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@cold'] }, async ({ page }) => {
-		// Marking test as slow to allow more time before timeout
-		test.slow();
-		const checkoutPage = new CheckoutPage(page);
-		await page.goto(slugs.checkout.checkoutSlug);
+  /**
+   * @feature Payment Method Selection
+   * @scenario Guest user selects different payment methods during checkout
+   * @given I have a product in my cart
+   *  @and I am on the checkout page as a guest
+   * @when I select a payment method
+   *  @and I complete the checkout process
+   * @then I should see a confirmation that my order has been placed
+   *  @and a order number should be created and shown to me
+   */
+  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
+    // Marking test as slow to allow more time befoure timeout
+    test.slow();
+    const checkoutPage = new CheckoutPage(page);
 
-		await checkoutPage.fillShippingAddress();
-		await checkoutPage.selectShippingMethod('fixed');
-		await checkoutPage.selectPaymentMethod('check');
-
-		let orderNumber = await checkoutPage.placeOrder();
-		expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
-	});
+    // Test with check/money order payment
+    await test.step('Place order with check/money order payment', async () => {
+      await page.goto(slugs.checkout.checkoutSlug);
+      await checkoutPage.fillShippingAddress();
+      await checkoutPage.selectShippingMethod('fixed');
+      await checkoutPage.selectPaymentMethod('check');
+      let orderNumber = await checkoutPage.placeOrder();
+      expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
+    });
+  });
 });

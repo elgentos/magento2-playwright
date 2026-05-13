@@ -28,6 +28,12 @@ class AdminLogin {
 	readonly adminSharingOption: Locator;
 	readonly customerCAPTCHAInheritCheckbox: Locator;
 	readonly adminInheritCheckbox: Locator;
+	// reCAPTCHA settings
+	readonly storesSecurityTab: Locator;
+	readonly googleReCaptchaStorefrontLink: Locator;
+	readonly storefrontReCaptchaAccordion: Locator;
+	readonly customerCreateReCaptchaOption: Locator;
+	readonly customerCreateReCaptchaInheritCheckbox: Locator;
 
 
 	constructor(page: Page) {
@@ -40,7 +46,7 @@ class AdminLogin {
 		this.adminLoginPasswordField = page.locator(UIReference.authentication.adminPasswordFieldId);
 		this.adminLoginButton = page.locator(UIReference.authentication.adminLoginButtonClass);
 		// Navigation
-		this.mainMenuStoresButton = page.getByRole('link', {name: UIReference.admin.storesButton});
+		this.mainMenuStoresButton = page.locator(UIReference.admin.adminMenuLocator).getByRole('link', {name: UIReference.admin.storesButton});
 		this.storesConfigurationButton = page.getByRole('link', {name: UIReference.admin.configuration}).first();
 		this.storesCustomersTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.admin.customers);
 		this.advancedSettingsTab = page.getByRole('strong').filter({hasText: UIReference.admin.advanced});
@@ -53,6 +59,12 @@ class AdminLogin {
 		this.adminSharingOption = page.getByLabel(UIReference.admin.adminSharing);
 		this.customerCAPTCHAInheritCheckbox = page.locator(UIReference.admin.customerCAPTCHAInheritLocator);
 		this.adminInheritCheckbox = page.locator(UIReference.admin.customerInheritLocator);
+		// reCAPTCHA settings
+		this.storesSecurityTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.general.security, {exact:true});
+		this.googleReCaptchaStorefrontLink = page.getByRole('link', { name: UIReference.admin.googleReCAPTCHALink });
+		this.storefrontReCaptchaAccordion = page.getByRole('link', { name: UIReference.admin.storeFrontLabel }).filter({hasNotText: 'Google'});
+		this.customerCreateReCaptchaOption = page.locator(UIReference.admin.customerReCAPTCHAOption);
+		this.customerCreateReCaptchaInheritCheckbox = page.locator(UIReference.admin.customerReCAPTCHAInherit);
 	}
 
 	/**
@@ -97,23 +109,86 @@ class AdminLogin {
 		}
 	}
 
+
 	/**
-	 * Navigate to the Stores Settings in Magento Admin.
+	 * Disable Google reCAPTCHA on the "Create New Customer Account" form key.
+	 *
+	 * The legacy Magento_Captcha module and Google reCAPTCHA are two separate systems;
+	 * disableLoginCaptcha() only handles the former. The /rest/V1/customers REST endpoint
+	 * is guarded by Magento_ReCaptchaWebapiRest, which reads the recaptcha_frontend/type_for/customer_create
+	 * config — so this form key has to be set to "No" for the setup test to be able to
+	 * create accounts via the API.
+	 *
+	 * Assumption is that we're already on the Stores → Configuration page.
 	 */
-	async navigateToStoreSettings() {
-		const configurationPageLabel = UIReference.admin.configuration;
-		await this.mainMenuStoresButton.click();
-		await this.storesConfigurationButton.click();
-
-		// Confirm the page has loaded correctly by checking for the presence of text.
-		await expect(async () => {
-			await expect(this.pageHeadingOne, `Page title is '${configurationPageLabel}'`)
-				.toContainText(`${configurationPageLabel}`);
-
-			await expect(this.page.getByRole('link', {name: UIReference.general.general}),
-				`"General options" under General section is visible.`).toBeVisible();
+	async disableReCAPTCHA() {
+		await this.storesSecurityTab.click();
+		// Confirm the link for Google reCAPTCHA Storefront is visible.
+		await expect(async() => {
+			await expect(this.googleReCaptchaStorefrontLink, `"Google reCAPTCHA Storefront" link is visible`).toBeVisible();
 		}).toPass();
+
+		await this.googleReCaptchaStorefrontLink.click();
+		// wait for the Storefront accordion to be visible before continuing.
+		await this.storefrontReCaptchaAccordion.waitFor();
+
+		if(!await this.customerCreateReCaptchaOption.isVisible()){
+			// option not visible, accordion is closed.
+			await this.storefrontReCaptchaAccordion.click();
+			// Confirm the option is now open
+			await expect(this.customerCreateReCaptchaOption, `"Enable for Create New Customer Account" option is open`).toBeVisible();
+		}
+
+		// if the 'use system value' checkbox is checked, uncheck it.
+		if(await this.customerCreateReCaptchaInheritCheckbox.isChecked()) {
+			await this.customerCreateReCaptchaInheritCheckbox.uncheck();
+			await expect(this.customerCreateReCaptchaOption, `reCAPTCHA option can be changed`).toBeEnabled();
+		}
+
+		// check if reCAPTCHA is already disabled (the "No" option has an empty value)
+		if(await this.customerCreateReCaptchaOption.inputValue() == ''){
+			await expect(this.customerCreateReCaptchaOption, `reCAPTCHA is disabled for customer creation`).toHaveValue('');
+		} else {
+			// Disable reCAPTCHA for the customer_create form key.
+			await this.customerCreateReCaptchaOption.selectOption('');
+			await expect(this.customerCreateReCaptchaOption, `reCAPTCHA is disabled for customer creation`).toHaveValue('');
+
+			await this.saveConfigButton.click();
+			await expect(this.page.locator(UIReference.general.adminMessageLocator),
+				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
+		}
 	}
+
+    /**
+     * Navigate to the Stores Settings in Magento Admin.
+     */
+    async navigateToStoreSettings() {
+        const configurationPageLabel = UIReference.admin.configuration;
+        const generalTab = this.page.getByRole('tab', { name: UIReference.admin.generalTabLabel });
+        const generalOptions = this.page.getByRole('link', {name: UIReference.general.general});
+
+        await this.mainMenuStoresButton.click();
+
+        await this.storesConfigurationButton.waitFor();
+        await this.storesConfigurationButton.click();
+
+        // Confirm the page has loaded correctly by checking for the presence of text.
+        await expect(async () => {
+            await expect(this.pageHeadingOne, `Page title is '${configurationPageLabel}'`)
+                .toContainText(`${configurationPageLabel}`);
+
+            /**
+             * Highlite change
+             * General options does not seem open immediately
+             */
+            if(await generalTab.isVisible() && await generalOptions.isHidden())  {
+                await generalTab.click();
+            }
+
+            await expect(this.page.getByRole('link', {name: UIReference.general.general}),
+                `"General options" under General section is visible.`).toBeVisible();
+        }).toPass();
+    }
 
 	/**
 	 * Enable multiple admin logins
@@ -168,7 +243,7 @@ class AdminLogin {
 		const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter(
 			{hasText : UIReference.errors.captchaIncorrect}
 		);
-		const adminLoginHeading = this.page.getByText(UIReference.authentication.adminLoginText);
+		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.authentication.adminLoginText);
 
 		if(await dashboardLabel.isVisible()){
 			// already logged in

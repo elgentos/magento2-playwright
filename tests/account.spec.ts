@@ -189,6 +189,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
 		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
 		await expect(page.getByText(company).first(), `Expect new company name to be listed`).toBeVisible();
+		let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+		await expect.soft(page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
 	});
 
 	/**
@@ -218,6 +220,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
 		// await expect(page.getByText(companyName)).toBeVisible();
 		await expect(page.getByText(address).first()).toBeVisible();
+		let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+		await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
 	});
 
 	/**

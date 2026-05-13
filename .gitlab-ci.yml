@@ -27,10 +27,6 @@ variables:
   MAGENTO_EXISTING_ACCOUNT_PASSWORD: "$MAGENTO_EXISTING_ACCOUNT_EMAIL_PASSWORD"
   MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: "$MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD"
 
-  MAGENTO_COUPON_CODE_CHROMIUM: "$MAGENTO_COUPON_CODE_CHROMIUM"
-  MAGENTO_COUPON_CODE_FIREFOX: "$MAGENTO_COUPON_CODE_FIREFOX"
-  MAGENTO_COUPON_CODE_WEBKIT: "$MAGENTO_COUPON_CODE_WEBKIT"
-
   MAGENTO_API_USERNAME: "$MAGENTO_ADMIN_USERNAME"
   MAGENTO_API_PASSWORD: "$MAGENTO_ADMIN_PASSWORD"
 
@@ -87,10 +83,6 @@ variables:
       check_var MAGENTO_EXISTING_ACCOUNT_EMAIL_WEBKIT
       check_var MAGENTO_EXISTING_ACCOUNT_PASSWORD
       check_var MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD
-
-      check_var MAGENTO_COUPON_CODE_CHROMIUM
-      check_var MAGENTO_COUPON_CODE_FIREFOX
-      check_var MAGENTO_COUPON_CODE_WEBKIT
       echo
 
       echo "== Quick network checks =="
@@ -206,31 +198,6 @@ test_mirror_pipeline:
   script:
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
 
-create_testing_suite:
-  stage: testing_suite
-  extends:
-    - .debug-template
-  script:
-    - echo "Setting up the testing environment"
-    - mkdir -p base-tests
-    # Avoid interactive prompt in CI ("Enter the vendor name:")
-    - printf "elgentos\n" | npm install
-    - ls -l base-tests || true
-    - echo "ENV file check"
-    - if [ -f ".env" ]; then echo ".env exists"; else echo ".env missing"; fi
-    - CI=true npx playwright test --grep "@setup" --reporter=line --workers=6 --max-failures=1 --trace=on
-  allow_failure: false
-  artifacts:
-    when: always
-    paths:
-      - playwright-report/
-      - test-results/
-      - base-tests/
-      - tests/
-      - playwright.config.ts
-      - tsconfig.json
-      - .env
-
 run_testing_suite:
   stage: testing_suite
   extends:
@@ -238,10 +205,7 @@ run_testing_suite:
   script:
     - echo "Running test suite"
     - printf "elgentos\n" | npm install
-    - CI=true npx playwright test --workers=1 --grep-invert "@setup" --max-failures=1 --trace=retain-on-failure
-  needs: [create_testing_suite]
-  dependencies:
-    - create_testing_suite
+    - CI=true npx playwright test --workers=1 --max-failures=1 --trace=retain-on-failure
   allow_failure: false
   artifacts:
     when: always

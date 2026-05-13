@@ -16,7 +16,7 @@ import { outcomeMarker, inputValues } from '@config';
 
 /**
  * Test: a guest logs in using correct credentials.
- * @assume the necessary account(s) have been created through setup.spec
+ * @assume the necessary account(s) have been created through the setup project (init.setup.ts)
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('User_logs_in_with_valid_credentials', {tag: '@hot'}, async ({page, browserName}) => {

@@ -21,7 +21,12 @@
   },
   "coupon": {
     "couponCodeRuleName": "Test coupon",
-    "couponType": "Specific Coupon"
+    "couponType": "Specific Coupon",
+    "codes": {
+      "CHROMIUM": "CHROMIUM321",
+      "FIREFOX": "FIREFOX321",
+      "WEBKIT": "WEBKIT321"
+    }
   },
   "addressCountries": [
     "Netherlands",
@@ -41,9 +46,10 @@
   },
   "firstAddress": {
     "firstCityValue": "Testing Valley",
+    "firstCountryId": "NL",
     "firstNonDefaultCountry": "Netherlands",
     "firstPhoneNumberValue": "0622000000",
-    "firstProvinceValue": "Idaho",
+    "firstProvinceValue": "Noord-Holland",
     "firstStreetAddressValue": "Testingstreet 1",
     "firstZipCodeValue": "12345"
   },

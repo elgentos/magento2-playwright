@@ -143,7 +143,7 @@ base('Test_name_uses_underscores', { tag: '@hot' }, async ({ page, browserName }
 });
 ```
 
-**Tags:** `@setup` (one-time setup), `@hot` (critical path), `@cold` (standard), plus feature tags like `@checkout`, `@cart`, `@category`.
+**Tags:** `@hot` (critical path), `@cold` (standard), `@api` (API-driven, no browser), plus feature tags like `@checkout`, `@cart`, `@category`. Setup tests are no longer tagged — they run in a dedicated `setup` Playwright project (see CI/CD Pipeline section below).
 
 **Browser-specific env vars:** Some tests use `browserName` to load browser-specific data:
 ```typescript
@@ -174,16 +174,15 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 
 ## CI/CD Pipeline
 
-Two stages in `.gitlab-ci.yml`:
-1. **create_testing_suite** - Runs `@setup` tagged tests (creates accounts, disables CAPTCHA, sets up coupons via API). Uses 6 workers.
-2. **run_testing_suite** - Runs all tests except `@setup`. Uses 1 worker. Retries up to 2 times.
+A single `testing_suite` stage in `.gitlab-ci.yml` runs `npx playwright test`. Setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup stage.
 
 Run locally:
+
 ```bash
-npx playwright test --grep "@setup" --trace on       # Setup (run once)
-npx playwright test --grep-invert "@setup" --trace on # All tests
-npx playwright test login.spec.ts                     # Single file
-npx playwright test --grep "@hot"                     # By tag
+npx playwright test                                   # All tests, with setup auto-run
+npx playwright test login.spec.ts                     # Single file (setup still runs)
+npx playwright test --grep "@hot"                     # By tag (setup still runs)
+npx playwright test --project=setup                   # Run setup only (rarely needed)
 ```
 
 ## Critical Rules for AI Agents
@@ -194,7 +193,7 @@ npx playwright test --grep "@hot"                     # By tag
 4. **Use the authenticated `test` fixture** from `@utils/fixtures.utils` when the test needs a logged-in user.
 5. **Use POMs** for page interactions. Don't put locator logic directly in spec files.
 6. **Config is deep-merged.** When overriding config in `tests/config/`, you only need to specify the keys you're changing.
-7. **`setup.spec.ts` must run first** before any other tests. It creates accounts and configures the Magento instance.
+7. **Setup runs as a project dependency.** `init.setup.ts` creates accounts, disables admin CAPTCHA, and sets up coupon codes. It runs automatically before any browser test via `dependencies: ['setup']` in `playwright.config.ts` — never invoke it manually.
 8. **Browser-specific data** uses env vars suffixed with the browser engine name (e.g., `_CHROMIUM`, `_FIREFOX`, `_WEBKIT`).
 9. **Magewire pages** (checkout, cart) need `waitForMagewireRequests()` after interactions that trigger Magewire calls.
 10. **Commit messages:** Write concise messages describing the change.

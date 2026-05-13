@@ -15,7 +15,7 @@ import ProductPage from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
-import { UIReference, slugs, outcomeMarker } from '@config';
+import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
 
 /**
  * Test Group: Cart functionalities for guests
