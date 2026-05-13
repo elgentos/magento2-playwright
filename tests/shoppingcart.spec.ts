@@ -13,7 +13,7 @@ import CartPage from '@poms/frontend/shoppingcart.page';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 
-import { requireEnv } from '@utils/env.utils';
+import { requireEnv, getCouponCode } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
 
@@ -103,10 +103,8 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
 	test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
-		const discountCode = inputValues.coupon.codes[browserEngine];
-		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
+		const discountCode = getCouponCode(browserName);
 
 		await cart.applyDiscountCode(discountCode);
 	});
@@ -117,10 +115,8 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
 	test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
-		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const cart = new CartPage(page);
-		const discountCode = inputValues.coupon.codes[browserEngine];
-		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
+		const discountCode = getCouponCode(browserName);
 
 		await cart.applyDiscountCode(discountCode);
 		await cart.removeDiscountCode();
