@@ -30,17 +30,27 @@ class MagewireUtils {
 
   /**
    * Waits until all Magewire network requests are completed.
+   *
+   * The triggering action (e.g. a radio check) typically returns before the
+   * Magewire POST fires, because Alpine.js debounces input/change events.
+   * Without a wait for the request to *start*, the active-set check below
+   * trivially passes and we move on while a request is still queued.
    */
   async waitForMagewireRequests(): Promise<void> {
-    const settlingTime = 100; // ms to wait after last request seen
-    const maxWaitTime = 10000; // total timeout
-    const checkInterval = 50; // interval to check active requests
+    const debounceWindow = 600; // covers typical Alpine.js @input.debounce delays
+    const settlingTime = 100;
+    const maxWaitTime = 10000;
+    const checkInterval = 50;
+
+    // If nothing is in flight yet, give a pending request a chance to fire.
+    if (this.activeRequests.size === 0) {
+      await this.page.waitForRequest(/\/magewire\//, { timeout: debounceWindow }).catch(() => null);
+    }
 
     const start = Date.now();
 
     while (Date.now() - start <= maxWaitTime) {
       if (this.activeRequests.size === 0) {
-        // Wait a little to ensure no new requests are triggered
         await this.page.waitForTimeout(settlingTime);
         if (this.activeRequests.size === 0) {
           await this.waitForMagewireDomIdle();
@@ -81,7 +91,8 @@ class MagewireUtils {
   }
 
   private isMagewireRequest(url: string): boolean {
-    return url.includes('/magewire/message');
+    // Magewire posts go to /magewire/post/livewire/message/...
+    return url.includes('/magewire/');
   }
 }
 
