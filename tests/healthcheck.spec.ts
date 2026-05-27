@@ -9,9 +9,19 @@
  */
 
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
+import path from 'path';
 
 import { requireEnv, getHttpCredentials } from '@utils/env.utils';
 import { UIReference, slugs } from '@config';
+
+function regressionSnapshotName(label: string, browser: string, extension: 'png' | 'yml'): string {
+	const now = new Date();
+	const day = String(now.getDate()).padStart(2, '0');
+	const month = String(now.getMonth() + 1).padStart(2, '0');
+	const date = `${day}${month}${now.getFullYear()}`;
+	return `production_${label}_${date}_${browser}.${extension}`;
+}
 
 /**
  * Test: Validate HTTP authentication configuration and site access.
@@ -57,8 +67,12 @@ test('HTTP_auth_headers_are_sent', async ({ page, playwright }) => {
 
 /**
  * Test Group: Smoke tests for critical pages
+ *
+ * Note that test groups below loop through the pages, but not here.
+ * This is because we need to be able to check for different elements on different pages,
+ * making it more benificial to write each test separately.
  */
-test.describe('Page health checks', () => {
+test.describe('Smoke tests for critical pages', () => {
 
 	/**
 	 * Test: Confirm the homepage can be reached.
@@ -125,4 +139,68 @@ test.describe('Page health checks', () => {
 
 		expect((await page.request.head(page.url())).status(), `Current page (${page.url()}) should return 200`).toBe(200);
 	});
+});
+
+/**
+ * Test Group: Visual regression tests
+ *
+ * For each listed page, the production site is captured fresh on every run,
+ * written to tests/utils/snapshots/ as production_<page>_<DDMMYYYY>_<browser>.png,
+ * and used as the baseline that the base URL is compared against.
+ */
+test.describe('Visual Regression Tests', () => {
+
+	// Pin the viewport and DPR so screenshots are byte-comparable regardless of
+	// the project's device profile. Desktop Safari defaults deviceScaleFactor
+	// to 2, which would otherwise produce a 2560×1440 bitmap on webkit while
+	// chromium/firefox produce 1280×720.
+	test.use({
+		viewport: { width: 1280, height: 720 },
+		deviceScaleFactor: 1,
+	});
+
+	// Per-page mask selectors hide elements that legitimately differ between
+	// production and the base URL (e.g. images served at different sizes by a
+	// CDN). Selectors apply to BOTH the production capture and the base URL
+	// comparison, so any element matched is painted over on both sides.
+	const visualRegressionPages: { label: string; slug: string; maskSelectors?: string[] }[] = [
+		{ label: 'homepage', slug: '/' },
+		{ label: 'plp', slug: slugs.categoryPage.categorySlug, maskSelectors: ['.product-item-photo'] },
+		{ label: 'pdp', slug: slugs.productPage.simpleProductSlug },
+		{ label: 'cart', slug: slugs.cart.cartSlug },
+	];
+
+	for (const { label, slug, maskSelectors } of visualRegressionPages) {
+		/**
+		 * Test: Compare the base URL page against a freshly captured production baseline.
+		 * @param page - Playwright page instance used for interacting with the website.
+		 * @param testInfo - Test metadata, used to resolve artifact and snapshot paths.
+		 */
+		test(`${label}_matches_visual_baseline`, { tag: ['@smoke', '@visual', '@cold']}, async ({ page }, testInfo) => {
+			const snapshotName = regressionSnapshotName(label, testInfo.project.name, 'png');
+			const masks = (maskSelectors ?? []).map(selector => page.locator(selector));
+
+			// 1. Navigate to the slug on the production URL.
+			const productionUrl = new URL(slug, requireEnv('PLAYWRIGHT_PRODUCTION_URL')).toString();
+			await page.goto(productionUrl);
+			await page.waitForLoadState('load');
+			// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
+
+			// 2. Capture production and write it to the snapshot path that step 4's
+			//    assertion reads. One file per page/browser/day — re-running on the
+			//    same day overwrites it with the latest production state.
+			const productionBuffer = await page.screenshot({ mask: masks });
+			const baselinePath = testInfo.snapshotPath(snapshotName);
+			fs.mkdirSync(path.dirname(baselinePath), { recursive: true });
+			fs.writeFileSync(baselinePath, productionBuffer);
+
+			// 3. Navigate to the same slug on the base URL.
+			await page.goto(slug);
+			await page.waitForLoadState('load');
+			// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
+
+			// 4. Compare the base URL page against the production baseline from step 2.
+			await expect(page).toHaveScreenshot(snapshotName, { mask: masks });
+		});
+	}
 });

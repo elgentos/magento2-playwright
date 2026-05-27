@@ -3,10 +3,12 @@
 .vscode
 .claude
 .auth/*
+.playwright-mcp
 node_modules/
 /test-results/
 /auth-storage/
 /playwright-report/
+/tests/utils/snapshots/*
 /base-tests/
 /i18n/
 
