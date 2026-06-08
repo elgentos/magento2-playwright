@@ -154,7 +154,7 @@ class AccountPage {
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
     // wait for the address index url
-	await this.page.waitForURL(/customer\/address\/(index|)/, {waitUntil: "load"});
+	await this.page.waitForURL(/customer\/address\/index/, {waitUntil: "load"});
   }
 
 
@@ -232,7 +232,7 @@ class AccountPage {
 
     await this.saveAddressButton.scrollIntoViewIfNeeded();
     await this.saveAddressButton.click();
-    await this.page.waitForURL(/customer\/address\//, {waitUntil: "load"});
+    await this.page.waitForURL(/customer\/address\/index/, {waitUntil: "load"});
 
     // await expect(this.page.getByText(streetName).last()).toBeVisible();
     if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();

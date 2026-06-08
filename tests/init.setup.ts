@@ -105,46 +105,68 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
 /**
  * Set up test accounts through the Magento API.
  *
- * @param testInfo - Playwright class that allows annotations to the report.
  */
-test(`Create_test_accounts`, { tag: '@api' }, async ({}, testInfo) => {
+test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 	test.slow(); // Mark as slow to double test time.
 
+	const ACCOUNTS_PER_PROJECT = 13;
+	const browserProjects = test.info().config.projects
+		.map(p => p.name)
+		.filter(name => name !== 'setup');
+
 	await test.step(`Creating accounts for general testing`, async() => {
-		// Start by checking if the accounts already exist
+		// Fetch existing playwright_user_* accounts so we only create missing ones.
 		const allCustomers = await APIClient.get(
 			`/rest/V1/customers/search` +
 			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
 			`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright_user%25` +
 			`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`);
-		const testAccountsPresent = allCustomers.items ?? [];
+		const existingEmails = new Set<string>(
+			(allCustomers.items ?? []).map((c: { email: string }) => c.email)
+		);
 
-		if(testAccountsPresent.length > 0) {
-			test.info().annotations.push({
-				type: `test accounts found`,
-				description: `We found testing accounts. Please check if the following is correct:
-				${JSON.stringify(testAccountsPresent, null, 2)}`
-			});
-		} else {
-			for(let accountId = 0; accountId < 13; accountId++) {
+		const created: string[] = [];
+		const skipped: string[] = [];
+
+		for (const projectName of browserProjects) {
+			for (let accountId = 0; accountId < ACCOUNTS_PER_PROJECT; accountId++) {
+				const email = `playwright_user_${projectName}_${accountId}@elgentos.nl`;
+
+				if (existingEmails.has(email)) {
+					skipped.push(email);
+					continue;
+				}
+
 				const customerPayload = {
 					customer : {
-						email: `playwright_user_${accountId}@elgentos.nl`,
+						email,
 						firstname: `${inputValues.account.firstName}`,
-						lastname: `${inputValues.account.lastName}`
+						lastname: `${inputValues.account.lastName}`,
+						addresses: [{
+							firstname: `${inputValues.account.firstName}`,
+							lastname: `${inputValues.account.lastName}`,
+							street: [inputValues.firstAddress.firstStreetAddressValue],
+							city: inputValues.firstAddress.firstCityValue,
+							region: { region: inputValues.firstAddress.firstProvinceValue },
+							postcode: inputValues.firstAddress.firstZipCodeValue,
+							country_id: inputValues.firstAddress.firstCountryId,
+							telephone: inputValues.firstAddress.firstPhoneNumberValue,
+							default_billing: true,
+							default_shipping: true,
+						}]
 					},
 					password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`
 				};
 
-				const addCustomerResponse = await APIClient.post(`/rest/V1/customers`, customerPayload);
-
-				test.info().annotations.push({
-					type: `accounts created!`,
-					description: `The following accounts have been created:
-				${JSON.stringify(addCustomerResponse, null, 2)}`
-				});
+				await APIClient.post(`/rest/V1/customers`, customerPayload);
+				created.push(email);
 			}
 		}
+
+		test.info().annotations.push({
+			type: `accounts created`,
+			description: `Created ${created.length} accounts, skipped ${skipped.length} pre-existing.\nCreated:\n${created.join('\n')}`,
+		});
 	});
 });
 

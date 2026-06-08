@@ -13,6 +13,13 @@ export function requireEnv(varName: string): string {
 }
 
 /**
+ * Retrieve an optional environment variable with a default fallback.
+ */
+export function optionalEnv(varName: string, defaultValue: string): string {
+	return process.env[varName] || defaultValue;
+}
+
+/**
  * Returns HTTP Basic Auth credentials for environments that require them
  * (e.g. review/staging sites behind HTTP authentication).
  * Set HTTP_AUTH_USERNAME and HTTP_AUTH_PASSWORD in .env to enable.
@@ -26,5 +33,15 @@ export function getHttpCredentials(): { username: string; password: string } | u
 		return { username, password };
 	}
 	return undefined;
+}
+
+/**
+ * Returns the coupon code for a given browser.
+ * Pattern supports {browser} placeholder, e.g. "{browser}321".
+ */
+export function getCouponCode(browserName: string): string {
+	const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
+	const pattern = optionalEnv('MAGENTO_COUPON_CODE_PATTERN', '{browser}321');
+	return pattern.replace('{browser}', browserEngine);
 }
 
