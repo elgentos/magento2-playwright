@@ -8,7 +8,7 @@ node_modules/
 
 # Env / secrets / auth state
 /.env
-/.auth/
+.auth/
 .mcp.json
 
 # Local config (generated from *.example.* templates)
