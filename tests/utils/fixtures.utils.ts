@@ -14,15 +14,58 @@ import {slugs, UIReference} from "@config";
 import { slugToRegex } from '@utils/url.utils';
 
 export * from '@playwright/test';
-export const test = baseTest.extend<{}, { workerStorageState: string }>({
+export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: string }>({
 	// Use the same storage state for all tests in this worker.
 	storageState: ({ workerStorageState }, use) => use(workerStorageState),
 
+	/**
+	 * Auto-fixture: verifies the worker's stored auth is still valid for the
+	 * current test and re-authenticates inline if not. Catches sessions that
+	 * expired or rotated between fixture init and this test running.
+	 *
+	 * Skipped for tests that opt out of auth via
+	 *   test.use({ storageState: { cookies: [], origins: [] } })
+	 */
+	_authGuard: [async ({ page, storageState }, use) => {
+		const expectedPath = path.resolve(
+			test.info().project.outputDir,
+			`.auth/${test.info().parallelIndex}.json`,
+		);
+
+		if (typeof storageState === 'string' && storageState === expectedPath) {
+			const isLoggedIn = await page.request
+				.get('/customer/section/load?sections=customer')
+				.then(r => r.ok() ? r.json() : null)
+				.then((j: any) => !!(j?.customer?.firstname))
+				.catch(() => false);
+
+			if (!isLoggedIn) {
+				const projectName = test.info().project.name;
+				const id = test.info().parallelIndex;
+				const username = `playwright_user_${projectName}_${id}@elgentos.nl`;
+				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+
+				await page.goto(slugs.account.loginSlug, { waitUntil: 'load' });
+				await page.getByRole('textbox', { name: UIReference.credentials.emailFieldLabel, exact: true }).fill(username);
+				await page.getByRole('textbox', { name: UIReference.credentials.passwordFieldLabel }).fill(password);
+				await page.getByRole('button', { name: UIReference.credentials.loginButtonLabel }).click();
+				await page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug), { waitUntil: 'networkidle' });
+
+				// Refresh the worker auth file so later tests in this worker skip the re-login.
+				await page.context().storageState({ path: storageState });
+			}
+		}
+
+		await use();
+	}, { auto: true }],
+
 	// Authenticate once per worker with a worker-scoped fixture.
 	workerStorageState: [async ({ browser }, use) => {
-		// Use parallelIndex as a unique identifier for each worker.
+		// Scope auth state per (project, parallelIndex) so chromium/firefox/webkit
+		// workers don't collide on the same file or the same Magento account.
 		const id = test.info().parallelIndex;
-		const fileName = path.resolve(__dirname, `../../.auth/worker_${id}.json`);
+		const projectName = test.info().project.name;
+		const fileName = path.resolve(test.info().project.outputDir, `.auth/${id}.json`);
 
 		// Check if the user is actually logged in
 		const userIsLoggedIn = async (storageState?: string): Promise<boolean> => {
@@ -64,7 +107,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 		// Make sure that accounts are unique, so that multiple team members
 		// can run tests at the same time without interference.
 		const account = {
-			'username': `playwright_user_${id}@elgentos.nl`,
+			'username': `playwright_user_${projectName}_${id}@elgentos.nl`,
 			'password': requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`)
 		};
 
@@ -96,6 +139,7 @@ export const test = baseTest.extend<{}, { workerStorageState: string }>({
 
 		// End of authentication steps.
 
+		fs.mkdirSync(path.dirname(fileName), { recursive: true });
 		await page.context().storageState({ path: fileName });
 		await page.close();
 		console.log(`${fileName} has been newly built.`);
