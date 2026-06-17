@@ -4,6 +4,7 @@ import { chromium, type FullConfig } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { UIReference } from '@config';
 import { getHttpCredentials } from './env.utils';
 import { getPlaywrightRequestConfig } from '../../playwrightRequestConfig';
 
@@ -35,11 +36,11 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
         const page = await context.newPage();
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const heading = page.getByRole('heading', { name: 'Consent to Cookies & Data' });
+        const heading = page.getByRole('heading', { name: UIReference.titles.cookieConsentHeading });
         const appeared = await heading.isVisible({ timeout: 15_000 }).catch(() => false);
 
         if (appeared) {
-            await page.getByRole('button', { name: 'Reject all' }).click();
+            await page.getByRole('button', { name: UIReference.general.cookieRejectButtonLabel }).click();
             await heading.waitFor({ state: 'hidden', timeout: 10_000 });
         } else {
             console.warn('[global-setup] Consent modal did not appear within 15s — saving current state anyway.');
