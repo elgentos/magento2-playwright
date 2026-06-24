@@ -15,8 +15,8 @@
     "cartSlug": "/checkout/cart/"
   },
   "categoryPage": {
-    "categorySlug": "/women.html",
-    "subcategorySlug" : "/gear/fitness-equipment.html"
+    "categorySlug": "/men/tops-men.html",
+    "subcategorySlug" : "/men/tops-men.html?cat=14"
   },
   "checkout": {
     "checkoutSlug": "/checkout/",
