@@ -12,18 +12,22 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ## Table of contents
 
-- [Prerequisites](#Prerequisites)
+- [Prerequisites](#prerequisites)
 - [Installing the suite](#-installing-the-suite)
-- [Before your run](#-before-you-run)
+- [Before you run](#-before-you-run)
 - [Running the suite](#-running-the-suite)
 - [Migrating from 6.x](#-migrating-from-6x)
+- [Generate Translations](#-generate-translations)
 - [How to use the testing suite](#-how-to-use-the-testing-suite)
     - [Running tests](#running-tests)
     - [Skipping specific tests](#skipping-specific-tests)
     - [Tags and Annotations](#tags-and-annotations)
 - [Customizing the testing suite](#-customizing-the-testing-suite)
   - [Examples](#examples)
+- [Troubleshooting imports](#troubleshooting-imports)
 - [How to help](#how-to-help)
+- [Scenarios](#scenarios)
+- [Roadmap](#roadmap)
 
 ---
 
@@ -82,7 +86,7 @@ After running the command, you will be asked:
 
 ## ⏸️ Before you run
 
-After the installation, a variety of folders will have been created. Most notable in these are `base-tests`, which contain the tests without alteration, and `tests`. **You should never make changes directly to the base-tests folder, as thisx may break functionality. However, note that the** `base-tests` **can be updated when you upgrade the package, so always review any changes after an update.**
+After the installation, a variety of folders will have been created. Most notable in these are `base-tests`, which contain the tests without alteration, and `tests`. **You should never make changes directly to the base-tests folder, as this may break functionality. However, note that the** `base-tests` **can be updated when you upgrade the package, so always review any changes after an update.**
 
 > If you want to make changes to your iteration of the testing suite such as making changes to how the test works, updating element identifiers etc., see the section ‘Customizing the testing suite’ below.
 
@@ -112,13 +116,13 @@ In every case Playwright pulls the `setup` project in automatically as a depende
 
 ## 🔁 Migrating from 6.x
 
-Version 7.0 moves setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
+The next major release moves setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
 
 1. Open `playwright.config.example.ts` (refreshed by the new package). Copy these into your own `playwright.config.ts`:
    - the `getSetupFiles()` helper
    - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
    - the `setup` project block at the top of `projects:`
-   - the `dependencies: [‘setup’]` line on each browser project
+   - the `dependencies: ['setup']` line on each browser project
 2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
 3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
 4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
@@ -133,7 +137,7 @@ The Magento 2 Playwright Testing Suite supports translations, allowing you to ru
 
 ### Setting Up Translations
 
-1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/Vendor/theme/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
+1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/{vendor}/{theme}/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
 
 
 2. **(Optional) Create Test Files**: Go to step 3 when this is the NPM installed package. Create the following directories and file:
@@ -144,16 +148,14 @@ The Magento 2 Playwright Testing Suite supports translations, allowing you to ru
 
 3. **Generate translation files**: run following command: `node translate-json.js nl_NL`. `nl_NL` is the language you want to translate to. For example; it will look for nl_NL.csv
 
-3. **Configuration**: Add or Update `MAGENTO_THEME_LOCALE` configuration in your `.env` file to specify which translations to use during testing.
-
 By following these steps, you can seamlessly integrate language support into your testing workflow, ensuring that your Magento 2 store is thoroughly tested across different languages.
 
-### Troubleshooting
+### Troubleshooting translations
 
 When getting the following error:
 
 ```
-Translating file:  i18n/nl_NL.csv
+Translating file:  i18n/app/nl_NL.csv
 Error: Invalid Record Length: expect 2, got 1 on line 284
 ```
 
@@ -208,29 +210,26 @@ Setup tests no longer need to be skipped — they run as a project dependency, n
 Most tests have been provided with a tag. This allows the user to run specific groups of tests, or skip specific tests. For example, tests that check the functionality of coupon codes are provided with the tag ‘@coupon-code’. To run only these tests, use:
 
 ```bash
-
-npx playwright test –-grep @coupon-code
+npx playwright test --grep @coupon-code
 ```
 
 You can also run multiple tags with logic operators:
 
 ```bash
-
-npx playwright test –-grep ”@coupon-code|@cart”
+npx playwright test --grep "@coupon-code|@cart"
 ```
 
-Use `--grep-invert` to run all tests **except** the tests with the specified test. Playwright docs offer more information: [Playwright: Tag Annotations](https://playwright.dev/docs/test-annotations#tag-tests). The following command, for example, skips all tests with the tag ‘@coupon-code’.
+Use `--grep-invert` to run all tests **except** the tests with the specified tag. Playwright docs offer more information: [Playwright: Tag Annotations](https://playwright.dev/docs/test-annotations#tag-tests). The following command, for example, skips all tests with the tag ‘@coupon-code’.
 
 ```bash
-
-npx playwright test –-grep-invert @coupon-code
+npx playwright test --grep-invert @coupon-code
 ```
 
-### Customizing the testing suite
+## ✏️ Customizing the testing suite
 
 The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, create a copy of `login.page.ts` and place it `tests/poms/frontend/` and make your edits in this file. The next time you run the testing suite, it will automatically use these custom files.
 
-####  Module Imports
+### Module Imports
 
 To keep the project structure clean and maintainable, we use **TypeScript path aliases** via `tsconfig.json`. This allows you to use the `@` prefix in imports instead of relative paths like `../../../`.
 
@@ -304,7 +303,7 @@ test('User can complete the checkout process', async ({ page }) => {
 
 ---
 
-## Troubleshooting
+## Troubleshooting imports
 
 If an `@` import doesn’t work, make sure your local `tsconfig.json` matches the one provided by the npm package.
 
