@@ -44,4 +44,3 @@ export function getCouponCode(browserName: string): string {
 	const pattern = optionalEnv('MAGENTO_COUPON_CODE_PATTERN', '{browser}321');
 	return pattern.replace('{browser}', browserEngine);
 }
-
