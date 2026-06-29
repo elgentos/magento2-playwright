@@ -1,21 +1,26 @@
-#folders
-.idea
-.vscode
-.claude
-.auth/*
-.playwright-mcp
+# IDE / editor
+.idea/
+.vscode/
+.claude/
+
+# Dependencies
 node_modules/
-/test-results/
-/auth-storage/
+
+# Env / secrets / auth state
+/.env
+.auth/
+.mcp.json
+
+# Local config (generated from *.example.* templates)
+/*.config.ts
+/tsconfig.json
+
+# Playwright artifacts
 /playwright-report/
-/tests/utils/snapshots/*
+/test-results/
+/.playwright-mcp/
+/tests/utils/snapshots/
+
+# Backup mirror / generated content
 /base-tests/
 /i18n/
-
-#files
-/*.config.ts
-/.env
-/tsconfig.json
-.mcp.json
-/.gitlab-ci.yml
-/.auth
