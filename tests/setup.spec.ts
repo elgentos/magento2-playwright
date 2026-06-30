@@ -8,6 +8,7 @@
  */
 
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
@@ -97,7 +98,7 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName },
 			for(let accountId = 0; accountId < 13; accountId++) {
 				const customerPayload = {
 					customer : {
-						email: `playwright_user_${accountId}@elgentos.nl`,
+						email: `playwright+${accountId}@elgentos.nl`,
 						firstname: `${inputValues.account.firstName}`,
 						lastname: `${inputValues.account.lastName}`
 					},
