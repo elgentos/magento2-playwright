@@ -11,12 +11,14 @@ class Install {
   currentUser = '';
   isCi = false;
   useDefaults = false;
-  pathToMagentoRootGitignore = '../../../../../../../'; // default: when installed via npm
+  pathToMagentoRootGitignore = './';
   pathToBaseDir = '../../../'; // default: when installed via npm
   envVars = {};
 
   rulesToAddToIgnore = [
     '# playwright',
+    '/playwright-report/',
+    '/test-results/',
     '/app/design/frontend/<vendor>/<theme>/web/playwright/*',
     '!/app/design/frontend/<vendor>/<theme>/web/playwright/tests/',
     '!/app/design/frontend/<vendor>/<theme>/web/playwright/package.json',
@@ -32,6 +34,8 @@ class Install {
     if (isLocalDev) {
       this.pathToMagentoRootGitignore = './'; // we're in the root of the dev repo
       this.pathToBaseDir = './';
+    } else {
+      this.pathToMagentoRootGitignore = this.getMagentoRootPath();
     }
 
     this.envVars = {
@@ -101,7 +105,7 @@ class Install {
 
     console.log('Checking .gitignore and adding lines if necessary...');
 
-    const gitignorePath = path.join(this.pathToMagentoRootGitignore, '.gitignore');
+    const gitignorePath = path.resolve(this.pathToMagentoRootGitignore, '.gitignore');
 
     // Read existing content if file exists
     let existingLines = [];
@@ -150,6 +154,24 @@ class Install {
       const themeInput = await this.askQuestion('Enter the theme name: ');
 
       return { vendor: vendorInput, theme: themeInput };
+  }
+
+  getMagentoRootPath() {
+    const projectDir = path.resolve(__dirname, this.pathToBaseDir);
+    const parts = projectDir.split(path.sep);
+    const appIndex = parts.findIndex((part, index) =>
+      part === 'app' &&
+      parts[index + 1] === 'design' &&
+      parts[index + 2] === 'frontend' &&
+      parts[index + 5] === 'web' &&
+      parts[index + 6] === 'playwright'
+    );
+
+    if (appIndex >= 0) {
+      return path.resolve(projectDir, '../../../../../../../');
+    }
+
+    return projectDir;
   }
 }
 
