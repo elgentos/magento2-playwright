@@ -101,6 +101,26 @@ const setupFiles = getSetupFiles(
     path.join(__dirname, 'tests'),
 );
 
+function getArtifactRoot(): string {
+  const currentDir = path.resolve(__dirname);
+  const parts = currentDir.split(path.sep);
+  const appIndex = parts.findIndex((part, index) =>
+      part === 'app' &&
+      parts[index + 1] === 'design' &&
+      parts[index + 2] === 'frontend' &&
+      parts[index + 5] === 'web' &&
+      parts[index + 6] === 'playwright'
+  );
+
+  if (appIndex >= 0) {
+    return path.resolve(currentDir, '../../../../../../../');
+  }
+
+  return currentDir;
+}
+
+const artifactRoot = getArtifactRoot();
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -108,7 +128,7 @@ export default defineConfig({
   /* Directory containing the test files */
   testDir: '.',
   /* Set an output directory */
-  outputDir: path.join(__dirname, 'test-results'),
+  outputDir: path.join(artifactRoot, 'test-results'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -120,7 +140,7 @@ export default defineConfig({
   /* Increase default timeout */
   timeout: 60_000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [['html', { outputFolder: path.join(artifactRoot, 'playwright-report') }]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'https://hyva-demo.elgentos.io/',
