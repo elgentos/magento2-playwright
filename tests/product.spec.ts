@@ -20,7 +20,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
      */
     await test.step('Log in with account', async () =>{
 		const id = test.info().parallelIndex;
-		let user = `playwright_user_${id}@elgentos.nl`;
+		let user = `playwright+${id}@elgentos.nl`;
 		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
       const loginPage = new LoginPage(page);

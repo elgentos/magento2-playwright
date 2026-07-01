@@ -42,7 +42,7 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 			if (!isLoggedIn) {
 				const projectName = test.info().project.name;
 				const id = test.info().parallelIndex;
-				const username = `playwright_user_${projectName}_${id}@elgentos.nl`;
+				const username = `playwright+${id}@elgentos.nl`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
 				await page.goto(slugs.account.loginSlug, { waitUntil: 'load' });
@@ -107,7 +107,7 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 		// Make sure that accounts are unique, so that multiple team members
 		// can run tests at the same time without interference.
 		const account = {
-			'username': `playwright_user_${projectName}_${id}@elgentos.nl`,
+			'username': `playwright+${id}@elgentos.nl`,
 			'password': requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`)
 		};
 

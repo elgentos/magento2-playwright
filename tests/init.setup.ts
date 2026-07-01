@@ -115,11 +115,11 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 		.filter(name => name !== 'setup');
 
 	await test.step(`Creating accounts for general testing`, async() => {
-		// Fetch existing playwright_user_* accounts so we only create missing ones.
+		// Fetch existing playwright+* accounts so we only create missing ones.
 		const allCustomers = await APIClient.get(
 			`/rest/V1/customers/search` +
 			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright_user%25` +
+			`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright%2B%25` +
 			`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`);
 		const existingEmails = new Set<string>(
 			(allCustomers.items ?? []).map((c: { email: string }) => c.email)
@@ -128,40 +128,39 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 		const created: string[] = [];
 		const skipped: string[] = [];
 
-		for (const projectName of browserProjects) {
-			for (let accountId = 0; accountId < ACCOUNTS_PER_PROJECT; accountId++) {
-				const email = `playwright_user_${projectName}_${accountId}@elgentos.nl`;
+		for (let accountId = 0; accountId < ACCOUNTS_PER_PROJECT; accountId++) {
+			const email = `playwright+${accountId}@elgentos.nl`;
 
-				if (existingEmails.has(email)) {
-					skipped.push(email);
-					continue;
-				}
+			if (existingEmails.has(email)) {
+				skipped.push(email);
+				continue;
+			}
 
-				const customerPayload = {
-					customer : {
-						email,
+			const customerPayload = {
+				customer : {
+					email,
+					firstname: `${inputValues.account.firstName}`,
+					lastname: `${inputValues.account.lastName}`,
+					addresses: [{
 						firstname: `${inputValues.account.firstName}`,
 						lastname: `${inputValues.account.lastName}`,
-						addresses: [{
-							firstname: `${inputValues.account.firstName}`,
-							lastname: `${inputValues.account.lastName}`,
-							street: [inputValues.firstAddress.firstStreetAddressValue],
-							city: inputValues.firstAddress.firstCityValue,
-							region: { region: inputValues.firstAddress.firstProvinceValue },
-							postcode: inputValues.firstAddress.firstZipCodeValue,
-							country_id: inputValues.firstAddress.firstCountryId,
-							telephone: inputValues.firstAddress.firstPhoneNumberValue,
-							default_billing: true,
-							default_shipping: true,
-						}]
-					},
-					password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`
-				};
+						street: [inputValues.firstAddress.firstStreetAddressValue],
+						city: inputValues.firstAddress.firstCityValue,
+						region: { region: inputValues.firstAddress.firstProvinceValue },
+						postcode: inputValues.firstAddress.firstZipCodeValue,
+						country_id: inputValues.firstAddress.firstCountryId,
+						telephone: inputValues.firstAddress.firstPhoneNumberValue,
+						default_billing: true,
+						default_shipping: true,
+					}]
+				},
+				password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`
+			};
 
-				await APIClient.post(`/rest/V1/customers`, customerPayload);
-				created.push(email);
-			}
+			await APIClient.post(`/rest/V1/customers`, customerPayload);
+			created.push(email);
 		}
+
 
 		test.info().annotations.push({
 			type: `accounts created`,
