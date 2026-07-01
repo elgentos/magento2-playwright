@@ -8,7 +8,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { faker } from '@faker-js/faker';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
