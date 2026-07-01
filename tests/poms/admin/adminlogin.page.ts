@@ -159,36 +159,40 @@ class AdminLogin {
 		}
 	}
 
-    /**
-     * Navigate to the Stores Settings in Magento Admin.
-     */
-    async navigateToStoreSettings() {
-        const configurationPageLabel = UIReference.admin.configuration;
-        const generalTab = this.page.getByRole('tab', { name: UIReference.admin.generalTabLabel });
-        const generalOptions = this.page.getByRole('link', {name: UIReference.general.general});
+	/**
+	 * Navigate to the Stores Settings in Magento Admin.
+	 */
+	async navigateToStoreSettings() {
+		const configurationPageLabel = UIReference.admin.configuration;
+		const generalTab = this.page.getByRole('tab', { name: UIReference.admin.generalTabLabel });
+		const generalOptions = this.page.getByRole('link', {name: UIReference.general.general});
 
-        await this.mainMenuStoresButton.click();
+		// Re-open the Stores flyout if a pop-up dismissal collapses it between click and visibility check.
+		await expect(async () => {
+			await this.mainMenuStoresButton.click();
+			await expect(this.storesConfigurationButton,
+				`"Configuration" link in Stores flyout is visible`).toBeVisible();
+		}).toPass();
 
-        await this.storesConfigurationButton.waitFor();
-        await this.storesConfigurationButton.click();
+		await this.storesConfigurationButton.click();
 
-        // Confirm the page has loaded correctly by checking for the presence of text.
-        await expect(async () => {
-            await expect(this.pageHeadingOne, `Page title is '${configurationPageLabel}'`)
-                .toContainText(`${configurationPageLabel}`);
+		// Confirm the page has loaded correctly by checking for the presence of text.
+		await expect(async () => {
+			await expect(this.pageHeadingOne, `Page title is '${configurationPageLabel}'`)
+				.toContainText(`${configurationPageLabel}`);
 
-            /**
-             * Highlite change
-             * General options does not seem open immediately
-             */
-            if(await generalTab.isVisible() && await generalOptions.isHidden())  {
-                await generalTab.click();
-            }
+			/**
+			 * Highlite change
+			 * General options does not seem open immediately
+			 */
+			if(await generalTab.isVisible() && await generalOptions.isHidden())  {
+				await generalTab.click();
+			}
 
-            await expect(this.page.getByRole('link', {name: UIReference.general.general}),
-                `"General options" under General section is visible.`).toBeVisible();
-        }).toPass();
-    }
+			await expect(this.page.getByRole('link', {name: UIReference.general.general}),
+				`"General options" under General section is visible.`).toBeVisible();
+		}).toPass();
+	}
 
 	/**
 	 * Enable multiple admin logins
