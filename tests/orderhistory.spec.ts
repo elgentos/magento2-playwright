@@ -23,7 +23,7 @@ import { UIReference, slugs } from '@config';
  */
 test('Recent_order_is_visible_in_history', async ({ page }) => {
 	const parallelIndex = test.info().parallelIndex;
-	const email = `playwright_user_${parallelIndex}@elgentos.nl`;
+	const email = `playwright+${parallelIndex}@elgentos.nl`;
 	const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
 	const loginPage = new LoginPage(page);
