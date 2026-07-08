@@ -27,15 +27,15 @@ class MainMenuPage {
 		this.mainMenuElement = page.locator(UIReference.general.headerLocator);
 		// this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
 		this.mainMenuAccountButton = this.page.locator(UIReference.mainMenu.accountMenuLocator);
-		this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
+		this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.miniCartLabel });
 		this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
-		this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});
+		this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.searchButtonLabel });
 
-		this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.loginButtonLabel});
-		this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.createAccountButtonLabel});
-		this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.wishListButtonLabel});
-		this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.myOrdersButtonLabel});
-		this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', {name: UIReference.mainMenu.addressBookButtonLabel});
+		this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', { name: UIReference.mainMenu.loginButtonLabel });
+		this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', { name: UIReference.mainMenu.createAccountButtonLabel });
+		this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', { name: UIReference.mainMenu.wishListButtonLabel });
+		this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', { name: UIReference.mainMenu.myOrdersButtonLabel });
+		this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', { name: UIReference.mainMenu.addressBookButtonLabel });
 		this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountLogoutItem);
 	}
 
@@ -66,8 +66,8 @@ class MainMenuPage {
 		await this.mainMenuAccountButton.waitFor();
 		await this.page.getByRole('link', { name: UIReference.categoryPage.categoryPageTitleText, exact: true }).click();
 
-		await expect(this.page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
-		`Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
+		await expect(this.page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText }),
+			`Heading "${UIReference.categoryPage.categoryPageTitleText}" is visible`).toBeVisible();
 	}
 
 	/**
@@ -82,28 +82,28 @@ class MainMenuPage {
 		// See: https://github.com/microsoft/playwright/issues/27969
 		await categoryLink.focus();
 		await categoryLink.hover();
-		await expect(this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText})).toBeVisible();
-		await this.page.getByRole('link', {name: UIReference.mainMenu.subCategoryItemText}).click();
+		await expect(this.page.getByRole('link', { name: UIReference.mainMenu.subCategoryItemText })).toBeVisible();
+		await this.page.getByRole('link', { name: UIReference.mainMenu.subCategoryItemText }).click();
 
-		await expect(this.page.getByRole('heading',{ name: outcomeMarker.categoryPage.subCategoryPageTitle }),
-		`Category page title "${outcomeMarker.categoryPage.subCategoryPageTitle}" is visible`).toBeVisible();
+		await expect(this.page.getByRole('heading', { name: outcomeMarker.categoryPage.subCategoryPageTitle }),
+			`Category page title "${outcomeMarker.categoryPage.subCategoryPageTitle}" is visible`).toBeVisible();
 	}
 
 	/**
 	 * Function for the test User_navigates_account_page
 	 */
-	async gotoMyAccount(){
+	async gotoMyAccount() {
 		await this.mainMenuMyAccountItem.click();
 
 		await expect(this.page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel }),
-		'Account dashboard is visible').toBeVisible();
+			'Account dashboard is visible').toBeVisible();
 	}
 
 	/**
 	 * Function for the test User_navigates_to_login
 	 */
 	async goToLoginPage() {
-		const loginHeader = this.page.getByRole('heading', {name: outcomeMarker.login.loginHeaderText, exact:true});
+		const loginHeader = this.page.getByRole('heading', { name: outcomeMarker.login.loginHeaderText, exact: true });
 		await this.openAccountMenu();
 
 		await this.mainMenuLoginItem.click();
@@ -115,7 +115,7 @@ class MainMenuPage {
 	 * Function for the test User_navigates_to_create_account
 	 */
 	async goToCreateAccountPage() {
-		const createAccountHeader = this.page.getByRole('heading', {name: outcomeMarker.account.createAccountHeaderText, exact:true});
+		const createAccountHeader = this.page.getByRole('heading', { name: outcomeMarker.account.createAccountHeaderText, exact: true });
 		await this.openAccountMenu();
 
 		await this.mainMenuCreateAccountButton.click();
@@ -129,13 +129,13 @@ class MainMenuPage {
 	async goToAddressBook() {
 		await this.mainMenuAddressBookButton.click();
 
-		if(this.page.url().includes('new')) {
+		if (this.page.url().includes('new')) {
 			// no address has been added yet
-			await expect(this.page.getByRole( 'heading', {name: UIReference.newAddress.addNewAddressTitle, level: 1, exact:true}),
-			`Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
+			await expect(this.page.getByRole('heading', { name: UIReference.newAddress.addNewAddressTitle, level: 1, exact: true }),
+				`Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
 		} else {
-			await expect(this.page.getByRole('heading', {name: UIReference.address.addressBookTitle, level: 1, exact: true}),
-			`Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+			await expect(this.page.getByRole('heading', { name: UIReference.address.addressBookTitle, level: 1, exact: true }),
+				`Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
 		}
 	}
 
@@ -146,8 +146,8 @@ class MainMenuPage {
 	async goToOrders() {
 		await this.mainMenuMyOrdersButton.click();
 
-		await expect(this.page.getByRole('heading', {name: UIReference.orderHistoryPage.orderHistoryTitle, level: 1, exact:true}),
-		`Heading "${UIReference.orderHistoryPage.orderHistoryTitle}" is visible`).toBeVisible();
+		await expect(this.page.getByRole('heading', { name: UIReference.orderHistoryPage.orderHistoryTitle, level: 1, exact: true }),
+			`Heading "${UIReference.orderHistoryPage.orderHistoryTitle}" is visible`).toBeVisible();
 	}
 
 	/**
@@ -158,8 +158,8 @@ class MainMenuPage {
 		await this.mainMenuWishListButton.click();
 		await this.page.waitForURL(slugToRegex(slugs.wishList.wishListSlug));
 
-		await expect(this.page.getByRole('heading', {name: UIReference.wishListPage.wishListTitle, exact:true}),
-		`Heading "${UIReference.wishListPage.wishListTitle}" is visible`).toBeVisible();
+		await expect(this.page.getByRole('heading', { name: UIReference.wishListPage.wishListTitle, exact: true }),
+			`Heading "${UIReference.wishListPage.wishListTitle}" is visible`).toBeVisible();
 	}
 
 	/**
@@ -168,12 +168,12 @@ class MainMenuPage {
 	async openMiniCart() {
 		await this.mainMenuMiniCartButton.waitFor();
 		// Trial first, since 'force' skips the actionability check
-		await this.mainMenuMiniCartButton.click({trial: true});
+		await this.mainMenuMiniCartButton.click({ trial: true });
 		// By adding 'force', we can bypass the 'aria-disabled' tag.
-		await this.mainMenuMiniCartButton.click({force: true});
+		await this.mainMenuMiniCartButton.click({ force: true });
 
 		let miniCartDrawer = this.page.locator(UIReference.miniCart.cartDrawerLocator);
-		await expect(async() => {
+		await expect(async () => {
 			await expect(miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle)).toBeVisible();
 		}).toPass();
 	}
@@ -182,9 +182,9 @@ class MainMenuPage {
 	 * Used for function User_searches_for_product
 	 * @param searchTerm
 	 */
-	async searchForProduct(searchTerm :string) {
+	async searchForProduct(searchTerm: string) {
 		const searchField = this.page.getByRole('searchbox', { name: UIReference.search.searchBoxPlaceholderText });
-		await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'), {waitUntil:'load'});
+		await this.page.goto(requireEnv('PLAYWRIGHT_BASE_URL'), { waitUntil: 'load' });
 		await this.mainMenuAccountButton.waitFor();
 
 		await this.mainMenuSearchButton.click();
@@ -195,18 +195,18 @@ class MainMenuPage {
 
 		await this.page.waitForURL(new RegExp(`[?&]q=${searchTerm}`));
 		await expect(this.page.getByRole('heading', { name: `${UIReference.search.searchResultsTitle} \'${searchTerm}\'` }),
-		`Title contains search term: "${searchTerm}"`).toBeVisible();
+			`Title contains search term: "${searchTerm}"`).toBeVisible();
 	}
 
 	/**
 	 * Function for the test User_logs_out
 	 */
-	async logout(){
+	async logout() {
 		// Use a server-side check: navigating to account overview redirects to login if not authenticated.
 		await this.page.goto(slugs.account.accountOverviewSlug, { waitUntil: 'load' });
 
 		// Redirected to login page, we're already logged out.
-		if(this.page.url().includes(slugs.account.loginSlug)) { return; }
+		if (this.page.url().includes(slugs.account.loginSlug)) { return; }
 
 		// We're on the account page, so we're logged in. Use the menu to log out.
 		await this.mainMenuAccountButton.waitFor();
