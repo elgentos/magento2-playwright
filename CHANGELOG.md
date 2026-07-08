@@ -5,16 +5,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Added
+- CLI tool `magento2-playwright` (registered under `bin` in `package.json`) with two commands: `setup` (interactive wizard that configures `.env` with base URL and admin credentials) and `create-coupons` (creates coupon codes in Magento per browser engine via the admin API). New `bin/cli.js`, `bin/commands/`, and `bin/helpers/` files.
+- Visual regression tests in `healthcheck.spec.ts` (ticket 164): a new "Visual Regression Tests" group that captures a fresh production baseline per page/browser, then compares the base URL against it with `toHaveScreenshot` (using per-page mask selectors). Viewport and device scale factor are pinned so screenshots are byte-comparable across browsers. Tagged `@smoke @visual @cold`.
+- Consent-cookie global setup `tests/utils/global-setup.ts` (ticket 480): captures the consentmanager.net "Reject all" cookies once and persists them as a storageState file (`tests/utils/.auth/consentCookies.json`) so tests skip the consent modal.
+- `playwrightRequestConfig.ts` with `getPlaywrightRequestConfig()` / `getPlaywrightApiRequestConfig()` helpers that split HTTP Basic Auth credentials out of the base URL.
+- `_authGuard` auto-fixture in `fixtures.utils.ts` that verifies a worker's stored auth is still valid and re-authenticates inline when needed; auth state is now scoped per `(project, parallelIndex)`.
+- `optionalEnv()` and `getCouponCode()` helpers in `env.utils.ts`. Coupon codes follow a `{browser}321` pattern, overridable via the `MAGENTO_COUPON_CODE_PATTERN` env variable.
+- Test accounts are now created with a default address during setup (ticket 401); added `firstCountryId` (`NL`) to `input-values.json`.
+- README sections: "Running the suite", "Migrating from 6.x", and troubleshooting guidance for translations and module imports.
+
 ### Changed
 - Setup is now a Playwright **project dependency**, not a tagged spec. `npx playwright test` runs `init.setup.ts` (the `setup` project) once automatically before any browser test. The separate `npx playwright test --grep "@setup"` step is no longer required.
 - Coupon codes moved from per-browser env vars (`MAGENTO_COUPON_CODE_*`) to a `coupon.codes` map in `input-values.json` (keyed by uppercase browser name). Adding a new browser is now a one-line config change.
 - CI pipelines (both `.gitlab-ci.yml` and `.github/workflows/main.yml`) collapsed from two stages to one — Playwright's project dependency handles ordering.
-- Playwright reports and test artifacts are written to the Magento root when the suite is installed inside a theme's `web/playwright` directory.
+- Playwright reports and test artifacts are written to the Magento root when the suite is installed inside a theme's `web/playwright` directory (ticket 475), via `outputDir` and the HTML reporter's `outputFolder`.
+- Test-account email addresses reworked to a `playwright+<id>@elgentos.nl` form for easy auto-archiving of the resulting emails (ticket 499).
+- `adminlogin.page.ts`: admin store-settings navigation now retries on failure (ticket 487), and a legend/heading locator was added so setup succeeds when the admin environment is set to Dutch (ticket 476).
+- Corrected the `firstAddress` province in `input-values.json` from `Idaho` to `Noord-Holland`.
+- Bumped dependencies: `@types/node` `^22` → `^25`, `@faker-js/faker` `10.2.0` → `10.4.0`, `dotenv` `17.2.3` → `17.3.1`; refreshed `package-lock.json` to latest versions (ticket 520).
+- Expanded `.gitignore` to cover IDE/editor folders, `.auth/`, generated config from `*.example.*` templates, Playwright artifacts, and visual-regression snapshots.
+
+### Fixed
+- Corrected the `HTTP_AUTH_USERNAME` / `HTTP_AUTH_PASSWORD` env variable names and removed unused environment variables and references (ticket 419).
+- `Footer_switch_currency` marked `test.fixme` due to caching issues on the demo site that caused the whole suite to fail.
 
 ### Removed
 - `tests/setup.spec.ts` (replaced by `tests/init.setup.ts`).
 - `MAGENTO_COUPON_CODE_CHROMIUM`, `MAGENTO_COUPON_CODE_FIREFOX`, `MAGENTO_COUPON_CODE_WEBKIT` env vars.
 - `@setup` tag (no longer needed; setup is gated by project dependency, not by tag filtering).
+- Unused env variables from `.env.example`: `PLAYWRIGHT_REVIEW_URL`, `MAGENTO_THEME_LOCALE`, `MAGENTO_NEW_ACCOUNT_PASSWORD`, and the per-browser `MAGENTO_EXISTING_ACCOUNT_EMAIL_*` variables (emails are now generated).
+- ARIA regression tests and an unused `@faker-js/faker` import.
 
 ### Breaking Changes
 - Existing installs upgrading to this version must update their root `playwright.config.ts` to mirror `playwright.config.example.ts` (new `setup` project + `getSetupFiles()` helper + `dependencies: ['setup']` on browser projects). Without this update, setup will not run and downstream tests will fail. See README → "Migrating from 6.x".
