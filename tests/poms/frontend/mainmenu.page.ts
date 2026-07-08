@@ -26,7 +26,7 @@ class MainMenuPage {
 		this.page = page;
 		this.mainMenuElement = page.locator(UIReference.general.headerLocator);
 		// this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.mainMenu.myAccountButtonLabel });
-		this.mainMenuAccountButton = this.page.locator('#customer-menu');
+		this.mainMenuAccountButton = this.page.locator(UIReference.mainMenu.accountMenuLocator);
 		this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.miniCartLabel});
 		this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.mainMenu.myAccountButtonLabel);
 		this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', {name: UIReference.mainMenu.searchButtonLabel});

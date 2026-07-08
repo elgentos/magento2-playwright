@@ -320,6 +320,7 @@
     "logoutLink" : "Sign Out"
   },
   "mainMenu": {
+	"accountMenuLocator": "#customer-menu",
     "addressBookButtonLabel" : "Address Book",
     "createAccountButtonLabel" : "Create an Account",
     "subCategoryItemText" : "Fitness Equipment",
