@@ -181,7 +181,15 @@ export default defineConfig({
       dependencies: ['setup'],
       use: {
         ...devices['Desktop Chrome'],
-        userAgent: 'Playwright'
+        userAgent: 'Playwright',
+        // Chromium is the only engine that implements the View Transitions API.
+        // The theme opts into cross-document transitions via `@view-transition { navigation: auto }`;
+        // the resulting ::view-transition overlay leaves elements non-"stable", so Playwright
+        // actionability waits (check/click/scrollIntoView) time out at 60s. Firefox and WebKit
+        // have no View Transitions and pass, so we disable the feature to match them.
+        launchOptions: {
+          args: ['--disable-features=ViewTransition,ViewTransitionOnNavigation'],
+        },
       },
     },
 

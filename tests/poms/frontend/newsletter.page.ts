@@ -11,7 +11,7 @@ class NewsletterSubscriptionPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
+    this.newsletterCheckElement = page.getByRole('switch', {name: UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel});
     this.saveSubscriptionsButton = page.getByRole('button', {name:UIReference.newsletterSubscriptions.saveSubscriptionsButton});
   }
 
@@ -24,11 +24,11 @@ class NewsletterSubscriptionPage {
       // user is already subscribed, test runs unsubscribe
       await this.newsletterCheckElement.uncheck();
       await this.saveSubscriptionsButton.click();
-      
+
     } else {
       // user is not yet subscribed, test runs subscribe
       subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;
-      
+
       await this.newsletterCheckElement.check();
       await this.saveSubscriptionsButton.click();
 

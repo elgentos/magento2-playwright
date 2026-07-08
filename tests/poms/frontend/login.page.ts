@@ -25,13 +25,22 @@ class LoginPage {
     await this.loginEmailField.fill(email);
     await this.loginPasswordField.fill(password);
     // usage of .press("Enter") to prevent webkit issues with button.click();
-    await this.loginButton.press("Enter");
-    // await this.loginButton.click({force: true});
+    // await this.loginButton.press("Enter");
+	await this.loginButton.click();
 
-    await this.page.waitForLoadState();
-    await this.page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug));
+	await this.page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug));
 
-    // Open the menu, then check the 'Sign Out' button is visible
+	/**
+	 * CACHING ISSUE WORKAROUND
+	 * Due to caching issues, the main menu might not update properly with a logged-in state.
+	 * We therefore navigate to the page again to ensure proper functionality.
+	 */
+	await this.page.goto(slugs.account.accountOverviewSlug);
+
+
+	// await expect(this.page.getByRole('link', {name: 'Sign Out'}), 'Sign out button on account page is visible').toBeVisible();
+
+    // Open the account menu, then check the 'Sign Out' button is visible.
     await mainmenu.mainMenuAccountButton.waitFor();
     await mainmenu.mainMenuAccountButton.click();
     await expect(mainmenu.mainMenuLogoutItem, 'Sign Out button is visible, user is logged in').toBeVisible();
