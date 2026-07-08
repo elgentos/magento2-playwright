@@ -5,45 +5,45 @@ import { UIReference, outcomeMarker, inputValues } from '@config';
 import { faker } from '@faker-js/faker'
 
 class NewsletterSubscriptionPage {
-  readonly page: Page;
-  readonly newsletterCheckElement: Locator;
-  readonly saveSubscriptionsButton: Locator;
+	readonly page: Page;
+	readonly newsletterCheckElement: Locator;
+	readonly saveSubscriptionsButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
-    this.newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
-    this.saveSubscriptionsButton = page.getByRole('button', {name:UIReference.newsletterSubscriptions.saveSubscriptionsButton});
-  }
+	constructor(page: Page) {
+		this.page = page;
+		this.newsletterCheckElement = page.getByRole('switch', { name: UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel });
+		this.saveSubscriptionsButton = page.getByRole('button', { name: UIReference.newsletterSubscriptions.saveSubscriptionsButton });
+	}
 
-  async updateNewsletterSubscription(){
+	async updateNewsletterSubscription() {
 
-    let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
-    let subscribed = false;
+		let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
+		let subscribed = false;
 
-    if(await this.newsletterCheckElement.isChecked()) {
-      // user is already subscribed, test runs unsubscribe
-      await this.newsletterCheckElement.uncheck();
-      await this.saveSubscriptionsButton.click();
-      
-    } else {
-      // user is not yet subscribed, test runs subscribe
-      subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;
-      
-      await this.newsletterCheckElement.check();
-      await this.saveSubscriptionsButton.click();
+		if (await this.newsletterCheckElement.isChecked()) {
+			// user is already subscribed, test runs unsubscribe
+			await this.newsletterCheckElement.uncheck();
+			await this.saveSubscriptionsButton.click();
 
-      subscribed = true;
-    }
+		} else {
+			// user is not yet subscribed, test runs subscribe
+			subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;
 
-    await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
-    return subscribed;
-  }
+			await this.newsletterCheckElement.check();
+			await this.saveSubscriptionsButton.click();
 
-  async footerSubscribeToNewsletter() {
-    await expect(this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel})).toBeVisible();
-    await this.page.getByRole('textbox', {name: UIReference.footerPage.newsletterInputElementLabel}).fill(faker.internet.email());
-    await this.page.getByRole('button', {name: UIReference.footerPage.newsletterSubscribeButtonLabel}).click();
-  }
+			subscribed = true;
+		}
+
+		await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
+		return subscribed;
+	}
+
+	async footerSubscribeToNewsletter() {
+		await expect(this.page.getByRole('textbox', { name: UIReference.footerPage.newsletterInputElementLabel })).toBeVisible();
+		await this.page.getByRole('textbox', { name: UIReference.footerPage.newsletterInputElementLabel }).fill(faker.internet.email());
+		await this.page.getByRole('button', { name: UIReference.footerPage.newsletterSubscribeButtonLabel }).click();
+	}
 }
 
 export default NewsletterSubscriptionPage;
