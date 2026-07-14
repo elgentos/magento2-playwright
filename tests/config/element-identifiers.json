@@ -172,7 +172,7 @@
 		"productGridLocator": ".products-grid",
 		"removeActiveFilterButtonLabel": "Remove active",
 		"sizeFilterButtonLabel": "Size filter",
-		"sizeXSLinkLabel": "XS",
+		"sizeMLinkLabel": "M",
 		"activeFilterButtonLabel": "Active filtering",
 		"clearAllFiltersLinkLabel": "Clear All",
 		"sortByButtonLabel": "Sort by",
