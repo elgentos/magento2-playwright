@@ -30,6 +30,8 @@ class LoginPage {
 
 		await this.page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug));
 
+		expect(this.page.url()).toContain(slugs.account.accountOverviewSlug);
+
 		/**
 		 * CACHING ISSUE WORKAROUND
 		 * Due to caching issues, the main menu might not update properly with a logged-in state.

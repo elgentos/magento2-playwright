@@ -1,46 +1,46 @@
 {
   "account": {
-    "accountOverviewSlug": "/customer/account/",
-    "addressBookSlug": "/customer/address",
-    "addressIndexSlug": "/customer/address/index",
-    "addressNewSlug": "/customer/address/new",
-    "accountEditSlug": "/customer/account/edit/",
-    "changePasswordSlug": "/customer/account/edit/changepass/1/",
-    "createAccountSlug": "/customer/account/create/",
-    "loginSlug": "/customer/account/login/",
-    "orderHistorySlug": "/sales/order/history/"
+    "accountOverviewSlug": "customer/account/",
+    "addressBookSlug": "customer/address",
+    "addressIndexSlug": "customer/address/index",
+    "addressNewSlug": "customer/address/new",
+    "accountEditSlug": "customer/account/edit/",
+    "changePasswordSlug": "customer/account/edit/changepass/1/",
+    "createAccountSlug": "customer/account/create/",
+    "loginSlug": "customer/account/login/",
+    "orderHistorySlug": "sales/order/history/"
   },
   "cart": {
-    "cartProductChangeSlug": "/cart/configure/",
-    "cartSlug": "/checkout/cart/"
+    "cartProductChangeSlug": "cart/configure/",
+    "cartSlug": "checkout/cart/"
   },
   "categoryPage": {
-    "categorySlug": "/women.html",
-    "subcategorySlug" : "/gear/fitness-equipment.html"
+    "categorySlug": "women.html",
+    "subcategorySlug" : "gear/fitness-equipment.html"
   },
   "checkout": {
-    "checkoutSlug": "/checkout/",
-    "purchaseSuccessSlug": "/checkout/onepage/success/"
+    "checkoutSlug": "checkout/",
+    "purchaseSuccessSlug": "checkout/onepage/success/"
   },
   "contact": {
-    "contactSlug": "/contact"
+    "contactSlug": "contact"
   },
   "productPage": {
-    "configurableProductSlug": "/inez-full-zip-jacket.html",
-    "productComparisonSlug": "/catalog/product_compare/index/",
-    "secondSimpleProductSlug": "/aim-analog-watch.html",
-    "simpleProductSlug": "/push-it-messenger-bag.html"
+    "configurableProductSlug": "inez-full-zip-jacket.html",
+    "productComparisonSlug": "catalog/product_compare/index/",
+    "secondSimpleProductSlug": "aim-analog-watch.html",
+    "simpleProductSlug": "push-it-messenger-bag.html"
   },
   "search": {
-    "resultsSlug": "/catalogsearch/result/"
+    "resultsSlug": "catalogsearch/result/"
   },
   "wishList": {
-    "wishListSlug": "/wishlist/"
+    "wishListSlug": "wishlist/"
   },
   "admin": {
-    "customerIndexSlug": "/customer/index/",
-    "customerNewSlug": "/customer/index/new/",
-    "customerEditSlug": "/customer/index/edit/",
-    "orderIndexSlug": "/sales/order/index/"
+    "customerIndexSlug": "customer/index/",
+    "customerNewSlug": "customer/index/new/",
+    "customerEditSlug": "customer/index/edit/",
+    "orderIndexSlug": "sales/order/index/"
   }
 }
