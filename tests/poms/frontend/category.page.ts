@@ -39,10 +39,10 @@ class CategoryPage {
    */
   async filterOnSize() {
     const filterRegion = this.page.getByRole('region', {name: 'Product filters'});
-    const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeMButton = filterRegion.getByRole('link', {name: UIReference.categoryPage.sizeMLinkLabel});
-    const activeFilteringButton = this.page.getByRole('button', {name: UIReference.categoryPage.activeFilterButtonLabel});
-    const clearAllLink = this.page.getByRole('link', {name: UIReference.categoryPage.clearAllFiltersLinkLabel});
+    const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.text.frontend.category.sizeFilter});
+    const sizeMButton = filterRegion.getByRole('link', {name: UIReference.text.frontend.category.sizeM});
+    const activeFilteringButton = this.page.getByRole('button', {name: UIReference.text.frontend.category.activeFilter});
+    const clearAllLink = this.page.getByRole('link', {name: UIReference.text.shared.buttons.clearAll});
 
     // Scroll to the size filter to trigger Alpine.js deferred initialization
     await sizeFilterButton.scrollIntoViewIfNeeded();
