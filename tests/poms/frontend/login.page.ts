@@ -30,7 +30,7 @@ class LoginPage {
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.overview));
 
-		expect(this.page.url()).toContain(slugs.account.accountOverviewSlug);
+		expect(this.page.url()).toContain(slugs.frontend.account.overview);
 
 		/**
 		 * CACHING ISSUE WORKAROUND
