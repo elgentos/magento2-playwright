@@ -2,7 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
-import { slugToRegex } from '@utils/url.utils';
+import { slugToRegex, isLocalhost } from '@utils/url.utils';
 
 class CategoryPage {
   readonly page:Page;
@@ -58,11 +58,11 @@ class CategoryPage {
 
     // Determine the expected size filter slug based on the environment
     let expectedSizeFilterSlug: string;
-    if (this.page.url().includes('localhost')) {
-      expectedSizeFilterSlug = 'size=168';
-    } else {
-      expectedSizeFilterSlug = 'size=M';
-    }
+	if(isLocalhost(this.page.url())){
+		expectedSizeFilterSlug = 'size=168';
+	} else {
+		expectedSizeFilterSlug = 'size=M';
+	}
 
     // Click on the M filter option
     await sizeMButton.click();
