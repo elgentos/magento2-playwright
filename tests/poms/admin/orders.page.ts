@@ -21,8 +21,8 @@ class AdminOrders {
    * @and I should see the saved order number id
    */
   async checkIfOrderExists(orderNumber: string){
-	const mainMenuSalesButton = this.page.getByRole('link', { name: UIReference.adminPage.navigation.salesButtonLabel });
-	const ordersButtonLink = this.page.getByRole('link', { name: UIReference.adminPage.subNavigation.ordersButtonLabel }).first();
+	const mainMenuSalesButton = this.page.getByRole('link', { name: UIReference.text.admin.common.navigation.sales });
+	const ordersButtonLink = this.page.getByRole('link', { name: UIReference.text.admin.common.navigation.orders }).first();
 
 	await expect(async () => {
 	  await mainMenuSalesButton.click();
@@ -31,20 +31,20 @@ class AdminOrders {
 
 	await ordersButtonLink.click();
 
-	const ordersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
+	const ordersSearchField = this.page.getByRole('textbox', {name: UIReference.text.admin.common.tableSearch});
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.orderIndexSlug}`));
-	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.orders.index}`));
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	await ordersSearchField.waitFor();
 	await ordersSearchField.fill(orderNumber);
-	await this.page.getByRole('button', {name: UIReference.adminGeneral.searchButtonLabel}).click();
+	await this.page.getByRole('button', {name: UIReference.text.shared.buttons.search}).click();
 
-	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	// Loop to ensure the 'results found' text is visible

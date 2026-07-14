@@ -32,8 +32,8 @@ class AdminMarketing {
 	  height: 1080
 	})
 
-	const mainMenuMarketingButton = this.page.getByRole('link', {name: UIReference.adminPage.navigation.marketingButtonLabel});
-	const cartPriceRulesLink = this.page.getByRole('link', {name: UIReference.adminPage.subNavigation.cartPriceRulesButtonLabel});
+	const mainMenuMarketingButton = this.page.getByRole('link', {name: UIReference.text.admin.common.navigation.marketing});
+	const cartPriceRulesLink = this.page.getByRole('link', {name: UIReference.text.admin.common.navigation.cartPriceRules});
 	await expect(mainMenuMarketingButton, `Button for Marketing is visible`).toBeVisible();
 
 	await expect(async () => {
@@ -43,37 +43,37 @@ class AdminMarketing {
 
 	await cartPriceRulesLink.click();
 
-	const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.cartPriceRulesPage.addCartPriceRuleButtonLabel});
+	const addCartPriceRuleButton = this.page.getByRole('button', {name: UIReference.text.admin.cartPriceRules.addRule});
 	await addCartPriceRuleButton.waitFor();
 
 	// Use search field to check for coupon codes.
-	const couponSearchField = this.page.locator(UIReference.adminPage.couponSearchFieldLocator);
+	const couponSearchField = this.page.locator(UIReference.selectors.admin.common.couponSearch);
 	await couponSearchField.fill(magentoCouponCode);
-	await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
+	await this.page.getByRole('button', {name: UIReference.text.shared.buttons.search}).click();
 
-	await expect(this.page.getByText(UIReference.adminPage.searchResultsText), `Search results text visible`).toBeVisible();
+	await expect(this.page.getByText(UIReference.text.admin.common.recordsFound), `Search results text visible`).toBeVisible();
 
 	const couponCellField = this.page.getByRole('cell', { name: outcomeMarker.magentoAdmin.noResultsFoundText });
 
 	if(await couponCellField.isHidden()){
 	  const couponStatusField = this.page.locator('tr').filter({hasText:magentoCouponCode}).first();
 	  const couponStatus = await couponStatusField.innerText();
-	  if(couponStatus.includes(UIReference.cartPriceRulesPage.couponCodeActiveStatusText)){
+	  if(couponStatus.includes(UIReference.text.admin.cartPriceRules.couponActive)){
 		resultMessage = 'Coupon already exists and is active.';
 	  } else {
 		// coupon has been found, but is not active.
 		await couponStatusField.click();
-		const activeStatusSwitcher = this.page.locator(UIReference.cartPriceRulesPage.activeStatusSwitcherLocator).first();
-		const activeStatusLabel = this.page.locator(UIReference.cartPriceRulesPage.activeStatusLabelLocator).first();
+		const activeStatusSwitcher = this.page.locator(UIReference.selectors.admin.cartPriceRules.activeStatusSwitcher).first();
+		const activeStatusLabel = this.page.locator(UIReference.selectors.admin.cartPriceRules.activeStatusLabel).first();
 
 		await expect(activeStatusLabel, `Active/Disable toggle is visible`).toBeVisible();
 		await activeStatusSwitcher.click();
 
-		const saveCouponButton = this.page.getByRole('button', {name:UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact:true});
+		const saveCouponButton = this.page.getByRole('button', {name:UIReference.text.shared.buttons.save, exact:true});
 		await saveCouponButton.click();
 
 		await expect(this.page.locator(
-		  UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
+		  UIReference.selectors.shared.message).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
 		), "Message 'you saved the rule' is visible").toBeVisible();
 		resultMessage = `Coupon code ${magentoCouponCode} has been activated.`;
 	  }
@@ -81,7 +81,7 @@ class AdminMarketing {
 	  // coupon is not set
 	  await addCartPriceRuleButton.click();
 
-	  const websiteSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.websitesSelectLabel);
+	  const websiteSelector = this.page.getByLabel(UIReference.text.admin.cartPriceRules.websites);
 	  await websiteSelector.evaluate(select => {
 		const s = select as HTMLSelectElement;
 		for (const option of s.options) {
@@ -90,7 +90,7 @@ class AdminMarketing {
 		select.dispatchEvent(new Event('change'));
 	  });
 
-	  const customerGroupsSelector = this.page.getByLabel(UIReference.cartPriceRulesPage.customerGroupsSelectLabel, { exact: true });
+	  const customerGroupsSelector = this.page.getByLabel(UIReference.text.admin.cartPriceRules.customerGroups, { exact: true });
 	  await customerGroupsSelector.evaluate(select => {
 		const s = select as HTMLSelectElement;
 		for (const option of s.options) {
@@ -99,25 +99,25 @@ class AdminMarketing {
 		select.dispatchEvent(new Event('change'));
 	  });
 
-	  await this.page.getByRole('textbox', { name: UIReference.cartPriceRulesPage.ruleNameFieldLabel }).fill(magentoCouponCode);
-	  await this.page.locator(UIReference.cartPriceRulesPage.couponTypeSelectField).selectOption({ label: inputValues.coupon.couponType });
-	  await this.page.getByLabel(UIReference.cartPriceRulesPage.couponCodeFieldLabel).fill(magentoCouponCode);
+	  await this.page.getByRole('textbox', { name: UIReference.text.admin.cartPriceRules.ruleName }).fill(magentoCouponCode);
+	  await this.page.locator(UIReference.selectors.admin.cartPriceRules.couponType).selectOption({ label: inputValues.coupon.couponType });
+	  await this.page.getByLabel(UIReference.text.admin.cartPriceRules.couponCode).fill(magentoCouponCode);
 
-	  await this.page.getByText(UIReference.cartPriceRulesPage.actionsSubtitleLabel, { exact: true }).click();
-	  await this.page.getByLabel(UIReference.cartPriceRulesPage.discountAmountFieldLabel).fill('10');
+	  await this.page.getByText(UIReference.text.admin.cartPriceRules.actionsSubtitle, { exact: true }).click();
+	  await this.page.getByLabel(UIReference.text.admin.cartPriceRules.discountAmount).fill('10');
 
-	  const couponSaveButton = this.page.getByRole('button', { name: UIReference.cartPriceRulesPage.saveRuleButtonLabel, exact: true });
+	  const couponSaveButton = this.page.getByRole('button', { name: UIReference.text.shared.buttons.save, exact: true });
 	  await couponSaveButton.scrollIntoViewIfNeeded();
 	  await couponSaveButton.click({force:true});
 	  await expect(this.page.locator(
-		UIReference.general.messageLocator).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
+		UIReference.selectors.shared.message).filter({hasText: outcomeMarker.magentoAdmin.couponRuleSavedText}
 	  ), "Message 'you saved the rule' is visible").toBeVisible();
 	  resultMessage = `Coupon code ${magentoCouponCode} has been set and activated.`;
 	}
 
 	// Clear the search field
 	await couponSearchField.waitFor();
-	const clearSearchButton = this.page.getByRole('button', { name: UIReference.cartPriceRulesPage.clearSearchButtonLabel });
+	const clearSearchButton = this.page.getByRole('button', { name: UIReference.text.admin.cartPriceRules.clearSearch });
 	await clearSearchButton.click();
 	await expect(couponSearchField, `Coupon Code search field is empty`).toBeEmpty();
 

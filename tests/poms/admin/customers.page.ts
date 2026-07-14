@@ -23,9 +23,9 @@ class AdminCustomers {
    * @then the system returns whether a customer with that email exists in the customer list
    */
   async checkIfCustomerExists(email: string){
-	const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.adminPage.navigation.customersButtonLabel}).first();
-	const allCustomersLink = this.page.getByRole('link', {name: UIReference.adminPage.subNavigation.allCustomersButtonLabel});
-	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.customerOverviewPage.tableSearchFieldLabel});
+	const mainMenuCustomersButton = this.page.getByRole('link', {name: UIReference.text.admin.common.customers}).first();
+	const allCustomersLink = this.page.getByRole('link', {name: UIReference.text.admin.common.navigation.allCustomers});
+	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.text.admin.common.tableSearch});
 
 	// loop clicking the 'Customers' button until clicking it show the subnavigation
 	await expect(async() =>{
@@ -36,18 +36,18 @@ class AdminCustomers {
 	await allCustomersLink.click();
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerIndexSlug}`));
-	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.index}`));
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	await customersSearchField.waitFor();
 	await customersSearchField.fill(email);
-	await this.page.getByRole('button', {name: UIReference.general.searchButtonLabel}).click();
+	await this.page.getByRole('button', {name: UIReference.text.shared.buttons.search}).click();
 
 	// Wait for the loader spinner to be hidden
-	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	// Loop to ensure the 'results found' text is visible
@@ -60,11 +60,11 @@ class AdminCustomers {
 	const emailIsFound = await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
 
 	// Click 'Clear all' button on filtered table to reset the table state.
-	await this.page.getByRole('button', {name: UIReference.adminGeneral.tableFilterResetLabel}).click();
+	await this.page.getByRole('button', {name: UIReference.text.shared.buttons.clearAll}).click();
 
 	// Wait for the loader spinner to be hidden
-	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	await expect(
@@ -90,23 +90,23 @@ class AdminCustomers {
 	lastName: string,
 	email: string
   ) {
-	const createNewCustomersLink = this.page.getByRole('button', {name: UIReference.adminCustomers.createNewCustomerButtonLabel});
+	const createNewCustomersLink = this.page.getByRole('button', {name: UIReference.text.admin.customers.createNew});
 	await createNewCustomersLink.click();
 
 	// Wait for URL. If loading symbol is visible, wait for it to go away
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerNewSlug}`));
-	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.new}`));
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
-	const accountCreationFirstNameField = this.page.getByLabel(UIReference.personalInformation.firstNameLabel);
-	const accountCreationLastNameField = this.page.getByLabel(UIReference.personalInformation.lastNameLabel);
-	const accountCreationEmailField = this.page.getByLabel(UIReference.credentials.emailFieldLabel, { exact: true});
-	const accountCreationConfirmButton = this.page.getByRole('button', {name: UIReference.adminCustomers.registration.createAccountSaveAndContinueButtonLabel});
-	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
+	const accountCreationFirstNameField = this.page.getByLabel(UIReference.text.shared.forms.firstName);
+	const accountCreationLastNameField = this.page.getByLabel(UIReference.text.shared.forms.lastName);
+	const accountCreationEmailField = this.page.getByLabel(UIReference.text.shared.forms.email, { exact: true});
+	const accountCreationConfirmButton = this.page.getByRole('button', {name: UIReference.text.admin.customers.saveAndContinue});
+	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.text.admin.common.tableSearch});
 
 	// Optional fields:
-	const allowBulkPurchaseSwitcher = this.page.locator(UIReference.cartPriceRulesPage.activeStatusSwitcherLocator).first();
+	const allowBulkPurchaseSwitcher = this.page.locator(UIReference.selectors.admin.cartPriceRules.activeStatusSwitcher).first();
 
 	await accountCreationFirstNameField.fill(firstName);
 	await accountCreationLastNameField.fill(lastName);
@@ -114,12 +114,12 @@ class AdminCustomers {
 	await allowBulkPurchaseSwitcher.click();
 	await accountCreationConfirmButton.click();
 
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
-	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 
 	  await expect(
-		this.page.locator(UIReference.general.messageLocator).filter({hasText: 'You saved the customer.'})
+		this.page.locator(UIReference.selectors.shared.message).filter({hasText: 'You saved the customer.'})
 	  ).toBeVisible();
 	}
 
@@ -138,16 +138,16 @@ class AdminCustomers {
    */
   async approveAccount(email: string) {
 
-	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.adminGeneral.tableSearchFieldLabel});
+	const customersSearchField = this.page.getByRole('textbox', {name: UIReference.text.admin.common.tableSearch});
 	const editAccountButton = this.page.getByRole('link', {name: 'Edit'}).first()
 	const approvalButtonAccountEdit = this.page.getByRole('button', {name: 'Approve'})
 
 	await customersSearchField.waitFor();
 	await customersSearchField.fill(email);
-	await this.page.getByRole('button', {name: UIReference.adminGeneral.searchButtonLabel}).click();
+	await this.page.getByRole('button', {name: UIReference.text.shared.buttons.search}).click();
 
-	if (await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).isVisible()) {
-	  await this.page.locator(UIReference.adminGeneral.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	// Loop to ensure the 'results found' text is visible
@@ -162,24 +162,24 @@ class AdminCustomers {
 	  editAccountButton.click();
 	}).toPass();
 
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
-	if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
+	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
+	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
 	  console.log('Spinner is visible');
-	  await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	}
 
 	// Press approval button when approval button is visible
 	if (await approvalButtonAccountEdit.isVisible()) {
 	  await approvalButtonAccountEdit.click();
 
-	  await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customerEditSlug}`));
-	  if (await this.page.locator(UIReference.general.loadingSpinnerLocator).isVisible()) {
+	  await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
+	  if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
 		console.log('Spinner is visible');
-		await this.page.locator(UIReference.general.loadingSpinnerLocator).waitFor({state: 'hidden'});
+		await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	  }
 	  await expect(
 		this.page
-		  .locator(UIReference.general.messageLocator)
+		  .locator(UIReference.selectors.shared.message)
 		  .filter({ hasText: 'Customer account has been approved!' })
 	  ).toBeVisible();
 	}

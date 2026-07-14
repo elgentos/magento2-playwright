@@ -11,28 +11,28 @@ class CartPage {
 
   constructor(page: Page) {
     this.page = page;
-    // this.showDiscountButton = this.page.getByRole('button', { name: UIReference.cart.showDiscountFormButtonLabel });
-    this.showDiscountButton = this.page.locator('summary').filter({hasText: UIReference.cart.showDiscountFormButtonLabel});
+    // this.showDiscountButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.applyDiscountCode });
+    this.showDiscountButton = this.page.locator('summary').filter({hasText: UIReference.text.frontend.common.applyDiscountCode});
   }
 
   async changeProductQuantity(amount: string){
-    const productRow = this.page.getByRole('listitem').filter({hasText: UIReference.productPage.simpleProductTitle});
-    let currentQuantity = await productRow.getByRole('spinbutton', {name: UIReference.cart.cartQuantityLabel}).inputValue();
+    const productRow = this.page.getByRole('listitem').filter({hasText: UIReference.text.frontend.product.simpleProduct});
+    let currentQuantity = await productRow.getByRole('spinbutton', {name: UIReference.text.frontend.common.quantityAbbr}).inputValue();
 
     if(currentQuantity == amount){
       amount = '3';
     }
 
-    let subTotalBeforeUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
-    await productRow.getByLabel(UIReference.cart.cartQuantityLabel).fill(amount);
-    await this.page.getByRole('button', { name: UIReference.cart.updateShoppingCartButtonLabel }).click();
+    let subTotalBeforeUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
+    await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).fill(amount);
+    await this.page.getByRole('button', { name: UIReference.text.frontend.cart.updateCart }).click();
 
     await expect(async () => {
-      let subTotalAfterUpdate = await productRow.getByText(UIReference.general.genericPriceSymbol).last().innerText();
+      let subTotalAfterUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
       await expect(subTotalBeforeUpdate, `Subtotal should change`).not.toEqual(subTotalAfterUpdate);
     }).toPass();
 
-    let updatedQuantity = await productRow.getByLabel(UIReference.cart.cartQuantityLabel).inputValue();
+    let updatedQuantity = await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).inputValue();
     expect(updatedQuantity, `updated quantity (${updatedQuantity}) should equal amount we've requested (${amount})`).toEqual(amount);
   }
 
@@ -41,7 +41,7 @@ class CartPage {
   // ==============================================
 
   async removeProduct(productTitle: string){
-    let removeButton = this.page.getByLabel(`${UIReference.general.removeLabel} ${productTitle}`);
+    let removeButton = this.page.getByLabel(`${UIReference.text.shared.buttons.remove} ${productTitle}`);
     await removeButton.click();
     await this.page.waitForLoadState();
     await expect(removeButton,`Button to remove specified product is not visible in the cart`).toBeHidden();
@@ -54,18 +54,18 @@ class CartPage {
   // Discount-related methods
   // ==============================================
   async applyDiscountCode(code: string){
-    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
       // discount field is not open.
       await this.showDiscountButton.click();
     }
 
-    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.cart.applyDiscountButtonLabel, exact:true});
-    let discountField = this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel);
+    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.text.frontend.cart.applyDiscount, exact:true});
+    let discountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
     await discountField.fill(code);
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
 
-    const notificationBanner = this.page.locator(UIReference.general.successMessageLocator)
+    const notificationBanner = this.page.locator(UIReference.selectors.shared.successMessage)
       .filter({hasText: outcomeMarker.cart.discountAppliedNotification});
     await notificationBanner.waitFor();
 
@@ -74,16 +74,16 @@ class CartPage {
     // hardcoded '-' symbol because the space between - and $ is not always present.
     await expect(this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`),`'- $' should be visible on the page`).toBeVisible();
     //Close message to prevent difficulties with other tests.
-    await this.page.getByLabel(UIReference.general.closeMessageLabel).click();
+    await this.page.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
   }
 
   async removeDiscountCode(){
-    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
       // discount field is not open.
       await this.showDiscountButton.click();
     }
 
-    let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
+    let cancelCouponButton = this.page.getByRole('button', {name: UIReference.text.frontend.common.cancelCoupon});
     await cancelCouponButton.click();
     await this.page.waitForLoadState();
 
@@ -92,13 +92,13 @@ class CartPage {
   }
 
   async enterWrongCouponCode(code: string){
-    if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+    if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
       // discount field is not open.
       await this.showDiscountButton.click();
     }
 
-    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.cart.applyDiscountButtonLabel, exact:true});
-    let discountField = this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel);
+    let applyDiscoundButton = this.page.getByRole('button', {name: UIReference.text.frontend.cart.applyDiscount, exact:true});
+    let discountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
     await discountField.fill(code);
     await applyDiscoundButton.click();
     await this.page.waitForLoadState();
@@ -116,26 +116,26 @@ class CartPage {
   // ==============================================
 
   async getCheckoutValues(productName:string, pricePDP:string, amountPDP:string){
-    const checkoutCartDetails = this.page.locator(UIReference.checkout.checkoutCartDetailsLocator);
-    const openCartDetailsButton = this.page.locator(UIReference.checkout.openCartDetailsButtonLocator);
+    const checkoutCartDetails = this.page.locator(UIReference.selectors.frontend.checkout.cartDetailsContainer);
+    const openCartDetailsButton = this.page.locator(UIReference.selectors.frontend.checkout.openCartDetails);
 
     if(await checkoutCartDetails.isHidden()) {
       await openCartDetailsButton.click();
     }
 
     // // Open minicart based on amount of products in cart
-    // let cartItemAmount = await this.page.locator(UIReference.miniCart.minicartAmountBubbleLocator).count();
+    // let cartItemAmount = await this.page.locator(UIReference.selectors.frontend.minicart.amountBubble).count();
     // if(cartItemAmount == 1) {
-    //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelCont}`).click();
+    //   await this.page.getByLabel(`${UIReference.text.frontend.checkout.openCart} ${cartItemAmount} ${UIReference.text.frontend.checkout.openCartItem}`).click();
     // } else {
-    //   await this.page.getByLabel(`${UIReference.checkout.openCartButtonLabel} ${cartItemAmount} ${UIReference.checkout.openCartButtonLabelContMultiple}`).click();
+    //   await this.page.getByLabel(`${UIReference.text.frontend.checkout.openCart} ${cartItemAmount} ${UIReference.text.frontend.checkout.openCartItems}`).click();
     // }
 
     // Get values from checkout page
-    let productInCheckout = this.page.locator(UIReference.checkout.cartDetailsLocator).filter({ hasText: productName }).nth(1);
-    this.productPriceInCheckout = await productInCheckout.getByText(UIReference.general.genericPriceSymbol).last().innerText();
+    let productInCheckout = this.page.locator(UIReference.selectors.frontend.checkout.cartDetails).filter({ hasText: productName }).nth(1);
+    this.productPriceInCheckout = await productInCheckout.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
     this.productPriceInCheckout = this.productPriceInCheckout.trim();
-    // let productImage = this.page.locator(UIReference.checkout.cartDetailsLocator)
+    // let productImage = this.page.locator(UIReference.selectors.frontend.checkout.cartDetails)
     // .filter({ has: this.page.getByRole('img', { name: productName })});
     // this.productQuantityInCheckout = await productImage.locator('> span').innerText();
     this.productQuantityInCheckout = await productInCheckout.locator('.product-price').getByText('x').innerText();
@@ -145,10 +145,10 @@ class CartPage {
 
   async calculateProductPricesAndCompare(pricePDP: string, amountPDP:string, priceCheckout:string, amountCheckout:string){
     // perform magic to calculate price * amount and mold it into the correct form again
-    pricePDP = pricePDP.replace(UIReference.general.genericPriceSymbol,'');
+    pricePDP = pricePDP.replace(UIReference.text.frontend.common.priceSymbol,'');
     let pricePDPInt = Number(pricePDP);
     let quantityPDPInt = parseInt(amountPDP);
-    let calculatedPricePDP = `${UIReference.general.genericPriceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
+    let calculatedPricePDP = `${UIReference.text.frontend.common.priceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
 
     expect(amountPDP,`Amount on PDP (${amountPDP}) equals amount in checkout (${amountCheckout})`).toEqual(amountCheckout);
     expect(calculatedPricePDP, `Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${priceCheckout})`).toEqual(priceCheckout);

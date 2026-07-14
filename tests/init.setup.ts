@@ -49,20 +49,20 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
 	// ElasticSuite Telemetry, ElasticSuite Newsletters, Adobe Data Collection, Magento Incoming Message
 	const popUpDismissals = [
 		{
-			locator: page.getByText(UIReference.admin.adobeDataCollectionText),
-			button: page.getByRole('button', { name: UIReference.admin.declineDontAllowButton }),
+			locator: page.getByText(UIReference.text.admin.configuration.adobeDataCollection),
+			button: page.getByRole('button', { name: UIReference.text.admin.configuration.declineDontAllow }),
 		},
 		{
-			locator: page.getByText(UIReference.admin.elasticSuiteNewsletterLabel),
-			button: page.getByRole('button', { name: UIReference.admin.declineNoThanksButton }),
+			locator: page.getByText(UIReference.text.admin.configuration.elasticSuiteNewsletter),
+			button: page.getByRole('button', { name: UIReference.text.admin.configuration.declineNoThanks }),
 		},
 		{
-			locator: page.getByText(UIReference.admin.elasticSuiteTelemetryLabel),
-			button: page.getByRole('button', { name: UIReference.admin.okButtonLabel }),
+			locator: page.getByText(UIReference.text.admin.configuration.elasticSuiteTelemetry),
+			button: page.getByRole('button', { name: UIReference.text.admin.common.ok }),
 		},
 		{
-			locator: page.getByRole('heading', {name: UIReference.admin.magentoIncomingMessageLabel}),
-			button: page.locator(UIReference.admin.magentoModelHeaderLocator).getByRole('button'),
+			locator: page.getByRole('heading', {name: UIReference.text.admin.configuration.magentoIncomingMessage}),
+			button: page.locator(UIReference.selectors.admin.common.modalHeader).getByRole('button'),
 		},
 	];
 

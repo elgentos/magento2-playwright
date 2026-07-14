@@ -11,8 +11,8 @@ test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', (
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryMultipleResults);
-    await expect(page).toHaveURL(slugToRegex(slugs.search.resultsSlug));
-    const results = page.locator(`${UIReference.categoryPage.productGridLocator} li`);
+    await expect(page).toHaveURL(slugToRegex(slugs.frontend.search.results));
+    const results = page.locator(`${UIReference.selectors.frontend.category.productGrid} li`);
     const resultCount = await results.count();
     expect(resultCount).toBeGreaterThan(1);
   });
@@ -21,8 +21,8 @@ test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', (
     await page.goto('');
     const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
-    // await expect(page).toHaveURL(`**${slugs.productPage.simpleProductSlug}`);
-    expect(page.url()).toEqual(expect.stringContaining(`${slugs.productPage.simpleProductSlug}`));
+    // await expect(page).toHaveURL(`**${slugs.frontend.product.simple}`);
+    expect(page.url()).toEqual(expect.stringContaining(`${slugs.frontend.product.simple}`));
   });
 
   test('No_results_message_is_shown_for_unknown_query', async ({ page }) => {

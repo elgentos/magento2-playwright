@@ -11,8 +11,8 @@ class NewsletterSubscriptionPage {
 
 	constructor(page: Page) {
 		this.page = page;
-		this.newsletterCheckElement = page.getByRole('switch', { name: UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel });
-		this.saveSubscriptionsButton = page.getByRole('button', { name: UIReference.newsletterSubscriptions.saveSubscriptionsButton });
+		this.newsletterCheckElement = page.getByRole('switch', { name: UIReference.text.frontend.newsletter.generalSubscription });
+		this.saveSubscriptionsButton = page.getByRole('button', { name: UIReference.text.shared.buttons.save });
 	}
 
 	async updateNewsletterSubscription() {
@@ -40,9 +40,9 @@ class NewsletterSubscriptionPage {
 	}
 
 	async footerSubscribeToNewsletter() {
-		await expect(this.page.getByRole('textbox', { name: UIReference.footerPage.newsletterInputElementLabel })).toBeVisible();
-		await this.page.getByRole('textbox', { name: UIReference.footerPage.newsletterInputElementLabel }).fill(faker.internet.email());
-		await this.page.getByRole('button', { name: UIReference.footerPage.newsletterSubscribeButtonLabel }).click();
+		await expect(this.page.getByRole('textbox', { name: UIReference.text.frontend.footer.newsletterInput })).toBeVisible();
+		await this.page.getByRole('textbox', { name: UIReference.text.frontend.footer.newsletterInput }).fill(faker.internet.email());
+		await this.page.getByRole('button', { name: UIReference.text.frontend.footer.newsletterSubscribe }).click();
 	}
 }
 

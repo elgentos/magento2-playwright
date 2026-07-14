@@ -10,11 +10,11 @@ class Footer {
 
     constructor(page: Page) {
         this.page = page
-        this.footerElement = this.page.locator(UIReference.footerPage.footerLocator);
+        this.footerElement = this.page.locator(UIReference.selectors.frontend.footer.footer);
     }
 
     async goToFooterElement () {
-        await this.page.getByText(UIReference.footerPage.currencyLabel).scrollIntoViewIfNeeded();
+        await this.page.getByText(UIReference.text.frontend.footer.currencyLabel).scrollIntoViewIfNeeded();
         await expect(
           this.footerElement,
           'Footer is visible'
@@ -25,16 +25,16 @@ class Footer {
         await this.goToFooterElement();
 
         const isUsdActive = await this.page.getByRole('button', {
-            name: UIReference.footerPage.currencyDollar
+            name: UIReference.text.frontend.footer.currencyDollar
         }).isVisible();
 
-        const currencyToOpen = isUsdActive ? UIReference.footerPage.currencyDollar : UIReference.footerPage.currencyEuro;
-        const currencyToSelect = isUsdActive ? UIReference.footerPage.currencyEuro : UIReference.footerPage.currencyDollar;
+        const currencyToOpen = isUsdActive ? UIReference.text.frontend.footer.currencyDollar : UIReference.text.frontend.footer.currencyEuro;
+        const currencyToSelect = isUsdActive ? UIReference.text.frontend.footer.currencyEuro : UIReference.text.frontend.footer.currencyDollar;
 
         await this.page.getByRole('button', { name: currencyToOpen }).click();
 
         await expect(
-          this.page.getByRole('navigation', { name: UIReference.footerPage.currencyLabel }),
+          this.page.getByRole('navigation', { name: UIReference.text.frontend.footer.currencyLabel }),
           'Footer navigation is visible'
         ).toBeVisible();
 

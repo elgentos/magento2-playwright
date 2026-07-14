@@ -36,33 +36,33 @@ class CheckoutPage extends MagewireUtils {
 			page: Page
 	){
 		super(page);
-		this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.checkout.shippingMethodFixedLabel);
-		this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.checkout.shippingMethodTableRateLabel);
-		this.paymentMethodOptionCheck = this.page.getByRole('radio', {name: UIReference.checkout.paymentOptionCheckLabel});
-		this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.checkout.openDiscountFormLabel});
-		this.placeOrderButton = this.page.getByRole('button', { name: UIReference.checkout.placeOrderButtonLabel });
-		this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.checkout.continueShoppingLabel });
+		this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.text.frontend.checkout.shippingFixed);
+		this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.text.frontend.checkout.shippingTableRate);
+		this.paymentMethodOptionCheck = this.page.getByRole('radio', {name: UIReference.text.frontend.checkout.paymentCheck});
+		this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.text.frontend.common.applyDiscountCode});
+		this.placeOrderButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.placeOrder });
+		this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.text.frontend.checkout.continueShopping });
 		// this.subtotalElement = page.getByText('Subtotal $');
-		this.subtotalElement = page.getByText(`${UIReference.financial.subTotal} ${UIReference.general.genericPriceSymbol}`);
+		this.subtotalElement = page.getByText(`${UIReference.text.frontend.common.subtotal} ${UIReference.text.frontend.common.priceSymbol}`);
 		// this.shippingElement = page.getByText('Shipping & Handling (Flat Rate - Fixed) $');
-		this.shippingElement = page.getByText(`${UIReference.checkout.shippingPriceText} ${UIReference.general.genericPriceSymbol}`);
+		this.shippingElement = page.getByText(`${UIReference.text.frontend.checkout.shippingPrice} ${UIReference.text.frontend.common.priceSymbol}`);
 		// this.taxElement = page.getByText('Tax $');
-		this.taxElement = page.getByText(`${UIReference.checkout.taxPriceText} ${UIReference.general.genericPriceSymbol}`);
+		this.taxElement = page.getByText(`${UIReference.text.frontend.checkout.tax} ${UIReference.text.frontend.common.priceSymbol}`);
 		// this.grandTotalElement = page.getByText('Grand Total $');
-		this.grandTotalElement = page.getByText(`${UIReference.financial.grandTotal} ${UIReference.general.genericPriceSymbol}`);
-		this.paymentMethodOptionCreditCard = this.page.getByLabel(UIReference.checkout.paymentOptionCreditCardLabel);
-		this.paymentMethodOptionPaypal = this.page.getByLabel(UIReference.checkout.paymentOptionPaypalLabel);
-		this.creditCardNumberField = this.page.getByLabel(UIReference.checkout.creditCardNumberLabel);
-		this.creditCardExpiryField = this.page.getByLabel(UIReference.checkout.creditCardExpiryLabel);
-		this.creditCardCVVField = this.page.getByLabel(UIReference.checkout.creditCardCVVLabel);
-		this.creditCardNameField = this.page.getByLabel(UIReference.checkout.creditCardNameLabel);
+		this.grandTotalElement = page.getByText(`${UIReference.text.frontend.common.grandTotal} ${UIReference.text.frontend.common.priceSymbol}`);
+		this.paymentMethodOptionCreditCard = this.page.getByLabel(UIReference.text.frontend.checkout.paymentCreditCard);
+		this.paymentMethodOptionPaypal = this.page.getByLabel(UIReference.text.frontend.checkout.paymentPaypal);
+		this.creditCardNumberField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardNumber);
+		this.creditCardExpiryField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardExpiry);
+		this.creditCardCVVField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardCVV);
+		this.creditCardNameField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardName);
 		// Customer name and address
 		this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
-		this.firstNameField = page.getByRole('textbox', {name: UIReference.personalInformation.firstNameLabel});
-		this.lastNameField = page.getByRole('textbox', {name: UIReference.personalInformation.lastNameLabel});
-		this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, { exact: true });
-		this.stateDropDown = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
-		this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
+		this.firstNameField = page.getByRole('textbox', {name: UIReference.text.shared.forms.firstName});
+		this.lastNameField = page.getByRole('textbox', {name: UIReference.text.shared.forms.lastName});
+		this.streetAddressField = page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true });
+		this.stateDropDown = page.getByLabel(UIReference.text.shared.forms.province);
+		this.phoneNumberField = page.getByLabel(UIReference.text.shared.forms.phone);
 	}
 
 	// ==============================================
@@ -77,8 +77,8 @@ class CheckoutPage extends MagewireUtils {
 		let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
 
 		// If we're not already on the checkout page, go there
-		if (!this.page.url().includes(slugs.checkout.checkoutSlug)) {
-			await this.page.goto(slugs.checkout.checkoutSlug);
+		if (!this.page.url().includes(slugs.frontend.checkout.index)) {
+			await this.page.goto(slugs.frontend.checkout.index);
 		}
 
 		// If shipping method is not selected, select it
@@ -98,7 +98,7 @@ class CheckoutPage extends MagewireUtils {
 		await this.placeOrderButton.click();
 		await this.waitForMagewireRequests();
 
-		await this.page.waitForURL(slugToRegex(slugs.checkout.purchaseSuccessSlug));
+		await this.page.waitForURL(slugToRegex(slugs.frontend.checkout.success));
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
 		let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
@@ -114,7 +114,7 @@ class CheckoutPage extends MagewireUtils {
 	// ==============================================
 
 	async applyDiscountCodeCheckout(code: string){
-		if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
 			// discount field is not open.
 			await this.showDiscountFormButton.click();
 			await this.waitForMagewireRequests();
@@ -122,13 +122,13 @@ class CheckoutPage extends MagewireUtils {
 
 		if(await this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`).isVisible()){
 			// discount is already active.
-			let cancelCouponButton = this.page.getByRole('button', { name: UIReference.checkout.cancelDiscountButtonLabel });
+			let cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
 			await cancelCouponButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
+		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon });
+		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
 
 		await checkoutDiscountField.fill(code);
 		await applyCouponCheckoutButton.click();
@@ -139,9 +139,9 @@ class CheckoutPage extends MagewireUtils {
 		// await expect(this.page.getByText(`-${outcomeMarker.checkout.checkoutPriceReducedSymbol}`),`'-$' should be visible on the page`).toBeVisible();
 
 		// Alternate checking method: the button 'Cancel Coupon' should become visible.
-		await expect(this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel})).toBeVisible();
+		await expect(this.page.getByRole('button', {name: UIReference.text.frontend.common.cancelCoupon})).toBeVisible();
 
-		const discountBox = this.page.getByRole('textbox', {name: UIReference.cart.discountBoxLabel});
+		const discountBox = this.page.getByRole('textbox', {name: UIReference.text.frontend.cart.discountBox});
 
 		await expect(async() => {
 			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
@@ -149,14 +149,14 @@ class CheckoutPage extends MagewireUtils {
 	}
 
 	async enterWrongCouponCode(code: string){
-		if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
 			// discount field is not open.
 			await this.showDiscountFormButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.checkout.applyDiscountButtonLabel });
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
+		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon });
+		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
 		await checkoutDiscountField.fill(code);
 		await applyCouponCheckoutButton.click();
 		await this.waitForMagewireRequests();
@@ -166,13 +166,13 @@ class CheckoutPage extends MagewireUtils {
 	}
 
 	async removeDiscountCode(){
-		if(await this.page.getByPlaceholder(UIReference.cart.discountInputFieldLabel).isHidden()){
+		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
 			// discount field is not open.
 			await this.showDiscountFormButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let cancelCouponButton = this.page.getByRole('button', {name: UIReference.cart.cancelCouponButtonLabel});
+		let cancelCouponButton = this.page.getByRole('button', {name: UIReference.text.frontend.common.cancelCoupon});
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
@@ -181,7 +181,7 @@ class CheckoutPage extends MagewireUtils {
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.checkout.discountInputFieldLabel);
+		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
 		await expect(checkoutDiscountField).toBeEditable();
 	}
 
@@ -247,20 +247,20 @@ class CheckoutPage extends MagewireUtils {
 
 	async fillShippingAddress() {
 		// Fill required shipping address fields
-		await this.page.getByLabel(UIReference.credentials.emailCheckoutFieldLabel, { exact: true }).fill(faker.internet.email());
-		await this.page.getByLabel(UIReference.personalInformation.firstNameLabel).fill(faker.person.firstName());
-		await this.page.getByLabel(UIReference.personalInformation.lastNameLabel).fill(faker.person.lastName());
-		await this.page.getByLabel(UIReference.newAddress.streetAddressLabel).first().fill(faker.location.streetAddress());
-		await this.page.getByLabel(UIReference.newAddress.zipCodeLabel).fill(faker.location.zipCode());
-		await this.page.getByLabel(UIReference.newAddress.cityNameLabel).fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
-		await this.page.getByLabel(UIReference.newAddress.phoneNumberLabel).fill(faker.phone.number({style: 'national'}));
+		await this.page.getByLabel(UIReference.text.shared.forms.emailCheckout, { exact: true }).fill(faker.internet.email());
+		await this.page.getByLabel(UIReference.text.shared.forms.firstName).fill(faker.person.firstName());
+		await this.page.getByLabel(UIReference.text.shared.forms.lastName).fill(faker.person.lastName());
+		await this.page.getByLabel(UIReference.text.shared.forms.streetAddress).first().fill(faker.location.streetAddress());
+		await this.page.getByLabel(UIReference.text.shared.forms.zipCode).fill(faker.location.zipCode());
+		await this.page.getByLabel(UIReference.text.shared.forms.city).fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
+		await this.page.getByLabel(UIReference.text.shared.forms.phone).fill(faker.phone.number({style: 'national'}));
 
 		// Select country (if needed)
 		// await this.page.getByLabel('Country').selectOption('US');
 		const country : string = faker.helpers.arrayElement(inputValues.addressCountries);
-		const countrySelectorField = this.page.getByLabel(UIReference.newAddress.countryLabel);
-		const stateInputField = this.page.getByRole('textbox', { name: UIReference.newAddress.provinceSelectLabel });
-		const stateSelectorField = stateInputField.filter({ hasText: UIReference.newAddress.provinceSelectFilterLabel });
+		const countrySelectorField = this.page.getByLabel(UIReference.text.shared.forms.country);
+		const stateInputField = this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province });
+		const stateSelectorField = stateInputField.filter({ hasText: UIReference.text.shared.forms.provinceFilter });
 
 
 		// If default selected country == country we want to use for the test,
@@ -275,8 +275,8 @@ class CheckoutPage extends MagewireUtils {
 			await this.page.waitForTimeout(5000);
 		}
 
-		const regionDropdown = this.page.getByLabel(UIReference.newAddress.provinceSelectLabel);
-		const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
+		const regionDropdown = this.page.getByLabel(UIReference.text.shared.forms.province);
+		const regionInputField = this.page.getByRole('textbox', {name: UIReference.text.shared.forms.province});
 
 		// Select state
 		if(country !== 'United States') {

@@ -28,13 +28,13 @@ test.describe('Cart functionalities (guest)', () => {
 	 */
 	test.beforeEach(async ({ page }, testInfo) => {
 		const productPage = new ProductPage(page);
-		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
-		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.productPage.simpleProductTitle}`;
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
 		const notificationValidator = new NotificationValidatorUtils(page, testInfo);
 		await notificationValidator.validate(productAddedNotification);
 
-		await page.goto(slugs.cart.cartSlug);
+		await page.goto(slugs.frontend.cart.index);
 	});
 
 	/**
@@ -44,7 +44,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 */
 	test('Add_product_to_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
 		await expect(page.getByRole('heading')
-			.getByRole('link', {name: UIReference.productPage.simpleProductTitle}), `Product is visible in cart`).toBeVisible();
+			.getByRole('link', {name: UIReference.text.frontend.product.simpleProduct}), `Product is visible in cart`).toBeVisible();
 	});
 
 	/**
@@ -55,8 +55,8 @@ test.describe('Cart functionalities (guest)', () => {
 	test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page}) => {
 		await test.step('Add another product to cart', async () =>{
 			const productpage = new ProductPage(page);
-			await page.goto(slugs.productPage.secondSimpleProductSlug);
-			await productpage.addSimpleProductToCart(UIReference.productPage.secondSimpleProducTitle, slugs.productPage.secondSimpleProductSlug);
+			await page.goto(slugs.frontend.product.secondSimple);
+			await productpage.addSimpleProductToCart(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
 		});
 
 		await test.step('Log in with account', async () =>{
@@ -69,12 +69,12 @@ test.describe('Cart functionalities (guest)', () => {
 			await loginPage.login(email, password);
 		});
 
-		await page.goto(slugs.cart.cartSlug);
+		await page.goto(slugs.frontend.cart.index);
 
-		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.simpleProductTitle }),
-			`${UIReference.productPage.simpleProductTitle} should still be in cart`).toBeVisible();
-		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.productPage.secondSimpleProducTitle }),
-			`${UIReference.productPage.secondSimpleProducTitle} should still be in cart`).toBeVisible();
+		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.text.frontend.product.simpleProduct }),
+			`${UIReference.text.frontend.product.simpleProduct} should still be in cart`).toBeVisible();
+		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.text.frontend.product.secondSimpleProduct }),
+			`${UIReference.text.frontend.product.secondSimpleProduct} should still be in cart`).toBeVisible();
 	});
 
 	/**
@@ -84,7 +84,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 */
 	test('Remove_product_from_cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
 		const cart = new CartPage(page);
-		await cart.removeProduct(UIReference.productPage.simpleProductTitle);
+		await cart.removeProduct(UIReference.text.frontend.product.simpleProduct);
 	});
 
 	/**
@@ -149,21 +149,21 @@ test.describe('Price checking tests', () => {
 
 		await test.step('Step: Add simple product to cart', async () =>{
 			const productPage = new ProductPage(page);
-			await page.goto(slugs.productPage.simpleProductSlug);
+			await page.goto(slugs.frontend.product.simple);
 			// set quantity to 2 so we can see that the math works
-			await page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
+			await page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
 
-			productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-			productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
-			await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug, '2');
+			productPagePrice = await page.locator(UIReference.selectors.frontend.product.price).innerText();
+			productPageAmount = await page.getByLabel(UIReference.text.shared.forms.quantity).inputValue();
+			await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple, '2');
 		});
 
 		await test.step('Step: go to checkout, get values', async () =>{
-			await page.goto(slugs.checkout.checkoutSlug);
+			await page.goto(slugs.frontend.checkout.index);
 			await page.waitForLoadState();
 
 			// returns productPriceInCheckout and productQuantityInCheckout
-			checkoutProductDetails = await cart.getCheckoutValues(UIReference.productPage.simpleProductTitle, productPagePrice, productPageAmount);
+			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.simpleProduct, productPagePrice, productPageAmount);
 		});
 
 		await test.step('Step: Calculate and check expectations', async () =>{
@@ -185,25 +185,25 @@ test.describe('Price checking tests', () => {
 		await test.step('Step: Add configurable product to cart', async () =>{
 			const productPage = new ProductPage(page);
 			// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-			await page.goto(slugs.productPage.configurableProductSlug);
+			await page.goto(slugs.frontend.product.configurable);
 			// set quantity to 2 so we can see that the math works
 			await page.getByLabel('Quantity').fill('2');
 
-			productPagePrice = await page.locator(UIReference.productPage.simpleProductPrice).innerText();
-			productPageAmount = await page.getByLabel(UIReference.productPage.quantityFieldLabel).inputValue();
+			productPagePrice = await page.locator(UIReference.selectors.frontend.product.price).innerText();
+			productPageAmount = await page.getByLabel(UIReference.text.shared.forms.quantity).inputValue();
 
 			await productPage.addConfigurableProductToCart(
-				UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2'
+				UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable, '2'
 			);
 		});
 
 		await test.step('Step: go to checkout, get values', async () =>{
-			await page.goto(slugs.checkout.checkoutSlug);
+			await page.goto(slugs.frontend.checkout.index);
 			await page.waitForLoadState();
 
 			// returns productPriceInCheckout and productQuantityInCheckout
 			checkoutProductDetails = await cart.getCheckoutValues(
-				UIReference.productPage.configurableProductTitle, productPagePrice, productPageAmount
+				UIReference.text.frontend.product.configurableProduct, productPagePrice, productPageAmount
 			);
 		});
 

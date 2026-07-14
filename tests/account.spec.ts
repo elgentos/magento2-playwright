@@ -75,8 +75,8 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 
 		// Login and change password via UI
 		await loginPage.login(email, password);
-		await page.goto(slugs.account.changePasswordSlug, { waitUntil: 'load' });
-		await expect(page.getByRole('textbox', { name: UIReference.credentials.currentPasswordFieldLabel })).toBeVisible();
+		await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
+		await expect(page.getByRole('textbox', { name: UIReference.text.shared.forms.currentPassword })).toBeVisible();
 		await accountPage.updatePassword(password, changedPassword);
 
 		// Verify the new password works via API
@@ -135,10 +135,10 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 
 		// Login and update email via UI
 		await loginPage.login(originalEmail, password);
-		await page.goto(slugs.account.accountEditSlug, { waitUntil: 'load' });
+		await page.goto(slugs.frontend.account.edit, { waitUntil: 'load' });
 		await expect(page.locator('#form-validate').
-			getByText(UIReference.accountDashboard.accountDashboardTitleLabel),
-			`Heading "${UIReference.accountDashboard.accountDashboardTitleLabel}" is visible`).toBeVisible();
+			getByText(UIReference.text.frontend.account.dashboardTitle),
+			`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`).toBeVisible();
 		await accountPage.updateEmail(password, updatedEmail);
 
 		// Verify the updated email works via API
@@ -156,19 +156,19 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
 
 	test.beforeEach(async ({page}) => {
-		await page.goto(slugs.account.addressIndexSlug, {waitUntil: "load"});
+		await page.goto(slugs.frontend.account.addressIndex, {waitUntil: "load"});
 
 		// if page navigated to new address, no address had been added yet.
 		if(page.url().includes('new')){
 			await expect(async () => {
-				await expect(page.getByText(UIReference.newAddress.addNewAddressTitle),
-				`Heading "${UIReference.newAddress.addNewAddressTitle}" is visible`).toBeVisible();
+				await expect(page.getByText(UIReference.text.frontend.account.addNewAddressTitle),
+				`Heading "${UIReference.text.frontend.account.addNewAddressTitle}" is visible`).toBeVisible();
 			}).toPass();
 		} else {
 			await expect(async () => {
 				await expect(page.getByRole('heading',
-				{ name: UIReference.address.addressBookTitle }),
-				`Heading "${UIReference.address.addressBookTitle}" is visible`).toBeVisible();
+				{ name: UIReference.text.frontend.common.navigation.addressBook }),
+				`Heading "${UIReference.text.frontend.common.navigation.addressBook}" is visible`).toBeVisible();
 			}).toPass();
 		}
 	});
@@ -179,7 +179,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		await page.goto(slugs.account.addressNewSlug);
+		await page.goto(slugs.frontend.account.addressNew);
 		const accountPage = new AccountPage(page);
 
 		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
@@ -200,8 +200,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
 		const accountPage = new AccountPage(page);
-		await page.goto(slugs.account.addressBookSlug);
-		let editAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.editAddressIconButton}).first();
+		await page.goto(slugs.frontend.account.addressBook);
+		let editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
 		let isDefaultAddress = false;
 
 		if(await editAddressButton.isHidden()){
@@ -209,7 +209,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 			if(await page.getByRole('link', { name: 'Change Shipping Address arrow' }).isVisible()) {
 				isDefaultAddress = true;
 			} else {
-				expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.account.addressNewSlug);
+				expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.frontend.account.addressNew);
 				await accountPage.addNewAddress();
 			}
 		}
@@ -230,15 +230,15 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
-		await page.goto(slugs.account.addressNewSlug);
+		await page.goto(slugs.frontend.account.addressNew);
 		const accountPage = new AccountPage(page);
 
 		await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
 		await accountPage.saveAddressButton.click();
 
-		const errorMessage = page.getByText(UIReference.general.errorMessageStreetAddressRequiredFieldText).first();
+		const errorMessage = page.getByText(UIReference.text.shared.messages.streetAddressRequired).first();
 		await errorMessage.waitFor();
-		await expect(errorMessage, `Error message "${UIReference.general.errorMessageStreetAddressRequiredFieldText}" is visible`).toBeVisible();
+		await expect(errorMessage, `Error message "${UIReference.text.shared.messages.streetAddressRequired}" is visible`).toBeVisible();
 	});
 
 	/**
@@ -248,13 +248,13 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
 		const accountPage = new AccountPage(page);
-		await page.goto(slugs.account.addressBookSlug);
+		await page.goto(slugs.frontend.account.addressBook);
 
-		let deleteAddressButton = page.getByRole('link', {name: UIReference.accountDashboard.addressDeleteIconButton}).first();
+		let deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
 
 		if(await deleteAddressButton.isHidden()) {
 			// The delete address button was not found, add another address first.
-			await page.goto(slugs.account.addressNewSlug);
+			await page.goto(slugs.frontend.account.addressNew);
 			await accountPage.addNewAddress();
 		}
 
@@ -275,12 +275,12 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
 	 */
 	test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page}) => {
 		// Navigate to a page.
-		await page.goto(slugs.account.accountOverviewSlug);
+		await page.goto(slugs.frontend.account.overview);
 		await page.waitForLoadState();
 
 		const newsletterPage = new NewsletterSubscriptionPage(page);
-		let newsletterLink = page.getByRole('link', { name: UIReference.accountDashboard.links.newsletterLink });
-		const newsletterCheckElement = page.getByLabel(UIReference.newsletterSubscriptions.generalSubscriptionCheckLabel);
+		let newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
+		const newsletterCheckElement = page.getByLabel(UIReference.text.frontend.newsletter.generalSubscription);
 
 		await newsletterLink.click();
 		await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();

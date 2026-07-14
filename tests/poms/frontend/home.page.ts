@@ -12,7 +12,7 @@ class HomePage {
   }
 
   async addHomepageProductToCart(){
-    let buyProductButton = this.page.getByRole('button').filter({hasText: UIReference.general.addToCartLabel}).first();
+    let buyProductButton = this.page.getByRole('button').filter({hasText: UIReference.text.shared.buttons.addToCart}).first();
 
     if(await buyProductButton.isVisible()) {
       await buyProductButton.click();

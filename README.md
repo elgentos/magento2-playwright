@@ -264,6 +264,85 @@ import HomePage from '../poms/frontend/home.page';
 
 ---
 
+### Element identifiers
+
+All element identifiers live in `config/element-identifiers.json` and are consumed through the `UIReference` export (`import { UIReference } from '@config'`). The file is organised along two axes so that identifiers stay easy to find and free of duplicates.
+
+**1. Type — what kind of identifier it is:**
+
+- `selectors` – CSS/DOM selectors (`#id`, `.class`, `[attr]`, …).
+- `text` – text that is visible to the user (labels, headings, button captions, messages).
+
+**2. Domain — where it is used, nested under each type:**
+
+- `shared` – reused across the whole suite (e.g. the loading spinner, the header, generic buttons and form labels).
+- `admin` – Magento admin panel.
+- `frontend` – the storefront.
+
+Within `admin` and `frontend`, identifiers are grouped into `common` (reused across multiple pages of that domain) and a key per `<page>` (`cart`, `checkout`, `product`, `account`, …). Under `text.shared` the elements are grouped further into `buttons`, `forms` and `messages`.
+
+```json
+{
+  "selectors": {
+    "shared":   { "spinner": "#container .spinner" },
+    "admin":    { "common": { "adminMenu": ".admin__menu" }, "login": { "username": "#username" } },
+    "frontend": { "common": { "region": "#region_id" }, "product": { "price": ".final-price .price-wrapper .price" } }
+  },
+  "text": {
+    "shared":   { "buttons": { "save": "Save" }, "forms": { "email": "Email" } },
+    "frontend": { "cart": { "title": "Shopping Cart" } }
+  }
+}
+```
+
+**Naming conventions:**
+
+- Use `camelCase`, meaningful keys that do not repeat their namespace.
+- **No type suffix.** The namespace already conveys the type, so drop `Locator`/`Field`/`Class`/`Id` under `selectors` and `Label`/`Text`/`Button` under `text`:
+  - `regionLocator` → `selectors.frontend.common.region`
+  - `saveButtonLabel` → `text.shared.buttons.save`
+- Define a value **once** at the most shared level that applies (`shared` > domain `common` > `<page>`) and reference it from there, so no value is duplicated. Genuinely distinct elements that happen to share a default string (e.g. the "My Account" menu link vs. the account page heading) are kept separate on purpose.
+
+**Usage:**
+
+```ts
+import { UIReference } from '@config';
+
+await page.getByRole('button', { name: UIReference.text.shared.buttons.save }).click();
+await page.locator(UIReference.selectors.frontend.product.price).isVisible();
+```
+
+---
+
+### Slugs
+
+URL slugs live in `config/slugs.json` and are consumed through the `slugs` export (`import { slugs } from '@config'`). The file follows the **same domain grouping** as the element identifiers: a top-level `frontend` / `admin` split, with a key per `<page>` underneath.
+
+Conventions mirror the element identifiers:
+
+- Use `camelCase` keys **without** a `Slug` suffix (`loginSlug` → `login`) and **without** a `Page` suffix on the page key (`categoryPage` → `category`).
+- Use `index` for a page's main URL (`cartSlug` → `cart.index`). Every page is an object, even when it holds a single slug, so the depth stays predictable.
+
+```json
+{
+  "frontend": {
+    "product": { "simple": "/push-it-messenger-bag.html" },
+    "checkout": { "index": "/checkout/", "success": "/checkout/onepage/success/" }
+  },
+  "admin": {
+    "customers": { "index": "/customer/index/", "edit": "/customer/index/edit/" }
+  }
+}
+```
+
+```ts
+import { slugs } from '@config';
+
+await page.goto(slugs.frontend.product.simple);
+```
+
+---
+
 ### Examples
 
 Below are some example tests to illustrate how to write and structure your tests.
