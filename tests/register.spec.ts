@@ -28,7 +28,7 @@ test('User_registers_an_account', { tag: ['@account-creation', '@hot'] }, async 
   let lastName = faker.person.lastName();
 
   const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-  let randomNumber = Math.floor(Math.random() * 100);
+  let randomNumber = Math.floor(Math.random() * 1000);
   let emailHandle = inputValues.accountCreation.emailHandleValue;
   let emailHost = inputValues.accountCreation.emailHostValue;
   const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
