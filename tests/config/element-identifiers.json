@@ -1,388 +1,302 @@
 {
-	"account": {
-		"addressBookHeading": "Address Book",
-		"dashboardHeading": "Account Information",
-		"editContactInfo": "Edit contact information",
-		"newAddressHeading": "Add New Address"
-	},
-	"accountCreation": {
-		"createAccountButtonLabel": "Create an Account",
-		"createAccountTitleText": "Create New Customer Account"
-	},
-	"accountDashboard": {
-		"accountDashboardTitleLabel": "Account Information",
-		"accountSideBarLabel": "Sidebar Main",
-		"addAddressButtonLabel": "ADD NEW ADDRESS",
-		"addressBookArea": ".block-addresses-list",
-		"addressDeleteIconButton": "Delete",
-		"editAddressIconButton": "pencil-alt",
-		"accountInformationFieldLocator": ".column > div > div > .flex",
-		"links": {
-			"newsletterLink": "Newsletter Subscriptions"
+	"selectors": {
+		"shared": {
+			"spinner": "#container .spinner",
+			"header": "#header",
+			"pageTitle": "h1.page-title",
+			"message": "#messages div div.messages div div.message span",
+			"errorMessage": "#messages div .messages div .error span",
+			"successMessage": "div.message.success"
+		},
+		"admin": {
+			"common": {
+				"adminMenu": ".admin__menu",
+				"configTabs": "#system_config_tabs",
+				"message": "#messages .message div",
+				"modalHeader": ".modal-header",
+				"couponSearch": "#promo_quote_grid_filter_coupon_code"
+			},
+			"login": {
+				"username": "#username",
+				"password": "#login",
+				"loginButton": ".action-login"
+			},
+			"configuration": {
+				"accountSharing": "#admin_security_admin_account_sharing",
+				"accountSharingInherit": "#admin_security_admin_account_sharing_inherit",
+				"captchaEnable": "#customer_captcha_enable",
+				"captchaEnableInherit": "#customer_captcha_enable_inherit",
+				"recaptchaCustomerCreate": "#recaptcha_frontend_type_for_customer_create",
+				"recaptchaCustomerCreateInherit": "#recaptcha_frontend_type_for_customer_create_inherit"
+			},
+			"cartPriceRules": {
+				"activeStatusLabel": ".admin__actions-switch-text",
+				"activeStatusSwitcher": ".admin__actions-switch-label",
+				"couponType": "select[name='coupon_type']"
+			}
+		},
+		"frontend": {
+			"common": {
+				"accountMenu": "#customer-menu",
+				"region": "#region_id"
+			},
+			"account": {
+				"accountInformationField": ".column > div > div > .flex",
+				"addressBookArea": ".block-addresses-list"
+			},
+			"category": {
+				"activeView": ".active",
+				"productGrid": ".products-grid",
+				"sortBy": ".form-select.sorter-options"
+			},
+			"product": {
+				"price": ".final-price .price-wrapper .price",
+				"optionForm": "#product_addtocart_form",
+				"optionValue": ".product-option-value-label"
+			},
+			"checkout": {
+				"cartDetails": "#checkout-cart-details div",
+				"cartDetailsContainer": "#checkout-cart-details",
+				"openCartDetails": "button[aria-controls=\"checkout-cart-details\"]",
+				"shippingAddressRadio": "#shipping-details input[type='radio']"
+			},
+			"minicart": {
+				"cartDrawer": "#cart-drawer-title",
+				"amountBubble": "#menu-cart-icon > span",
+				"price": ".price-excluding-tax .minicart-price .price"
+			},
+			"search": {
+				"toggle": "#menu-search-icon",
+				"input": "#search",
+				"suggestionBox": "#search_autocomplete"
+			},
+			"footer": {
+				"footer": ".page-footer"
+			},
+			"contact": {
+				"message": "#comment"
+			},
+			"wishlist": {
+				"itemGrid": "#wishlist-view-form"
+			}
 		}
 	},
-	"address": {
-		"addressField": "Street Address",
-		"addressSavedText": "You saved the address.",
-		"cityField": "City",
-		"companyField": "Company",
-		"countryField": "Country",
-		"phoneField": "Phone Number",
-		"regionInputField": "State/Province",
-		"regionLocator": "#region_id",
-		"saveAddressButton": "Save Address",
-		"zipCodeField": "Zip/Postal Code",
-		"TO_DEPRECATE": "addressBookTitle Below - moved to account",
-		"addressBookTitle": "Address Book"
-	},
-	"admin": {
-		"admin": "Admin",
-		"adminSharing": "Admin Account Sharing",
-		"adminMenuLocator": ".admin__menu",
-		"adobeDataCollectionText": "Allow Adobe to collect usage data to improve user experience",
-		"advanced": "Advanced",
-		"captchaEnabled": "Enable CAPTCHA on Storefront",
-		"configuration": "Configuration",
-		"configTabLocator": "#system_config_tabs",
-		"configurationSavedText": "You saved the configuration.",
-		"customerCAPTCHAInheritLocator": "#customer_captcha_enable_inherit",
-		"customerInheritLocator": "#admin_security_admin_account_sharing_inherit",
-		"customerReCAPTCHAOption": "#recaptcha_frontend_type_for_customer_create",
-		"customerReCAPTCHAInherit": "#recaptcha_frontend_type_for_customer_create_inherit",
-		"customers": "Customers",
-		"customerConfiguration": "Customer Configuration",
-		"declineDontAllowButton": "Don't Allow",
-		"declineNoThanksButton": "No thanks",
-		"elasticSuiteNewsletterLabel": "Introducing the Elasticsuite newsletter",
-		"elasticSuiteTelemetryLabel": "Help Us Improve Elasticsuite",
-		"generalTabLabel": "General ",
-		"googleReCAPTCHALink": "Google reCAPTCHA Storefront",
-		"magentoIncomingMessageLabel": "Incoming Message",
-		"magentoModelHeaderLocator": ".modal-header",
-		"okButtonLabel": "Ok",
-		"recordsFoundLocator": "#promo_quote_grid-total-count",
-		"storesButton": "Stores",
-		"storeFrontLabel": "Storefront"
-	},
-	"adminMarketing": {
-		"cartPriceRules": "Cart Price Rules",
-		"couponSearchLocator": "#promo_quote_grid_filter_coupon_code",
-		"marketingButton": "Marketing"
-	},
-	"authentication": {
-		"adminUsernameFieldId": "#username",
-		"adminPasswordFieldId": "#login",
-		"adminLoginButtonClass": ".action-login",
-		"adminLoginText": "Welcome, please sign in",
-		"changePassword": "Change Password",
-		"currentPassword": "Current Password",
-		"newPassword": "New Password",
-		"newPasswordConfirm": "Confirm New Password"
-	},
-	"commerce": {
-		"updateCartButton": "Update Shopping Cart"
-	},
-	"errors": {
-		"captchaIncorrect": "Incorrect CAPTCHA."
-	},
-	"adminGeneral": {
-		"tableSearchFieldLabel": "Search by keyword",
-		"tableFilterResetLabel": "Clear All",
-		"loadingSpinnerLocator": "#container .spinner",
-		"searchButtonLabel": "Search"
-	},
-	"adminCustomers": {
-		"createNewCustomerButtonLabel": "Add New Customer",
-		"edit": {
-			"passwordFieldLabel": "Enter Password"
+	"text": {
+		"shared": {
+			"buttons": {
+				"save": "Save",
+				"search": "Search",
+				"submit": "Submit",
+				"remove": "Remove",
+				"addToCart": "Add to Cart",
+				"addToWishlist": "Add to Wish List",
+				"closeMessage": "Close message",
+				"login": "Sign In",
+				"cookieReject": "Reject all",
+				"clearAll": "Clear All"
+			},
+			"forms": {
+				"firstName": "First Name",
+				"lastName": "Last Name",
+				"email": "Email",
+				"emailCheckout": "Email address",
+				"name": "Name",
+				"password": "Password",
+				"passwordConfirm": "Confirm Password",
+				"currentPassword": "Current Password",
+				"newPassword": "New Password",
+				"newPasswordConfirm": "Confirm New Password",
+				"streetAddress": "Street Address",
+				"city": "City",
+				"company": "Company",
+				"country": "Country",
+				"phone": "Phone Number",
+				"province": "State/Province",
+				"provinceFilter": "Please select a region, state or province.",
+				"zipCode": "Zip/Postal Code",
+				"quantity": "Quantity"
+			},
+			"messages": {
+				"captchaIncorrect": "Incorrect CAPTCHA.",
+				"streetAddressRequired": "Street Address field is required."
+			}
 		},
-		"registration": {
-			"debtorNumberFieldLabel": "Debtor number",
-			"allowBulkPurchaseFieldLabel": "Allow bulk purchase",
-			"createAccountSaveButtonLabel": "Save Customer",
-			"createAccountSaveAndContinueButtonLabel": "Save and Continue Edit"
+		"admin": {
+			"common": {
+				"admin": "Admin",
+				"general": "General",
+				"generalTab": "General ",
+				"advanced": "Advanced",
+				"customers": "Customers",
+				"customerConfiguration": "Customer Configuration",
+				"configuration": "Configuration",
+				"stores": "Stores",
+				"storefront": "Storefront",
+				"security": "Security",
+				"configurationSaved": "You saved the configuration.",
+				"saveConfig": "Save Config",
+				"tableSearch": "Search by keyword",
+				"recordsFound": "records found",
+				"dashboardTitle": "Dashboard",
+				"ok": "Ok",
+				"navigation": {
+					"marketing": "Marketing",
+					"sales": "Sales",
+					"allCustomers": "All Customers",
+					"cartPriceRules": "Cart Price Rules",
+					"orders": "Orders"
+				}
+			},
+			"login": {
+				"welcome": "Welcome, please sign in"
+			},
+			"configuration": {
+				"captchaEnabled": "Enable CAPTCHA on Storefront",
+				"adminSharing": "Admin Account Sharing",
+				"adobeDataCollection": "Allow Adobe to collect usage data to improve user experience",
+				"elasticSuiteNewsletter": "Introducing the Elasticsuite newsletter",
+				"elasticSuiteTelemetry": "Help Us Improve Elasticsuite",
+				"googleRecaptcha": "Google reCAPTCHA Storefront",
+				"magentoIncomingMessage": "Incoming Message",
+				"declineDontAllow": "Don't Allow",
+				"declineNoThanks": "No thanks"
+			},
+			"customers": {
+				"createNew": "Add New Customer",
+				"saveAndContinue": "Save and Continue Edit"
+			},
+			"cartPriceRules": {
+				"actionsSubtitle": "Actions",
+				"addRule": "Add New Rule",
+				"clearSearch": "Reset Filter",
+				"couponCode": "Coupon Code",
+				"couponActive": "Active",
+				"customerGroups": "Customer Groups",
+				"discountAmount": "Discount Amount",
+				"ruleName": "Rule Name",
+				"websites": "Websites"
+			}
+		},
+		"frontend": {
+			"common": {
+				"priceSymbol": "$",
+				"price": "Price",
+				"subtotal": "Subtotal",
+				"grandTotal": "Grand Total",
+				"quantityAbbr": "Qty",
+				"itemsPerPage": "Show items per page",
+				"cancelCoupon": "Cancel Coupon",
+				"discountInput": "Enter discount code",
+				"applyDiscountCode": "Apply Discount Code",
+				"cookieConsentTitle": "Consent to Cookies & Data",
+				"navigation": {
+					"addressBook": "Address Book",
+					"category": "Gear",
+					"subCategory": "Fitness Equipment",
+					"createAccount": "Create an Account",
+					"toggleMinicart": "Toggle minicart",
+					"myAccount": "My Account",
+					"signOut": "Sign Out",
+					"myOrders": "My Orders",
+					"searchToggle": "Toggle search form",
+					"wishList": "My Wish List"
+				}
+			},
+			"home": {
+				"title": "Hyvä Theme"
+			},
+			"account": {
+				"title": "My Account",
+				"dashboardTitle": "Account Information",
+				"addNewAddressButton": "ADD NEW ADDRESS",
+				"addNewAddressTitle": "Add New Address",
+				"deleteAddress": "Delete",
+				"editAddress": "pencil-alt",
+				"newsletterLink": "Newsletter Subscriptions",
+				"saveAddress": "Save Address",
+				"changePassword": "Change Password",
+				"changeEmail": "Change Email",
+				"createAccountTitle": "Create New Customer Account"
+			},
+			"newsletter": {
+				"generalSubscription": "General Subscription"
+			},
+			"category": {
+				"title": "Women",
+				"activeFilter": "Active filtering",
+				"sizeFilter": "Size filter",
+				"sizeM": "Filter Size M",
+				"sortBy": "Sort by",
+				"viewSwitch": "Products view mode",
+				"viewGrid": "Products view mode - Grid",
+				"viewList": "Products view mode - List"
+			},
+			"product": {
+				"addToCompare": "Add to Compare",
+				"simpleProduct": "Push It Messenger Bag",
+				"secondSimpleProduct": "Aim Analog Watch",
+				"configurableProduct": "Inez Full Zip Jacket",
+				"fullScreenOpen": "Click to view image in",
+				"fullScreenClose": "Close fullscreen",
+				"thumbnail": "View larger image"
+			},
+			"cart": {
+				"title": "Shopping Cart",
+				"applyDiscount": "Apply Discount",
+				"discountBox": "Discount Code",
+				"updateItem": "Update item",
+				"updateCart": "Update Shopping Cart"
+			},
+			"checkout": {
+				"applyCoupon": "Apply Coupon",
+				"continueShopping": "Continue Shopping",
+				"openCart": "Cart",
+				"openCartItem": "item",
+				"openCartItems": "items",
+				"paymentCheck": "Check / Money order",
+				"paymentCreditCard": "Credit Card",
+				"paymentPaypal": "PayPal",
+				"creditCardNumber": "Credit Card Number",
+				"creditCardExpiry": "Expiration Date",
+				"creditCardCVV": "Card Verification Number",
+				"creditCardName": "Name on Card",
+				"placeOrder": "Place Order",
+				"shippingFixed": "Fixed",
+				"shippingTableRate": "Table Rate",
+				"shippingPrice": "Shipping & Handling (Flat Rate - Fixed)",
+				"tax": "Tax"
+			},
+			"minicart": {
+				"empty": "Cart is empty",
+				"checkout": "Checkout",
+				"editProduct": "Edit product",
+				"removeProduct": "Remove product",
+				"toCart": "View and Edit Cart"
+			},
+			"search": {
+				"placeholder": "Search entire store here...",
+				"resultsTitle": "Search results for:",
+				"termsDropdown": "Search terms"
+			},
+			"compare": {
+				"title": "Compare Products",
+				"empty": "You have no items to compare.",
+				"removeProduct": "Remove Product"
+			},
+			"wishlist": {
+				"title": "My Wish List",
+				"update": "Update Wish List"
+			},
+			"orderHistory": {
+				"title": "My Orders"
+			},
+			"footer": {
+				"currencyLabel": "Currency",
+				"currencyDollar": "USD - US Dollar",
+				"currencyEuro": "EUR - Euro",
+				"newsletterInput": "Email Address",
+				"newsletterSubscribe": "Subscribe"
+			}
 		}
-	},
-	"adminPage": {
-		"captchaIncorrectText": "Incorrect CAPTCHA.",
-		"captchaDisabledLabel": "No",
-		"couponSearchFieldLocator": "#promo_quote_grid_filter_coupon_code",
-		"dashboardHeadingText": "Dashboard",
-		"navigation": {
-			"customersButtonLabel": "Customers",
-			"marketingButtonLabel": "Marketing",
-			"storesButtonLabel": "Stores",
-			"salesButtonLabel": "Sales"
-		},
-		"searchResultsText": "records found",
-		"subNavigation": {
-			"allCustomersButtonLabel": "All Customers",
-			"cartPriceRulesButtonLabel": "Cart Price Rules",
-			"configurationButtonLabel": "Configuration",
-			"ordersButtonLabel": "Orders"
-		},
-		"usernameFieldLabel": "Username",
-		"passwordFieldLabel": "Password",
-		"loginButtonLabel": "Sign In",
-		"usernameFieldId": "#username",
-		"passwordFieldId": "#login",
-		"loginButtonClass": ".action-login"
-	},
-	"newAddress": {
-		"addNewAddressTitle": "Add New Address",
-		"cityNameLabel": "City",
-		"companyNameLabel": "Company",
-		"countryLabel": "Country",
-		"phoneNumberLabel": "Phone Number",
-		"provinceSelectLabel": "State/Province",
-		"provinceSelectFilterLabel": "Please select a region, state or province.",
-		"regionDropdownLocator": "#region_id",
-		"streetAddressLabel": "Street Address",
-		"saveAdressButton": "Save Address",
-		"zipCodeLabel": "Zip/Postal Code"
-	},
-	"newsletterSubscriptions": {
-		"generalSubscriptionCheckLabel": "General Subscription",
-		"saveSubscriptionsButton": "Save"
-	},
-	"productPage": {
-		"addToCartButtonLocator": "Add to Cart",
-		"addToCompareButtonLabel": "Add to Compare",
-		"addToWishlistButtonLabel": "Add to Wish List",
-		"simpleProductTitle": "Push It Messenger Bag",
-		"secondSimpleProducTitle": "Aim Analog Watch",
-		"simpleProductPrice": ".final-price .price-wrapper .price",
-		"configurableProductTitle": "Inez Full Zip Jacket",
-		"configurableProductSizeLabel": "Size",
-		"configurableProductColorLabel": "Color",
-		"configurableProductOptionForm": "#product_addtocart_form",
-		"configurableProductOptionValue": ".product-option-value-label",
-		"quantityFieldLabel": "Quantity",
-		"fullScreenOpenLabel": "Click to view image in",
-		"fullScreenCloseLabel": "Close fullscreen",
-		"thumbnailImageLabel": "View larger image",
-		"reviewCountLabel": "Show items per page"
-	},
-	"categoryPage": {
-		"activeViewLocator": ".active",
-		"categoryPageTitleText": "Women",
-		"firstFilterOptionLocator": "#filter-option-0-content",
-		"itemsOnPageAmountLocator": ".toolbar-number",
-		"itemsPerPageButtonLabel": "Show items per page",
-		"productGridLocator": ".products-grid",
-		"removeActiveFilterButtonLabel": "Remove active",
-		"sizeFilterButtonLabel": "Size filter",
-		"sizeMLinkLabel": "Filter Size M",
-		"activeFilterButtonLabel": "Active filtering",
-		"clearAllFiltersLinkLabel": "Clear All",
-		"sortByButtonLabel": "Sort by",
-		"sortByButtonLocator": ".form-select.sorter-options",
-		"viewSwitchLabel": "Products view mode",
-		"viewGridLabel": "Products view mode - Grid",
-		"viewListLabel": "Products view mode - List"
-	},
-	"cart": {
-		"applyDiscountButtonLabel": "Apply Discount",
-		"cancelCouponButtonLabel": "Cancel Coupon",
-		"cartTitleText": "Shopping Cart",
-		"cartQuantityLabel": "Qty",
-		"discountInputFieldLabel": "Enter discount code",
-		"discountBoxLabel": "Discount Code",
-		"showDiscountFormButtonLabel": "Apply Discount Code",
-		"updateItemButtonLabel": "Update item",
-		"updateShoppingCartButtonLabel": "Update Shopping Cart"
-	},
-	"cartPriceRulesPage": {
-		"actionsSubtitleLabel": "Actions",
-		"activeStatusLabelLocator": ".admin__actions-switch-text",
-		"activeStatusSwitcherLocator": ".admin__actions-switch-label",
-		"addCartPriceRuleButtonLabel": "Add New Rule",
-		"clearSearchButtonLabel": "Reset Filter",
-		"couponCodeFieldLabel": "Coupon Code",
-		"couponCodeActiveStatusText": "Active",
-		"couponTypeSelectField": "select[name='coupon_type']",
-		"customerGroupsSelectLabel": "Customer Groups",
-		"discountAmountFieldLabel": "Discount Amount",
-		"ruleNameFieldLabel": "Rule Name",
-		"saveRuleButtonLabel": "Save",
-		"websitesSelectLabel": "Websites"
-	},
-	"checkout": {
-		"applyDiscountButtonLabel": "Apply Coupon",
-		"applyDiscountCodeLabel": "Apply Discount Code",
-		"cancelDiscountButtonLabel": "Cancel Coupon",
-		"cartDetailsLocator": "#checkout-cart-details div",
-		"continueShoppingLabel": "Continue Shopping",
-		"discountInputFieldLabel": "Enter discount code",
-		"openCartButtonLabel": "Cart",
-		"openCartButtonLabelCont": "item",
-		"openCartButtonLabelContMultiple": "items",
-		"openCartDetailsButtonLocator": "button[aria-controls=\"checkout-cart-details\"]",
-		"openDiscountFormLabel": "Apply Discount Code",
-		"paymentOptionCheckLabel": "Check / Money order",
-		"paymentOptionCreditCardLabel": "Credit Card",
-		"paymentOptionPaypalLabel": "PayPal",
-		"checkoutCartDetailsLocator": "#checkout-cart-details",
-		"creditCardNumberLabel": "Credit Card Number",
-		"creditCardExpiryLabel": "Expiration Date",
-		"creditCardCVVLabel": "Card Verification Number",
-		"creditCardNameLabel": "Name on Card",
-		"placeOrderButtonLabel": "Place Order",
-		"remove": "Remove",
-		"shippingAddressRadioLocator": "#shipping-details input[type='radio']",
-		"shippingMethodFixedLabel": "Fixed",
-		"shippingMethodTableRateLabel": "Table Rate",
-		"shippingPriceText": "Shipping & Handling (Flat Rate - Fixed)",
-		"taxPriceText": "Tax"
-	},
-	"comparePage": {
-		"removeCompareLabel": "Remove Product",
-		"addToWishListLabel": "Add to Wish List",
-		"comparisonPageEmptyText": "You have no items to compare.",
-		"comparisonPageTitleText": "Compare Products"
-	},
-	"configurationPage": {
-		"advancedAdministrationTabLabel": "Admin",
-		"advancedTabLabel": "Advanced",
-		"allowMultipleLoginsSelectField": "#admin_security_admin_account_sharing",
-		"allowMultipleLoginsSystemCheckbox": "#admin_security_admin_account_sharing_inherit",
-		"captchaSettingSelectField": "#customer_captcha_enable",
-		"captchaSettingSystemCheckbox": "#customer_captcha_enable_inherit",
-		"captchaSectionLabel": "CAPTCHA",
-		"customerConfigurationTabLabel": "Customer Configuration",
-		"customersTabLabel": "Customers",
-		"saveConfigButtonLabel": "Save Config",
-		"securitySectionLabel": "Security"
-	},
-	"contactPage": {
-		"messageFieldSelector": "#comment"
-	},
-	"credentials": {
-		"currentPasswordFieldLabel": "Current Password",
-		"emailFieldLabel": "Email",
-		"emailCheckoutFieldLabel": "Email address",
-		"loginButtonLabel": "Sign In",
-		"nameFieldLabel": "Name",
-		"newPasswordConfirmFieldLabel": "Confirm New Password",
-		"newPasswordFieldLabel": "New Password",
-		"passwordConfirmFieldLabel": "Confirm Password",
-		"passwordFieldLabel": "Password"
-	},
-	"customerOverviewPage": {
-		"tableSearchFieldLabel": "Search by keyword"
-	},
-	"financial": {
-		"subTotal": "Subtotal",
-		"grandTotal": "Grand Total"
-	},
-	"footerPage": {
-		"footerLocator": ".page-footer",
-		"currencyIdentifier": "#currency-heading",
-		"currencyLabel": "Currency",
-		"currencyDollar": "USD - US Dollar",
-		"currencyEuro": "EUR - Euro",
-		"newsletterInputElementLabel": "Email Address",
-		"newsletterSubscribeButtonLabel": "Subscribe"
-	},
-	"general": {
-		"adminMessageLocator": "#messages .message div",
-		"cookieRejectButtonLabel": "Reject all",
-		"firstNameField": "First Name",
-		"general": "General",
-		"headingOneLocator": "h1.page-title",
-		"lastNameField": "Last Name",
-		"messageLocator": "#messages div div.messages div div.message span",
-		"priceSymbol": "$",
-		"save": "Save",
-		"saveConfigButton": "Save Config",
-		"security": "Security",
-		"search": "Search",
-		"quantityAbbr": "Qty",
-		"TO_BE_DEPRECATED_BELOW": "Try not to use",
-		"addToCartLabel": "Add to Cart",
-		"closeMessageLabel": "Close message",
-		"errorMessageLocator": "#messages div .messages div .error span",
-		"errorMessageStreetAddressRequiredFieldText": "Street Address field is required.",
-		"genericPriceLabel": "Price",
-		"genericPriceSymbol": "$",
-		"genericSaveButtonLabel": "Save",
-		"genericSubmitButtonLabel": "Submit",
-		"headerLocator": "#header",
-		"loadingSpinnerLocator": "#container .spinner",
-		"removeLabel": "Remove",
-		"searchButtonLabel": "Search",
-		"successMessageLocator": "div.message.success"
-	},
-	"homePage": {
-		"homePageTitleText": "Hyvä Theme"
-	},
-	"menu": {
-		"logoutLink": "Sign Out"
-	},
-	"mainMenu": {
-		"accountMenuLocator": "#customer-menu",
-		"addressBookButtonLabel": "Address Book",
-		"createAccountButtonLabel": "Create an Account",
-		"subCategoryItemText": "Fitness Equipment",
-		"categoryItemText": "Gear",
-		"loginButtonLabel": "Sign In",
-		"miniCartLabel": "Toggle minicart",
-		"myAccountButtonLabel": "My Account",
-		"myAccountLogoutItem": "Sign Out",
-		"myOrdersButtonLabel": "My Orders",
-		"searchButtonLabel": "Toggle search form",
-		"wishListButtonLabel": "My Wish List"
-	},
-	"miniCart": {
-		"cartDrawerLocator": "#cart-drawer-title",
-		"cartEmptyText": "Cart is empty",
-		"checkOutButtonLabel": "Checkout",
-		"editProductIconLabel": "Edit product",
-		"minicartButtonLocator": "#menu-cart-icon",
-		"minicartAmountBubbleLocator": "#menu-cart-icon > span",
-		"minicartPriceFieldClass": ".price-excluding-tax .minicart-price .price",
-		"miniCartToggleLabelEmpty": "Cart is empty",
-		"miniCartToggleLabelMultiItem": "items",
-		"miniCartToggleLabelOneItem": "1 item",
-		"miniCartToggleLabelPrefix": "Toggle minicart,",
-		"productQuantityFieldLabel": "Quantity",
-		"removeProductIconLabel": "Remove product",
-		"toCartLinkLabel": "View and Edit Cart"
-	},
-	"search": {
-		"searchBoxPlaceholderText": "Search entire store here...",
-		"searchToggleLocator": "#menu-search-icon",
-		"searchInputLocator": "#search",
-		"suggestionBoxLocator": "#search_autocomplete",
-		"searchResultsTitle": "Search results for:",
-		"searchTermDropdownText": "Search terms"
-	},
-	"titles": {
-		"accountHeading": "My Account",
-		"adminDashboardHeading": "Dashboard",
-		"categoryHeading": "Women",
-		"cartHeading": "Shopping Cart",
-		"cookieConsentHeading": "Consent to Cookies & Data",
-		"homeHeading": "Hyvä Theme",
-		"loginHeading": "Customer Login",
-		"signedOutHeading": "You have signed out",
-		"simpleProductHeading": "Push It Messenger Bag"
-	},
-	"toasts": {
-		"accountInfoSaved": "You saved the account information."
-	},
-	"orderHistoryPage": {
-		"orderHistoryTitle": "My Orders"
-	},
-	"personalInformation": {
-		"changePasswordSwitchLabel": "Change Password",
-		"changeEmailCheckLabel": "Change Email",
-		"firstNameLabel": "First Name",
-		"lastNameLabel": "Last Name"
-	},
-	"wishListPage": {
-		"wishListItemGridLabel": "#wishlist-view-form",
-		"wishListTitle": "My Wish List",
-		"updateCompareListButtonLabel": "Update Wish List"
 	}
 }

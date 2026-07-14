@@ -17,7 +17,7 @@ class NotificationValidatorUtils {
      * @param value - the expected notification
      */
     async validate(value: string) {
-		const messages = await this.page.locator(UIReference.general.messageLocator).all();
+		const messages = await this.page.locator(UIReference.selectors.shared.message).all();
 		let iteration = messages.length;
 
 		for (const memo of messages) {

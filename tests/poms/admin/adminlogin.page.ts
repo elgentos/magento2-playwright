@@ -39,32 +39,32 @@ class AdminLogin {
 	constructor(page: Page) {
 		// General
 		this.page = page;
-		this.pageHeadingOne = page.locator(UIReference.general.headingOneLocator);
-		this.saveConfigButton = page.getByRole('button', { name: UIReference.general.saveConfigButton });
+		this.pageHeadingOne = page.locator(UIReference.selectors.shared.pageTitle);
+		this.saveConfigButton = page.getByRole('button', { name: UIReference.text.admin.common.saveConfig });
 		// Input Fields
-		this.adminLoginEmailField = page.locator(UIReference.authentication.adminUsernameFieldId);
-		this.adminLoginPasswordField = page.locator(UIReference.authentication.adminPasswordFieldId);
-		this.adminLoginButton = page.locator(UIReference.authentication.adminLoginButtonClass);
+		this.adminLoginEmailField = page.locator(UIReference.selectors.admin.login.username);
+		this.adminLoginPasswordField = page.locator(UIReference.selectors.admin.login.password);
+		this.adminLoginButton = page.locator(UIReference.selectors.admin.login.loginButton);
 		// Navigation
-		this.mainMenuStoresButton = page.locator(UIReference.admin.adminMenuLocator).getByRole('link', {name: UIReference.admin.storesButton});
-		this.storesConfigurationButton = page.getByRole('link', {name: UIReference.admin.configuration}).first();
-		this.storesCustomersTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.admin.customers);
-		this.advancedSettingsTab = page.getByRole('strong').filter({hasText: UIReference.admin.advanced});
-		this.customerConfigurationLink = page.getByRole('link', { name: UIReference.admin.customerConfiguration });
-		this.adminSettingsLink = page.getByRole('link', {name: UIReference.admin.admin, exact: true});
+		this.mainMenuStoresButton = page.locator(UIReference.selectors.admin.common.adminMenu).getByRole('link', {name: UIReference.text.admin.common.stores});
+		this.storesConfigurationButton = page.getByRole('link', {name: UIReference.text.admin.common.configuration}).first();
+		this.storesCustomersTab = page.locator(UIReference.selectors.admin.common.configTabs).getByText(UIReference.text.admin.common.customers);
+		this.advancedSettingsTab = page.getByRole('strong').filter({hasText: UIReference.text.admin.common.advanced});
+		this.customerConfigurationLink = page.getByRole('link', { name: UIReference.text.admin.common.customerConfiguration });
+		this.adminSettingsLink = page.getByRole('link', {name: UIReference.text.admin.common.admin, exact: true});
 		// Settings
 		this.customerCaptchaAccordion = page.getByRole('link', { name: 'CAPTCHA' }).filter({hasNotText: 'documentation'});
-		this.adminSecurityAccordion = page.getByRole('link', { name: UIReference.general.security });
-		this.storeFrontCaptchaOption = page.getByLabel(UIReference.admin.captchaEnabled);
-		this.adminSharingOption = page.getByLabel(UIReference.admin.adminSharing);
-		this.customerCAPTCHAInheritCheckbox = page.locator(UIReference.admin.customerCAPTCHAInheritLocator);
-		this.adminInheritCheckbox = page.locator(UIReference.admin.customerInheritLocator);
+		this.adminSecurityAccordion = page.getByRole('link', { name: UIReference.text.admin.common.security });
+		this.storeFrontCaptchaOption = page.getByLabel(UIReference.text.admin.configuration.captchaEnabled);
+		this.adminSharingOption = page.getByLabel(UIReference.text.admin.configuration.adminSharing);
+		this.customerCAPTCHAInheritCheckbox = page.locator(UIReference.selectors.admin.configuration.captchaEnableInherit);
+		this.adminInheritCheckbox = page.locator(UIReference.selectors.admin.configuration.accountSharingInherit);
 		// reCAPTCHA settings
-		this.storesSecurityTab = page.locator(UIReference.admin.configTabLocator).getByText(UIReference.general.security, {exact:true});
-		this.googleReCaptchaStorefrontLink = page.getByRole('link', { name: UIReference.admin.googleReCAPTCHALink });
-		this.storefrontReCaptchaAccordion = page.getByRole('link', { name: UIReference.admin.storeFrontLabel }).filter({hasNotText: 'Google'});
-		this.customerCreateReCaptchaOption = page.locator(UIReference.admin.customerReCAPTCHAOption);
-		this.customerCreateReCaptchaInheritCheckbox = page.locator(UIReference.admin.customerReCAPTCHAInherit);
+		this.storesSecurityTab = page.locator(UIReference.selectors.admin.common.configTabs).getByText(UIReference.text.admin.common.security, {exact:true});
+		this.googleReCaptchaStorefrontLink = page.getByRole('link', { name: UIReference.text.admin.configuration.googleRecaptcha });
+		this.storefrontReCaptchaAccordion = page.getByRole('link', { name: UIReference.text.admin.common.storefront }).filter({hasNotText: 'Google'});
+		this.customerCreateReCaptchaOption = page.locator(UIReference.selectors.admin.configuration.recaptchaCustomerCreate);
+		this.customerCreateReCaptchaInheritCheckbox = page.locator(UIReference.selectors.admin.configuration.recaptchaCustomerCreateInherit);
 	}
 
 	/**
@@ -104,8 +104,8 @@ class AdminLogin {
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.general.adminMessageLocator),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
+			await expect(this.page.locator(UIReference.selectors.admin.common.message),
+				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
 		}
 	}
 
@@ -154,8 +154,8 @@ class AdminLogin {
 			await expect(this.customerCreateReCaptchaOption, `reCAPTCHA is disabled for customer creation`).toHaveValue('');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.general.adminMessageLocator),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
+			await expect(this.page.locator(UIReference.selectors.admin.common.message),
+				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
 		}
 	}
 
@@ -163,9 +163,9 @@ class AdminLogin {
 	 * Navigate to the Stores Settings in Magento Admin.
 	 */
 	async navigateToStoreSettings() {
-		const configurationPageLabel = UIReference.admin.configuration;
-		const generalTab = this.page.getByRole('tab', { name: UIReference.admin.generalTabLabel });
-		const generalOptions = this.page.getByRole('link', {name: UIReference.general.general});
+		const configurationPageLabel = UIReference.text.admin.common.configuration;
+		const generalTab = this.page.getByRole('tab', { name: UIReference.text.admin.common.generalTab });
+		const generalOptions = this.page.getByRole('link', {name: UIReference.text.admin.common.general});
 
 		// Re-open the Stores flyout if a pop-up dismissal collapses it between click and visibility check.
 		await expect(async () => {
@@ -189,7 +189,7 @@ class AdminLogin {
 				await generalTab.click();
 			}
 
-			await expect(this.page.getByRole('link', {name: UIReference.general.general}),
+			await expect(this.page.getByRole('link', {name: UIReference.text.admin.common.general}),
 				`"General options" under General section is visible.`).toBeVisible();
 		}).toPass();
 	}
@@ -231,8 +231,8 @@ class AdminLogin {
 			await expect(this.adminSharingOption, `Account sharing option enabled`).toHaveValue('1');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.general.adminMessageLocator),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.admin.configurationSavedText);
+			await expect(this.page.locator(UIReference.selectors.admin.common.message),
+				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
 		}
 
 	}
@@ -243,11 +243,11 @@ class AdminLogin {
 	 * @param password - admin's password, sourced from .env
 	 */
 	async loginAdmin(username:string, password:string){
-		const dashboardLabel = this.page.getByRole('heading', {name: UIReference.titles.adminDashboardHeading});
-		const captchaNotification = this.page.locator(UIReference.general.messageLocator).filter(
-			{hasText : UIReference.errors.captchaIncorrect}
+		const dashboardLabel = this.page.getByRole('heading', {name: UIReference.text.admin.common.dashboardTitle});
+		const captchaNotification = this.page.locator(UIReference.selectors.shared.message).filter(
+			{hasText : UIReference.text.shared.messages.captchaIncorrect}
 		);
-		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.authentication.adminLoginText);
+		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.text.admin.login.welcome);
 
 		if(await dashboardLabel.isVisible()){
 			// already logged in

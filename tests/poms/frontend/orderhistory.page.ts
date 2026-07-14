@@ -11,7 +11,7 @@ class OrderHistoryPage {
   }
 
   async open() {
-    await this.page.goto(slugs.account.orderHistorySlug);
+    await this.page.goto(slugs.frontend.account.orderHistory);
     await this.page.waitForLoadState();
   }
 

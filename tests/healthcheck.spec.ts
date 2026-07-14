@@ -86,7 +86,7 @@ test.describe('Smoke tests for critical pages', () => {
 		const homepageResponse = await homepageResponsePromise;
 		expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', {name: UIReference.homePage.homePageTitleText, level: 1}),
+		await expect(page.getByRole('heading', {name: UIReference.text.frontend.home.title, level: 1}),
 		'Homepage has a visible title').toBeVisible();
 	});
 
@@ -95,13 +95,13 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Plp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
-		const plpResponsePromise = page.waitForResponse(slugs.categoryPage.categorySlug);
+		const plpResponsePromise = page.waitForResponse(slugs.frontend.category.index);
 
-		await page.goto(slugs.categoryPage.categorySlug);
+		await page.goto(slugs.frontend.category.index);
 		const plpResponse = await plpResponsePromise;
 		expect(plpResponse.status(), 'PLP should return 200').toBe(200);
 
-		await expect( page.getByRole('heading', {name: UIReference.categoryPage.categoryPageTitleText}),
+		await expect( page.getByRole('heading', {name: UIReference.text.frontend.category.title}),
 		'PLP has a visible title').toBeVisible();
 	});
 
@@ -110,13 +110,13 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
-		const pdpResponsePromise = page.waitForResponse(slugs.productPage.simpleProductSlug);
+		const pdpResponsePromise = page.waitForResponse(slugs.frontend.product.simple);
 
-		await page.goto(slugs.productPage.simpleProductSlug);
+		await page.goto(slugs.frontend.product.simple);
 		const pdpResponse = await pdpResponsePromise;
 		expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', {level: 1, name: UIReference.productPage.simpleProductTitle}),
+		await expect(page.getByRole('heading', {level: 1, name: UIReference.text.frontend.product.simpleProduct}),
 		'PDP has a visible title').toBeVisible();
 	});
 
@@ -126,15 +126,15 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Checkout_returns_302_then_redirects', { tag: ['@smoke', '@cold'] }, async ({page}) => {
-		const responsePromise = page.waitForResponse(slugs.checkout.checkoutSlug);
+		const responsePromise = page.waitForResponse(slugs.frontend.checkout.index);
 
-		await page.goto(slugs.checkout.checkoutSlug);
+		await page.goto(slugs.frontend.checkout.index);
 		const response = await responsePromise;
 
 		expect(response.status(), 'Cart empty, checkout should return 302').toBe(302);
-		expect(page.url(), 'Cart empty, checkout should redirect to cart').toContain(slugs.cart.cartSlug);
+		expect(page.url(), 'Cart empty, checkout should redirect to cart').toContain(slugs.frontend.cart.index);
 
-		await expect(page.getByRole('heading', {name: UIReference.cart.cartTitleText}),
+		await expect(page.getByRole('heading', {name: UIReference.text.frontend.cart.title}),
 		'Cart has a visible title').toBeVisible();
 
 		expect((await page.request.head(page.url())).status(), `Current page (${page.url()}) should return 200`).toBe(200);
@@ -165,9 +165,9 @@ test.describe('Visual Regression Tests', () => {
 	// comparison, so any element matched is painted over on both sides.
 	const visualRegressionPages: { label: string; slug: string; maskSelectors?: string[] }[] = [
 		{ label: 'homepage', slug: '/' },
-		{ label: 'plp', slug: slugs.categoryPage.categorySlug, maskSelectors: ['.product-item-photo'] },
-		{ label: 'pdp', slug: slugs.productPage.simpleProductSlug },
-		{ label: 'cart', slug: slugs.cart.cartSlug },
+		{ label: 'plp', slug: slugs.frontend.category.index, maskSelectors: ['.product-item-photo'] },
+		{ label: 'pdp', slug: slugs.frontend.product.simple },
+		{ label: 'cart', slug: slugs.frontend.cart.index },
 	];
 
 	for (const { label, slug, maskSelectors } of visualRegressionPages) {

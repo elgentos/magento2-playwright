@@ -11,9 +11,9 @@ class SearchPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.searchToggle = page.locator(UIReference.search.searchToggleLocator);
-    this.searchInput = page.locator(UIReference.search.searchInputLocator);
-    this.suggestionBox = page.locator(UIReference.search.suggestionBoxLocator);
+    this.searchToggle = page.locator(UIReference.selectors.frontend.search.toggle);
+    this.searchInput = page.locator(UIReference.selectors.frontend.search.input);
+    this.suggestionBox = page.locator(UIReference.selectors.frontend.search.suggestionBox);
   }
 
   async openSearch() {
