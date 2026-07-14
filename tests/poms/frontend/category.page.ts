@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
+import { slugToRegex, isLocalhost } from '@utils/url.utils';
 
 class CategoryPage {
   readonly page:Page;
@@ -39,7 +40,7 @@ class CategoryPage {
   async filterOnSize() {
     const filterRegion = this.page.getByRole('region', {name: 'Product filters'});
     const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeXSButton = filterRegion.getByRole('link', {name: UIReference.categoryPage.sizeXSLinkLabel});
+    const sizeMButton = filterRegion.getByRole('link', {name: UIReference.categoryPage.sizeMLinkLabel});
     const activeFilteringButton = this.page.getByRole('button', {name: UIReference.categoryPage.activeFilterButtonLabel});
     const clearAllLink = this.page.getByRole('link', {name: UIReference.categoryPage.clearAllFiltersLinkLabel});
 
@@ -52,12 +53,21 @@ class CategoryPage {
       if (isExpanded !== 'true') {
         await sizeFilterButton.click();
       }
-      await expect(sizeXSButton).toBeVisible();
+      await expect(sizeMButton).toBeVisible();
     }).toPass();
 
-    // Click on the XS filter option
-    await sizeXSButton.click();
-    await this.page.waitForURL(/[?&]size=166/);
+    // Determine the expected size filter slug based on the environment
+    let expectedSizeFilterSlug: string;
+	if(isLocalhost(this.page.url())){
+		expectedSizeFilterSlug = 'size=168';
+	} else {
+		expectedSizeFilterSlug = 'size=M';
+	}
+
+    // Click on the M filter option
+    await sizeMButton.click();
+
+    await this.page.waitForURL(slugToRegex(expectedSizeFilterSlug));
 
     // Verify active filtering is shown and Clear All link is available
     await expect(activeFilteringButton, 'Active filtering button should be visible').toBeVisible();
