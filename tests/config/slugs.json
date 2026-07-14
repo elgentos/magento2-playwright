@@ -1,46 +1,52 @@
 {
-  "account": {
-    "accountOverviewSlug": "/customer/account/",
-    "addressBookSlug": "/customer/address",
-    "addressIndexSlug": "/customer/address/index",
-    "addressNewSlug": "/customer/address/new",
-    "accountEditSlug": "/customer/account/edit/",
-    "changePasswordSlug": "/customer/account/edit/changepass/1/",
-    "createAccountSlug": "/customer/account/create/",
-    "loginSlug": "/customer/account/login/",
-    "orderHistorySlug": "/sales/order/history/"
-  },
-  "cart": {
-    "cartProductChangeSlug": "/cart/configure/",
-    "cartSlug": "/checkout/cart/"
-  },
-  "categoryPage": {
-    "categorySlug": "/women.html",
-    "subcategorySlug" : "/gear/fitness-equipment.html"
-  },
-  "checkout": {
-    "checkoutSlug": "/checkout/",
-    "purchaseSuccessSlug": "/checkout/onepage/success/"
-  },
-  "contact": {
-    "contactSlug": "/contact"
-  },
-  "productPage": {
-    "configurableProductSlug": "/inez-full-zip-jacket.html",
-    "productComparisonSlug": "/catalog/product_compare/index/",
-    "secondSimpleProductSlug": "/aim-analog-watch.html",
-    "simpleProductSlug": "/push-it-messenger-bag.html"
-  },
-  "search": {
-    "resultsSlug": "/catalogsearch/result/"
-  },
-  "wishList": {
-    "wishListSlug": "/wishlist/"
-  },
-  "admin": {
-    "customerIndexSlug": "/customer/index/",
-    "customerNewSlug": "/customer/index/new/",
-    "customerEditSlug": "/customer/index/edit/",
-    "orderIndexSlug": "/sales/order/index/"
-  }
+	"frontend": {
+		"account": {
+			"overview": "/customer/account/",
+			"edit": "/customer/account/edit/",
+			"changePassword": "/customer/account/edit/changepass/1/",
+			"create": "/customer/account/create/",
+			"login": "/customer/account/login/",
+			"addressBook": "/customer/address",
+			"addressIndex": "/customer/address/index",
+			"addressNew": "/customer/address/new",
+			"orderHistory": "/sales/order/history/"
+		},
+		"cart": {
+			"index": "/checkout/cart/",
+			"configure": "/cart/configure/"
+		},
+		"category": {
+			"index": "/women.html",
+			"subcategory": "/gear/fitness-equipment.html"
+		},
+		"checkout": {
+			"index": "/checkout/",
+			"success": "/checkout/onepage/success/"
+		},
+		"contact": {
+			"index": "/contact"
+		},
+		"product": {
+			"simple": "/push-it-messenger-bag.html",
+			"secondSimple": "/aim-analog-watch.html",
+			"configurable": "/inez-full-zip-jacket.html",
+			"comparison": "/catalog/product_compare/index/"
+		},
+		"search": {
+			"results": "/catalogsearch/result/"
+		},
+		"wishlist": {
+			"index": "/wishlist/"
+		}
+	},
+	"admin": {
+		"customers": {
+			"index": "/customer/index/",
+			"new": "/customer/index/new/",
+			"edit": "/customer/index/edit/"
+		},
+		"orders": {
+			"index": "/sales/order/index/"
+		}
+	}
 }

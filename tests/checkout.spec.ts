@@ -27,9 +27,9 @@ test.describe('Checkout (logged in user)', () => {
 
 		magewire.startMonitoring();
 
-		await page.goto(slugs.productPage.simpleProductSlug);
-		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
-		await page.goto(slugs.checkout.checkoutSlug);
+		await page.goto(slugs.frontend.product.simple);
+		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		await page.goto(slugs.frontend.checkout.index);
 	});
 
 	/**
@@ -38,8 +38,8 @@ test.describe('Checkout (logged in user)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Address_is_pre_filled_in_checkout',{ tag: ['@checkout', '@hot']}, async ({page}) => {
-		let signInLink = page.getByRole('link', { name: UIReference.credentials.loginButtonLabel });
-		let addressField = page.getByLabel(UIReference.newAddress.streetAddressLabel);
+		let signInLink = page.getByRole('link', { name: UIReference.text.shared.buttons.login });
+		let addressField = page.getByLabel(UIReference.text.shared.forms.streetAddress);
 		let addressAlreadyAdded = false;
 
 		if(await signInLink.isVisible()) {
@@ -47,7 +47,7 @@ test.describe('Checkout (logged in user)', () => {
 		}
 
 		// name field should NOT be on the page
-		await expect(page.getByLabel(UIReference.personalInformation.firstNameLabel)).toBeHidden();
+		await expect(page.getByLabel(UIReference.text.shared.forms.firstName)).toBeHidden();
 
 		if(await addressField.isVisible()) {
 			if(!addressAlreadyAdded){
@@ -60,7 +60,7 @@ test.describe('Checkout (logged in user)', () => {
 		}
 
 		// expect to see radio button to select existing address
-		let shippingRadioButton = page.locator(UIReference.checkout.shippingAddressRadioLocator).first();
+		let shippingRadioButton = page.locator(UIReference.selectors.frontend.checkout.shippingAddressRadio).first();
 		await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
 	});
 
@@ -97,11 +97,11 @@ test.describe('Checkout (guest)', () => {
 
 		// ensure product in cart
 		const productPage = new ProductPage(page);
-		await page.goto(slugs.productPage.simpleProductSlug);
-		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+		await page.goto(slugs.frontend.product.simple);
+		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		// to checkout
-		await page.goto(slugs.checkout.checkoutSlug);
+		await page.goto(slugs.frontend.checkout.index);
 	});
 
 	/**
@@ -127,8 +127,8 @@ test.describe('Checkout (guest)', () => {
 		const checkoutPage = new CheckoutPage(page);
 
 		// Add product to cart and go to checkout
-		await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
-		await page.goto(slugs.checkout.checkoutSlug);
+		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		await page.goto(slugs.frontend.checkout.index);
 
 		// Select shipping method to trigger price calculations
 		await checkoutPage.shippingMethodOptionFixed.check();
@@ -183,7 +183,7 @@ test.describe('Checkout (guest)', () => {
 
     // Test with check/money order payment
     await test.step('Place order with check/money order payment', async () => {
-      await page.goto(slugs.checkout.checkoutSlug);
+      await page.goto(slugs.frontend.checkout.index);
       await checkoutPage.fillShippingAddress();
       await checkoutPage.selectShippingMethod('fixed');
       await checkoutPage.selectPaymentMethod('check');

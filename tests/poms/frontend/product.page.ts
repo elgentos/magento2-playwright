@@ -14,9 +14,9 @@ class ProductPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.addToCartButton = page.getByRole('button', { name: UIReference.productPage.addToCartButtonLocator, exact:true });
-    this.addToCompareButton = page.getByLabel(UIReference.productPage.addToCompareButtonLabel, { exact: true });
-    this.addToWishlistButton = page.getByLabel(UIReference.productPage.addToWishlistButtonLabel, { exact: true });
+    this.addToCartButton = page.getByRole('button', { name: UIReference.text.shared.buttons.addToCart, exact:true });
+    this.addToCompareButton = page.getByLabel(UIReference.text.frontend.product.addToCompare, { exact: true });
+    this.addToWishlistButton = page.getByLabel(UIReference.text.shared.buttons.addToWishlist, { exact: true });
   }
 
   // ==============================================
@@ -25,7 +25,7 @@ class ProductPage {
 
   async addProductToCompare(product:string, url: string){
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
-    const successMessage = this.page.locator(UIReference.general.successMessageLocator);
+    const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
 
     await this.page.goto(url);
 
@@ -33,7 +33,7 @@ class ProductPage {
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
 
-    await this.page.goto(slugs.productPage.productComparisonSlug);
+    await this.page.goto(slugs.frontend.product.comparison);
 
     // Assertion: a cell with the product name inside a cell with the product name should be visible
     await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
@@ -49,7 +49,7 @@ class ProductPage {
     this.addToWishlistButton.click();
 
     await expect(async () => {
-      await this.page.waitForSelector(UIReference.general.messageLocator, { state: 'visible' });
+      await this.page.waitForSelector(UIReference.selectors.shared.message, { state: 'visible' });
     }).toPass();
 
     await expect(this.page.getByText(addedToWishlistNotification), "Notification that product has been added is visible").toBeVisible();
@@ -58,9 +58,9 @@ class ProductPage {
       await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     }).toPass();
 
-    let productNameInWishlist = this.page.locator(UIReference.wishListPage.wishListItemGridLabel).getByText(UIReference.productPage.simpleProductTitle, {exact: true});
+    let productNameInWishlist = this.page.locator(UIReference.selectors.frontend.wishlist.itemGrid).getByText(UIReference.text.frontend.product.simpleProduct, {exact: true});
 
-    await expect(this.page).toHaveURL(slugToRegex(slugs.wishList.wishListSlug));
+    await expect(this.page).toHaveURL(slugToRegex(slugs.frontend.wishlist.index));
     await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
     await expect(productNameInWishlist).toContainText(product);
   }
@@ -87,9 +87,9 @@ class ProductPage {
   async openLightboxAndScrollThrough(url: string){
 
     await this.page.goto(url);
-    let fullScreenOpener = this.page.getByLabel(UIReference.productPage.fullScreenOpenLabel);
-    let fullScreenCloser = this.page.getByLabel(UIReference.productPage.fullScreenCloseLabel);
-    let thumbnails = this.page.getByRole('button', {name: UIReference.productPage.thumbnailImageLabel});
+    let fullScreenOpener = this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen);
+    let fullScreenCloser = this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose);
+    let thumbnails = this.page.getByRole('button', {name: UIReference.text.frontend.product.thumbnail});
 
     await fullScreenOpener.click();
     await expect(fullScreenCloser).toBeVisible();
@@ -114,7 +114,7 @@ class ProductPage {
     const initialUrl = this.page.url();
 
     // Find and click the review count selector
-    const reviewCountSelector = this.page.getByLabel(UIReference.productPage.reviewCountLabel);
+    const reviewCountSelector = this.page.getByLabel(UIReference.text.frontend.common.itemsPerPage);
     await expect(reviewCountSelector).toBeVisible();
 
     // Select 20 reviews per page
@@ -149,14 +149,14 @@ class ProductPage {
 
     if(quantity){
       // set quantity
-      await this.page.getByRole('spinbutton', {name: UIReference.productPage.quantityFieldLabel}).fill('2');
+      await this.page.getByRole('spinbutton', {name: UIReference.text.shared.forms.quantity}).fill('2');
     }
 
     // assert visibility to ensure we can click the add to cart button.
     await expect(this.addToCartButton).toBeVisible();
     await this.addToCartButton.click();
 
-    await expect(this.page.locator(UIReference.general.messageLocator).filter(
+    await expect(this.page.locator(UIReference.selectors.shared.message).filter(
       {hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`}),
       `Product has been added to cart`
     ).toBeVisible();
@@ -169,7 +169,7 @@ class ProductPage {
 
     this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
-    const productOptions = this.page.locator(UIReference.productPage.configurableProductOptionForm);
+    const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
     // wait for the color and size selectors are actually visible
     await productOptions.getByRole('radiogroup').first().waitFor();
@@ -177,16 +177,16 @@ class ProductPage {
 
     // loop through each radiogroup (product option) within the form
     for (const option of await productOptions.getByRole('radiogroup').all()) {
-      await option.locator(UIReference.productPage.configurableProductOptionValue).first().check();
+      await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
     }
 
     if(quantity){
       // set quantity
-      await this.page.getByLabel(UIReference.productPage.quantityFieldLabel).fill('2');
+      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
     }
 
     await this.addToCartButton.click();
-    let successMessage = this.page.locator(UIReference.general.successMessageLocator);
+    let successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
     await successMessage.waitFor();
     await expect(this.page.getByText(productAddedNotification)).toBeVisible();
   }

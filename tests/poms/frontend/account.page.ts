@@ -44,47 +44,47 @@ class AccountPage {
     this.page = page;
     this.loginPage = new LoginPage(page);
 
-    this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.accountDashboard.accountDashboardTitleLabel });
-    this.firstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
-    this.lastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
-    // this.companyNameField = page.getByLabel(UIReference.newAddress.companyNameLabel);
-    this.companyNameField = page.getByRole('textbox', {name: UIReference.newAddress.companyNameLabel});
-    this.phoneNumberField = page.getByLabel(UIReference.newAddress.phoneNumberLabel);
-    this.streetAddressField = page.getByLabel(UIReference.newAddress.streetAddressLabel, { exact: true });
-    this.zipCodeField = page.getByLabel(UIReference.newAddress.zipCodeLabel);
-    this.cityField = page.getByLabel(UIReference.newAddress.cityNameLabel);
-    this.countrySelectorField = page.getByLabel(UIReference.newAddress.countryLabel);
+    this.accountDashboardTitle = page.getByRole('heading', { name: UIReference.text.frontend.account.dashboardTitle });
+    this.firstNameField = page.getByLabel(UIReference.text.shared.forms.firstName);
+    this.lastNameField = page.getByLabel(UIReference.text.shared.forms.lastName);
+    // this.companyNameField = page.getByLabel(UIReference.text.shared.forms.company);
+    this.companyNameField = page.getByRole('textbox', {name: UIReference.text.shared.forms.company});
+    this.phoneNumberField = page.getByLabel(UIReference.text.shared.forms.phone);
+    this.streetAddressField = page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true });
+    this.zipCodeField = page.getByLabel(UIReference.text.shared.forms.zipCode);
+    this.cityField = page.getByLabel(UIReference.text.shared.forms.city);
+    this.countrySelectorField = page.getByLabel(UIReference.text.shared.forms.country);
 
-    this.stateInputField = page.getByLabel(UIReference.newAddress.provinceSelectLabel);
+    this.stateInputField = page.getByLabel(UIReference.text.shared.forms.province);
     // Target the <select> directly: filtering by option text races the JS that populates the options.
-    this.stateSelectorField = page.locator(UIReference.newAddress.regionDropdownLocator);
+    this.stateSelectorField = page.locator(UIReference.selectors.frontend.common.region);
 
-    this.saveAddressButton = page.getByRole('button', { name: UIReference.newAddress.saveAdressButton });
+    this.saveAddressButton = page.getByRole('button', { name: UIReference.text.frontend.account.saveAddress });
 
 	this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
 
     // Account Information elements
-    this.changePasswordSwitch = page.getByRole('switch', { name: UIReference.personalInformation.changePasswordSwitchLabel });
-    this.changeEmailCheck = page.getByRole('switch', { name: UIReference.personalInformation.changeEmailCheckLabel });
-    this.currentPasswordField = page.getByLabel(UIReference.credentials.currentPasswordFieldLabel);
-    this.newPasswordField = page.getByLabel(UIReference.credentials.newPasswordFieldLabel, { exact: true });
-    this.confirmNewPasswordField = page.getByLabel(UIReference.credentials.newPasswordConfirmFieldLabel);
-    this.genericSaveButton = page.getByRole('button', { name: UIReference.general.genericSaveButtonLabel });
+    this.changePasswordSwitch = page.getByRole('switch', { name: UIReference.text.frontend.account.changePassword });
+    this.changeEmailCheck = page.getByRole('switch', { name: UIReference.text.frontend.account.changeEmail });
+    this.currentPasswordField = page.getByLabel(UIReference.text.shared.forms.currentPassword);
+    this.newPasswordField = page.getByLabel(UIReference.text.shared.forms.newPassword, { exact: true });
+    this.confirmNewPasswordField = page.getByLabel(UIReference.text.shared.forms.newPasswordConfirm);
+    this.genericSaveButton = page.getByRole('button', { name: UIReference.text.shared.buttons.save });
 
     // Account Creation elements
-    this.accountCreationFirstNameField = page.getByLabel(UIReference.personalInformation.firstNameLabel);
-    this.accountCreationLastNameField = page.getByLabel(UIReference.personalInformation.lastNameLabel);
-    this.accountCreationEmailField = page.getByLabel(UIReference.credentials.emailFieldLabel, { exact: true });
-    this.accountCreationPasswordField = page.getByLabel(UIReference.credentials.passwordFieldLabel, { exact: true });
-    this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.credentials.passwordConfirmFieldLabel);
-    this.accountCreationConfirmButton = page.getByRole('button', { name: UIReference.accountCreation.createAccountButtonLabel });
+    this.accountCreationFirstNameField = page.getByLabel(UIReference.text.shared.forms.firstName);
+    this.accountCreationLastNameField = page.getByLabel(UIReference.text.shared.forms.lastName);
+    this.accountCreationEmailField = page.getByLabel(UIReference.text.shared.forms.email, { exact: true });
+    this.accountCreationPasswordField = page.getByLabel(UIReference.text.shared.forms.password, { exact: true });
+    this.accountCreationPasswordRepeatField = page.getByLabel(UIReference.text.shared.forms.passwordConfirm);
+    this.accountCreationConfirmButton = page.getByRole('button', { name: UIReference.text.frontend.common.navigation.createAccount });
 
-    this.accountInformationField = page.locator(UIReference.accountDashboard.accountInformationFieldLocator).first();
+    this.accountInformationField = page.locator(UIReference.selectors.frontend.account.accountInformationField).first();
 
     // Address Book elements
-    this.addNewAddressButton = page.getByRole('button', { name: UIReference.accountDashboard.addAddressButtonLabel });
-    this.deleteAddressButton = page.getByRole('link', { name: UIReference.accountDashboard.addressDeleteIconButton }).first();
-    this.editAddressButton = page.getByRole('link', { name: UIReference.accountDashboard.editAddressIconButton }).first();
+    this.addNewAddressButton = page.getByRole('button', { name: UIReference.text.frontend.account.addNewAddressButton });
+    this.deleteAddressButton = page.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress }).first();
+    this.editAddressButton = page.getByRole('link', { name: UIReference.text.frontend.account.editAddress }).first();
   }
 
   /**
@@ -129,8 +129,8 @@ class AccountPage {
     if(country !== defaultSelectedCountry) {
       await this.countrySelectorField.selectOption({label: country});
     }
-    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
-    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
+    const regionDropdown = this.page.locator(UIReference.selectors.frontend.common.region);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.text.shared.forms.province});
 
     if(country !== 'United States') {
       await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
@@ -208,8 +208,8 @@ class AccountPage {
       await this.countrySelectorField.selectOption({label: country});
     }
 
-    const regionDropdown = this.page.locator(UIReference.newAddress.regionDropdownLocator);
-    const regionInputField = this.page.getByRole('textbox', {name: UIReference.newAddress.provinceSelectLabel});
+    const regionDropdown = this.page.locator(UIReference.selectors.frontend.common.region);
+    const regionInputField = this.page.getByRole('textbox', {name: UIReference.text.shared.forms.province});
 
     if(country !== 'United States') {
       await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
@@ -240,7 +240,7 @@ class AccountPage {
 
   async deleteFirstAddressFromAddressBook() {
     let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
-    let addressBookSection = this.page.locator(UIReference.accountDashboard.addressBookArea);
+    let addressBookSection = this.page.locator(UIReference.selectors.frontend.account.addressBookArea);
 
     this.page.on('dialog', async (dialog) => {
       if (dialog.type() === 'confirm') {
@@ -277,7 +277,7 @@ class AccountPage {
     await this.confirmNewPasswordField.fill(newPassword);
     await this.genericSaveButton.click();
 
-    await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
+    await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
     await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
   }
 
@@ -288,7 +288,7 @@ class AccountPage {
     await this.currentPasswordField.fill(currentPassword);
     await this.genericSaveButton.click();
 
-	await this.page.waitForURL(slugToRegex(slugs.account.loginSlug));
+	await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
     await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
   }
 

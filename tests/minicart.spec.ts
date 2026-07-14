@@ -24,8 +24,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    await page.goto(slugs.productPage.simpleProductSlug);
-    await productPage.addSimpleProductToCart(UIReference.productPage.simpleProductTitle, slugs.productPage.simpleProductSlug);
+    await page.goto(slugs.frontend.product.simple);
+    await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
   });
@@ -83,7 +83,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
   test('Delete_product_from_minicart',{ tag: ['@minicart-simple-product', '@cold']}, async ({page}, testInfo) => {
     testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`});
     const miniCart = new MiniCartPage(page);
-    await miniCart.removeProductFromMinicart(UIReference.productPage.simpleProductTitle);
+    await miniCart.removeProductFromMinicart(UIReference.text.frontend.product.simpleProduct);
   });
 
   /**
@@ -114,8 +114,8 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
     const mainMenu = new MainMenuPage(page);
     const productPage = new ProductPage(page);
 
-    await page.goto(slugs.productPage.configurableProductSlug);
-    await productPage.addConfigurableProductToCart(UIReference.productPage.configurableProductTitle, slugs.productPage.configurableProductSlug, '2');
+    await page.goto(slugs.frontend.product.configurable);
+    await productPage.addConfigurableProductToCart(UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable, '2');
     await mainMenu.openMiniCart();
     await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();
   });

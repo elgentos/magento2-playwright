@@ -36,11 +36,11 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
         const page = await context.newPage();
         await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const heading = page.getByRole('heading', { name: UIReference.titles.cookieConsentHeading });
+        const heading = page.getByRole('heading', { name: UIReference.text.frontend.common.cookieConsentTitle });
         const appeared = await heading.isVisible({ timeout: 15_000 }).catch(() => false);
 
         if (appeared) {
-            await page.getByRole('button', { name: UIReference.general.cookieRejectButtonLabel }).click();
+            await page.getByRole('button', { name: UIReference.text.shared.buttons.cookieReject }).click();
             await heading.waitFor({ state: 'hidden', timeout: 10_000 });
         } else {
             console.warn('[global-setup] Consent modal did not appear within 15s — saving current state anyway.');

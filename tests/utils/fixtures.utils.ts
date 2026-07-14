@@ -45,11 +45,11 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 				const username = `playwright+${id}@elgentos.nl`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-				await page.goto(slugs.account.loginSlug, { waitUntil: 'load' });
-				await page.getByRole('textbox', { name: UIReference.credentials.emailFieldLabel, exact: true }).fill(username);
-				await page.getByRole('textbox', { name: UIReference.credentials.passwordFieldLabel }).fill(password);
-				await page.getByRole('button', { name: UIReference.credentials.loginButtonLabel }).click();
-				await page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug), { waitUntil: 'networkidle' });
+				await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
+				await page.getByRole('textbox', { name: UIReference.text.shared.forms.email, exact: true }).fill(username);
+				await page.getByRole('textbox', { name: UIReference.text.shared.forms.password }).fill(password);
+				await page.getByRole('button', { name: UIReference.text.shared.buttons.login }).click();
+				await page.waitForURL(slugToRegex(slugs.frontend.account.overview), { waitUntil: 'networkidle' });
 
 				// Refresh the worker auth file so later tests in this worker skip the re-login.
 				await page.context().storageState({ path: storageState });
@@ -77,10 +77,10 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 			});
 
 			const page = await context.newPage();
-			await page.goto(slugs.account.accountOverviewSlug, { waitUntil: 'domcontentloaded' });
+			await page.goto(slugs.frontend.account.overview, { waitUntil: 'domcontentloaded' });
 
 			const loggedIn =
-				!page.url().includes(slugs.account.loginSlug);
+				!page.url().includes(slugs.frontend.account.login);
 
 			await context.close();
 			// console.log(`Is user considered logged in? ${loggedIn}`);
@@ -111,12 +111,12 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 			'password': requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`)
 		};
 
-		const emailField = page.getByRole('textbox', {name: UIReference.credentials.emailFieldLabel, exact: true});
-		const pwField = page.getByRole('textbox', {name: UIReference.credentials.passwordFieldLabel});
-		const loginButton = page.getByRole('button', { name: UIReference.credentials.loginButtonLabel });
+		const emailField = page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true});
+		const pwField = page.getByRole('textbox', {name: UIReference.text.shared.forms.password});
+		const loginButton = page.getByRole('button', { name: UIReference.text.shared.buttons.login });
 
 		// Perform authentication steps. Replace these actions with your own.
-		await page.goto(slugs.account.loginSlug, {waitUntil: 'load'});
+		await page.goto(slugs.frontend.account.login, {waitUntil: 'load'});
 		await emailField.waitFor();
 
 		await emailField.fill(account.username);
@@ -125,16 +125,16 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 
 		// Wait until the page receives the cookies.
 		// We do this by waiting for the page to be done loading. This should navigate to the customer account page.
-		await page.waitForURL(slugToRegex(slugs.account.accountOverviewSlug), {waitUntil: 'networkidle'});
+		await page.waitForURL(slugToRegex(slugs.frontend.account.overview), {waitUntil: 'networkidle'});
 
 		// Confirm by checking page.url() returns https://hyva-demo.magento2.localhost/default/customer/account/
 		// console.log(page.url());
 
 		await expect(async () => {
 			await expect(
-				page.locator(UIReference.general.headingOneLocator),
+				page.locator(UIReference.selectors.shared.pageTitle),
 				`Homepage has the expected text in title`
-			).toContainText(UIReference.titles.accountHeading);
+			).toContainText(UIReference.text.frontend.account.title);
 		}).toPass();
 
 		// End of authentication steps.

@@ -9,7 +9,7 @@ class CategoryPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.categoryPageTitle = this.page.getByRole('heading', { name: UIReference.categoryPage.categoryPageTitleText });
+    this.categoryPageTitle = this.page.getByRole('heading', { name: UIReference.text.frontend.category.title });
   }
 
   /**
@@ -21,7 +21,7 @@ class CategoryPage {
    * @and I should see the title of the page
    */
   async goToCategoryPage(){
-    await this.page.goto(slugs.categoryPage.categorySlug);
+    await this.page.goto(slugs.frontend.category.index);
 
     this.page.waitForLoadState();
     await expect(this.categoryPageTitle).toBeVisible();
@@ -38,10 +38,10 @@ class CategoryPage {
    */
   async filterOnSize() {
     const filterRegion = this.page.getByRole('region', {name: 'Product filters'});
-    const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.categoryPage.sizeFilterButtonLabel});
-    const sizeXSButton = filterRegion.getByRole('link', {name: UIReference.categoryPage.sizeXSLinkLabel});
-    const activeFilteringButton = this.page.getByRole('button', {name: UIReference.categoryPage.activeFilterButtonLabel});
-    const clearAllLink = this.page.getByRole('link', {name: UIReference.categoryPage.clearAllFiltersLinkLabel});
+    const sizeFilterButton = filterRegion.getByRole('button', {name: UIReference.text.frontend.category.sizeFilter});
+    const sizeXSButton = filterRegion.getByRole('link', {name: UIReference.text.frontend.category.sizeXS});
+    const activeFilteringButton = this.page.getByRole('button', {name: UIReference.text.frontend.category.activeFilter});
+    const clearAllLink = this.page.getByRole('link', {name: UIReference.text.shared.buttons.clearAll});
 
     // Scroll to the size filter to trigger Alpine.js deferred initialization
     await sizeFilterButton.scrollIntoViewIfNeeded();
@@ -74,12 +74,12 @@ class CategoryPage {
    * @and I should see products sorted by price
    */
   async sortProducts(attribute:string){
-    const sortButton = this.page.getByLabel(UIReference.categoryPage.sortByButtonLabel);
+    const sortButton = this.page.getByLabel(UIReference.text.frontend.category.sortBy);
     await sortButton.selectOption(attribute);
     const sortRegex = new RegExp(`[?&]product_list_order=${attribute}`);
     await this.page.waitForURL(sortRegex);
 
-    const selectedValue = await this.page.$eval(UIReference.categoryPage.sortByButtonLocator, sel => (sel as HTMLSelectElement).value);
+    const selectedValue = await this.page.$eval(UIReference.selectors.frontend.category.sortBy, sel => (sel as HTMLSelectElement).value);
 
     // sortButton should now display attribute
     expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
@@ -96,8 +96,8 @@ class CategoryPage {
    * @and the amount of items should be the new amount I've selected
    */
   async showMoreProducts(){
-    const itemsPerPageButton = this.page.getByLabel(UIReference.categoryPage.itemsPerPageButtonLabel);
-    const productGrid = this.page.locator(UIReference.categoryPage.productGridLocator);
+    const itemsPerPageButton = this.page.getByLabel(UIReference.text.frontend.common.itemsPerPage);
+    const productGrid = this.page.locator(UIReference.selectors.frontend.category.productGrid);
 
     await itemsPerPageButton.selectOption('36');
     const itemsRegex = /[?&]product_list_limit=36/;
@@ -118,13 +118,13 @@ class CategoryPage {
    * @and the reported selected view should not be the same as it was before I clicked the button
    */
   async switchView(){
-    const viewSwitcher = this.page.getByLabel(UIReference.categoryPage.viewSwitchLabel, {exact: true}).locator(UIReference.categoryPage.activeViewLocator);
+    const viewSwitcher = this.page.getByLabel(UIReference.text.frontend.category.viewSwitch, {exact: true}).locator(UIReference.selectors.frontend.category.activeView);
     const activeView = await viewSwitcher.getAttribute('title');
 
     if(activeView == 'Grid'){
-      await this.page.getByLabel(UIReference.categoryPage.viewListLabel).click();
+      await this.page.getByLabel(UIReference.text.frontend.category.viewList).click();
     } else {
-      await this.page.getByLabel(UIReference.categoryPage.viewGridLabel).click();
+      await this.page.getByLabel(UIReference.text.frontend.category.viewGrid).click();
     }
 
     const viewRegex = /[?&]product_list_mode=list/;

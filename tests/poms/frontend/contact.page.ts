@@ -13,14 +13,14 @@ class ContactPage {
 
   constructor(page: Page){
     this.page = page;
-    this.nameField = this.page.getByLabel(UIReference.credentials.nameFieldLabel);
-    this.emailField = this.page.getByPlaceholder(UIReference.credentials.emailFieldLabel, { exact: true });
-    this.messageField = this.page.locator(UIReference.contactPage.messageFieldSelector);
-    this.sendFormButton = this.page.getByRole('button', { name: UIReference.general.genericSubmitButtonLabel });
+    this.nameField = this.page.getByLabel(UIReference.text.shared.forms.name);
+    this.emailField = this.page.getByPlaceholder(UIReference.text.shared.forms.email, { exact: true });
+    this.messageField = this.page.locator(UIReference.selectors.frontend.contact.message);
+    this.sendFormButton = this.page.getByRole('button', { name: UIReference.text.shared.buttons.submit });
   }
 
   async fillOutForm(){
-    await this.page.goto(slugs.contact.contactSlug);
+    await this.page.goto(slugs.frontend.contact.index);
     let messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
 
     // Add a wait for the form to be visible
