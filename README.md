@@ -24,6 +24,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
     - [Tags and Annotations](#tags-and-annotations)
 - [Customizing the testing suite](#-customizing-the-testing-suite)
   - [Examples](#examples)
+- [Conventions](#-conventions)
 - [Troubleshooting imports](#troubleshooting-imports)
 - [How to help](#how-to-help)
 - [Scenarios](#scenarios)
@@ -378,6 +379,84 @@ test('user_can_register_an_account', async ({ page }) => {
 test('User can complete the checkout process', async ({ page }) => {
   // Implementation details
 });
+```
+
+---
+
+## 🧭 Conventions
+
+Guidelines for writing consistent, maintainable Page Object Models (POMs).
+
+### Expose locators through getters
+
+Define locators as `get` accessors rather than assigning them in the constructor. Getters keep the constructor free of setup bloat and build each locator lazily — only when a test actually uses it — while callers still access them exactly like a property (`accountPage.genericSaveButton`).
+
+**Correct Usage**
+
+```ts
+export class BaseAccountPage {
+  constructor(public readonly page: Page) {}
+
+  get genericSaveButton(): Locator {
+    return this.page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+  }
+}
+```
+
+**Wrong Usage**
+
+```ts
+// ❌ Don't build locators eagerly in the constructor
+export class BaseAccountPage {
+  readonly genericSaveButton: Locator;
+
+  constructor(public readonly page: Page) {
+    this.genericSaveButton = page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+  }
+}
+```
+
+### Only group locators you use together
+
+A getter may return an object of related locators, but **only group them when they're likely to be used together** — typically the fields of a single form that a method fills as a set. Grouping expresses a real relationship; bundling unrelated elements creates false cohesion and forces every locator in the group to be rebuilt each time any one of them is accessed.
+
+Standalone elements (page landmarks, a shared save button, individual action buttons) should each have their own getter.
+
+```ts
+// ✅ Cohesive: these fields are filled together as one form
+get accountAddressFields() {
+  return {
+    companyNameField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.company }),
+    phoneNumberField: this.page.getByLabel(UIReference.text.shared.forms.phone),
+    streetAddressField: this.page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true }),
+    // …
+  };
+}
+
+// ✅ Standalone: no shared form, so keep it individual
+get genericSaveButton(): Locator {
+  return this.page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+}
+```
+
+```ts
+// ❌ Don't bundle unrelated locators just to reduce the number of getters
+get accountElements() {
+  return {
+    dashboardTitle: this.page.getByRole('heading', { name: UIReference.text.frontend.account.dashboardTitle }),
+    saveButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.save }),
+    deleteAddressButton: this.page.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress }).first(),
+  };
+}
+```
+
+When you do use a grouped getter repeatedly within a method, destructure it once so the group is materialised a single time:
+
+```ts
+const { companyNameField, phoneNumberField, streetAddressField } = this.accountAddressFields;
+await companyNameField.fill(company);
+await phoneNumberField.fill(phone);
+await streetAddressField.fill(street);
 ```
 
 ---

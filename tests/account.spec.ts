@@ -11,7 +11,7 @@
 import { test, expect } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 
-import AccountPage from '@poms/frontend/account.page';
+import { BaseAccountPage } from '@poms/frontend/account.page';
 import LoginPage from '@poms/frontend/login.page';
 import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
 
@@ -44,7 +44,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 * @param request - APIRequestContext instance used to create accounts with the API.
 	 */
 	test('Change_password', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		const loginPage = new LoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
@@ -92,7 +92,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 * @param request - APIRequestContext instance used to create accounts with the API.
 	 */
 	test('Update_email_address', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		const loginPage = new LoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
@@ -180,7 +180,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
 		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 
 		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
 		const company = faker.company.name();
@@ -188,7 +188,8 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 		await accountPage.addNewAddress({ company: company, street: address});
 
 		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
-		await expect(page.getByText(company).first(), `Expect new company name to be listed`).toBeVisible();
+		// company name no longer shown in overview here
+		// await expect(page.getByText(company).first(), `Expect new company name to be listed`).toBeVisible();
 		let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 		await expect.soft(page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
 	});
@@ -199,7 +200,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
 		let editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
 		let isDefaultAddress = false;
@@ -231,10 +232,10 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
 		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 
-		await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
-		await accountPage.saveAddressButton.click();
+		await accountPage.accountAddressFields.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
+		await accountPage.accountAddressFields.saveAddressButton.click();
 
 		const errorMessage = page.getByText(UIReference.text.shared.messages.streetAddressRequired).first();
 		await errorMessage.waitFor();
@@ -247,7 +248,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
 
 		let deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
