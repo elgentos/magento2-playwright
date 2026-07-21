@@ -3,7 +3,7 @@
 import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
-import ComparePage from '@poms/frontend/compare.page';
+import { BaseComparePage } from '@poms/frontend/compare.page';
 import LoginPage from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
@@ -17,9 +17,8 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
   });
 
   await test.step('Navigate to product comparison page', async () =>{
-    const comparePageTitle = page.getByRole('heading', { name: UIReference.text.frontend.compare.title });
-    await page.goto(slugs.frontend.product.comparison);
-    await expect(comparePageTitle, `Heading ${comparePageTitle} is visible`).toBeVisible();
+	const comparePage = new BaseComparePage(page);
+	await comparePage.goToComparePage();
   });
 });
 
@@ -31,7 +30,7 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
  * @then I should see a notification that the product has been added
  */
 test('Add_product_to_cart_from_comparison_page',{ tag: ['@comparison-page', '@cold']}, async ({page}) => {
-  const comparePage = new ComparePage(page);
+  const comparePage = new BaseComparePage(page);
   await comparePage.addToCart(UIReference.text.frontend.product.simpleProduct);
 });
 
@@ -93,7 +92,7 @@ test.afterEach('Remove products from compare', async ({ page }) => {
   await page.goto(slugs.frontend.product.comparison);
 
   page.on('dialog', dialog => dialog.accept());
-  const comparePage = new ComparePage(page);
+  const comparePage = new BaseComparePage(page);
   await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
   await comparePage.removeProductFromCompare(UIReference.text.frontend.product.secondSimpleProduct);
 });
