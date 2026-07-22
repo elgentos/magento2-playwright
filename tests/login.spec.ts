@@ -19,7 +19,7 @@ import { outcomeMarker, inputValues } from '@config';
  * @assume the necessary account(s) have been created through the setup project (init.setup.ts)
  * @param page - Playwright page instance used for interacting with the website.
  */
-test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page, browserName }) => {
+test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) => {
 	const id = test.info().parallelIndex;
 	let user = `playwright+${id}@elgentos.nl`;
 	let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
@@ -50,7 +50,7 @@ test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page, brow
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Invalid_credentials_are_rejected', async ({ page }) => {
-	const loginPage = new LoginPage(page);
+	const loginPage = new BaseLoginPage(page);
 	await loginPage.loginExpectError('invalid@example.com', 'wrongpassword', outcomeMarker.login.invalidCredentialsMessage);
 });
 
@@ -59,6 +59,6 @@ test('Invalid_credentials_are_rejected', async ({ page }) => {
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Login_fails_with_missing_password', async ({ page }) => {
-	const loginPage = new LoginPage(page);
+	const loginPage = new BaseLoginPage(page);
 	await loginPage.loginExpectError('invalid@example.com', '', '');
 });
