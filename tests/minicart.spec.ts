@@ -3,7 +3,7 @@
 import {test, expect} from '@playwright/test';
 import {UIReference, outcomeMarker, slugs} from '@config';
 
-import MainMenuPage from '@poms/frontend/mainmenu.page';
+import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
 import ProductPage from '@poms/frontend/product.page';
 import MiniCartPage from '@poms/frontend/minicart.page';
 
@@ -21,7 +21,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @and I should see the product in the minicart
    */
   test.beforeEach(async ({ page }) => {
-    const mainMenu = new MainMenuPage(page);
+    const mainMenu = new BaseMainMenuPage(page);
     const productPage = new ProductPage(page);
 
     await page.goto(slugs.frontend.product.simple);
@@ -111,7 +111,7 @@ test.describe('Minicart Actions', {annotation: {type: 'Minicart', description: '
    *  @and I should see the product in the minicart
    */
   test.beforeEach(async ({ page }) => {
-    const mainMenu = new MainMenuPage(page);
+    const mainMenu = new BaseMainMenuPage(page);
     const productPage = new ProductPage(page);
 
     await page.goto(slugs.frontend.product.configurable);
