@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 import { UIReference ,slugs } from '@config';
 
 import ProductPage from '@poms/frontend/product.page';
-import LoginPage from '@poms/frontend/login.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
 test.describe('Product page tests',{ tag: '@product',}, () => {
@@ -23,7 +23,7 @@ test.describe('Product page tests',{ tag: '@product',}, () => {
 		let user = `playwright+${id}@elgentos.nl`;
 		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-      const loginPage = new LoginPage(page);
+      const loginPage = new BaseLoginPage(page);
       await loginPage.login(user, password);
     });
 

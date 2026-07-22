@@ -26,6 +26,13 @@ export class BaseContactPage {
 		}
 	}
 
+	// get messageLocators: return message locators
+	get messageLocators() {
+		return {
+			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
+		}
+	}
+
 	// ==============================================
 	// Navigation methods
 	// ==============================================
@@ -60,6 +67,8 @@ export class BaseContactPage {
 		await this.formFields.messageField.fill(faker.lorem.paragraph());
 
 		await this.formFields.sendFormButton.click();
+		// wait for success message div to show.
+		await this.messageLocators.successMessage.waitFor();
 
 		// Final assertions to confirm test performed correctly.
 		await expect(this.page.getByText(messageSentConfirmationText)).toBeVisible();

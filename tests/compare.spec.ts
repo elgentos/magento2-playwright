@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
 import { BaseComparePage } from '@poms/frontend/compare.page';
-import LoginPage from '@poms/frontend/login.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
 
@@ -67,7 +67,8 @@ test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page',
 		let user = `playwright+${id}@elgentos.nl`;
 		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-		const loginPage = new LoginPage(page);
+		const loginPage = new BaseLoginPage(page);
+		await loginPage.goToLoginPage();
 		await loginPage.login(user, password);
 	});
 

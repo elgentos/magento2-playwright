@@ -90,15 +90,21 @@ class CheckoutPage extends MagewireUtils {
 		await this.paymentMethodOptionCheck.check();
 		await this.waitForMagewireRequests();
 
-		await expect(async() => {
-			// Ensure the payment method is now checked.
-			expect(this.paymentMethodOptionCheck).toBeChecked();
-		}).toPass();
+		await expect(this.paymentMethodOptionCheck, 'payment method is selected').toBeChecked();
 
-		await this.placeOrderButton.click();
+		// await expect(async() => {
+		// 	// Ensure the payment method is now checked.
+		// 	expect(this.paymentMethodOptionCheck).toBeChecked();
+		// }).toPass();
+
+		// wait for placeOrderbutton to be actionable, tie the click to the resulting navigation.
+		await expect(this.placeOrderButton).toBeEnabled();
+		await Promise.all([
+			this.page.waitForURL(slugToRegex(slugs.frontend.checkout.success)),
+			this.placeOrderButton.click(),
+		]);
 		await this.waitForMagewireRequests();
 
-		await this.page.waitForURL(slugToRegex(slugs.frontend.checkout.success));
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
 		let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });

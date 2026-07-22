@@ -10,7 +10,7 @@
 import { test, expect } from '@playwright/test';
 
 import CartPage from '@poms/frontend/shoppingcart.page';
-import LoginPage from '@poms/frontend/login.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
@@ -60,12 +60,13 @@ test.describe('Cart functionalities (guest)', () => {
 		});
 
 		await test.step('Log in with account', async () =>{
-			const loginPage = new LoginPage(page);
+			const loginPage = new BaseLoginPage(page);
 
 			const parallelIndex = test.info().parallelIndex;
 			const email = `playwright+${parallelIndex}@elgentos.nl`;
 			const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
+			await loginPage.goToLoginPage();
 			await loginPage.login(email, password);
 		});
 

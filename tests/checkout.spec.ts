@@ -4,7 +4,7 @@
 import { test, expect } from '@utils/fixtures.utils';
 
 import ProductPage from '@poms/frontend/product.page';
-import AccountPage from '@poms/frontend/account.page';
+import { BaseAccountPage } from '@poms/frontend/account.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
 import { faker } from '@faker-js/faker';
@@ -52,7 +52,7 @@ test.describe('Checkout (logged in user)', () => {
 		if(await addressField.isVisible()) {
 			if(!addressAlreadyAdded){
 			// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
-			const accountPage = new AccountPage(page);
+			const accountPage = new BaseAccountPage(page);
 			await accountPage.addNewAddress();
 			} else {
 				throw new Error(`Address field is visible even though an address has been added to the account.`);
@@ -71,7 +71,7 @@ test.describe('Checkout (logged in user)', () => {
 	 */
 	test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}) => {
 		const checkoutPage = new CheckoutPage(page);
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await accountPage.ensureCustomerDetails();
 
 		let orderNumber = await checkoutPage.placeOrder();

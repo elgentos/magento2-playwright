@@ -9,7 +9,7 @@
 
 import { test } from '@playwright/test';
 
-import LoginPage from '@poms/frontend/login.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import ProductPage from '@poms/frontend/product.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 import OrderHistoryPage from '@poms/frontend/orderhistory.page';
@@ -26,11 +26,12 @@ test('Recent_order_is_visible_in_history', async ({ page }) => {
 	const email = `playwright+${parallelIndex}@elgentos.nl`;
 	const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-	const loginPage = new LoginPage(page);
+	const loginPage = new BaseLoginPage(page);
 	const productPage = new ProductPage(page);
 	const checkoutPage = new CheckoutPage(page);
 	const orderHistoryPage = new OrderHistoryPage(page);
 
+	await loginPage.goToLoginPage();
 	await loginPage.login(email, password);
 
 	await page.goto(slugs.frontend.product.simple);
