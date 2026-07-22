@@ -15,6 +15,26 @@ export class BaseComparePage {
 		return this.page.getByRole('heading', { name: UIReference.text.frontend.compare.title });
 	}
 
+	// get compareActionButtons: returns action buttons on comparison page.
+	get compareActionButtons() {
+		return {
+			removeFromCompareButton: (product: string): Locator =>
+				this.page.getByLabel(`${UIReference.text.frontend.compare.removeProduct} ${product}`),
+			addToCartButton: (product: string): Locator =>
+				this.page.getByRole('cell', { name: product }).getByRole('button', { name: UIReference.text.shared.buttons.addToCart }),
+			addToWishListButton: (product: string): Locator =>
+				this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`)
+		}
+	}
+
+	// get messageLocators: return message locators
+	get messageLocators() {
+		return {
+			generalMessage : this.page.locator(UIReference.selectors.shared.message),
+			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
+		}
+	}
+
 	// ==============================================
 	// Navigation methods
 	// ==============================================
@@ -32,6 +52,7 @@ export class BaseComparePage {
 	// ==============================================
 	// Product interaction methods
 	// ==============================================
+
 	/**
 	 * Method: remove provided product from the comparison list.
 	 * @param product {string} - product title that should be removed
@@ -45,33 +66,43 @@ export class BaseComparePage {
 		}
 
 		const comparisonPageProductTitle = this.page.getByRole('link', { name: product });
-		let removeFromCompareButton = this.page.getByLabel(`${UIReference.text.frontend.compare.removeProduct} ${product}`);
-		await removeFromCompareButton.click();
-		const messageLocator = this.page.locator(UIReference.selectors.shared.message);
-		await messageLocator.waitFor();
+
+		await this.compareActionButtons.removeFromCompareButton(product).click();
+		await this.messageLocators.generalMessage.waitFor();
 		await this.page.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage }).click();
-		await expect(messageLocator, `notification toast should be hidden`).toBeHidden();
+
+		// Assertions to confirm test ran correctly.
+		await expect(this.messageLocators.generalMessage, `notification toast should be hidden`).toBeHidden();
 		await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
 	}
 
+	/**
+	 * Method: add product to cart from the comparison page.
+	 * Used in test "Add_product_to_cart_from_comparison_page"
+	 * @param product {string} - name of the product used in the test.
+	 */
 	async addToCart(product: string) {
-		const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
 		let productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
 
-		const productCell = this.page.getByRole('cell', { name: product });
-		const addToCartButton = productCell.getByRole('button', { name: UIReference.text.shared.buttons.addToCart });
+		this.compareActionButtons.addToCartButton(product).click();
+		await this.messageLocators.successMessage.waitFor();
 
-		await addToCartButton.click();
-		await successMessage.waitFor();
+		// Final assertion to confirm test ran correctly.
 		await expect(productAddedNotification).toBeVisible();
 	}
 
+	/**
+	 * Method: add product to wishlist from comparison page.
+	 * Used in the test "Add_product_to_wishlist_from_comparison_page"
+	 * @param product {string} - name of the product used in the test.
+	 */
 	async addToWishList(product: string) {
-		const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
-		let addToWishlistButton = this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`);
 		let productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
 
-		await addToWishlistButton.click();
-		await successMessage.waitFor();
+		await this.compareActionButtons.addToWishListButton(product).click();
+		await this.messageLocators.successMessage.waitFor();
+
+		// Final assertion to confirm test ran correctly.
+		await expect(productAddedNotification).toBeVisible();
 	}
 }
