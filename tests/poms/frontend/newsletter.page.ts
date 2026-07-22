@@ -2,7 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues } from '@config';
-import { faker } from '@faker-js/faker'
+import { faker } from '@faker-js/faker';
 
 class NewsletterSubscriptionPage {
 	readonly page: Page;
@@ -37,12 +37,6 @@ class NewsletterSubscriptionPage {
 
 		await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
 		return subscribed;
-	}
-
-	async footerSubscribeToNewsletter() {
-		await expect(this.page.getByRole('textbox', { name: UIReference.text.frontend.footer.newsletterInput })).toBeVisible();
-		await this.page.getByRole('textbox', { name: UIReference.text.frontend.footer.newsletterInput }).fill(faker.internet.email());
-		await this.page.getByRole('button', { name: UIReference.text.frontend.footer.newsletterSubscribe }).click();
 	}
 }
 
