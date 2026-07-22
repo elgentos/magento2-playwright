@@ -78,7 +78,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 * Test: Confirm the homepage can be reached.
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
-	test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
+	test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
 		const homepageURL = requireEnv(`PLAYWRIGHT_BASE_URL`);
 		const homepageResponsePromise = page.waitForResponse(homepageURL);
 
@@ -86,38 +86,38 @@ test.describe('Smoke tests for critical pages', () => {
 		const homepageResponse = await homepageResponsePromise;
 		expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', {name: UIReference.text.frontend.home.title, level: 1}),
-		'Homepage has a visible title').toBeVisible();
+		await expect(page.getByRole('heading', { name: UIReference.text.frontend.home.title, level: 1 }),
+			'Homepage has a visible title').toBeVisible();
 	});
 
 	/**
 	 * Test: Confirm a product listing (category) page can be reached.
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
-	test('Plp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
+	test('Plp_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
 		const plpResponsePromise = page.waitForResponse(slugs.frontend.category.index);
 
 		await page.goto(slugs.frontend.category.index);
 		const plpResponse = await plpResponsePromise;
 		expect(plpResponse.status(), 'PLP should return 200').toBe(200);
 
-		await expect( page.getByRole('heading', {name: UIReference.text.frontend.category.title}),
-		'PLP has a visible title').toBeVisible();
+		await expect(page.getByRole('heading', { name: UIReference.text.frontend.category.title }),
+			'PLP has a visible title').toBeVisible();
 	});
 
 	/**
 	 * Test: Confirm a product detail page can be reached.
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
-	test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({page}) => {
+	test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
 		const pdpResponsePromise = page.waitForResponse(slugs.frontend.product.simple);
 
 		await page.goto(slugs.frontend.product.simple);
 		const pdpResponse = await pdpResponsePromise;
 		expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', {level: 1, name: UIReference.text.frontend.product.simpleProduct}),
-		'PDP has a visible title').toBeVisible();
+		await expect(page.getByRole('heading', { level: 1, name: UIReference.text.frontend.product.simpleProduct }),
+			'PDP has a visible title').toBeVisible();
 	});
 
 	/**
@@ -125,7 +125,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 * Then, the checkout should redirect the user - often to the cart.
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
-	test('Checkout_returns_302_then_redirects', { tag: ['@smoke', '@cold'] }, async ({page}) => {
+	test('Checkout_returns_302_then_redirects', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
 		const responsePromise = page.waitForResponse(slugs.frontend.checkout.index);
 
 		await page.goto(slugs.frontend.checkout.index);
@@ -134,8 +134,8 @@ test.describe('Smoke tests for critical pages', () => {
 		expect(response.status(), 'Cart empty, checkout should return 302').toBe(302);
 		expect(page.url(), 'Cart empty, checkout should redirect to cart').toContain(slugs.frontend.cart.index);
 
-		await expect(page.getByRole('heading', {name: UIReference.text.frontend.cart.title}),
-		'Cart has a visible title').toBeVisible();
+		await expect(page.getByRole('heading', { name: UIReference.text.frontend.cart.title }),
+			'Cart has a visible title').toBeVisible();
 
 		expect((await page.request.head(page.url())).status(), `Current page (${page.url()}) should return 200`).toBe(200);
 	});
@@ -176,7 +176,7 @@ test.describe('Visual Regression Tests', () => {
 		 * @param page - Playwright page instance used for interacting with the website.
 		 * @param testInfo - Test metadata, used to resolve artifact and snapshot paths.
 		 */
-		test(`${label}_matches_visual_baseline`, { tag: ['@smoke', '@visual', '@cold']}, async ({ page }, testInfo) => {
+		test(`${label}_matches_visual_baseline`, { tag: ['@smoke', '@visual', '@cold'] }, async ({ page }, testInfo) => {
 			const snapshotName = regressionSnapshotName(label, testInfo.project.name, 'png');
 			const masks = (maskSelectors ?? []).map(selector => page.locator(selector));
 
