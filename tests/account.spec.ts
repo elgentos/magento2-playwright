@@ -12,7 +12,7 @@ import { test, expect } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 
 import { BaseAccountPage } from '@poms/frontend/account.page';
-import LoginPage from '@poms/frontend/login.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
 
 import { requireEnv } from '@utils/env.utils';
@@ -45,7 +45,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 */
 	test('Change_password', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
 		const accountPage = new BaseAccountPage(page);
-		const loginPage = new LoginPage(page);
+		const loginPage = new BaseLoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
 		const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
@@ -93,7 +93,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 */
 	test('Update_email_address', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
 		const accountPage = new BaseAccountPage(page);
-		const loginPage = new LoginPage(page);
+		const loginPage = new BaseLoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
 		const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
