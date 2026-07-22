@@ -74,6 +74,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 		});
 
 		// Login and change password via UI
+		await loginPage.goToLoginPage();
 		await loginPage.login(email, password);
 		await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
 		await expect(page.getByRole('textbox', { name: UIReference.text.shared.forms.currentPassword })).toBeVisible();
@@ -134,6 +135,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 		});
 
 		// Login and update email via UI
+		await loginPage.goToLoginPage();
 		await loginPage.login(originalEmail, password);
 		await page.goto(slugs.frontend.account.edit, { waitUntil: 'load' });
 		await expect(page.locator('#form-validate').
