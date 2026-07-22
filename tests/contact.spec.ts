@@ -1,7 +1,7 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import ContactPage from '@poms/frontend/contact.page';
+import { BaseContactPage } from '@poms/frontend/contact.page';
 
 /**
  * @feature Magento 2 Contact Form
@@ -13,7 +13,8 @@ import ContactPage from '@poms/frontend/contact.page';
  *  @then I should see a notification my message has been sent
  *  @and the fields should be empty again.
  */
-test('Send_message_through_contact_form',{ tag: ['@contact-form', '@cold']}, async ({page}) => {
-  const contactPage = new ContactPage(page);
-  await contactPage.fillOutForm();
+test('Send_message_through_contact_form', { tag: ['@contact-form', '@hot'] }, async ({ page }) => {
+	const contactPage = new BaseContactPage(page);
+	await contactPage.goToContactPage();
+	await contactPage.fillOutForm();
 });

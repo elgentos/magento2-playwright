@@ -284,6 +284,9 @@
 				"empty": "You have no items to compare.",
 				"removeProduct": "Remove Product"
 			},
+			"contact": {
+				"title": "Contact Us"
+			},
 			"wishlist": {
 				"title": "My Wish List",
 				"update": "Update Wish List"
