@@ -295,6 +295,9 @@
 				"fullScreenClose": "Close fullscreen",
 				"thumbnail": "View larger image"
 			},
+			"register" : {
+				"title" : "Create New Customer Account"
+			},
 			"search": {
 				"placeholder": "Search entire store here...",
 				"resultsTitle": "Search results for:",

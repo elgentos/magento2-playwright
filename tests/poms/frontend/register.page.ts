@@ -1,58 +1,101 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker, slugs} from '@config';
-
-class RegisterPage {
-  readonly page: Page;
-  readonly accountCreationFirstNameField: Locator;
-  readonly accountCreationLastNameField: Locator;
-  readonly accountCreationEmailField: Locator;
-  readonly accountCreationPasswordField: Locator;
-  readonly accountCreationPasswordRepeatField: Locator;
-  readonly accountCreationConfirmButton: Locator;
-
-  constructor(page: Page){
-    this.page = page;
-    this.accountCreationFirstNameField = page.getByLabel(UIReference.text.shared.forms.firstName);
-    this.accountCreationLastNameField = page.getByLabel(UIReference.text.shared.forms.lastName);
-    this.accountCreationEmailField = page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true});
-    this.accountCreationPasswordField = page.getByRole('textbox', {name: UIReference.text.shared.forms.password, exact:true});
-    this.accountCreationPasswordRepeatField = page.getByRole('textbox', {name: UIReference.text.shared.forms.passwordConfirm});
-    this.accountCreationConfirmButton = page.getByRole('button', {name: UIReference.text.frontend.common.navigation.createAccount});
-  }
+import { UIReference, outcomeMarker, slugs } from '@config';
+import { requireEnv } from '@utils/env.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 
-  async createNewAccount(firstName: string, lastName: string, email: string, password: string, isSetup: boolean = false){
-    let accountInformationField = this.page.locator(UIReference.selectors.frontend.account.accountInformationField).first();
-    await this.page.goto(slugs.frontend.account.create);
+export class BaseRegisterPage {
+	constructor(public readonly page: Page) { }
 
-    await expect(async () => {
-      await expect(this.page.getByRole('heading',
-          { name: UIReference.text.frontend.account.createAccountTitle }),
-        `Heading "${UIReference.text.frontend.account.createAccountTitle}" is visible`).toBeVisible();
-    }).toPass();
+	// ==============================================
+	// Element getters
+	// ==============================================
 
-    await this.accountCreationFirstNameField.fill(firstName);
-    await this.accountCreationLastNameField.fill(lastName);
-    await this.accountCreationEmailField.fill(email);
-    await this.accountCreationPasswordField.fill(password);
-    await this.accountCreationPasswordRepeatField.fill(password);
-    await this.accountCreationConfirmButton.click();
+	/**
+	 * get categoryPageTitle
+	 * Returns locator for category page title.
+	 */
+	protected get registerPageTitle(): Locator {
+		return this.page.getByRole('heading', { name: UIReference.text.frontend.register.title });
+	}
 
-    if(!isSetup) {
-      await this.page.waitForLoadState();
-      // Assertions: Account created notification, navigated to account page, email visible on page
-      await expect(this.page.getByText(outcomeMarker.account.accountCreatedNotificationText), 'Account creation notification should be visible').toBeVisible();
+	/**
+	 * get registerFormFields
+	 * Returns the form fields associated with the 'create an account' form
+	 */
+	get registerForm() {
+		return {
+			firstNameField : this.page.getByLabel(UIReference.text.shared.forms.firstName),
+			lastNameField : this.page.getByLabel(UIReference.text.shared.forms.lastName),
+			emailField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.email, exact: true }),
+			passwordField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.password, exact: true }),
+			repeatPasswordField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.passwordConfirm }),
+			createAccountButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.navigation.createAccount })
+		}
+	}
 
-      await this.page.goto(slugs.frontend.account.overview);
-      await expect(this.page.getByRole('heading',
-        {name: UIReference.text.frontend.account.dashboardTitle, level:2}),
-        `Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`).toBeVisible();
-      // await expect(this.page, 'Should be redirected to account overview page').toHaveURL(new RegExp('.+' + slugs.frontend.account.overview));
-      await expect(accountInformationField, `Account information should contain email: ${email}`).toContainText(email);
-    }
-  }
+	/**
+	 * get accountInfoField:
+	 * Returns the field that shows the user's emailaddress
+	 * in the dashboard after creating an account.
+	 */
+	get accountInfoField() {
+		return this.page.locator(UIReference.selectors.frontend.account.accountInformationField).first();
+	}
+
+	// ==============================================
+	// Navigation methods
+	// ==============================================
+
+	/**
+	 * Method to navigate to category page
+	 */
+	async goToRegisterPage() {
+		await this.page.goto(slugs.frontend.account.create);
+		await this.page.waitForLoadState();
+
+		await expect(this.registerPageTitle).toBeVisible();
+	}
+
+	// ==============================================
+	// Form interaction methods
+	// ==============================================
+
+	/**
+	 * Method to create an account through the 'create an account' form.
+	 * Used in the test 'User_registers_an_account'.
+	 * @param firstName {string} - first name to use for the account.
+	 * @param lastName {string} - last name to use for the account.
+	 * @param email {string} - email to use for the account.
+	 * @param password {string} - password to use for the account.
+	 */
+	async createNewAccount(firstName: string, lastName: string, email: string, password: string) {
+		// declare form elements from getter here to simplify variables.
+		const { firstNameField, lastNameField, emailField, passwordField, repeatPasswordField, createAccountButton } = this.registerForm;
+
+		await firstNameField.fill(firstName);
+		await lastNameField.fill(lastName);
+		await emailField.fill(email);
+		await passwordField.fill(password);
+		await repeatPasswordField.fill(password);
+		await createAccountButton.click();
+
+		await this.page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
+
+		// Checkpoint: success message visible.
+		await expect(this.page.getByRole('alert'),`account has been created`)
+			.toContainText(outcomeMarker.account.accountCreatedNotificationText
+		);
+
+		// Final assertion: navigate to account dashboard and confirm our email is visible
+		await this.page.goto(slugs.frontend.account.overview);
+
+		await expect(this.page.getByRole('heading',
+			{ name: UIReference.text.frontend.account.dashboardTitle, level: 2 }),
+			`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`
+		).toBeVisible();
+		await expect(this.accountInfoField, `Account information should contain email: ${email}`).toContainText(email);
+	}
 }
-
-export default RegisterPage;
