@@ -13,7 +13,7 @@ import { faker } from '@faker-js/faker';
 
 import { BaseAccountPage } from '@poms/frontend/account.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
-import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
+import { BaseNewsletterSubscriptionPage } from '@poms/frontend/newsletter.page';
 
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
@@ -281,7 +281,7 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
 		await page.goto(slugs.frontend.account.overview);
 		await page.waitForLoadState();
 
-		const newsletterPage = new NewsletterSubscriptionPage(page);
+		const newsletterPage = new BaseNewsletterSubscriptionPage(page);
 		let newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
 		const newsletterCheckElement = page.getByLabel(UIReference.text.frontend.newsletter.generalSubscription);
 

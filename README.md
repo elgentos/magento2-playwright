@@ -459,6 +459,35 @@ await phoneNumberField.fill(phone);
 await streetAddressField.fill(street);
 ```
 
+### Assert notifications by role, not by CSS class
+
+Magento notification messages expose `role="alert"`, so target them with `getByRole('alert')` instead of a class selector like `.message.success`. Role locators survive Hyvä's Tailwind class changes and don't need a `UIReference.selectors` entry.
+
+Message text is usually split across child nodes — Magento renders the product name and a link inside the sentence ("You added product X to the *comparison list*.") — so assert with `toContainText`, which normalizes whitespace and matches across those nodes.
+
+```ts
+// ✅ Role-based, matches across the link inside the message
+await expect(this.page.getByRole('alert'),
+  `${product} has been added to comparison`).toContainText(
+  `${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}`);
+```
+
+```ts
+// ❌ Class selector, and hasText can't span the message's child nodes reliably
+await expect(this.page.locator('.message.success').filter(
+  { hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}` })).toBeVisible();
+```
+
+**Caveat: `getByRole('alert')` is strict.** If a page ever shows two messages at once, the locator resolves to multiple elements and the assertion throws a strict-mode violation instead of passing. When that happens, filter down to the one you mean rather than reaching for `.first()`:
+
+```ts
+await expect(this.page.getByRole('alert').filter(
+  { hasText: `${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}` }),
+  `${product} has been added to comparison`).toBeVisible();
+```
+
+Also give each notification its own marker in `outcome-markers.json`. Reusing a marker from a different flow looks like deduplication but breaks silently: the cart message reads "You added &lt;product&gt;" while the comparison message reads "You added **product** &lt;product&gt; to the comparison list.", so a shared marker matches neither everywhere.
+
 ---
 
 ## Troubleshooting imports

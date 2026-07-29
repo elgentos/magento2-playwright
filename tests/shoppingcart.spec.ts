@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
 
 import CartPage from '@poms/frontend/shoppingcart.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
-import ProductPage from '@poms/frontend/product.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
@@ -27,7 +27,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param testInfo -  Playwright class that allows interaction with the report.
 	 */
 	test.beforeEach(async ({ page }, testInfo) => {
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
@@ -54,8 +54,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 */
 	test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page}) => {
 		await test.step('Add another product to cart', async () =>{
-			const productpage = new ProductPage(page);
-			await page.goto(slugs.frontend.product.secondSimple);
+			const productpage = new BaseProductPage(page);
 			await productpage.addSimpleProductToCart(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
 		});
 
@@ -149,7 +148,7 @@ test.describe('Price checking tests', () => {
 		const cart = new CartPage(page);
 
 		await test.step('Step: Add simple product to cart', async () =>{
-			const productPage = new ProductPage(page);
+			const productPage = new BaseProductPage(page);
 			await page.goto(slugs.frontend.product.simple);
 			// set quantity to 2 so we can see that the math works
 			await page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
@@ -184,7 +183,7 @@ test.describe('Price checking tests', () => {
 		const cart = new CartPage(page);
 
 		await test.step('Step: Add configurable product to cart', async () =>{
-			const productPage = new ProductPage(page);
+			const productPage = new BaseProductPage(page);
 			// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
 			await page.goto(slugs.frontend.product.configurable);
 			// set quantity to 2 so we can see that the math works

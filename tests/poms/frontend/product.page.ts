@@ -4,192 +4,296 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-class ProductPage {
-  readonly page: Page;
-  simpleProductTitle: Locator | undefined;
-  configurableProductTitle: Locator | undefined;
-  addToCartButton: Locator;
-  addToCompareButton: Locator;
-  addToWishlistButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
-    this.addToCartButton = page.getByRole('button', { name: UIReference.text.shared.buttons.addToCart, exact:true });
-    this.addToCompareButton = page.getByLabel(UIReference.text.frontend.product.addToCompare, { exact: true });
-    this.addToWishlistButton = page.getByLabel(UIReference.text.shared.buttons.addToWishlist, { exact: true });
-  }
+export class BaseProductPage {
+	constructor(public readonly page: Page) { }
 
-  // ==============================================
-  // Productpage-related methods
-  // ==============================================
+	// ==============================================
+	// Element getters
+	// ==============================================
 
-  async addProductToCompare(product:string, url: string){
-    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} product`;
-    const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
+	/**
+	 * get productPageTitle method
+	 * Returns a function that returns locator for product page title.
+	 * Required since the page title depends on the product we're navigating to.
+	 * @param product {string} - name of the product
+	 */
+	protected get productPageTitle() {
+		return (product: string) => this.page.getByLabel('Product Info').getByText(product, {exact: true});
+	}
 
-    await this.page.goto(url);
+	/**
+	 * get productInteraction
+	 * Returns elements needed to add product to cart, wishlist, or compare
+	 */
+	get productInteraction() {
+		return {
+			addToCartButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.addToCart, exact: true }),
+			addToCompareButton: this.page.getByLabel(UIReference.text.frontend.product.addToCompare, { exact: true }),
+			addToWishlistButton: this.page.getByLabel(UIReference.text.shared.buttons.addToWishlist, { exact: true }),
+			quantityField: this.page.getByRole('spinbutton', { name: UIReference.text.shared.forms.quantity })
 
-    await this.addToCompareButton.click();
-    await successMessage.waitFor();
-    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
+		}
+	}
 
-    await this.page.goto(slugs.frontend.product.comparison);
+	/**
+	 * get configurableProductOptions
+	 * Returns locator for the product options
+	 */
+	get configurableProductOptions() {
+		const field = this.page.locator(UIReference.selectors.frontend.product.optionForm);
+		return {
+			options: field.getByRole('radiogroup')
+		}
+	}
 
-    // Assertion: a cell with the product name inside a cell with the product name should be visible
-    await expect(this.page.getByRole('cell', {name: product}).getByText(product, {exact: true})).toBeVisible();
-  }
+	/**
+	 * get reviewFormFields
+	 * Returns the elements of the product review form
+	 */
+	get reviewFormFields() {
+		return {
+			stars : this.page.getByRole('radio', {name: '5 stars'}),
+			nickname : this.page.getByPlaceholder('Nickname*'),
+			summary : this.page.getByPlaceholder('Summary*'),
+			review : this.page.getByPlaceholder('Review*'),
+			submitButton : this.page.getByRole('button', { name: 'Submit Review' }),
+			loader : this.page.getByRole('img', { name: 'loader' })
+		}
+	}
 
-  async addProductToWishlist(product:string, url: string){
-    /**
-     * Note that the test Add_product_to_wishlist is currently set to fixme
-     */
-    let addedToWishlistNotification = `${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`;
-    await this.page.goto(url);
-    await this.addToWishlistButton.waitFor();
-    this.addToWishlistButton.click();
+	/**
+	 * get reviewsPerPage
+	 * Returns locator that determines the amount of reviews shown on the page
+	 */
+	get reviewsPerPageDropdown() {
+		return this.page.locator('#limiter');
+	}
 
-    await expect(async () => {
-      await this.page.waitForSelector(UIReference.selectors.shared.message, { state: 'visible' });
-    }).toPass();
+	/**
+	 * get lightboxElements
+	 * Returns the various elements related to the lightbox:
+	 * a tool to show the product pictures in a larger box.
+	 */
+	get lightboxElements() {
+		return {
+			fullScreenOpener : this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen),
+			fullScreenCloser : this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose),
+			thumbnails : this.page.getByRole('button', { name: UIReference.text.frontend.product.thumbnail }).all()
+		}
+	}
 
-    await expect(this.page.getByText(addedToWishlistNotification), "Notification that product has been added is visible").toBeVisible();
+	// ==============================================
+	// Navigation methods
+	// ==============================================
 
-    await expect(async () => {
-      await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
-    }).toPass();
+	/**
+	 * method to navigate to a product page.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - the slug to navigate to
+	 */
+	async goToProductPage(product: string, slug: string) {
+		await this.page.goto(slug);
+		await this.page.waitForLoadState();
 
-    let productNameInWishlist = this.page.locator(UIReference.selectors.frontend.wishlist.itemGrid).getByText(UIReference.text.frontend.product.simpleProduct, {exact: true});
+		await expect(this.productPageTitle(product)).toBeVisible();
+	}
 
-    await expect(this.page).toHaveURL(slugToRegex(slugs.frontend.wishlist.index));
-    await expect(this.page.getByText(addedToWishlistNotification)).toBeVisible();
-    await expect(productNameInWishlist).toContainText(product);
-  }
+	// ==============================================
+	// Cart-related methods
+	// ==============================================
 
-  async leaveProductReview(product:string, url: string){
+	/**
+	 * Method to add a simple product to the user's/guest's cart.
+	 * @param product {string} - name of the product
+	 * @param slug {slug} - slug where the product is located
+	 * @param quantity {string} - optional: if provided,
+	 * the amount of the product to add to the cart.
+	 */
+	async addSimpleProductToCart(product: string, slug: string, quantity?: string) {
+		await this.goToProductPage(product, slug);
 
-    await this.page.goto(url);
+		if (quantity) { await this.productInteraction.quantityField.fill(quantity) };
+		await this.productInteraction.addToCartButton.click();
 
-    //TODO: Uncomment this and fix test once website is fixed
-    /*
-      await page.locator('#Rating_5_label path').click();
-      await page.getByPlaceholder('Nickname*').click();
-      await page.getByPlaceholder('Nickname*').fill('John');
-      await page.getByPlaceholder('Nickname*').press('Tab');
-      await page.getByPlaceholder('Summary*').click();
-      await page.getByPlaceholder('Summary*').fill('A short paragraph');
-      await page.getByPlaceholder('Review*').click();
-      await page.getByPlaceholder('Review*').fill('Review message!');
-      await page.getByRole('button', { name: 'Submit Review' }).click();
-      await page.getByRole('img', { name: 'loader' }).click();
-    */
-  }
+		// Final assertion to confirm product has been added to cart
+		await expect(this.page.getByRole('alert'),
+			`${product} has been added to cart`).toContainText(
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+	}
 
-  async openLightboxAndScrollThrough(url: string){
+	/**
+	 * Method to add a configurable product to the user's/guest's cart.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 * @param quantity {string} - optional: if provided,
+	 * the amount of the product to add to the cart.
+	 */
+	async addConfigurableProductToCart(product: string, slug: string, quantity?: string) {
+		await this.goToProductPage(product, slug);
 
-    await this.page.goto(url);
-    let fullScreenOpener = this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen);
-    let fullScreenCloser = this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose);
-    let thumbnails = this.page.getByRole('button', {name: UIReference.text.frontend.product.thumbnail});
+		// Checkpoint: ensure options are available
+		await this.configurableProductOptions.options.first().waitFor();
+		await this.configurableProductOptions.options.last().waitFor();
 
-    await fullScreenOpener.click();
-    await expect(fullScreenCloser).toBeVisible();
+		// Loop through all options and make a selection for each
+		for (const option of await this.configurableProductOptions.options.all()) {
+			await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
+		}
 
-    for (const img of await thumbnails.all()) {
-      await img.click();
-      // wait for transition animation
-      await this.page.waitForTimeout(500);
-      await expect(img, `CSS class 'border-primary' appended to button`).toHaveClass(new RegExp(outcomeMarker.productPage.borderClassRegex));
-    }
+		if (quantity) { await this.productInteraction.quantityField.fill(quantity) };
+		await this.productInteraction.addToCartButton.click();
 
-    await fullScreenCloser.click();
-    await expect(fullScreenCloser).toBeHidden();
+		// Final assertion to confirm product has been added to cart
+		await expect(this.page.getByRole('alert'),
+			`${product} has been added to cart`).toContainText(
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+	}
 
-  }
+	// ==============================================
+	// Product list-related methods
+	// ==============================================
 
-  async changeReviewCountAndVerify(url: string) {
+	/**
+	 * Method to add a product to the comparison list.
+	 * Adds product, then confirms product is present in list.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 */
+	async addProductToCompare(product: string, slug: string) {
+		await this.goToProductPage(product, slug);
 
-    await this.page.goto(url);
+		await this.productInteraction.addToCompareButton.click();
 
-    // Get the default review count from URL or UI
-    const initialUrl = this.page.url();
+		// Checkpoint: notification confirms the product was added.
+		// Message text is split across nodes (text, link, period), so assert containment.
+		await expect(this.page.getByRole('alert'),
+			`${product} has been added to comparison`).toContainText(
+			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}`);
 
-    // Find and click the review count selector
-    const reviewCountSelector = this.page.getByLabel(UIReference.text.frontend.common.itemsPerPage);
-    await expect(reviewCountSelector).toBeVisible();
+		await this.page.goto(slugs.frontend.product.comparison);
 
-    // Select 20 reviews per page
-    await reviewCountSelector.selectOption('20');
-    await this.page.waitForURL(/[?&]limit=20/);
+		// Final assertions: page should load and title should be visible.
+		// Additionally, name of the product we added should in the list.
+		await expect(this.page.getByRole('heading', {name: UIReference.text.frontend.compare.title}),
+			`Checkpoint: comparison page title is visible`).toBeVisible();
+		await expect(this.page.getByRole('cell', { name: product }).getByText(product, { exact: true })).toBeVisible();
+	}
 
-    // Verify URL contains the new limit
-    const urlAfterFirstChange = this.page.url();
-    expect(urlAfterFirstChange, 'URL should contain limit=20 parameter').toContain('limit=20');
-    expect(urlAfterFirstChange, 'URL should have changed after selecting 20 items per page').not.toEqual(initialUrl);
+	/**
+	 * NOTE: THE TEST 'ADD_PRODUCT_TO_WISHLIST' IS CURRENTLY SET TO FIXME.
+	 * Method to add a product to the wishlist.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 */
+	async addProductToWishlist(product: string, slug: string) {
+		await this.goToProductPage(product, slug);
 
-    // Select 50 reviews per page
-    await reviewCountSelector.selectOption('50');
-    await this.page.waitForURL(/[?&]limit=50/);
+		await this.productInteraction.addToWishlistButton.click();
+		await this.page.waitForURL(slugToRegex(slugs.frontend.wishlist.index));
 
-    // Verify URL contains the new limit
-    const urlAfterSecondChange = this.page.url();
-    expect(urlAfterSecondChange, 'URL should contain limit=50 parameter').toContain('limit=50');
-    expect(urlAfterSecondChange, 'URL should have changed after selecting 50 items per page').not.toEqual(urlAfterFirstChange);
-  }
+		// Final assertions: success notification shown to user, product in wishlist.
+		await expect(
+			this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`),
+			`Product has been added to wishlist notification`
+		).toBeVisible();
 
-  // ==============================================
-  // Cart-related methods
-  // ==============================================
+		await expect(
+			this.page.locator(UIReference.selectors.frontend.wishlist.itemGrid).getByText(product, {exact: true}),
+			`Product name is shown in wishlist item overview`
+		).toBeVisible();
 
-  async addSimpleProductToCart(product: string, url: string, quantity?: string) {
+	}
 
-    await this.page.goto(url);
+	// ==============================================
+	// Review-related methods
+	// ==============================================
 
-    this.simpleProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
-    expect(await this.simpleProductTitle.innerText(), `Product title "${product}" is visible`).toEqual(product);
+	/**
+	 * NOTE: THE TEST 'LEAVE_A_PRODUCT_REVIEW' IS CURRENTLY SET TO FIXME.
+	 * Method to leave a review for a product.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 */
+	async leaveProductReview(product: string, slug: string) {
+		await this.goToProductPage(product, slug);
 
-    if(quantity){
-      // set quantity
-      await this.page.getByRole('spinbutton', {name: UIReference.text.shared.forms.quantity}).fill('2');
-    }
+		await this.reviewFormFields.stars.scrollIntoViewIfNeeded();
 
-    // assert visibility to ensure we can click the add to cart button.
-    await expect(this.addToCartButton).toBeVisible();
-    await this.addToCartButton.click();
+		await this.reviewFormFields.stars.click();
+		await this.reviewFormFields.nickname.fill('John');
+		await this.reviewFormFields.summary.fill('Summary of my review');
+		await this.reviewFormFields.review.fill('A longer paragraph containing details of my opinions of the product');
+		await this.reviewFormFields.submitButton.click();
 
-    await expect(this.page.locator(UIReference.selectors.shared.message).filter(
-      {hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`}),
-      `Product has been added to cart`
-    ).toBeVisible();
+		await this.reviewFormFields.loader.waitFor({state: 'hidden'});
 
-  }
+		// Final assertion: confirm the message "review submitted for moderation" is visible.
+		await expect(this.page.getByText('You submitted your review for moderation')).toBeVisible();
+	}
 
-  async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
+	/**
+	 * Method to update the amount of reviews shown on the product page.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 */
+	async changeReviewCountAndVerify(product: string, slug: string) {
+		await this.goToProductPage(product, slug);
 
-    await this.page.goto(url);
+		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
+		// get the actual number shown on 'Show' dropdown on the page
+		let initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
+		);
 
-    this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
-    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
-    const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
+		// Select a new amount of reviews that's different from the current amount.
+		let newValue;
+		initialReviewAmount == '20' ? newValue = '50' : newValue = '20';
+		await this.reviewsPerPageDropdown.selectOption({ label : newValue});
+		newValue == '20' ? await this.page.waitForURL(/[?&]limit=20/) : await this.page.waitForURL(/[?&]limit=50/);
 
-    // wait for the color and size selectors are actually visible
-    await productOptions.getByRole('radiogroup').first().waitFor();
-    await productOptions.getByRole('radiogroup').last().waitFor();
+		// Retrieve new value shown on page
+		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
+		let newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
+		);
 
-    // loop through each radiogroup (product option) within the form
-    for (const option of await productOptions.getByRole('radiogroup').all()) {
-      await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
-    }
+		// Final assertions: confirm the reviewAmount on the page is updated
+		expect(initialReviewAmount,
+			`initial amount of reviews (${initialReviewAmount}) does not equal new amount (${newReviewAmount})`
+		).not.toEqual(newReviewAmount);
+	}
 
-    if(quantity){
-      // set quantity
-      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
-    }
 
-    await this.addToCartButton.click();
-    let successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
-    await successMessage.waitFor();
-    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
-  }
+	// ==============================================
+	// Media gallery-related methods
+	// ==============================================
+
+	/**
+	 * Method to open the lightbox (product picture views) and scroll through images.
+	 * Used in the test 'Open_pictures_in_lightbox_and_scroll'.
+	 * @param product {string} - name of the product
+	 * @param slug {string} - slug where the product is located
+	 */
+	async openLightboxAndScrollThrough(product: string, slug: string) {
+		await this.goToProductPage(product, slug);
+
+		await this.lightboxElements.fullScreenOpener.click();
+		await expect(this.lightboxElements.fullScreenCloser).toBeVisible();
+
+		for (const img of await this.lightboxElements.thumbnails) {
+			await img.click();
+			// wait for transition animation
+			await this.page.waitForTimeout(500);
+			await expect(img, `CSS class 'border-primary' appended to button`)
+				.toHaveClass(new RegExp(outcomeMarker.productPage.borderClassRegex)
+			);
+		}
+
+		await this.lightboxElements.fullScreenCloser.click();
+
+		// Final assertion: after closing the lightbox, the 'close lightbox' button should be hidden
+		await expect(this.lightboxElements.fullScreenCloser, `'close lightbox' button should be hidden`).toBeHidden();
+	}
+
 }
-
-export default ProductPage;

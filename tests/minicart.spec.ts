@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
 import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
-import ProductPage from '@poms/frontend/product.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
 import { BaseMiniCartPage } from '@poms/frontend/minicart.page';
 
 test.describe('Minicart Actions', { annotation: { type: 'Minicart', description: 'Minicart simple product tests' }, }, () => {
@@ -22,9 +22,8 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 */
 	test.beforeEach(async ({ page }) => {
 		const mainMenu = new BaseMainMenuPage(page);
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 
-		await page.goto(slugs.frontend.product.simple);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await mainMenu.openMiniCart();
 		await expect(page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle)).toBeVisible();
@@ -112,9 +111,8 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 */
 	test.beforeEach(async ({ page }) => {
 		const mainMenu = new BaseMainMenuPage(page);
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 
-		await page.goto(slugs.frontend.product.configurable);
 		await productPage.addConfigurableProductToCart(UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable, '2');
 		await mainMenu.openMiniCart();
 		await expect(page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle)).toBeVisible();

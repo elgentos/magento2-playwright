@@ -5,13 +5,13 @@ import { UIReference, outcomeMarker, slugs } from '@config';
 
 import { BaseComparePage } from '@poms/frontend/compare.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
-import ProductPage from '@poms/frontend/product.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
 	await test.step('Add products to compare', async () => {
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
 	});
@@ -73,7 +73,7 @@ test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page',
 	});
 
 	await test.step('Add product to compare', async () => {
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 		await page.goto(slugs.frontend.product.comparison);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 	});

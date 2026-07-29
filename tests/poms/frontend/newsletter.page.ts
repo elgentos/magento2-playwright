@@ -4,33 +4,47 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues } from '@config';
 import { faker } from '@faker-js/faker';
 
-class NewsletterSubscriptionPage {
-	readonly page: Page;
-	readonly newsletterCheckElement: Locator;
-	readonly saveSubscriptionsButton: Locator;
+export class BaseNewsletterSubscriptionPage {
+	constructor(public readonly page: Page) { }
 
-	constructor(page: Page) {
-		this.page = page;
-		this.newsletterCheckElement = page.getByRole('switch', { name: UIReference.text.frontend.newsletter.generalSubscription });
-		this.saveSubscriptionsButton = page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+	// ==============================================
+	// Element getters
+	// ==============================================
+
+	// get newsLetterFormFields - returns field locators to update newsletter subscription
+	get newsLetterFormFields() {
+		return {
+			newsletterCheckElement : this.page.getByRole('switch', { name: UIReference.text.frontend.newsletter.generalSubscription }),
+			saveSubscriptionsButton : this.page.getByRole('button', { name: UIReference.text.shared.buttons.save })
+		}
 	}
 
+	// ==============================================
+	// Page-interaction methods
+	// ==============================================
+
+	/**
+	 * Method: update subcsription to newsletter.
+	 * @returns subscribed {boolean} - true if user is now subscribed,
+	 * false if the user is unsubscribed.
+	 */
 	async updateNewsletterSubscription() {
+		const {newsletterCheckElement , saveSubscriptionsButton } = this.newsLetterFormFields;
 
 		let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
 		let subscribed = false;
 
-		if (await this.newsletterCheckElement.isChecked()) {
+		if (await newsletterCheckElement.isChecked()) {
 			// user is already subscribed, test runs unsubscribe
-			await this.newsletterCheckElement.uncheck();
-			await this.saveSubscriptionsButton.click();
+			await newsletterCheckElement.uncheck();
+			await saveSubscriptionsButton.click();
 
 		} else {
 			// user is not yet subscribed, test runs subscribe
 			subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;
 
-			await this.newsletterCheckElement.check();
-			await this.saveSubscriptionsButton.click();
+			await newsletterCheckElement.check();
+			await saveSubscriptionsButton.click();
 
 			subscribed = true;
 		}
@@ -39,5 +53,3 @@ class NewsletterSubscriptionPage {
 		return subscribed;
 	}
 }
-
-export default NewsletterSubscriptionPage;

@@ -3,7 +3,7 @@
 // Import test and expect from utils to ensure authenticated state.
 import { test, expect } from '@utils/fixtures.utils';
 
-import ProductPage from '@poms/frontend/product.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
 import { BaseAccountPage } from '@poms/frontend/account.page';
 import CheckoutPage from '@poms/frontend/checkout.page';
 
@@ -23,11 +23,10 @@ test.describe('Checkout (logged in user)', () => {
 	 */
 	test.beforeEach(async ({ page }) => {
 		const magewire = new MagewireUtils(page);
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 
 		magewire.startMonitoring();
 
-		await page.goto(slugs.frontend.product.simple);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await page.goto(slugs.frontend.checkout.index);
 	});
@@ -96,8 +95,7 @@ test.describe('Checkout (guest)', () => {
 		magewire.startMonitoring();
 
 		// ensure product in cart
-		const productPage = new ProductPage(page);
-		await page.goto(slugs.frontend.product.simple);
+		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		// to checkout
@@ -123,7 +121,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Verify_price_calculations_in_checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 		const checkoutPage = new CheckoutPage(page);
 
 		// Add product to cart and go to checkout
