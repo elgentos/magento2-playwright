@@ -12,6 +12,7 @@
     "translate": "node translate-json.js nl_NL"
   },
   "dependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@faker-js/faker": "^10.2.0",
     "@playwright/test": "^1.57.0",
     "@types/node": "^25.5.0",

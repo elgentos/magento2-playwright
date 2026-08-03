@@ -87,8 +87,8 @@ class ProductPage {
   async openLightboxAndScrollThrough(url: string){
 
     await this.page.goto(url);
-    let fullScreenOpener = this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen);
-    let fullScreenCloser = this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose);
+    let fullScreenOpener = this.page.locator('.group.stack').first();
+    let fullScreenCloser = this.page.locator('.absolute.right-2');
     let thumbnails = this.page.getByRole('button', {name: UIReference.text.frontend.product.thumbnail});
 
     await fullScreenOpener.click();
@@ -166,23 +166,30 @@ class ProductPage {
   async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
 
     await this.page.goto(url);
-
     this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
+	await expect(this.configurableProductTitle, `Checkpoint: title is visible`).toBeVisible();
+
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
-    // wait for the color and size selectors are actually visible
-    await productOptions.getByRole('radiogroup').first().waitFor();
-    await productOptions.getByRole('radiogroup').last().waitFor();
+    // each product option (size, color) is a fieldset, which maps to the 'group' role
+    const productOptionGroups = productOptions.getByRole('group');
 
-    // loop through each radiogroup (product option) within the form
-    for (const option of await productOptions.getByRole('radiogroup').all()) {
-      await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
+    // wait for the color and size selectors are actually visible
+    await expect(productOptionGroups.first(), `Checkpoint: first product option is visible`).toBeVisible();
+    await expect(productOptionGroups.last(), `Checkpoint: last product option is visible`).toBeVisible();
+
+    // loop through each product option within the form
+    for (const option of await productOptionGroups.all()) {
+      // option values that do not exist for the current selection stay in the DOM but are disabled
+      const optionValue = option.locator(`${UIReference.selectors.frontend.product.optionValue}:enabled`).first();
+      await optionValue.check();
+      await expect(optionValue, `Checkpoint: product option is selected`).toBeChecked();
     }
 
     if(quantity){
       // set quantity
-      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
+      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill(quantity);
     }
 
     await this.addToCartButton.click();
