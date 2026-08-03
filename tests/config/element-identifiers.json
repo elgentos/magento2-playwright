@@ -52,7 +52,7 @@
 			"product": {
 				"price": ".final-price .price-wrapper .price",
 				"optionForm": "#product_addtocart_form",
-				"optionValue": ".product-option-value-label"
+				"optionValue": "input[type='radio']"
 			},
 			"checkout": {
 				"cartDetails": "#checkout-cart-details div",
