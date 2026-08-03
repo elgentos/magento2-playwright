@@ -172,24 +172,24 @@ class ProductPage {
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
-    // the swatch groups carry role="radiogroup" (no fieldset wraps them)
-    const productOptionGroups = productOptions.getByRole('radiogroup');
+    // each product option (size, color) is a fieldset, which maps to the 'group' role
+    const productOptionGroups = productOptions.getByRole('group');
 
     // wait for the color and size selectors are actually visible
     await expect(productOptionGroups.first(), `Checkpoint: first product option is visible`).toBeVisible();
     await expect(productOptionGroups.last(), `Checkpoint: last product option is visible`).toBeVisible();
 
-    // loop through each radiogroup (product option) within the form
+    // loop through each product option within the form
     for (const option of await productOptionGroups.all()) {
-      // the radio input sits behind its label (z-index:-1), so click the label instead of checking the input
-      const optionValue = option.locator(UIReference.selectors.frontend.product.optionValue).first();
-      await optionValue.click();
-      await expect(optionValue.getByRole('radio'), `Checkpoint: product option is selected`).toBeChecked();
+      // option values that do not exist for the current selection stay in the DOM but are disabled
+      const optionValue = option.locator(`${UIReference.selectors.frontend.product.optionValue}:enabled`).first();
+      await optionValue.check();
+      await expect(optionValue, `Checkpoint: product option is selected`).toBeChecked();
     }
 
     if(quantity){
       // set quantity
-      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
+      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill(quantity);
     }
 
     await this.addToCartButton.click();
