@@ -14,7 +14,7 @@ class ContactPage {
   constructor(page: Page){
     this.page = page;
     this.nameField = this.page.getByLabel(UIReference.text.shared.forms.name);
-    this.emailField = this.page.getByPlaceholder(UIReference.text.shared.forms.email, { exact: true });
+    this.emailField = this.page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true });
     this.messageField = this.page.locator(UIReference.selectors.frontend.contact.message);
     this.sendFormButton = this.page.getByRole('button', { name: UIReference.text.shared.buttons.submit });
   }
