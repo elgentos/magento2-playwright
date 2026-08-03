@@ -21,7 +21,7 @@ import { UIReference, slugs } from '@config';
  * because the steps are identical for each page.
  */
 test.describe('Accessibility Tests: EEA compliance', () => {
-
+	// Set up a list of pages to check.
 	const pagesToCheck: { label: string; slug: string; pageTitle: string }[] = [
 		{ label: 'home', slug: '/', pageTitle: UIReference.text.frontend.home.title },
 		{ label: 'plp', slug: slugs.frontend.category.index, pageTitle: UIReference.text.frontend.category.title},
@@ -29,6 +29,7 @@ test.describe('Accessibility Tests: EEA compliance', () => {
 		{ label: 'cart', slug: slugs.frontend.cart.index, pageTitle: UIReference.text.frontend.cart.title },
 	];
 
+	// For each page in the list above, run the accessibility check.
 	for (const { label, slug, pageTitle } of pagesToCheck) {
 		/**
 		 * Test: confirm the page does not have critical accessibility issues.
