@@ -36,23 +36,23 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user already has an item in their cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Address_is_pre_filled_in_checkout',{ tag: ['@checkout', '@hot']}, async ({page}) => {
+	test('Address_is_pre_filled_in_checkout', { tag: ['@checkout', '@hot'] }, async ({ page }) => {
 		let signInLink = page.getByRole('link', { name: UIReference.text.shared.buttons.login });
 		let addressField = page.getByLabel(UIReference.text.shared.forms.streetAddress);
 		let addressAlreadyAdded = false;
 
-		if(await signInLink.isVisible()) {
+		if (await signInLink.isVisible()) {
 			throw new Error(`Sign in link found, user is not logged in. Please check the test setup.`);
 		}
 
 		// name field should NOT be on the page
 		await expect(page.getByLabel(UIReference.text.shared.forms.firstName)).toBeHidden();
 
-		if(await addressField.isVisible()) {
-			if(!addressAlreadyAdded){
-			// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
-			const accountPage = new BaseAccountPage(page);
-			await accountPage.addNewAddress();
+		if (await addressField.isVisible()) {
+			if (!addressAlreadyAdded) {
+				// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
+				const accountPage = new BaseAccountPage(page);
+				await accountPage.addNewAddress();
 			} else {
 				throw new Error(`Address field is visible even though an address has been added to the account.`);
 			}
@@ -68,7 +68,7 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user already has an item in their cart and is on the checkout page.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}) => {
+	test('Place_order_for_simple_product', { tag: ['@simple-product-order', '@hot'], }, async ({ page }) => {
 		const checkoutPage = new CheckoutPage(page);
 		const accountPage = new BaseAccountPage(page);
 		await accountPage.ensureCustomerDetails();
@@ -89,7 +89,7 @@ test.describe('Checkout (guest)', () => {
 	 * Before each test: set op monitoring and add product to cart
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async({page}) => {
+	test.beforeEach(async ({ page }) => {
 		// set up magewire monitoring
 		const magewire = new MagewireUtils(page);
 		magewire.startMonitoring();
@@ -107,7 +107,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
+	test('Add_coupon_code_in_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
@@ -133,7 +133,7 @@ test.describe('Checkout (guest)', () => {
 
 		// Wait for totals to update
 		await expect(async () => {
-			await page.locator('.magewire\\.messenger').waitFor({state: "hidden"});
+			await page.locator('.magewire\\.messenger').waitFor({ state: "hidden" });
 		}).toPass();
 
 		// Get all price components using the verifyPriceCalculations method from the CheckoutPage fixture
@@ -145,7 +145,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
+	test('Remove_coupon_code_from_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
 		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
@@ -159,34 +159,34 @@ test.describe('Checkout (guest)', () => {
 	 * Test: Using an invalid coupon code does not work
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Invalid_coupon_code_in_checkout_is_rejected',{ tag: ['@checkout', '@coupon-code', '@cold'] }, async ({page}) => {
+	test('Invalid_coupon_code_in_checkout_is_rejected', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page }) => {
 		const checkout = new CheckoutPage(page);
 		await checkout.enterWrongCouponCode("incorrect discount code");
 	});
 
-  /**
-   * @feature Payment Method Selection
-   * @scenario Guest user selects different payment methods during checkout
-   * @given I have a product in my cart
-   *  @and I am on the checkout page as a guest
-   * @when I select a payment method
-   *  @and I complete the checkout process
-   * @then I should see a confirmation that my order has been placed
-   *  @and a order number should be created and shown to me
-   */
-  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
-    // Marking test as slow to allow more time befoure timeout
-    test.slow();
-    const checkoutPage = new CheckoutPage(page);
+	/**
+	 * @feature Payment Method Selection
+	 * @scenario Guest user selects different payment methods during checkout
+	 * @given I have a product in my cart
+	 *  @and I am on the checkout page as a guest
+	 * @when I select a payment method
+	 *  @and I complete the checkout process
+	 * @then I should see a confirmation that my order has been placed
+	 *  @and a order number should be created and shown to me
+	 */
+	test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
+		// Marking test as slow to allow more time befoure timeout
+		test.slow();
+		const checkoutPage = new CheckoutPage(page);
 
-    // Test with check/money order payment
-    await test.step('Place order with check/money order payment', async () => {
-      await page.goto(slugs.frontend.checkout.index);
-      await checkoutPage.fillShippingAddress();
-      await checkoutPage.selectShippingMethod('fixed');
-      await checkoutPage.selectPaymentMethod('check');
-      let orderNumber = await checkoutPage.placeOrder();
-      expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
-    });
-  });
+		// Test with check/money order payment
+		await test.step('Place order with check/money order payment', async () => {
+			await page.goto(slugs.frontend.checkout.index);
+			await checkoutPage.fillShippingAddress();
+			await checkoutPage.selectShippingMethod('fixed');
+			await checkoutPage.selectPaymentMethod('check');
+			let orderNumber = await checkoutPage.placeOrder();
+			expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
+		});
+	});
 });
