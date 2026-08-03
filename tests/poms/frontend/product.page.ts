@@ -166,18 +166,25 @@ class ProductPage {
   async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
 
     await this.page.goto(url);
-
     this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
+	await expect(this.configurableProductTitle, `Checkpoint: title is visible`).toBeVisible();
+
     let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
     const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
+    // the swatch groups carry role="radiogroup" (no fieldset wraps them)
+    const productOptionGroups = productOptions.getByRole('radiogroup');
+
     // wait for the color and size selectors are actually visible
-    await productOptions.getByRole('radiogroup').first().waitFor();
-    await productOptions.getByRole('radiogroup').last().waitFor();
+    await expect(productOptionGroups.first(), `Checkpoint: first product option is visible`).toBeVisible();
+    await expect(productOptionGroups.last(), `Checkpoint: last product option is visible`).toBeVisible();
 
     // loop through each radiogroup (product option) within the form
-    for (const option of await productOptions.getByRole('radiogroup').all()) {
-      await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
+    for (const option of await productOptionGroups.all()) {
+      // the radio input sits behind its label (z-index:-1), so click the label instead of checking the input
+      const optionValue = option.locator(UIReference.selectors.frontend.product.optionValue).first();
+      await optionValue.click();
+      await expect(optionValue.getByRole('radio'), `Checkpoint: product option is selected`).toBeChecked();
     }
 
     if(quantity){
