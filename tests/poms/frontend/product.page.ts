@@ -87,8 +87,8 @@ class ProductPage {
   async openLightboxAndScrollThrough(url: string){
 
     await this.page.goto(url);
-    let fullScreenOpener = this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen);
-    let fullScreenCloser = this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose);
+    let fullScreenOpener = this.page.locator('.group.stack').first();
+    let fullScreenCloser = this.page.locator('.absolute.right-2');
     let thumbnails = this.page.getByRole('button', {name: UIReference.text.frontend.product.thumbnail});
 
     await fullScreenOpener.click();

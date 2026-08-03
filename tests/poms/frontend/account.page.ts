@@ -252,11 +252,11 @@ class AccountPage {
     let addressBookArray = await addressBookSection.allInnerTexts();
     // split by each new line
     let arraySplit = addressBookArray[0].split('\n');
-    // Retrieve index 8, because:
-    // index 0 to 5 are the table headers (i.e. Company, Name etc.)
-    // index 6 is company, index 7 is name, and index 8 is the first address value.
+    // Retrieve index 6, because:
+    // index 0 to 3 are the table headers (i.e. Name, Street Address etc.)
+    // index 5 is name, index 6 is address.
     // if this table changes, the index number should change.
-    let addressToBeDeleted = arraySplit[8];
+    let addressToBeDeleted = arraySplit[6];
 
     // Annotate the report so the user knows what address should be deleted
     test.info().annotations.push({type: `Address to be deleted`, description: addressToBeDeleted});
