@@ -9,6 +9,9 @@ node_modules/
 /auth-storage/
 /playwright-report/
 /base-tests/
+/docs/
+/.superpowers/
+/.playwright-mcp/
 
 #files
 /*.config.ts

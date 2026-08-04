@@ -26,6 +26,12 @@ export default tseslint.config(
 			'.auth/**',
 			'i18n/**',
 			'docs/**',
+			// No leading slash on this one either, for the same reason as
+			// '*.config.ts' below: ESLint ignores are minimatch, not gitignore.
+			// No effect today (no .ts files live here) — guards against a future
+			// .superpowers/**/*.ts linting locally while CI (where this
+			// directory doesn't ship) stays green.
+			'.superpowers/**',
 			// gitignored + machine-specific; see spec. No leading slash: ESLint's
 			// `ignores` are plain minimatch globs matched against the relative
 			// path (see @eslint/config-array's doMatch), not gitignore syntax —
@@ -65,19 +71,19 @@ export default tseslint.config(
 			// test/POM logic, which is out of scope here.
 			'@typescript-eslint/no-unused-vars': 'warn', // 32 hits
 			'@typescript-eslint/no-explicit-any': 'warn', // 18 hits
-			'@typescript-eslint/require-await': 'warn', // 2 hits: poms/admin/customers:161, poms/frontend/shoppingcart:194
+			'@typescript-eslint/require-await': 'warn', // 2 hits: poms/admin/customers, poms/frontend/shoppingcart
 			'@typescript-eslint/no-unused-expressions': 'warn', // 4 hits: poms/frontend/{account,category,product x2}
 			'@typescript-eslint/restrict-template-expressions': 'warn', // 2 hits: checkout.spec, poms/frontend/checkout
-			'no-useless-escape': 'warn', // 2 hits: poms/frontend/mainmenu:237 (both columns, same line)
-			'@typescript-eslint/no-unnecessary-type-assertion': 'warn', // 1 hit: init.setup:180
-			'no-useless-assignment': 'warn', // 1 hit: poms/admin/marketing:27
+			'no-useless-escape': 'warn', // 2 hits: poms/frontend/mainmenu (both columns, same line)
+			'@typescript-eslint/no-unnecessary-type-assertion': 'warn', // 1 hit: init.setup
+			'no-useless-assignment': 'warn', // 1 hit: poms/admin/marketing
 			// awaiting a Locator-returning (non-Promise) call inside .toPass();
 			// same root pattern as block 3's no-useless-await, on the same 3
 			// lines. Demoted rather than fixed for the same reason: removing the
 			// await is exactly the change eslint --fix made and this branch had
 			// to revert (see block 3), and injecting a real awaited action
 			// would be a test-logic change, out of scope here.
-			'@typescript-eslint/await-thenable': 'warn', // 3 hits: compare.spec:53, poms/admin/{customers:155,orders:52}
+			'@typescript-eslint/await-thenable': 'warn', // 3 hits: compare.spec, poms/admin/{customers,orders}
 		},
 	},
 
@@ -92,8 +98,8 @@ export default tseslint.config(
 		rules: {
 			// Severity principle triage, same reasoning as block 1: both hits
 			// pre-exist in translate-json.js and are outside this branch's scope.
-			'no-unused-vars': 'warn', // 1 hit: translate-json.js:132
-			'no-prototype-builtins': 'warn', // 1 hit: translate-json.js:150
+			'no-unused-vars': 'warn', // 1 hit: translate-json.js
+			'no-prototype-builtins': 'warn', // 1 hit: translate-json.js
 		},
 	},
 
@@ -107,7 +113,57 @@ export default tseslint.config(
 		},
 	},
 
+	// ------- block 4: test-structure rules, spec/setup files only
+	// ORDERING INVARIANT — this block must stay ABOVE block 3, not below it.
+	// `extends: [playwright.configs['flat/recommended']]` bakes in that preset's
+	// own severities for ~30 rules (e.g. no-element-handle/no-wait-for-selector/
+	// no-page-pause at 'warn', no-networkidle and prefer-web-first-assertions at
+	// 'error'). ESLint's flat config resolves a rule key that two matching
+	// blocks both set by letting the LATER block in the array win. Block 3's
+	// `files` pattern (tests/**/*.ts) is a superset of this block's
+	// (tests/**/*.spec.ts, tests/**/*.setup.ts), so for every spec/setup file
+	// both blocks match — meaning whichever block is physically later in this
+	// array wins for any rule key they both touch. Putting this block first
+	// makes block 3's explicit, deliberately-chosen severities win uniformly
+	// across all of tests/, including spec/setup files. Moving this block back
+	// below block 3 would silently flip five rules' effective severity in
+	// spec/setup files only (previously caught: no-element-handle,
+	// no-wait-for-selector, no-page-pause going error->warn; no-networkidle and
+	// prefer-web-first-assertions going warn->error) — do not do that.
+	//
+	// `extends` also pulls in flat/recommended's other rules at their own
+	// baseline severity. Three had measured hits and are re-declared below with
+	// counts (expect-expect, no-conditional-expect, prefer-hooks-on-top). Every
+	// other flat/recommended rule not mentioned anywhere in this file (e.g.
+	// no-standalone-expect, valid-title, valid-expect, no-duplicate-hooks,
+	// prefer-locator) currently has 0 measured hits, so it's left at whatever
+	// severity flat/recommended gives it — that's fine per the severity
+	// principle since there's nothing to demote.
+	{
+		files: ['tests/**/*.spec.ts', 'tests/**/*.setup.ts'],
+		extends: [playwright.configs['flat/recommended']],
+		rules: {
+			'playwright/no-focused-test': 'error', // 0 hits
+			'playwright/no-conditional-in-test': 'warn', // 21 hits: account.spec x7, init.setup x5, setup.spec x4, checkout.spec x3, healthcheck.spec, register.spec
+			// disallowFixme must be true, or this rule cannot see test.fixme()
+			// calls at all regardless of severity (confirmed by reading
+			// eslint-plugin-playwright's no-skipped-test source) — without it,
+			// the rule only ever catches non-conditional test.skip(), and this
+			// codebase has none, so it would report 0 hits despite 3 genuine
+			// disabled tests existing. allowConditional keeps the codebase's
+			// conditional test.skip(condition, message) calls (setup.spec x2,
+			// healthcheck.spec, mainmenu.spec) exempt, matching intent.
+			'playwright/no-skipped-test': ['warn', { allowConditional: true, disallowFixme: true }], // 3 hits: footer.spec, mainmenu.spec, search.spec
+			'playwright/expect-expect': 'warn', // 50 hits: spread across nearly every spec file — see report for the full per-file breakdown
+			'playwright/no-conditional-expect': 'warn', // 3 hits: account.spec
+			'playwright/prefer-hooks-on-top': 'warn', // 1 hit: compare.spec
+		},
+	},
+
 	// ------------------- block 3: flake rules across ALL of tests/
+	// Positioned AFTER block 4 (see the ordering-invariant comment there) so
+	// these explicit severities win uniformly across all of tests/, including
+	// the *.spec.ts/*.setup.ts files block 4 also matches.
 	{
 		files: ['tests/**/*.ts'],
 		plugins: { playwright: playwrightPlugin },
@@ -119,51 +175,13 @@ export default tseslint.config(
 			'playwright/missing-playwright-await': 'error', // 0 hits
 			'playwright/no-wait-for-timeout': 'warn', // 5 hits: poms/frontend/checkout x2, poms/frontend/product, poms/admin/adminlogin, utils/magewire
 			'playwright/no-networkidle': 'warn', // 4 hits: login.spec, poms/frontend/login, utils/fixtures x2
-			'playwright/no-force-option': 'warn', // 2 hits: poms/admin/marketing:111, poms/frontend/mainmenu:213
+			'playwright/no-force-option': 'warn', // 2 hits: poms/admin/marketing, poms/frontend/mainmenu
 			// brief assumed 0 hits for the following three (no trailing comment);
 			// actual npm run lint run found violations, so per the severity
 			// principle they're demoted to warn instead of left at error.
-			'playwright/no-eval': 'warn', // 1 hit: poms/frontend/category:123
+			'playwright/no-eval': 'warn', // 1 hit: poms/frontend/category
 			'playwright/no-useless-await': 'warn', // 3 hits: poms/admin/{customers,orders}, compare.spec
 			'playwright/prefer-web-first-assertions': 'warn', // 4 hits: poms/frontend/category, poms/frontend/minicart x2, poms/frontend/shoppingcart
-		},
-	},
-
-	// ------- block 4: test-structure rules, spec/setup files only
-	{
-		files: ['tests/**/*.spec.ts', 'tests/**/*.setup.ts'],
-		// `extends` also pulls in flat/recommended's other ~30 rules at their
-		// own baseline severity (e.g. expect-expect, no-conditional-expect,
-		// prefer-hooks-on-top) — those are deliberately left uncounted below;
-		// only the three rules this branch explicitly re-triaged have hit-count
-		// comments. Don't try to reconcile the comment totals in this file
-		// against `npm run lint`'s grand total — the difference is exactly
-		// these inherited-but-uncounted rules.
-		extends: [playwright.configs['flat/recommended']],
-		rules: {
-			'playwright/no-focused-test': 'error', // 0 hits
-			'playwright/no-conditional-in-test': 'warn', // 21 hits: account.spec x7, init.setup x5, setup.spec x4, checkout.spec x3, healthcheck.spec, register.spec
-			// 0 hits with these options, verified by targeting every file with a
-			// skip/fixme marker directly. `allowConditional: true` exempts the
-			// codebase's `test.skip(condition, message)` calls (setup.spec x2,
-			// healthcheck.spec, mainmenu.spec); `disallowFixme` is NOT set, so
-			// the rule doesn't check test.fixme() at all (footer.spec,
-			// mainmenu.spec, search.spec have 3 fixme markers between them, but
-			// this rule structurally can't see them with the current options —
-			// that's a policy question for later, not a hit-count problem now).
-			// Kept at 'error' per the severity principle: 0 measured hits.
-			'playwright/no-skipped-test': ['error', { allowConditional: true }], // 0 hits
-			// flat/recommended (extended above) sets no-networkidle to 'error',
-			// which otherwise wins over block 3's 'warn' for the *.spec.ts/*.setup.ts
-			// subset (login.spec.ts:32 is one of the 4 hits noted in block 3).
-			// Re-declared here so the severity is consistent across all of tests/.
-			// The same shadowing would hit any OTHER block-3 rule whose warn
-			// severity differs from flat/recommended's baseline, for any hit
-			// that lands in a *.spec.ts/*.setup.ts file specifically (e.g.
-			// prefer-web-first-assertions is 'warn' here vs 'error' in
-			// flat/recommended — currently latent because none of its 4 hits
-			// are in spec/setup files, but re-check this block if that changes).
-			'playwright/no-networkidle': 'warn',
 		},
 	},
 
@@ -186,7 +204,7 @@ export default tseslint.config(
 			'@typescript-eslint/no-unsafe-call': 'off',
 			'@typescript-eslint/no-unsafe-return': 'off',
 			// Actionable and worth fixing, but has pre-existing hits.
-			'@typescript-eslint/no-floating-promises': 'warn', // 2 hits: poms/admin/customers:162, poms/frontend/compare:87
+			'@typescript-eslint/no-floating-promises': 'warn', // 2 hits: poms/admin/customers, poms/frontend/compare
 		},
 	},
 

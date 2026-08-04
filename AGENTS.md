@@ -188,14 +188,19 @@ contributor tooling and are not shipped to consumers of the package.
 
 `base-tests/` is never linted; it is generated from `tests/` by `build.js`. Warnings mark
 pre-existing debt with a hit count in `eslint.config.mjs` — do not add new ones, and do not silence a
-rule to make output quiet.
+rule to make output quiet. Refresh hit-count comments with `npx eslint . -f json` (pipe through a
+counter per rule), not by hand — hand-counted comments drift out of sync with the next reformat or
+autofix.
 
 Run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once, so the bulk Prettier commit does
 not obscure `git blame`.
 
 ## CI/CD Pipeline
 
-A single `testing_suite` stage in `.gitlab-ci.yml` runs `npx playwright test`. Setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup stage.
+`.gitlab-ci.yml` has three stages: `lint`, `testing_suite`, `mirror`. The `lint` stage runs
+`npm run lint` and `npm run format:check` and blocks the pipeline on failure. `testing_suite` runs
+`npx playwright test`; setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as
+a dependency of the chromium/firefox/webkit projects — no separate setup stage.
 
 Run locally:
 

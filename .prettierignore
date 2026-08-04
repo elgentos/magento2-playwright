@@ -5,6 +5,7 @@ test-results/
 .auth/
 i18n/
 docs/
+.superpowers/
 package-lock.json
 
 # gitignored + machine-specific

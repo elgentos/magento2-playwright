@@ -201,6 +201,11 @@ test_mirror_pipeline:
 
 lint:
   stage: lint
+  # Overrides the top-level Playwright browser image (unverified Node version,
+  # and ~2 GB just to run a linter). ESLint 10 requires Node ^20.19.0 ||
+  # ^22.13.0 || >=24; node:22 satisfies that without depending on whatever the
+  # Playwright image happens to ship.
+  image: node:22
   before_script: []
   script:
     # --ignore-scripts: build.js deletes tests/ when CI=true, and

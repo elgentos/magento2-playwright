@@ -1,4 +1,15 @@
 {
+	// This file exists only because the real tsconfig.json is gitignored
+	// (build.js generates it from tsconfig.example.json), and type-aware
+	// linting cannot reference a file absent from a fresh clone. Its
+	// compilerOptions should track tsconfig.example.json's — keep them in
+	// sync when that file changes, e.g. `target`, which deliberately differs
+	// here (es2022 vs example's es6) because this file is dev-tooling-only
+	// and never ships or runs against older targets. Its `paths` deliberately
+	// omit base-tests/* (unlike the example file, which lists both
+	// base-tests/* and tests/*): tests/ is the source of truth in this repo
+	// and resolves standalone, so this file must not depend on the generated
+	// base-tests/ copy.
 	"compilerOptions": {
 		"target": "es2022",
 		"module": "commonjs",
@@ -17,5 +28,9 @@
 			"@fixtures/*": ["./tests/fixtures/*"]
 		}
 	},
+	// Root-level .ts files are named individually, not globbed — a new tracked
+	// root .ts file must be added here explicitly, or ESLint's type-aware
+	// rules will fail on it with "none of those TSConfigs include this file"
+	// rather than linting it.
 	"include": ["tests/**/*.ts", "playwright.config.example.ts", "playwrightRequestConfig.ts"]
 }
