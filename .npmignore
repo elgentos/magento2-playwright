@@ -16,3 +16,8 @@ node_modules/
 /tsconfig.json
 /.gitlab-ci.yml
 /.auth
+/eslint.config.mjs
+/.prettierrc.json
+/.prettierignore
+/tsconfig.eslint.json
+/.git-blame-ignore-revs

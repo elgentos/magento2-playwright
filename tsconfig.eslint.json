@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "commonjs",
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"noEmit": true,
+		"paths": {
+			"@config": ["./tests/config"],
+			"@utils/*": ["./tests/utils/*"],
+			"@poms/*": ["./tests/poms/*"],
+			"@types/*": ["./tests/types/*"],
+			"@fixtures/*": ["./tests/fixtures/*"]
+		}
+	},
+	"include": ["tests/**/*.ts", "playwright.config.example.ts", "playwrightRequestConfig.ts"]
+}

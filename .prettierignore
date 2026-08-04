@@ -1,0 +1,14 @@
+base-tests/
+node_modules/
+playwright-report/
+test-results/
+.auth/
+i18n/
+docs/
+package-lock.json
+
+# gitignored + machine-specific
+/*.config.ts
+
+# Prettier reflows large tables into unreviewable diffs
+*.md
