@@ -163,7 +163,7 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 
 ## Style Guide
 
-- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON.
+- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON. Enforced by Prettier — run `npm run format` rather than hand-aligning.
 - **No hardcoded strings.** All UI labels, URLs, messages, and test data come from config JSON files. If a value doesn't exist in config, add it there first, then reference it.
 - **Locator strategy:** Prefer `page.getByRole()` with config labels. Fall back to `page.locator()` with a config selector only when roles don't work.
 - **Test names:** Use `Underscored_names_describing_the_scenario`.
@@ -171,6 +171,27 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 - **Default exports** for POM classes.
 - **Use path aliases** (`@config`, `@poms/*`, etc.), never relative paths for cross-directory imports.
 - **Use `.press("Enter")` instead of `.click()`** on submit buttons to avoid WebKit issues.
+
+### Linting
+
+Style is mechanically enforced. A blocking `lint` job runs on every pull request and GitLab pipeline.
+
+```bash
+npm run lint          # ESLint: type-aware TS rules + Playwright rules
+npm run lint:fix      # auto-fix what ESLint can
+npm run format        # Prettier: rewrite files
+npm run format:check  # Prettier: verify only (what CI runs)
+```
+
+Config lives in `eslint.config.mjs` and `.prettierrc.json`. Both are `.npmignore`d — they are
+contributor tooling and are not shipped to consumers of the package.
+
+`base-tests/` is never linted; it is generated from `tests/` by `build.js`. Warnings mark
+pre-existing debt with a hit count in `eslint.config.mjs` — do not add new ones, and do not silence a
+rule to make output quiet.
+
+Run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once, so the bulk Prettier commit does
+not obscure `git blame`.
 
 ## CI/CD Pipeline
 
