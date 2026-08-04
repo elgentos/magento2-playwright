@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
 export class BaseComparePage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -19,20 +19,24 @@ export class BaseComparePage {
 	get compareActionButtons() {
 		return {
 			removeFromCompareButton: (product: string): Locator =>
-				this.page.getByLabel(`${UIReference.text.frontend.compare.removeProduct} ${product}`),
+				this.page.getByLabel(
+					`${UIReference.text.frontend.compare.removeProduct} ${product}`,
+				),
 			addToCartButton: (product: string): Locator =>
-				this.page.getByRole('cell', { name: product }).getByRole('button', { name: UIReference.text.shared.buttons.addToCart }),
+				this.page
+					.getByRole('cell', { name: product })
+					.getByRole('button', { name: UIReference.text.shared.buttons.addToCart }),
 			addToWishListButton: (product: string): Locator =>
-				this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`)
-		}
+				this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`),
+		};
 	}
 
 	// get messageLocators: return message locators
 	get messageLocators() {
 		return {
-			generalMessage : this.page.locator(UIReference.selectors.shared.message),
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
-		}
+			generalMessage: this.page.locator(UIReference.selectors.shared.message),
+			successMessage: this.page.locator(UIReference.selectors.shared.successMessage),
+		};
 	}
 
 	// ==============================================
@@ -46,7 +50,10 @@ export class BaseComparePage {
 		await this.page.goto(slugs.frontend.product.comparison);
 		await this.page.waitForLoadState();
 
-		await expect(this.comparePageTitle, 'Checkpoint: comparison page title is visible').toBeVisible();
+		await expect(
+			this.comparePageTitle,
+			'Checkpoint: comparison page title is visible',
+		).toBeVisible();
 	}
 
 	// ==============================================
@@ -59,7 +66,9 @@ export class BaseComparePage {
 	 * @returns {empty} - returns early if comparison page is empty
 	 */
 	async removeProductFromCompare(product: string) {
-		const comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
+		const comparisonPageEmptyText = this.page.getByText(
+			UIReference.text.frontend.compare.empty,
+		);
 		// if the comparison page is empty, we can't remove anything
 		if (await comparisonPageEmptyText.isVisible()) {
 			return;
@@ -69,11 +78,19 @@ export class BaseComparePage {
 
 		await this.compareActionButtons.removeFromCompareButton(product).click();
 		await this.messageLocators.generalMessage.waitFor();
-		await this.page.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage }).click();
+		await this.page
+			.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage })
+			.click();
 
 		// Assertions to confirm test ran correctly.
-		await expect(this.messageLocators.generalMessage, `notification toast should be hidden`).toBeHidden();
-		await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
+		await expect(
+			this.messageLocators.generalMessage,
+			`notification toast should be hidden`,
+		).toBeHidden();
+		await expect(
+			comparisonPageProductTitle,
+			`Link to product is no longer visible`,
+		).toBeHidden();
 	}
 
 	/**
@@ -82,7 +99,9 @@ export class BaseComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToCart(product: string) {
-		const productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+		const productAddedNotification = this.page.getByText(
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`,
+		);
 
 		this.compareActionButtons.addToCartButton(product).click();
 		await this.messageLocators.successMessage.waitFor();
@@ -97,7 +116,9 @@ export class BaseComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToWishList(product: string) {
-		const productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
+		const productAddedNotification = this.page.getByText(
+			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
+		);
 
 		await this.compareActionButtons.addToWishListButton(product).click();
 		await this.messageLocators.successMessage.waitFor();

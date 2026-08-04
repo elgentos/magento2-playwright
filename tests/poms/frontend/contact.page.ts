@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
 export class BaseContactPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -19,18 +19,23 @@ export class BaseContactPage {
 	// get formFields - returns field locators for the contact form
 	get formFields() {
 		return {
-			nameField : this.page.getByLabel(UIReference.text.shared.forms.name),
-			emailField : this.page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true }),
-			messageField : this.page.locator(UIReference.selectors.frontend.contact.message),
-			sendFormButton : this.page.getByRole('button', { name: UIReference.text.shared.buttons.submit })
-		}
+			nameField: this.page.getByLabel(UIReference.text.shared.forms.name),
+			emailField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.email,
+				exact: true,
+			}),
+			messageField: this.page.locator(UIReference.selectors.frontend.contact.message),
+			sendFormButton: this.page.getByRole('button', {
+				name: UIReference.text.shared.buttons.submit,
+			}),
+		};
 	}
 
 	// get messageLocators: return message locators
 	get messageLocators() {
 		return {
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
-		}
+			successMessage: this.page.locator(UIReference.selectors.shared.successMessage),
+		};
 	}
 
 	// ==============================================
@@ -45,7 +50,10 @@ export class BaseContactPage {
 		await this.page.waitForLoadState();
 
 		// Final assertion to check steps have finsihed correctly.
-		await expect(this.contactPageTitle, 'Checkpoint: contact page title is visible').toBeVisible();
+		await expect(
+			this.contactPageTitle,
+			'Checkpoint: contact page title is visible',
+		).toBeVisible();
 	}
 
 	// ==============================================

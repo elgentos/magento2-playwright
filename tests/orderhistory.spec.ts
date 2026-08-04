@@ -34,7 +34,10 @@ test('Recent_order_is_visible_in_history', async ({ page }) => {
 	await loginPage.goToLoginPage();
 	await loginPage.login(email, password);
 
-	await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+	await productPage.addSimpleProductToCart(
+		UIReference.text.frontend.product.simpleProduct,
+		slugs.frontend.product.simple,
+	);
 	await page.goto(slugs.frontend.checkout.index);
 
 	const orderNumberLocator = await checkoutPage.placeOrder();

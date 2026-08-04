@@ -24,9 +24,21 @@ test.describe('Accessibility Tests: EEA compliance', () => {
 	// Set up a list of pages to check.
 	const pagesToCheck: { label: string; slug: string; pageTitle: string }[] = [
 		{ label: 'home', slug: '/', pageTitle: UIReference.text.frontend.home.title },
-		{ label: 'plp', slug: slugs.frontend.category.index, pageTitle: UIReference.text.frontend.category.title},
-		{ label: 'pdp', slug: slugs.frontend.product.simple, pageTitle: UIReference.text.frontend.product.simpleProduct },
-		{ label: 'cart', slug: slugs.frontend.cart.index, pageTitle: UIReference.text.frontend.cart.title },
+		{
+			label: 'plp',
+			slug: slugs.frontend.category.index,
+			pageTitle: UIReference.text.frontend.category.title,
+		},
+		{
+			label: 'pdp',
+			slug: slugs.frontend.product.simple,
+			pageTitle: UIReference.text.frontend.product.simpleProduct,
+		},
+		{
+			label: 'cart',
+			slug: slugs.frontend.cart.index,
+			pageTitle: UIReference.text.frontend.cart.title,
+		},
 	];
 
 	// For each page in the list above, run the accessibility check.
@@ -35,24 +47,31 @@ test.describe('Accessibility Tests: EEA compliance', () => {
 		 * Test: confirm the page does not have critical accessibility issues.
 		 * @param page - Playwright page instance used for interacting with the website.
 		 */
-		test(`${label}page_passes_wcag2a_scan`, { tag: '@accessibility', }, async ({ page }, testInfo) => {
-			await page.goto(slug);
-			await page.waitForLoadState();
-			const pageHeading = page.getByRole('heading', {name : pageTitle}).first();
+		test(
+			`${label}page_passes_wcag2a_scan`,
+			{ tag: '@accessibility' },
+			async ({ page }, testInfo) => {
+				await page.goto(slug);
+				await page.waitForLoadState();
+				const pageHeading = page.getByRole('heading', { name: pageTitle }).first();
 
-			await expect(pageHeading,`Checkpoint: ${label} page title is visible`).toBeVisible();
+				await expect(
+					pageHeading,
+					`Checkpoint: ${label} page title is visible`,
+				).toBeVisible();
 
-			// Analyze page
-			const axe = new AxeBuilder({ page }).withTags(['wcag2aa']);
-			const accessibilityScanResults = await axe.analyze();
+				// Analyze page
+				const axe = new AxeBuilder({ page }).withTags(['wcag2aa']);
+				const accessibilityScanResults = await axe.analyze();
 
-			// attach scan results to reporter
-			await testInfo.attach(`${label}page_accessibility-scan-results`, {
-				body: JSON.stringify(accessibilityScanResults, null, 2),
-				contentType: 'application/json'
-			});
+				// attach scan results to reporter
+				await testInfo.attach(`${label}page_accessibility-scan-results`, {
+					body: JSON.stringify(accessibilityScanResults, null, 2),
+					contentType: 'application/json',
+				});
 
-			expect(accessibilityScanResults.violations).toEqual([]);
-		});
+				expect(accessibilityScanResults.violations).toEqual([]);
+			},
+		);
 	}
 });

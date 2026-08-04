@@ -5,7 +5,7 @@ import { UIReference, slugs } from '@config';
 import { slugToRegex, isLocalhost } from '@utils/url.utils';
 
 export class BaseCategoryPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -24,21 +24,31 @@ export class BaseCategoryPage {
 	 * Returns category filter locators.
 	 */
 	get categoryFilterItems() {
-		const filterRegion = this.page.getByRole('region', { name: UIReference.text.frontend.category.filterRegion });
+		const filterRegion = this.page.getByRole('region', {
+			name: UIReference.text.frontend.category.filterRegion,
+		});
 		return {
 			filterRegion,
-			attributeFilterButton : filterRegion.getByRole('button', { name: UIReference.text.frontend.category.sizeFilter }),
-			attributeOption : filterRegion.getByRole('link', { name: UIReference.text.frontend.category.sizeM }),
-			activeFilteringButton : this.page.getByRole('button', { name: UIReference.text.frontend.category.activeFilter }),
-			clearAllLink : this.page.getByRole('link', { name: UIReference.text.shared.buttons.clearAll })
-		}
+			attributeFilterButton: filterRegion.getByRole('button', {
+				name: UIReference.text.frontend.category.sizeFilter,
+			}),
+			attributeOption: filterRegion.getByRole('link', {
+				name: UIReference.text.frontend.category.sizeM,
+			}),
+			activeFilteringButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.category.activeFilter,
+			}),
+			clearAllLink: this.page.getByRole('link', {
+				name: UIReference.text.shared.buttons.clearAll,
+			}),
+		};
 	}
 
 	get moreProductItems() {
 		return {
-			itemsPerPageButton : this.page.getByLabel(UIReference.text.frontend.common.itemsPerPage),
-			productGrid : this.page.locator(UIReference.selectors.frontend.category.productGrid)
-		}
+			itemsPerPageButton: this.page.getByLabel(UIReference.text.frontend.common.itemsPerPage),
+			productGrid: this.page.locator(UIReference.selectors.frontend.category.productGrid),
+		};
 	}
 
 	/**
@@ -50,7 +60,9 @@ export class BaseCategoryPage {
 	}
 
 	get viewSwitcher() {
-		return this.page.getByLabel(UIReference.text.frontend.category.viewSwitch, { exact: true }).locator(UIReference.selectors.frontend.category.activeView);
+		return this.page
+			.getByLabel(UIReference.text.frontend.category.viewSwitch, { exact: true })
+			.locator(UIReference.selectors.frontend.category.activeView);
 	}
 
 	// ==============================================
@@ -67,11 +79,9 @@ export class BaseCategoryPage {
 		await expect(this.categoryPageTitle).toBeVisible();
 	}
 
-
 	// ==============================================
 	// Page-interaction methods
 	// ==============================================
-
 
 	/**
 	 * Method to filter category on an attribute.
@@ -80,7 +90,8 @@ export class BaseCategoryPage {
 	 */
 	async filterOnAttribute() {
 		// declare 'this.categoryFilterItems' once to avoid having to use it everywhere.
-		const { attributeFilterButton, attributeOption, activeFilteringButton, clearAllLink } = this.categoryFilterItems;
+		const { attributeFilterButton, attributeOption, activeFilteringButton, clearAllLink } =
+			this.categoryFilterItems;
 
 		// Scroll to the attribute filter to trigger Alpine.js deferred initialization
 		await attributeFilterButton.scrollIntoViewIfNeeded();
@@ -98,17 +109,20 @@ export class BaseCategoryPage {
 
 		// Determine the expected size filter slug based on the environment
 		let expectedSizeFilterSlug: string;
-		isLocalhost(this.page.url()) ? expectedSizeFilterSlug = 'size=168' : expectedSizeFilterSlug = 'size=M';
-
+		isLocalhost(this.page.url())
+			? (expectedSizeFilterSlug = 'size=168')
+			: (expectedSizeFilterSlug = 'size=M');
 
 		await attributeOption.click();
 		await this.page.waitForURL(slugToRegex(expectedSizeFilterSlug));
 
 		// Verify active filtering is shown and Clear All link is available
-		await expect(activeFilteringButton, 'Active filtering button should be visible').toBeVisible();
+		await expect(
+			activeFilteringButton,
+			'Active filtering button should be visible',
+		).toBeVisible();
 		await expect(clearAllLink, 'Clear All link should be visible').toBeVisible();
 	}
-
 
 	/**
 	 * Method to sort products on category price by attribute.
@@ -120,14 +134,18 @@ export class BaseCategoryPage {
 		await this.sortButton.selectOption(attribute);
 		await this.page.waitForURL(sortRegex);
 
-		const selectedValue = await this.page.$eval(UIReference.selectors.frontend.category.sortBy, sel => (sel as HTMLSelectElement).value);
+		const selectedValue = await this.page.$eval(
+			UIReference.selectors.frontend.category.sortBy,
+			(sel) => (sel as HTMLSelectElement).value,
+		);
 
 		// Verification:
 		// Sort button should show selected attribute, and url should have ordering appended
 		expect(selectedValue, `Sort button should now display ${attribute}`).toEqual(attribute);
-		expect(this.page.url(), `URL should contain ?product_list_order=${attribute}`).toContain(`product_list_order=${attribute}`);
+		expect(this.page.url(), `URL should contain ?product_list_order=${attribute}`).toContain(
+			`product_list_order=${attribute}`,
+		);
 	}
-
 
 	/**
 	 * Method for the test "Change_amount_of_products_shown"
@@ -143,7 +161,9 @@ export class BaseCategoryPage {
 
 		const amountOfItems = await productGrid.locator('li').count();
 
-		expect(this.page.url(), `URL should contain ?product_list_limit=36`).toContain(`?product_list_limit=36`);
+		expect(this.page.url(), `URL should contain ?product_list_limit=36`).toContain(
+			`?product_list_limit=36`,
+		);
 		expect(amountOfItems, `Amount of items on the page should be 36`).toBe(36);
 	}
 
@@ -164,7 +184,13 @@ export class BaseCategoryPage {
 		await this.page.waitForURL(viewRegex);
 
 		const newActiveView = await this.viewSwitcher.getAttribute('title');
-		expect(newActiveView, `View (now ${newActiveView}) should be switched (old: ${activeView})`).not.toEqual(activeView);
-		expect(this.page.url(), `URL should contain ?product_list_mode=${newActiveView?.toLowerCase()}`).toContain(`?product_list_mode=${newActiveView?.toLowerCase()}`);
+		expect(
+			newActiveView,
+			`View (now ${newActiveView}) should be switched (old: ${activeView})`,
+		).not.toEqual(activeView);
+		expect(
+			this.page.url(),
+			`URL should contain ?product_list_mode=${newActiveView?.toLowerCase()}`,
+		).toContain(`?product_list_mode=${newActiveView?.toLowerCase()}`);
 	}
 }

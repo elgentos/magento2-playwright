@@ -57,11 +57,15 @@ test('HTTP_auth_headers_are_sent', async ({ page, playwright }) => {
 	// 4. Site requires auth — verify we can visit the page with the provided credentials.
 	const response = await page.goto('/');
 	expect(response, 'Navigation should return a response').not.toBeNull();
-	expect(response!.ok(), `Authenticated request should succeed but got ${response!.status()}`).toBeTruthy();
+	expect(
+		response!.ok(),
+		`Authenticated request should succeed but got ${response!.status()}`,
+	).toBeTruthy();
 
 	test.info().annotations.push({
 		type: 'HTTP Auth',
-		description: 'Site requires authentication — successfully accessed with provided credentials.',
+		description:
+			'Site requires authentication — successfully accessed with provided credentials.',
 	});
 });
 
@@ -73,7 +77,6 @@ test('HTTP_auth_headers_are_sent', async ({ page, playwright }) => {
  * making it more benificial to write each test separately.
  */
 test.describe('Smoke tests for critical pages', () => {
-
 	/**
 	 * Test: Confirm the homepage can be reached.
 	 * @param page - Playwright page instance used for interacting with the website.
@@ -86,8 +89,10 @@ test.describe('Smoke tests for critical pages', () => {
 		const homepageResponse = await homepageResponsePromise;
 		expect(homepageResponse.status(), 'Homepage should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', { name: UIReference.text.frontend.home.title, level: 1 }),
-			'Homepage has a visible title').toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: UIReference.text.frontend.home.title, level: 1 }),
+			'Homepage has a visible title',
+		).toBeVisible();
 	});
 
 	/**
@@ -101,8 +106,10 @@ test.describe('Smoke tests for critical pages', () => {
 		const plpResponse = await plpResponsePromise;
 		expect(plpResponse.status(), 'PLP should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', { name: UIReference.text.frontend.category.title }),
-			'PLP has a visible title').toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: UIReference.text.frontend.category.title }),
+			'PLP has a visible title',
+		).toBeVisible();
 	});
 
 	/**
@@ -116,8 +123,13 @@ test.describe('Smoke tests for critical pages', () => {
 		const pdpResponse = await pdpResponsePromise;
 		expect(pdpResponse.status(), 'PDP should return 200').toBe(200);
 
-		await expect(page.getByRole('heading', { level: 1, name: UIReference.text.frontend.product.simpleProduct }),
-			'PDP has a visible title').toBeVisible();
+		await expect(
+			page.getByRole('heading', {
+				level: 1,
+				name: UIReference.text.frontend.product.simpleProduct,
+			}),
+			'PDP has a visible title',
+		).toBeVisible();
 	});
 
 	/**
@@ -132,12 +144,19 @@ test.describe('Smoke tests for critical pages', () => {
 		const response = await responsePromise;
 
 		expect(response.status(), 'Cart empty, checkout should return 302').toBe(302);
-		expect(page.url(), 'Cart empty, checkout should redirect to cart').toContain(slugs.frontend.cart.index);
+		expect(page.url(), 'Cart empty, checkout should redirect to cart').toContain(
+			slugs.frontend.cart.index,
+		);
 
-		await expect(page.getByRole('heading', { name: UIReference.text.frontend.cart.title }),
-			'Cart has a visible title').toBeVisible();
+		await expect(
+			page.getByRole('heading', { name: UIReference.text.frontend.cart.title }),
+			'Cart has a visible title',
+		).toBeVisible();
 
-		expect((await page.request.head(page.url())).status(), `Current page (${page.url()}) should return 200`).toBe(200);
+		expect(
+			(await page.request.head(page.url())).status(),
+			`Current page (${page.url()}) should return 200`,
+		).toBe(200);
 	});
 });
 
@@ -149,7 +168,6 @@ test.describe('Smoke tests for critical pages', () => {
  * and used as the baseline that the base URL is compared against.
  */
 test.describe('Visual Regression Tests', () => {
-
 	// Pin the viewport and DPR so screenshots are byte-comparable regardless of
 	// the project's device profile. Desktop Safari defaults deviceScaleFactor
 	// to 2, which would otherwise produce a 2560×1440 bitmap on webkit while
@@ -165,7 +183,11 @@ test.describe('Visual Regression Tests', () => {
 	// comparison, so any element matched is painted over on both sides.
 	const visualRegressionPages: { label: string; slug: string; maskSelectors?: string[] }[] = [
 		{ label: 'homepage', slug: '/' },
-		{ label: 'plp', slug: slugs.frontend.category.index, maskSelectors: ['.product-item-photo'] },
+		{
+			label: 'plp',
+			slug: slugs.frontend.category.index,
+			maskSelectors: ['.product-item-photo'],
+		},
 		{ label: 'pdp', slug: slugs.frontend.product.simple },
 		{ label: 'cart', slug: slugs.frontend.cart.index },
 	];
@@ -176,31 +198,38 @@ test.describe('Visual Regression Tests', () => {
 		 * @param page - Playwright page instance used for interacting with the website.
 		 * @param testInfo - Test metadata, used to resolve artifact and snapshot paths.
 		 */
-		test(`${label}_matches_visual_baseline`, { tag: ['@smoke', '@visual', '@cold'] }, async ({ page }, testInfo) => {
-			const snapshotName = regressionSnapshotName(label, testInfo.project.name, 'png');
-			const masks = (maskSelectors ?? []).map(selector => page.locator(selector));
+		test(
+			`${label}_matches_visual_baseline`,
+			{ tag: ['@smoke', '@visual', '@cold'] },
+			async ({ page }, testInfo) => {
+				const snapshotName = regressionSnapshotName(label, testInfo.project.name, 'png');
+				const masks = (maskSelectors ?? []).map((selector) => page.locator(selector));
 
-			// 1. Navigate to the slug on the production URL.
-			const productionUrl = new URL(slug, requireEnv('PLAYWRIGHT_PRODUCTION_URL')).toString();
-			await page.goto(productionUrl);
-			await page.waitForLoadState('load');
-			// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
+				// 1. Navigate to the slug on the production URL.
+				const productionUrl = new URL(
+					slug,
+					requireEnv('PLAYWRIGHT_PRODUCTION_URL'),
+				).toString();
+				await page.goto(productionUrl);
+				await page.waitForLoadState('load');
+				// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
 
-			// 2. Capture production and write it to the snapshot path that step 4's
-			//    assertion reads. One file per page/browser/day — re-running on the
-			//    same day overwrites it with the latest production state.
-			const productionBuffer = await page.screenshot({ mask: masks });
-			const baselinePath = testInfo.snapshotPath(snapshotName);
-			fs.mkdirSync(path.dirname(baselinePath), { recursive: true });
-			fs.writeFileSync(baselinePath, productionBuffer);
+				// 2. Capture production and write it to the snapshot path that step 4's
+				//    assertion reads. One file per page/browser/day — re-running on the
+				//    same day overwrites it with the latest production state.
+				const productionBuffer = await page.screenshot({ mask: masks });
+				const baselinePath = testInfo.snapshotPath(snapshotName);
+				fs.mkdirSync(path.dirname(baselinePath), { recursive: true });
+				fs.writeFileSync(baselinePath, productionBuffer);
 
-			// 3. Navigate to the same slug on the base URL.
-			await page.goto(slug);
-			await page.waitForLoadState('load');
-			// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
+				// 3. Navigate to the same slug on the base URL.
+				await page.goto(slug);
+				await page.waitForLoadState('load');
+				// TODO: add an element.waitFor(); here so we can confirm the page is done loading.
 
-			// 4. Compare the base URL page against the production baseline from step 2.
-			await expect(page).toHaveScreenshot(snapshotName, { mask: masks });
-		});
+				// 4. Compare the base URL page against the production baseline from step 2.
+				await expect(page).toHaveScreenshot(snapshotName, { mask: masks });
+			},
+		);
 	}
 });

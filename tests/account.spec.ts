@@ -17,284 +17,366 @@ import { BaseNewsletterSubscriptionPage } from '@poms/frontend/newsletter.page';
 
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
-import { UIReference, outcomeMarker, slugs, inputValues} from '@config';
+import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
 
 /**
  * Test group: User credentials tests
  */
-test.describe('User credentials tests (API-provisioned)', { annotation:
-{type: 'Account Dashboard', description: 'Test for changing credentials using API-provisioned account'}, }, () => {
+test.describe(
+	'User credentials tests (API-provisioned)',
+	{
+		annotation: {
+			type: 'Account Dashboard',
+			description: 'Test for changing credentials using API-provisioned account',
+		},
+	},
+	() => {
+		let apiClient: ApiClient;
 
-	let apiClient: ApiClient;
+		// Ensure we don't use an authenticated state.
+		test.use({ storageState: { cookies: [], origins: [] } });
 
-	// Ensure we don't use an authenticated state.
-	test.use({ storageState: { cookies: [], origins: [] } });
+		test.beforeAll(async () => {
+			apiClient = await new ApiClient().create();
+		});
 
-	test.beforeAll(async () => {
-		apiClient = await new ApiClient().create();
-	});
+		test.afterAll(async () => {
+			await apiClient.dispose();
+		});
 
-	test.afterAll(async () => {
-		await apiClient.dispose();
-	});
+		/**
+		 * Test: User changes their password
+		 * @param page - Playwright page instance used to interact with the website.
+		 * @param request - APIRequestContext instance used to create accounts with the API.
+		 */
+		test(
+			'Change_password',
+			{ tag: ['@account-credentials', '@hot'] },
+			async ({ page, request }) => {
+				const accountPage = new BaseAccountPage(page);
+				const loginPage = new BaseLoginPage(page);
 
-	/**
-	 * Test: User changes their password
-	 * @param page - Playwright page instance used to interact with the website.
-	 * @param request - APIRequestContext instance used to create accounts with the API.
-	 */
-	test('Change_password', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new BaseAccountPage(page);
-		const loginPage = new BaseLoginPage(page);
+				const parallelIndex = test.info().parallelIndex;
+				const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
+				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
-		const parallelIndex = test.info().parallelIndex;
-		const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
-		const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-		const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
+				// Ensure a fresh account exists with the original password
+				const searchResponse = await apiClient.get(
+					`/rest/V1/customers/search` +
+						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+						`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
+						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+				);
 
-		// Ensure a fresh account exists with the original password
-		const searchResponse = await apiClient.get(
-			`/rest/V1/customers/search` +
-			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
-			`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`
-		);
+				if (searchResponse.items?.length > 0) {
+					await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
+				}
 
-		if (searchResponse.items?.length > 0) {
-			await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
-		}
+				await apiClient.post('/rest/V1/customers', {
+					customer: {
+						email,
+						firstname: inputValues.account.firstName,
+						lastname: inputValues.account.lastName,
+					},
+					password,
+				});
 
-		await apiClient.post('/rest/V1/customers', {
-			customer: {
-				email,
-				firstname: inputValues.account.firstName,
-				lastname: inputValues.account.lastName,
+				// Login and change password via UI
+				await loginPage.goToLoginPage();
+				await loginPage.login(email, password);
+				await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
+				await expect(
+					page.getByRole('textbox', {
+						name: UIReference.text.shared.forms.currentPassword,
+					}),
+				).toBeVisible();
+				await accountPage.updatePassword(password, changedPassword);
+
+				// Verify the new password works via API
+				const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
+					data: { username: email, password: changedPassword },
+				});
+				expect(
+					tokenResponse.ok(),
+					'Customer token API should accept the new password',
+				).toBeTruthy();
 			},
-			password,
-		});
-
-		// Login and change password via UI
-		await loginPage.goToLoginPage();
-		await loginPage.login(email, password);
-		await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
-		await expect(page.getByRole('textbox', { name: UIReference.text.shared.forms.currentPassword })).toBeVisible();
-		await accountPage.updatePassword(password, changedPassword);
-
-		// Verify the new password works via API
-		const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
-			data: { username: email, password: changedPassword },
-		});
-		expect(tokenResponse.ok(), 'Customer token API should accept the new password').toBeTruthy();
-	});
-
-	/**
-	 * Test: User changes their e-mailaddress
-	 * @param page - Playwright page instance used to interact with the website.
-	 * @param request - APIRequestContext instance used to create accounts with the API.
-	 */
-	test('Update_email_address', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new BaseAccountPage(page);
-		const loginPage = new BaseLoginPage(page);
-
-		const parallelIndex = test.info().parallelIndex;
-		const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
-		const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@elgentos.nl`;
-		const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-
-		// Ensure a fresh account exists with the original email
-		const searchResponse = await apiClient.get(
-			`/rest/V1/customers/search` +
-			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=${originalEmail}` +
-			`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`
 		);
 
-		if (searchResponse.items?.length > 0) {
-			await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
-		}
+		/**
+		 * Test: User changes their e-mailaddress
+		 * @param page - Playwright page instance used to interact with the website.
+		 * @param request - APIRequestContext instance used to create accounts with the API.
+		 */
+		test(
+			'Update_email_address',
+			{ tag: ['@account-credentials', '@hot'] },
+			async ({ page, request }) => {
+				const accountPage = new BaseAccountPage(page);
+				const loginPage = new BaseLoginPage(page);
 
-		// Also clean up any leftover updated email account from a previous run
-		const updatedSearchResponse = await apiClient.get(
-			`/rest/V1/customers/search` +
-			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=${updatedEmail}` +
-			`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`
-		);
+				const parallelIndex = test.info().parallelIndex;
+				const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
+				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@elgentos.nl`;
+				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-		if (updatedSearchResponse.items?.length > 0) {
-			await apiClient.delete(`/rest/V1/customers/${updatedSearchResponse.items[0].id}`);
-		}
+				// Ensure a fresh account exists with the original email
+				const searchResponse = await apiClient.get(
+					`/rest/V1/customers/search` +
+						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+						`&searchCriteria[filterGroups][0][filters][0][value]=${originalEmail}` +
+						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+				);
 
-		await apiClient.post('/rest/V1/customers', {
-			customer: {
-				email: originalEmail,
-				firstname: inputValues.account.firstName,
-				lastname: inputValues.account.lastName,
+				if (searchResponse.items?.length > 0) {
+					await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
+				}
+
+				// Also clean up any leftover updated email account from a previous run
+				const updatedSearchResponse = await apiClient.get(
+					`/rest/V1/customers/search` +
+						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+						`&searchCriteria[filterGroups][0][filters][0][value]=${updatedEmail}` +
+						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+				);
+
+				if (updatedSearchResponse.items?.length > 0) {
+					await apiClient.delete(
+						`/rest/V1/customers/${updatedSearchResponse.items[0].id}`,
+					);
+				}
+
+				await apiClient.post('/rest/V1/customers', {
+					customer: {
+						email: originalEmail,
+						firstname: inputValues.account.firstName,
+						lastname: inputValues.account.lastName,
+					},
+					password,
+				});
+
+				// Login and update email via UI
+				await loginPage.goToLoginPage();
+				await loginPage.login(originalEmail, password);
+				await page.goto(slugs.frontend.account.edit, { waitUntil: 'load' });
+				await expect(
+					page
+						.locator('#form-validate')
+						.getByText(UIReference.text.frontend.account.dashboardTitle),
+					`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`,
+				).toBeVisible();
+				await accountPage.updateEmail(password, updatedEmail);
+
+				// Verify the updated email works via API
+				const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
+					data: { username: updatedEmail, password: password },
+				});
+				expect(
+					tokenResponse.ok(),
+					'Customer token API should accept the updated email',
+				).toBeTruthy();
 			},
-			password,
-		});
-
-		// Login and update email via UI
-		await loginPage.goToLoginPage();
-		await loginPage.login(originalEmail, password);
-		await page.goto(slugs.frontend.account.edit, { waitUntil: 'load' });
-		await expect(page.locator('#form-validate').
-			getByText(UIReference.text.frontend.account.dashboardTitle),
-			`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`).toBeVisible();
-		await accountPage.updateEmail(password, updatedEmail);
-
-		// Verify the updated email works via API
-		const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
-			data: { username: updatedEmail, password: password },
-		});
-		expect(tokenResponse.ok(), 'Customer token API should accept the updated email').toBeTruthy();
-	});
-});
+		);
+	},
+);
 
 /**
  * Test Group: Account address book actions
  * @assume we're using the fixture with an authenticated account
  */
-test.describe.serial('Account address book actions', { annotation: {type: 'Account Dashboard', description: 'Tests for the Address Book'},}, () => {
+test.describe.serial(
+	'Account address book actions',
+	{ annotation: { type: 'Account Dashboard', description: 'Tests for the Address Book' } },
+	() => {
+		test.beforeEach(async ({ page }) => {
+			await page.goto(slugs.frontend.account.addressIndex, { waitUntil: 'load' });
 
-	test.beforeEach(async ({page}) => {
-		await page.goto(slugs.frontend.account.addressIndex, {waitUntil: "load"});
-
-		// if page navigated to new address, no address had been added yet.
-		if(page.url().includes('new')){
-			await expect(async () => {
-				await expect(page.getByText(UIReference.text.frontend.account.addNewAddressTitle),
-				`Heading "${UIReference.text.frontend.account.addNewAddressTitle}" is visible`).toBeVisible();
-			}).toPass();
-		} else {
-			await expect(async () => {
-				await expect(page.getByRole('heading',
-				{ name: UIReference.text.frontend.common.navigation.addressBook }),
-				`Heading "${UIReference.text.frontend.common.navigation.addressBook}" is visible`).toBeVisible();
-			}).toPass();
-		}
-	});
-
-	/**
-	 * Test: The user adds an address to their account
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new BaseAccountPage(page);
-
-		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
-		const company = faker.company.name();
-
-		await accountPage.addNewAddress({ company: company, street: address});
-
-		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
-		const addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-		await expect.soft(page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
-	});
-
-	/**
-	 * Test: The user edits an existing address to their account
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new BaseAccountPage(page);
-		await page.goto(slugs.frontend.account.addressBook);
-		const editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
-		let isDefaultAddress = false;
-
-		if(await editAddressButton.isHidden()){
-			// The edit address button was not found, add another address first.
-			if(await page.getByRole('link', { name: 'Change Shipping Address arrow' }).isVisible()) {
-				isDefaultAddress = true;
+			// if page navigated to new address, no address had been added yet.
+			if (page.url().includes('new')) {
+				await expect(async () => {
+					await expect(
+						page.getByText(UIReference.text.frontend.account.addNewAddressTitle),
+						`Heading "${UIReference.text.frontend.account.addNewAddressTitle}" is visible`,
+					).toBeVisible();
+				}).toPass();
 			} else {
-				expect (page.url(), `Edit address button not found, check URL is to the new address page`).toBe(slugs.frontend.account.addressNew);
+				await expect(async () => {
+					await expect(
+						page.getByRole('heading', {
+							name: UIReference.text.frontend.common.navigation.addressBook,
+						}),
+						`Heading "${UIReference.text.frontend.common.navigation.addressBook}" is visible`,
+					).toBeVisible();
+				}).toPass();
+			}
+		});
+
+		/**
+		 * Test: The user adds an address to their account
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test('Add_an_address', { tag: ['@address-actions', '@hot'] }, async ({ page }) => {
+			await page.goto(slugs.frontend.account.addressNew);
+			const accountPage = new BaseAccountPage(page);
+
+			const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
+			const company = faker.company.name();
+
+			await accountPage.addNewAddress({ company: company, street: address });
+
+			await expect(
+				page.getByText(address).first(),
+				`Expect new address to be listed`,
+			).toBeVisible();
+			const addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+			await expect
+				.soft(
+					page.getByText(addressAddedNotification),
+					`message that confirms actions should be visible`,
+				)
+				.toBeVisible();
+		});
+
+		/**
+		 * Test: The user edits an existing address to their account
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test('Edit_existing_address', { tag: ['@address-actions', '@hot'] }, async ({ page }) => {
+			const accountPage = new BaseAccountPage(page);
+			await page.goto(slugs.frontend.account.addressBook);
+			const editAddressButton = page
+				.getByRole('link', { name: UIReference.text.frontend.account.editAddress })
+				.first();
+			let isDefaultAddress = false;
+
+			if (await editAddressButton.isHidden()) {
+				// The edit address button was not found, add another address first.
+				if (
+					await page
+						.getByRole('link', { name: 'Change Shipping Address arrow' })
+						.isVisible()
+				) {
+					isDefaultAddress = true;
+				} else {
+					expect(
+						page.url(),
+						`Edit address button not found, check URL is to the new address page`,
+					).toBe(slugs.frontend.account.addressNew);
+					await accountPage.addNewAddress();
+				}
+			}
+
+			// const companyName = faker.company.name();
+			const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
+			await accountPage.editExistingAddress({ street: address }, isDefaultAddress);
+
+			// await expect(page.getByText(companyName)).toBeVisible();
+			await expect(page.getByText(address).first()).toBeVisible();
+			const addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+			await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
+		});
+
+		/**
+		 * Test: The user can't add an address if they don't fill in all the required fields
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test(
+			'Missing_required_field_prevents_creation',
+			{ tag: ['@address-actions'] },
+			async ({ page }) => {
+				await page.goto(slugs.frontend.account.addressNew);
+				const accountPage = new BaseAccountPage(page);
+
+				await accountPage.accountAddressFields.phoneNumberField.fill(
+					inputValues.firstAddress.firstPhoneNumberValue,
+				);
+				await accountPage.accountAddressFields.saveAddressButton.click();
+
+				const errorMessage = page
+					.getByText(UIReference.text.shared.messages.streetAddressRequired)
+					.first();
+				await errorMessage.waitFor();
+				await expect(
+					errorMessage,
+					`Error message "${UIReference.text.shared.messages.streetAddressRequired}" is visible`,
+				).toBeVisible();
+			},
+		);
+
+		/**
+		 * Test: The user deletes an address from their account.
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test('Delete_an_address', { tag: ['@address-actions', '@hot'] }, async ({ page }) => {
+			const accountPage = new BaseAccountPage(page);
+			await page.goto(slugs.frontend.account.addressBook);
+
+			const deleteAddressButton = page
+				.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress })
+				.first();
+
+			if (await deleteAddressButton.isHidden()) {
+				// The delete address button was not found, add another address first.
+				await page.goto(slugs.frontend.account.addressNew);
 				await accountPage.addNewAddress();
 			}
-		}
 
-		// const companyName = faker.company.name();
-		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
-		await accountPage.editExistingAddress({street:address}, isDefaultAddress);
-
-		// await expect(page.getByText(companyName)).toBeVisible();
-		await expect(page.getByText(address).first()).toBeVisible();
-		const addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-		await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
-	});
-
-	/**
-	 * Test: The user can't add an address if they don't fill in all the required fields
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
-		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new BaseAccountPage(page);
-
-		await accountPage.accountAddressFields.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
-		await accountPage.accountAddressFields.saveAddressButton.click();
-
-		const errorMessage = page.getByText(UIReference.text.shared.messages.streetAddressRequired).first();
-		await errorMessage.waitFor();
-		await expect(errorMessage, `Error message "${UIReference.text.shared.messages.streetAddressRequired}" is visible`).toBeVisible();
-	});
-
-	/**
-	 * Test: The user deletes an address from their account.
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new BaseAccountPage(page);
-		await page.goto(slugs.frontend.account.addressBook);
-
-		const deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
-
-		if(await deleteAddressButton.isHidden()) {
-			// The delete address button was not found, add another address first.
-			await page.goto(slugs.frontend.account.addressNew);
-			await accountPage.addNewAddress();
-		}
-
-		await accountPage.deleteFirstAddressFromAddressBook();
-	});
-});
+			await accountPage.deleteFirstAddressFromAddressBook();
+		});
+	},
+);
 
 /**
  * Test Group: Newsletter tests
  * @assume we're using the fixture with an authenticated account
  */
-test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
+test.describe(
+	'Newsletter actions',
+	{ annotation: { type: 'Account Dashboard', description: 'Newsletter tests' } },
+	() => {
+		/**
+		 * Test: The user (un)subscribes from the newsletter
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test(
+			'Update_newsletter_subscription',
+			{ tag: ['@newsletter-actions', '@cold'] },
+			async ({ page }) => {
+				// Navigate to a page.
+				await page.goto(slugs.frontend.account.overview);
+				await page.waitForLoadState();
 
-	/**
-	 * Test: The user (un)subscribes from the newsletter
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page}) => {
-		// Navigate to a page.
-		await page.goto(slugs.frontend.account.overview);
-		await page.waitForLoadState();
+				const newsletterPage = new BaseNewsletterSubscriptionPage(page);
+				const newsletterLink = page.getByRole('link', {
+					name: UIReference.text.frontend.account.newsletterLink,
+				});
+				const newsletterCheckElement = page.getByLabel(
+					UIReference.text.frontend.newsletter.generalSubscription,
+				);
 
-		const newsletterPage = new BaseNewsletterSubscriptionPage(page);
-		const newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
-		const newsletterCheckElement = page.getByLabel(UIReference.text.frontend.newsletter.generalSubscription);
+				await newsletterLink.click();
+				await expect(
+					page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, {
+						exact: true,
+					}),
+				).toBeVisible();
 
-		await newsletterLink.click();
-		await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
+				const updateSubscription = await newsletterPage.updateNewsletterSubscription();
 
-		const updateSubscription = await newsletterPage.updateNewsletterSubscription();
+				await newsletterLink.click();
 
-		await newsletterLink.click();
-
-		if(updateSubscription) {
-			await expect(newsletterCheckElement).toBeChecked();
-		}
-		else {
-			await expect(newsletterCheckElement).not.toBeChecked();
-		}
-	});
-});
+				if (updateSubscription) {
+					await expect(newsletterCheckElement).toBeChecked();
+				} else {
+					await expect(newsletterCheckElement).not.toBeChecked();
+				}
+			},
+		);
+	},
+);

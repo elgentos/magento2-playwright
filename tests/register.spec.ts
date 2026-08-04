@@ -19,26 +19,38 @@ test.use({ storageState: { cookies: [], origins: [] } });
  *  @then I click the 'Create account' button
  *  @then I should see a messsage confirming my account was created
  */
-test('User_registers_an_account', { tag: ['@account-creation', '@hot'] }, async ({ page, browserName }, testInfo) => {
-	const registerPage = new BaseRegisterPage(page);
-	await registerPage.goToRegisterPage();
+test(
+	'User_registers_an_account',
+	{ tag: ['@account-creation', '@hot'] },
+	async ({ page, browserName }, testInfo) => {
+		const registerPage = new BaseRegisterPage(page);
+		await registerPage.goToRegisterPage();
 
-	// Retrieve desired password from .env file
-	const existingAccountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-	const firstName = faker.person.firstName();
-	const lastName = faker.person.lastName();
+		// Retrieve desired password from .env file
+		const existingAccountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+		const firstName = faker.person.firstName();
+		const lastName = faker.person.lastName();
 
-	const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
-	const randomNumber = Math.floor(Math.random() * 1000);
-	const emailHandle = inputValues.accountCreation.emailHandleValue;
-	const emailHost = inputValues.accountCreation.emailHostValue;
-	const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
+		const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
+		const randomNumber = Math.floor(Math.random() * 1000);
+		const emailHandle = inputValues.accountCreation.emailHandleValue;
+		const emailHost = inputValues.accountCreation.emailHostValue;
+		const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
 
-	if (!accountEmail) {
-		throw new Error(`Generated account email is invalid.`);
-	}
-	// end of browserNameEmailSection
+		if (!accountEmail) {
+			throw new Error(`Generated account email is invalid.`);
+		}
+		// end of browserNameEmailSection
 
-	await registerPage.createNewAccount(firstName, lastName, accountEmail, existingAccountPassword);
-	testInfo.annotations.push({ type: 'Notification: account created!', description: `Credentials used: ${accountEmail}, password: ${existingAccountPassword}` });
-});
+		await registerPage.createNewAccount(
+			firstName,
+			lastName,
+			accountEmail,
+			existingAccountPassword,
+		);
+		testInfo.annotations.push({
+			type: 'Notification: account created!',
+			description: `Credentials used: ${accountEmail}, password: ${existingAccountPassword}`,
+		});
+	},
+);
