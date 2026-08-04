@@ -57,7 +57,7 @@ export class BaseContactPage {
 	 * Used in the test "Send_message_through_contact_form"
 	 */
 	async fillOutForm() {
-		let messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
+		const messageSentConfirmationText = outcomeMarker.contactPage.messageSentConfirmationText;
 
 		// // Add a wait for the form to be visible
 		// await this.formFields.nameField.waitFor();

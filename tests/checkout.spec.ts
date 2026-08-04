@@ -37,9 +37,9 @@ test.describe('Checkout (logged in user)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Address_is_pre_filled_in_checkout', { tag: ['@checkout', '@hot'] }, async ({ page }) => {
-		let signInLink = page.getByRole('link', { name: UIReference.text.shared.buttons.login });
-		let addressField = page.getByLabel(UIReference.text.shared.forms.streetAddress);
-		let addressAlreadyAdded = false;
+		const signInLink = page.getByRole('link', { name: UIReference.text.shared.buttons.login });
+		const addressField = page.getByLabel(UIReference.text.shared.forms.streetAddress);
+		const addressAlreadyAdded = false;
 
 		if (await signInLink.isVisible()) {
 			throw new Error(`Sign in link found, user is not logged in. Please check the test setup.`);
@@ -59,7 +59,7 @@ test.describe('Checkout (logged in user)', () => {
 		}
 
 		// expect to see radio button to select existing address
-		let shippingRadioButton = page.locator(UIReference.selectors.frontend.checkout.shippingAddressRadio).first();
+		const shippingRadioButton = page.locator(UIReference.selectors.frontend.checkout.shippingAddressRadio).first();
 		await expect(shippingRadioButton, 'Radio button to select address should be visible').toBeVisible();
 	});
 
@@ -73,7 +73,7 @@ test.describe('Checkout (logged in user)', () => {
 		const accountPage = new BaseAccountPage(page);
 		await accountPage.ensureCustomerDetails();
 
-		let orderNumber = await checkoutPage.placeOrder();
+		const orderNumber = await checkoutPage.placeOrder();
 		test.info().annotations.push({ type: 'Order number', description: `${orderNumber}` });
 	});
 });
@@ -185,7 +185,7 @@ test.describe('Checkout (guest)', () => {
 			await checkoutPage.fillShippingAddress();
 			await checkoutPage.selectShippingMethod('fixed');
 			await checkoutPage.selectPaymentMethod('check');
-			let orderNumber = await checkoutPage.placeOrder();
+			const orderNumber = await checkoutPage.placeOrder();
 			expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
 		});
 	});

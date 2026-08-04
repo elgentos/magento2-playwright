@@ -21,8 +21,8 @@ import { outcomeMarker, inputValues } from '@config';
  */
 test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) => {
 	const id = test.info().parallelIndex;
-	let user = `playwright+${id}@elgentos.nl`;
-	let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+	const user = `playwright+${id}@elgentos.nl`;
+	const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 	const loginPage = new BaseLoginPage(page);
 	await loginPage.goToLoginPage();

@@ -25,7 +25,7 @@ class NotificationValidatorUtils {
 
 			// wait for item to be visible
 			await memo.waitFor({state: 'visible'});
-			let msgContent = await memo.textContent();
+			const msgContent = await memo.textContent();
 
 			if(msgContent !== null) {
 				reportAnnotation = msgContent.trim();

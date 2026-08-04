@@ -190,7 +190,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 		await accountPage.addNewAddress({ company: company, street: address});
 
 		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
-		let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+		const addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 		await expect.soft(page.getByText(addressAddedNotification), `message that confirms actions should be visible`).toBeVisible();
 	});
 
@@ -202,7 +202,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
 		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
-		let editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
+		const editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
 		let isDefaultAddress = false;
 
 		if(await editAddressButton.isHidden()){
@@ -221,7 +221,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 
 		// await expect(page.getByText(companyName)).toBeVisible();
 		await expect(page.getByText(address).first()).toBeVisible();
-		let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
+		const addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
 		await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
 	});
 
@@ -251,7 +251,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
 
-		let deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
+		const deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
 
 		if(await deleteAddressButton.isHidden()) {
 			// The delete address button was not found, add another address first.
@@ -280,13 +280,13 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
 		await page.waitForLoadState();
 
 		const newsletterPage = new BaseNewsletterSubscriptionPage(page);
-		let newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
+		const newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
 		const newsletterCheckElement = page.getByLabel(UIReference.text.frontend.newsletter.generalSubscription);
 
 		await newsletterLink.click();
 		await expect(page.getByText(outcomeMarker.account.newsletterSubscriptionTitle, { exact: true })).toBeVisible();
 
-		let updateSubscription = await newsletterPage.updateNewsletterSubscription();
+		const updateSubscription = await newsletterPage.updateNewsletterSubscription();
 
 		await newsletterLink.click();
 

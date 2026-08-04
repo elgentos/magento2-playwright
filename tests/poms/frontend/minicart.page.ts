@@ -54,8 +54,8 @@ export class BaseMiniCartPage {
 	 * @param product {string} - name of the product to remove.
 	 */
 	async removeProductFromMinicart(product: string) {
-		let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
-		let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${UIReference.text.frontend.product.simpleProduct}"`);
+		const productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
+		const removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${UIReference.text.frontend.product.simpleProduct}"`);
 		// ensure button is visible
 		await removeProductMiniCartButton.waitFor();
 		await removeProductMiniCartButton.click();
@@ -68,7 +68,7 @@ export class BaseMiniCartPage {
 	 * @param amount {string} - the new quantity to set.
 	 */
 	async updateProduct(amount: string) {
-		let productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
+		const productQuantityChangedNotification = outcomeMarker.miniCart.productQuantityChangedConfirmation;
 		await this.editProductButton.click();
 		await expect(this.page).toHaveURL(slugToRegex(slugs.frontend.cart.configure));
 
@@ -78,7 +78,7 @@ export class BaseMiniCartPage {
 		await this.updateItemButton.click();
 		await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
 
-		let productQuantityInCart = await this.page.getByLabel(UIReference.text.frontend.common.quantityAbbr).first().inputValue();
+		const productQuantityInCart = await this.page.getByLabel(UIReference.text.frontend.common.quantityAbbr).first().inputValue();
 		expect(productQuantityInCart).toBe(amount);
 	}
 

@@ -204,7 +204,7 @@ export class BaseAccountPage {
 		// click the correct button based on if there's more than one address (defaultAddress boolean)
 		defaultAddress ? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click() : await this.editAddressButton.click();
 
-		let oldAddress = await streetAddressField.inputValue();
+		const oldAddress = await streetAddressField.inputValue();
 
 		await expect(this.userNameFields.firstNameField, `first name field should be filled in automatically`).not.toBeEmpty();
 		await expect(this.userNameFields.lastNameField, `first name field should be filled in automatically`).not.toBeEmpty();
@@ -259,8 +259,8 @@ export class BaseAccountPage {
 	}
 
 	async deleteFirstAddressFromAddressBook() {
-		let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
-		let addressBookSection = this.page.locator(UIReference.selectors.frontend.account.addressBookArea);
+		const addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
+		const addressBookSection = this.page.locator(UIReference.selectors.frontend.account.addressBookArea);
 
 		this.page.on('dialog', async (dialog) => {
 			if (dialog.type() === 'confirm') {
@@ -269,14 +269,14 @@ export class BaseAccountPage {
 		});
 
     // Retrieve all text in the 'address book' section
-    let addressBookArray = await addressBookSection.allInnerTexts();
+    const addressBookArray = await addressBookSection.allInnerTexts();
     // split by each new line
-    let arraySplit = addressBookArray[0].split('\n');
+    const arraySplit = addressBookArray[0].split('\n');
     // Retrieve index 6, because:
     // index 0 to 3 are the table headers (i.e. Name, Street Address etc.)
     // index 5 is name, index 6 is address.
     // if this table changes, the index number should change.
-    let addressToBeDeleted = arraySplit[6];
+    const addressToBeDeleted = arraySplit[6];
 
 		// Annotate the report so the user knows what address should be deleted
 		test.info().annotations.push({ type: `Address to be deleted`, description: addressToBeDeleted });
@@ -301,7 +301,7 @@ export class BaseAccountPage {
 	 *
 	 */
 	async updatePassword(currentPassword: string, newPassword: string) {
-		let passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
+		const passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
 
 		await this.passwordFormElements.changePasswordSwitch.check();
 		await this.passwordFormElements.currentPasswordField.fill(currentPassword);
@@ -314,7 +314,7 @@ export class BaseAccountPage {
 	}
 
 	async updateEmail(currentPassword: string, newEmail: string) {
-		let accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
+		const accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
 		await this.changeEmailCheck.check();
 		await this.accountCreationFields.emailField.fill(newEmail);
 		await this.passwordFormElements.currentPasswordField.fill(currentPassword);
@@ -325,7 +325,7 @@ export class BaseAccountPage {
 	}
 
 	async deleteAllAddresses() {
-		let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
+		const addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
 
 		this.page.on('dialog', async (dialog) => {
 			if (dialog.type() === 'confirm') {

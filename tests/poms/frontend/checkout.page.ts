@@ -110,7 +110,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 * @returns {string} Ordernumber - the order to confirm the test with
 	 */
 	async placeOrder() {
-		let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
+		const orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
 
 		// If we're not already on the checkout page, go there
 		if (!this.page.url().includes(slugs.frontend.checkout.index)) {
@@ -134,7 +134,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.submitOrder();
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
-		let orderNumber = this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
+		const orderNumber = this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
 
 		await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
 		return orderNumber;
@@ -250,7 +250,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 			await this.waitForMagewireRequests();
 		}
 
-		let cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
+		const cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
@@ -259,7 +259,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
+		const checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
 		await expect(checkoutDiscountField).toBeEditable();
 	}
 

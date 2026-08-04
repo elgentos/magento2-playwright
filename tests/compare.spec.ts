@@ -44,13 +44,13 @@ test('Add_product_to_cart_from_comparison_page', { tag: ['@comparison-page', '@c
 test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page', '@cold'] }, async ({ page }) => {
 	const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
-	let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
-	let addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
+	const productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
+	const addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
 	await addToWishlistButton.click();
 	await errorMessage.waitFor();
 	await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
 
-	await expect(page.url(), `Page has been redirect to login page`).toContain(slugs.frontend.account.login);
+	expect(page.url(), `Page has been redirect to login page`).toContain(slugs.frontend.account.login);
 });
 
 /**
@@ -64,8 +64,8 @@ test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page
 test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page', '@hot'] }, async ({ page, browserName }) => {
 	await test.step('Log in with account', async () => {
 		const id = test.info().parallelIndex;
-		let user = `playwright+${id}@elgentos.nl`;
-		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+		const user = `playwright+${id}@elgentos.nl`;
+		const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 		const loginPage = new BaseLoginPage(page);
 		await loginPage.goToLoginPage();

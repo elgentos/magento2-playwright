@@ -176,9 +176,9 @@ test.describe('Price checking tests', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Configurable_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-		var productPagePrice: string;
-		var productPageAmount: string;
-		var checkoutProductDetails: string[];
+		let productPagePrice: string;
+		let productPageAmount: string;
+		let checkoutProductDetails: string[];
 
 		const cart = new BaseCartPage(page);
 

@@ -38,7 +38,7 @@ test.describe('Accessibility Tests: EEA compliance', () => {
 		test(`${label}page_passes_wcag2a_scan`, { tag: '@accessibility', }, async ({ page }, testInfo) => {
 			await page.goto(slug);
 			await page.waitForLoadState();
-			let pageHeading = page.getByRole('heading', {name : pageTitle}).first();
+			const pageHeading = page.getByRole('heading', {name : pageTitle}).first();
 
 			await expect(pageHeading,`Checkpoint: ${label} page title is visible`).toBeVisible();
 

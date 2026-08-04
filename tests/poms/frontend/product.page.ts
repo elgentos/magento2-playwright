@@ -133,7 +133,7 @@ export class BaseProductPage {
 		await this.page.goto(url);
 		await expect(this.productPageTitle(product), `Checkpoint: title is visible`).toBeVisible();
 
-		let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
 		const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
 		// each product option (size, color) is a fieldset, which maps to the 'group' role
@@ -157,7 +157,7 @@ export class BaseProductPage {
 		}
 
 		await this.productInteraction.addToCartButton.click();
-		let successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
+		const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
 		await successMessage.waitFor();
 		await expect(this.page.getByText(productAddedNotification)).toBeVisible();
 	}
@@ -254,7 +254,7 @@ export class BaseProductPage {
 
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
 		// get the actual number shown on 'Show' dropdown on the page
-		let initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+		const initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
 			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
 		);
 
@@ -266,7 +266,7 @@ export class BaseProductPage {
 
 		// Retrieve new value shown on page
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
-		let newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+		const newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
 			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
 		);
 

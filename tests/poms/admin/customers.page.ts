@@ -152,7 +152,7 @@ class AdminCustomers {
 
 	// Loop to ensure the 'results found' text is visible
 	await expect(async() =>{
-	  await this.page.getByText(outcomeMarker.customerOverviewPage.searchResultsFoundText).first();
+	  this.page.getByText(outcomeMarker.customerOverviewPage.searchResultsFoundText).first();
 	}).toPass();
 
 	// Return true (email found) or false (email not found)

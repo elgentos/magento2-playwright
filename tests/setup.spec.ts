@@ -164,8 +164,8 @@ test(`Set_coupon_codes`, {
 		// Not present. Set coupon code, then check.
 		const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
 		const customerGroups = await APIClient.get(`/rest/V1/customerGroups/search?searchCriteria=all`);
-		let websiteIds: any[] = [];
-		let customerGroupsIds: any[] = [];
+		const websiteIds: any[] = [];
+		const customerGroupsIds: any[] = [];
 
 		websiteInfo.forEach((website: { name: string; id: any; }) => {
 			if(website.name !== 'admin') {

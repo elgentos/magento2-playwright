@@ -59,7 +59,7 @@ export class BaseComparePage {
 	 * @returns {empty} - returns early if comparison page is empty
 	 */
 	async removeProductFromCompare(product: string) {
-		let comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
+		const comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
 		// if the comparison page is empty, we can't remove anything
 		if (await comparisonPageEmptyText.isVisible()) {
 			return;
@@ -82,7 +82,7 @@ export class BaseComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToCart(product: string) {
-		let productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+		const productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
 
 		this.compareActionButtons.addToCartButton(product).click();
 		await this.messageLocators.successMessage.waitFor();
@@ -97,7 +97,7 @@ export class BaseComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToWishList(product: string) {
-		let productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
+		const productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
 
 		await this.compareActionButtons.addToWishListButton(product).click();
 		await this.messageLocators.successMessage.waitFor();

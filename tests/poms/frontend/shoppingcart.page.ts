@@ -49,21 +49,21 @@ export class BaseCartPage {
 		const productRow = this.page.getByRole('listitem').filter({ hasText: UIReference.text.frontend.product.simpleProduct });
 
 		// If the amount to update to is the same as the current amount in cart, update the amount to change to.
-		let currentQuantity = await productRow.getByRole('spinbutton', { name: UIReference.text.frontend.common.quantityAbbr }).inputValue();
+		const currentQuantity = await productRow.getByRole('spinbutton', { name: UIReference.text.frontend.common.quantityAbbr }).inputValue();
 		if (currentQuantity == amount) { amount = '3'; }
 
-		let subTotalBeforeUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
+		const subTotalBeforeUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
 
 		await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).fill(amount);
 		await this.cartInteraction.updateCartButton.click();
 
 		// Checkpoint: wait until the subtotal changed
 		await expect(async () => {
-			let subTotalAfterUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
+			const subTotalAfterUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
 			expect(subTotalBeforeUpdate, `Checkpoint: listed subtotal should change`).not.toEqual(subTotalAfterUpdate);
 		}).toPass();
 
-		let updatedQuantity = await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).inputValue();
+		const updatedQuantity = await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).inputValue();
 
 		// Final assertion: the quantity of the product in the cart has updated.
 		expect(updatedQuantity, `updated quantity (${updatedQuantity}) should equal amount we've requested (${amount})`).toEqual(amount);
@@ -75,7 +75,7 @@ export class BaseCartPage {
 	 */
 	async removeProduct(productTitle: string) {
 		// Define the delete button here because it depends on the name of the product.
-		let removeButton = this.page.getByLabel(`${UIReference.text.shared.buttons.remove} ${productTitle}`);
+		const removeButton = this.page.getByLabel(`${UIReference.text.shared.buttons.remove} ${productTitle}`);
 		await removeButton.click();
 		await this.page.waitForLoadState();
 
@@ -147,7 +147,7 @@ export class BaseCartPage {
 		await this.page.waitForLoadState();
 
 
-		let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
+		const incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
 		// Final assertions: notification that code was incorrect & discount code field is still editable
 		await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
@@ -175,9 +175,9 @@ export class BaseCartPage {
 		}
 
 		// Get product details section in checkout and retrieve values
-		let productInCheckout = this.page.locator(UIReference.selectors.frontend.checkout.cartDetails).filter({ hasText: productName }).nth(1);
-		let productPriceInCheckout = (await productInCheckout.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText()).trim();
-		let productQuantityInCheckout = (await productInCheckout.locator('.product-price').getByText('x').innerText()).substring(0, 1);
+		const productInCheckout = this.page.locator(UIReference.selectors.frontend.checkout.cartDetails).filter({ hasText: productName }).nth(1);
+		const productPriceInCheckout = (await productInCheckout.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText()).trim();
+		const productQuantityInCheckout = (await productInCheckout.locator('.product-price').getByText('x').innerText()).substring(0, 1);
 
 		// Return price and quantity values
 		return [productPriceInCheckout, productQuantityInCheckout];
@@ -194,9 +194,9 @@ export class BaseCartPage {
 	async calculateProductPricesAndCompare(pricePDP: string, amountPDP: string, priceCheckout: string, amountCheckout: string) {
 		// perform magic to calculate price * amount and mold it into the correct form again
 		pricePDP = pricePDP.replace(UIReference.text.frontend.common.priceSymbol, '');
-		let pricePDPInt = Number(pricePDP);
-		let quantityPDPInt = parseInt(amountPDP);
-		let calculatedPricePDP = `${UIReference.text.frontend.common.priceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
+		const pricePDPInt = Number(pricePDP);
+		const quantityPDPInt = parseInt(amountPDP);
+		const calculatedPricePDP = `${UIReference.text.frontend.common.priceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
 
 		// Final assertions: confirm the quantities are the same in cart and checkout,
 		// then confirm the price listed in the checkout equals our calculcated price.
