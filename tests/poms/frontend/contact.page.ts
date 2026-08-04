@@ -20,7 +20,7 @@ export class BaseContactPage {
 	get formFields() {
 		return {
 			nameField : this.page.getByLabel(UIReference.text.shared.forms.name),
-			emailField : this.page.getByPlaceholder(UIReference.text.shared.forms.email, { exact: true }),
+			emailField : this.page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true }),
 			messageField : this.page.locator(UIReference.selectors.frontend.contact.message),
 			sendFormButton : this.page.getByRole('button', { name: UIReference.text.shared.buttons.submit })
 		}

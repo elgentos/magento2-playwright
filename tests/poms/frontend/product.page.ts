@@ -129,26 +129,40 @@ export class BaseProductPage {
 	 * @param quantity {string} - optional: if provided,
 	 * the amount of the product to add to the cart.
 	 */
-	async addConfigurableProductToCart(product: string, slug: string, quantity?: string) {
-		await this.goToProductPage(product, slug);
+  async addConfigurableProductToCart(product: string, url:string, quantity?:string) {
 
-		// Checkpoint: ensure options are available
-		await this.configurableProductOptions.options.first().waitFor();
-		await this.configurableProductOptions.options.last().waitFor();
+    await this.page.goto(url);
+    this.configurableProductTitle = this.page.getByLabel('Product Info').getByText(product, {exact:true});
+	await expect(this.configurableProductTitle, `Checkpoint: title is visible`).toBeVisible();
 
-		// Loop through all options and make a selection for each
-		for (const option of await this.configurableProductOptions.options.all()) {
-			await option.locator(UIReference.selectors.frontend.product.optionValue).first().check();
-		}
+    let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
+    const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
-		if (quantity) { await this.productInteraction.quantityField.fill(quantity) };
-		await this.productInteraction.addToCartButton.click();
+    // each product option (size, color) is a fieldset, which maps to the 'group' role
+    const productOptionGroups = productOptions.getByRole('group');
 
-		// Final assertion to confirm product has been added to cart
-		await expect(this.page.getByRole('alert'),
-			`${product} has been added to cart`).toContainText(
-			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
-	}
+    // wait for the color and size selectors are actually visible
+    await expect(productOptionGroups.first(), `Checkpoint: first product option is visible`).toBeVisible();
+    await expect(productOptionGroups.last(), `Checkpoint: last product option is visible`).toBeVisible();
+
+    // loop through each product option within the form
+    for (const option of await productOptionGroups.all()) {
+      // option values that do not exist for the current selection stay in the DOM but are disabled
+      const optionValue = option.locator(`${UIReference.selectors.frontend.product.optionValue}:enabled`).first();
+      await optionValue.check();
+      await expect(optionValue, `Checkpoint: product option is selected`).toBeChecked();
+    }
+
+    if(quantity){
+      // set quantity
+      await this.page.getByLabel(UIReference.text.shared.forms.quantity).fill(quantity);
+    }
+
+    await this.addToCartButton.click();
+    let successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
+    await successMessage.waitFor();
+    await expect(this.page.getByText(productAddedNotification)).toBeVisible();
+  }
 
 	// ==============================================
 	// Product list-related methods
