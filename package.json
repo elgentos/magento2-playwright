@@ -9,7 +9,11 @@
   },
   "scripts": {
     "postinstall": "node build.js; node install.js; npx playwright install",
-    "translate": "node translate-json.js nl_NL"
+    "translate": "node translate-json.js nl_NL",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@axe-core/playwright": "^4.12.1",
@@ -18,5 +22,15 @@
     "@types/node": "^25.5.0",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.11.0",
+    "globals": "^17.9.0",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.66.0"
   }
 }
