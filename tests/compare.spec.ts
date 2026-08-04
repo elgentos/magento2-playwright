@@ -50,7 +50,7 @@ test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page
 	await errorMessage.waitFor();
 	await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
 
-	expect(page.url(), `Page has been redirect to login page`).toContain(slugs.frontend.account.login);
+	await expect(page.url(), `Page has been redirect to login page`).toContain(slugs.frontend.account.login);
 });
 
 /**

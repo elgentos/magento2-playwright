@@ -33,7 +33,6 @@ export class Logger {
                 process.stdout.write(msg);
             }
         } else {
-             
             switch (level) {
                 case 'log':
                 case 'info':

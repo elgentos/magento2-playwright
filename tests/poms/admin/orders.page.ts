@@ -49,7 +49,7 @@ class AdminOrders {
 
 	// Loop to ensure the 'results found' text is visible
 	await expect(async() =>{
-	  this.page.getByText(outcomeMarker.adminGeneral.searchResultsFoundText).first();
+	  await this.page.getByText(outcomeMarker.adminGeneral.searchResultsFoundText).first();
 	}).toPass();
 
 	await expect(this.page.getByRole('cell', {name:orderNumber}).locator('div')).toBeVisible();
