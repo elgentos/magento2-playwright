@@ -37,6 +37,8 @@
     "orderPlacedNumberText": "Your order number is:"
   },
   "comparePage": {
+    "productAddedNotificationTextOne": "You added product",
+    "productAddedNotificationTextTwo": "to the comparison list.",
     "productRemovedNotificationTextOne": "You removed product",
     "productRemovedNotificationTextTwo": "from the comparison list.",
     "productNotWishlistedNotificationText": "You must login or register to add items to your wishlist."

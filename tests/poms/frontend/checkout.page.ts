@@ -6,64 +6,100 @@ import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 
-class CheckoutPage extends MagewireUtils {
 
-	readonly shippingMethodOptionFixed: Locator;
-	readonly shippingMethodTableRateFixed: Locator;
-	readonly paymentMethodOptionCheck: Locator;
-	readonly showDiscountFormButton: Locator;
-	readonly placeOrderButton: Locator;
-	readonly continueShoppingButton: Locator;
-	readonly subtotalElement: Locator;
-	readonly shippingElement: Locator;
-	readonly taxElement: Locator;
-	readonly grandTotalElement: Locator;
-	readonly paymentMethodOptionCreditCard: Locator;
-	readonly paymentMethodOptionPaypal: Locator;
-	readonly creditCardNumberField: Locator;
-	readonly creditCardExpiryField: Locator;
-	readonly creditCardCVVField: Locator;
-	readonly creditCardNameField: Locator;
-	// Customer name and address
-	readonly newAddressButton: Locator;
-	readonly firstNameField: Locator;
-	readonly lastNameField: Locator;
-	readonly streetAddressField: Locator;
-	readonly stateDropDown: Locator;
-	readonly phoneNumberField: Locator;
+export class BaseCheckoutPage extends MagewireUtils {
+	constructor(public readonly page: Page) { super(page) };
 
-	constructor(
-			page: Page
-	){
-		super(page);
-		this.shippingMethodOptionFixed = this.page.getByLabel(UIReference.text.frontend.checkout.shippingFixed);
-		this.shippingMethodTableRateFixed = this.page.getByLabel(UIReference.text.frontend.checkout.shippingTableRate);
-		this.paymentMethodOptionCheck = this.page.getByRole('radio', {name: UIReference.text.frontend.checkout.paymentCheck});
-		this.showDiscountFormButton = this.page.getByRole('button', {name: UIReference.text.frontend.common.applyDiscountCode});
-		this.placeOrderButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.placeOrder });
-		this.continueShoppingButton = this.page.getByRole('link', { name: UIReference.text.frontend.checkout.continueShopping });
-		// this.subtotalElement = page.getByText('Subtotal $');
-		this.subtotalElement = page.getByText(`${UIReference.text.frontend.common.subtotal} ${UIReference.text.frontend.common.priceSymbol}`);
-		// this.shippingElement = page.getByText('Shipping & Handling (Flat Rate - Fixed) $');
-		this.shippingElement = page.getByText(`${UIReference.text.frontend.checkout.shippingPrice} ${UIReference.text.frontend.common.priceSymbol}`);
-		// this.taxElement = page.getByText('Tax $');
-		this.taxElement = page.getByText(`${UIReference.text.frontend.checkout.tax} ${UIReference.text.frontend.common.priceSymbol}`);
-		// this.grandTotalElement = page.getByText('Grand Total $');
-		this.grandTotalElement = page.getByText(`${UIReference.text.frontend.common.grandTotal} ${UIReference.text.frontend.common.priceSymbol}`);
-		this.paymentMethodOptionCreditCard = this.page.getByLabel(UIReference.text.frontend.checkout.paymentCreditCard);
-		this.paymentMethodOptionPaypal = this.page.getByLabel(UIReference.text.frontend.checkout.paymentPaypal);
-		this.creditCardNumberField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardNumber);
-		this.creditCardExpiryField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardExpiry);
-		this.creditCardCVVField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardCVV);
-		this.creditCardNameField = this.page.getByLabel(UIReference.text.frontend.checkout.creditCardName);
-		// Customer name and address
-		this.newAddressButton = this.page.getByRole('button', { name: 'New Address' });
-		this.firstNameField = page.getByRole('textbox', {name: UIReference.text.shared.forms.firstName});
-		this.lastNameField = page.getByRole('textbox', {name: UIReference.text.shared.forms.lastName});
-		this.streetAddressField = page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true });
-		this.stateDropDown = page.getByLabel(UIReference.text.shared.forms.province);
-		this.phoneNumberField = page.getByLabel(UIReference.text.shared.forms.phone);
+	// ==============================================
+	// Element getters
+	// ==============================================
+
+
+	/**
+	 * get contactInfoFields
+	 * Returns the form fields associated with the
+	 * 'contact information' section of the checkout.
+	 */
+	get contactInfoFields() {
+		return {
+			newAddressButton : this.page.getByRole('button', { name: 'New Address' }),
+			emailField : this.page.getByLabel(UIReference.text.shared.forms.emailCheckout, { exact: true }),
+			firstNameField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.firstName }),
+			lastNameField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.lastName }),
+			streetAddressField : this.page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true }),
+			zipCodeField : this.page.getByLabel(UIReference.text.shared.forms.zipCode),
+			cityField : this.page.getByLabel(UIReference.text.shared.forms.city),
+			phoneField : this.page.getByLabel(UIReference.text.shared.forms.phone),
+			countrySelector : this.page.getByLabel(UIReference.text.shared.forms.country),
+			stateDropDown : this.page.getByLabel(UIReference.text.shared.forms.province),
+			regionInputField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province })
+		}
 	}
+
+	/**
+	 * get shippingFields
+	 * Returns the elements from the shipping section of the checkout.
+	 */
+	get shippingFields() {
+		return {
+			shippingMethodOptionFixed : this.page.getByLabel(UIReference.text.frontend.checkout.shippingFixed),
+			shippingMethodTableRateFixed : this.page.getByLabel(UIReference.text.frontend.checkout.shippingTableRate),
+		}
+	}
+
+	/**
+	 * get paymentFields
+	 * Returns the elements from the payment section of the checkout.
+	 */
+	get paymentFields() {
+		return {
+			paymentMethodOptionCheck : this.page.getByRole('radio', { name: UIReference.text.frontend.checkout.paymentCheck }),
+			paymentMethodOptionCreditCard : this.page.getByLabel(UIReference.text.frontend.checkout.paymentCreditCard),
+			paymentMethodOptionPaypal : this.page.getByLabel(UIReference.text.frontend.checkout.paymentPaypal),
+			creditCardNumberField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardNumber),
+			creditCardExpiryField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardExpiry),
+			creditCardCVVField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardCVV),
+			creditCardNameField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardName),
+		}
+	}
+
+	/**
+	 * get orderSummaryFields
+	 * Returns the elements from the summary section of the checkout.
+	 */
+	get orderSummaryFields() {
+		return {
+			subtotalElement : this.page.getByText(`${UIReference.text.frontend.common.subtotal} ${UIReference.text.frontend.common.priceSymbol}`),
+			shippingElement : this.page.getByText(`${UIReference.text.frontend.checkout.shippingPrice} ${UIReference.text.frontend.common.priceSymbol}`),
+			taxElement : this.page.getByText(`${UIReference.text.frontend.checkout.tax} ${UIReference.text.frontend.common.priceSymbol}`),
+			grandTotalElement : this.page.getByText(`${UIReference.text.frontend.common.grandTotal} ${UIReference.text.frontend.common.priceSymbol}`),
+			placeOrderButton : this.page.getByRole('button', { name: UIReference.text.frontend.checkout.placeOrder }),
+		}
+	}
+
+	/**
+	 * get discountFormFields
+	 * Returns locators from the discount form in the checkout
+	 */
+	get discountFormFields() {
+		return {
+			openFormButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.applyDiscountCode }),
+			codeInputField : this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput),
+			applyCodeButton : this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon }),
+			discountBox : this.page.getByRole('textbox', { name: UIReference.text.frontend.cart.discountBox }),
+			cancelCouponButton: this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon })
+		}
+	}
+
+	/**
+	 * get continueShoppingButton
+	 * Returns locator for the link element to continue shopping.
+	 * This is visible after an order has been placed.
+	 */
+	get continueShoppingButton() {
+		return this.page.getByRole('link', { name: UIReference.text.frontend.checkout.continueShopping });
+	}
+
 
 	// ==============================================
 	// Order-related methods
@@ -73,111 +109,153 @@ class CheckoutPage extends MagewireUtils {
 	 * Function to place order for a test user.
 	 * @returns {string} Ordernumber - the order to confirm the test with
 	 */
-	async placeOrder(){
+	async placeOrder() {
 		let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
 
 		// If we're not already on the checkout page, go there
 		if (!this.page.url().includes(slugs.frontend.checkout.index)) {
 			await this.page.goto(slugs.frontend.checkout.index);
+			await expect(this.orderSummaryFields.placeOrderButton).toBeVisible();
 		}
 
 		// If shipping method is not selected, select it
-		if (!(await this.shippingMethodOptionFixed.isChecked())) {
-			await this.shippingMethodOptionFixed.check();
+		if (!(await this.shippingFields.shippingMethodOptionFixed.isChecked())) {
+			await this.shippingFields.shippingMethodOptionFixed.check();
 			await this.waitForMagewireRequests();
 		}
 
-		await this.paymentMethodOptionCheck.check();
+		await this.paymentFields.paymentMethodOptionCheck.check();
 		await this.waitForMagewireRequests();
 
-		await expect(async() => {
-			// Ensure the payment method is now checked.
-			expect(this.paymentMethodOptionCheck).toBeChecked();
-		}).toPass();
+		await expect(this.paymentFields.paymentMethodOptionCheck, 'payment method is selected').toBeChecked();
 
-		await this.placeOrderButton.click();
-		await this.waitForMagewireRequests();
-
-		await this.page.waitForURL(slugToRegex(slugs.frontend.checkout.success));
+		// wait for placeOrderbutton to be actionable, then submit the order.
+		await expect(this.orderSummaryFields.placeOrderButton).toBeEnabled();
+		await this.submitOrder();
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
-		let orderNumber = await this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
+		let orderNumber = this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
 
 		await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
 		return orderNumber;
 	}
 
+	/**
+	 * Clicks 'Place Order' and waits for the success page.
+	 *
+	 * Magewire can swallow the click: while it re-renders the summary block the
+	 * button node is replaced, no order request is sent and the page never
+	 * navigates. That is invisible in the DOM - no error message, button still
+	 * enabled - so detect it by the missing navigation, let the cascade settle
+	 * and click again.
+	 * @param attempts {number} - how many times to submit before giving up.
+	 */
+	private async submitOrder(attempts: number = 3) {
+		const requestWindow = 2000; // a registered click posts well inside this
+		const successUrl = slugToRegex(slugs.frontend.checkout.success);
 
+		for (let attempt = 1; attempt <= attempts; attempt++) {
+			// Start watching before the click, so a fast post cannot be missed.
+			const orderRequest = this.page.waitForRequest(/\/magewire\//, { timeout: requestWindow }).catch(() => null);
+			await this.orderSummaryFields.placeOrderButton.click();
+
+			// A click that registered always posts to Magewire. Once it has, the
+			// order is on its way: wait it out rather than risk a second order.
+			if (await orderRequest || successUrl.test(this.page.url())) {
+				await this.page.waitForURL(successUrl);
+				return;
+			}
+
+			// No post at all - the click was swallowed by a Magewire re-render.
+			await this.waitForMagewireRequests();
+		}
+
+		throw new Error(`[Checkout] 'Place Order' produced no order request after ${attempts} attempts`);
+	}
 
 	// ==============================================
 	// Discount-related methods
 	// ==============================================
 
-	async applyDiscountCodeCheckout(code: string){
-		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
-			// discount field is not open.
-			await this.showDiscountFormButton.click();
+	/**
+	 * Method to apply a discount code in the checkout
+	 * @param code {string} - the discount code to use
+	 */
+	async applyDiscountCodeCheckout(code: string) {
+		// Shorten discount form elements
+		const { openFormButton, codeInputField, applyCodeButton, discountBox, cancelCouponButton } = this.discountFormFields;
+
+		// Ensure the discount code form is visible.
+		if (await codeInputField.isHidden()) {
+			await openFormButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		if(await this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`).isVisible()){
+		// If a coupon code has been applied already, remove.
+		if (await this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`).isVisible()) {
 			// discount is already active.
-			let cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
 			await cancelCouponButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon });
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
-
-		await checkoutDiscountField.fill(code);
-		await applyCouponCheckoutButton.click();
+		// fill in discount code form
+		await codeInputField.fill(code);
+		await applyCodeButton.click();
 		await this.waitForMagewireRequests();
 
-		await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`),`Notification that discount code ${code} has been applied`).toBeVisible({timeout: 30000});
-		const discountString = `Discount (${code})`;
-		// await expect(this.page.getByText(`-${outcomeMarker.checkout.checkoutPriceReducedSymbol}`),`'-$' should be visible on the page`).toBeVisible();
-
-		// Alternate checking method: the button 'Cancel Coupon' should become visible.
-		await expect(this.page.getByRole('button', {name: UIReference.text.frontend.common.cancelCoupon})).toBeVisible();
-
-		const discountBox = this.page.getByRole('textbox', {name: UIReference.text.frontend.cart.discountBox});
-
-		await expect(async() => {
+		// Final assertions: notification visible, 'cancel coupon' button is visible, discountfield has code filled in.
+		await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`), `Notification that discount code ${code} has been applied`).toBeVisible({ timeout: 30000 });
+		await expect(cancelCouponButton, `cancel coupon button is visible`).toBeVisible();
+		await expect(async () => {
 			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
 		}).toPass();
 	}
 
-	async enterWrongCouponCode(code: string){
-		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
-			// discount field is not open.
-			await this.showDiscountFormButton.click();
+	/**
+	 * Method to fill in an incorrect discount code to confirm that does not work
+	 * Used in the test 'Invalid_coupon_code_in_checkout_is_rejected'.
+	 * @param code {string} - incorrect code to use.
+	 */
+	async enterWrongCouponCode(code: string) {
+		// Shorten discount form elements
+		const { openFormButton, codeInputField, applyCodeButton } = this.discountFormFields;
+
+		// Ensure the discount code form is visible.
+		if (await codeInputField.isHidden()) {
+			await openFormButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let applyCouponCheckoutButton = this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon });
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
-		await checkoutDiscountField.fill(code);
-		await applyCouponCheckoutButton.click();
+		// fill in the incorrect code
+		await codeInputField.fill(code);
+		await applyCodeButton.click();
 		await this.waitForMagewireRequests();
 
+		// Final assertions: notification that code is incorrect shows up, the input field is still editable.
 		await expect.soft(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
-		await expect(checkoutDiscountField).toBeEditable();
+		await expect(codeInputField).toBeEditable();
 	}
 
-	async removeDiscountCode(){
-		if(await this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput).isHidden()){
-			// discount field is not open.
-			await this.showDiscountFormButton.click();
+	/**
+	 * Method to remove discount code in checkout.
+	 * Used in the test Remove_coupon_code_from_checkout
+	 */
+	async removeDiscountCode() {
+		// Shorten discount form elements
+		const { openFormButton, codeInputField, applyCodeButton } = this.discountFormFields;
+
+		// Ensure the discount code form is visible.
+		if (await codeInputField.isHidden()) {
+			await openFormButton.click();
 			await this.waitForMagewireRequests();
 		}
 
-		let cancelCouponButton = this.page.getByRole('button', {name: UIReference.text.frontend.common.cancelCoupon});
+		let cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
-		await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification),`Notification should be visible`).toBeVisible();
-		await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),`'-$' should not be on the page`).toBeHidden();
+		await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification), `Notification should be visible`).toBeVisible();
+		await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol), `'-$' should not be on the page`).toBeHidden();
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 
@@ -189,6 +267,11 @@ class CheckoutPage extends MagewireUtils {
 	// Price summary methods
 	// ==============================================
 
+	/**
+	 * Helper method to retrieve the value from a field
+	 * @param element {locator} - the element to retieve the price from
+	 * @returns match {float} - a float variable from what was originally text.
+	 */
 	async getPriceValue(element: Locator): Promise<number> {
 		const priceText = await element.innerText();
 		// Extract just the price part after the $ symbol
@@ -196,97 +279,119 @@ class CheckoutPage extends MagewireUtils {
 		return match ? parseFloat(match[1]) : 0;
 	}
 
+	/**
+	 * Method to verify the price calculations the checkout has made.
+	 * Checks the separate values and performs calculations,
+	 * then confoirms the calculated total equals the total shown on page.
+	 */
 	async verifyPriceCalculations() {
-		const subtotal = await this.getPriceValue(this.subtotalElement);
-		const shipping = await this.getPriceValue(this.shippingElement);
-		const tax = await this.getPriceValue(this.taxElement);
-		const grandTotal = await this.getPriceValue(this.grandTotalElement);
+		// Retrieve prices
+		const subtotal = await this.getPriceValue(this.orderSummaryFields.subtotalElement);
+		const shipping = await this.getPriceValue(this.orderSummaryFields.shippingElement);
+		const tax = await this.getPriceValue(this.orderSummaryFields.taxElement);
+		const grandTotal = await this.getPriceValue(this.orderSummaryFields.grandTotalElement);
 
+		// Calculate total
 		const calculatedTotal = +(subtotal + shipping + tax).toFixed(2);
 
+		// Final assertions: check values are greater than 0.
+		// Also check displayed grand total equals calculated total.
 		expect(subtotal, `Subtotal (${subtotal}) should be greater than 0`).toBeGreaterThan(0);
 		expect(shipping, `Shipping cost (${shipping}) should be greater than 0`).toBeGreaterThan(0);
-		// Enable when tax settings are set.
-		//expect(tax, `Tax (${tax}) should be greater than 0`).toBeGreaterThan(0);
 		expect(grandTotal, `Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`).toBe(calculatedTotal);
 	}
 
+
+	/**
+	 * Method to select a payment method in the checkout
+	 * @param method  {string} - the payment method a guest/user can select.
+	 */
 	async selectPaymentMethod(method: 'check' | 'creditcard' | 'paypal'): Promise<void> {
-		switch(method) {
+		// Simplify paymentField variables
+		const { paymentMethodOptionCheck, paymentMethodOptionCreditCard, paymentMethodOptionPaypal,
+				creditCardNumberField,creditCardExpiryField,creditCardCVVField,creditCardNameField } = this.paymentFields;
+
+		// switch based on the payment method that was used as input.
+		switch (method) {
 			case 'check':
-				await this.paymentMethodOptionCheck.check();
+				await paymentMethodOptionCheck.check();
 				break;
 			case 'creditcard':
-				await this.paymentMethodOptionCreditCard.check();
+				await paymentMethodOptionCreditCard.check();
 				// Fill credit card details
-				await this.creditCardNumberField.fill(inputValues.payment?.creditCard?.number || '4111111111111111');
-				await this.creditCardExpiryField.fill(inputValues.payment?.creditCard?.expiry || '12/25');
-				await this.creditCardCVVField.fill(inputValues.payment?.creditCard?.cvv || '123');
-				await this.creditCardNameField.fill(inputValues.payment?.creditCard?.name || 'Test User');
+				await creditCardNumberField.fill(inputValues.payment?.creditCard?.number || '4111111111111111');
+				await creditCardExpiryField.fill(inputValues.payment?.creditCard?.expiry || '12/25');
+				await creditCardCVVField.fill(inputValues.payment?.creditCard?.cvv || '123');
+				await creditCardNameField.fill(inputValues.payment?.creditCard?.name || 'Test User');
 				break;
 			case 'paypal':
-				await this.paymentMethodOptionPaypal.check();
+				await paymentMethodOptionPaypal.check();
 				break;
 		}
 
 		await this.waitForMagewireRequests();
 	}
 
+	/**
+	 * Method to select a shipping method in the checkout
+	 * @param method  {string} - the payment method a guest/user can select.
+	 */
 	async selectShippingMethod(method: 'fixed' | 'table rate'): Promise<void> {
-		switch(method) {
+		switch (method) {
 			case 'fixed':
-				await this.shippingMethodOptionFixed.check();
+				await this.shippingFields.shippingMethodOptionFixed.check();
 				break;
 			case 'table rate':
-				await this.shippingMethodTableRateFixed.check();
+				await this.shippingFields.shippingMethodTableRateFixed.check();
 				break;
 		}
 
 		await this.waitForMagewireRequests();
 	}
 
+
+	/**
+	 * Method to fill in the shipping address.
+	 * Fills in all fields, then selects a country from a pre made list (3, see input-values.json)
+	 * If that country is USA, then the state field is a dropdown.
+	 * If it's a different country, then the state field is an input field.
+	 */
 	async fillShippingAddress() {
+		// Simplify the shipping address fields locators
+		const { emailField, firstNameField, lastNameField, streetAddressField, zipCodeField, cityField, phoneField,
+				countrySelector, regionInputField, stateDropDown} = this.contactInfoFields;
+
 		// Fill required shipping address fields
-		await this.page.getByLabel(UIReference.text.shared.forms.emailCheckout, { exact: true }).fill(faker.internet.email());
-		await this.page.getByLabel(UIReference.text.shared.forms.firstName).fill(faker.person.firstName());
-		await this.page.getByLabel(UIReference.text.shared.forms.lastName).fill(faker.person.lastName());
-		await this.page.getByLabel(UIReference.text.shared.forms.streetAddress).first().fill(faker.location.streetAddress());
-		await this.page.getByLabel(UIReference.text.shared.forms.zipCode).fill(faker.location.zipCode());
-		await this.page.getByLabel(UIReference.text.shared.forms.city).fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
-		await this.page.getByLabel(UIReference.text.shared.forms.phone).fill(faker.phone.number({style: 'national'}));
+		await emailField.fill(faker.internet.email());
+		await firstNameField.fill(faker.person.firstName());
+		await lastNameField.fill(faker.person.lastName());
+		await streetAddressField.first().fill(faker.location.streetAddress());
+		await zipCodeField.fill(faker.location.zipCode());
+		await cityField.fill(faker.location.city().replace(/[^A-Za-z0-9\-' ]/g, ''));
+		await phoneField.fill(faker.phone.number({ style: 'national' }));
 
-		// Select country (if needed)
-		// await this.page.getByLabel('Country').selectOption('US');
-		const country : string = faker.helpers.arrayElement(inputValues.addressCountries);
-		const countrySelectorField = this.page.getByLabel(UIReference.text.shared.forms.country);
-		const stateInputField = this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province });
-		const stateSelectorField = stateInputField.filter({ hasText: UIReference.text.shared.forms.provinceFilter });
+		// Set up variables that depend on the type of state field
+		const country: string = faker.helpers.arrayElement(inputValues.addressCountries);
 
-
-		// If default selected country == country we want to use for the test,
-		// don't re-select it.
-		const defaultSelectedCountry = await countrySelectorField.evaluate(
+		// get the currently selected country (default)
+		const defaultSelectedCountry = await countrySelector.evaluate(
 			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
 		);
 
-		if(country !== defaultSelectedCountry) {
-			await countrySelectorField.selectOption({label: country});
+		// If the default country !== the country we're using in this test, select our country of choice.
+		if (country !== defaultSelectedCountry) {
+			await countrySelector.selectOption({ label: country });
 			// Add a 5 second wait to allow the region dropdown/field to update.
 			await this.page.waitForTimeout(5000);
 		}
 
-		const regionDropdown = this.page.getByLabel(UIReference.text.shared.forms.province);
-		const regionInputField = this.page.getByRole('textbox', {name: UIReference.text.shared.forms.province});
-
-		// Select state
-		if(country !== 'United States') {
-			// await expect(regionDropdown, `Dropdown should not be visible`).toBeHidden();
+		// Select state of region based on the country used in the test
+		if (country !== 'United States') {
 			await expect(regionInputField, `State input field should be editable`).toBeEditable();
 			await regionInputField.fill(faker.location.state());
 		} else {
 			await expect(regionInputField, `Dropdown should not be visible`).toBeHidden();
-			// await expect(regionDropdown, `State input field should be editable`).toBeEditable();
-			await regionDropdown.selectOption(faker.location.state());
+			await stateDropDown.selectOption(faker.location.state());
 			// Timeout because Alpine uses an @input.debounce to delay the activation of the event
 			// Standard debounce is 250ms.
 			await this.page.waitForTimeout(1000);
@@ -296,5 +401,3 @@ class CheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 	}
 }
-
-export default CheckoutPage;

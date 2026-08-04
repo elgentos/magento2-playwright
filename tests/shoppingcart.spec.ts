@@ -9,9 +9,9 @@
 
 import { test, expect } from '@playwright/test';
 
-import CartPage from '@poms/frontend/shoppingcart.page';
-import LoginPage from '@poms/frontend/login.page';
-import ProductPage from '@poms/frontend/product.page';
+import { BaseCartPage } from '@poms/frontend/shoppingcart.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
@@ -27,7 +27,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param testInfo -  Playwright class that allows interaction with the report.
 	 */
 	test.beforeEach(async ({ page }, testInfo) => {
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
@@ -54,18 +54,18 @@ test.describe('Cart functionalities (guest)', () => {
 	 */
 	test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page}) => {
 		await test.step('Add another product to cart', async () =>{
-			const productpage = new ProductPage(page);
-			await page.goto(slugs.frontend.product.secondSimple);
+			const productpage = new BaseProductPage(page);
 			await productpage.addSimpleProductToCart(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
 		});
 
 		await test.step('Log in with account', async () =>{
-			const loginPage = new LoginPage(page);
+			const loginPage = new BaseLoginPage(page);
 
 			const parallelIndex = test.info().parallelIndex;
 			const email = `playwright+${parallelIndex}@elgentos.nl`;
 			const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
+			await loginPage.goToLoginPage();
 			await loginPage.login(email, password);
 		});
 
@@ -83,7 +83,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Remove_product_from_cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 		await cart.removeProduct(UIReference.text.frontend.product.simpleProduct);
 	});
 
@@ -93,7 +93,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Change_product_quantity_in_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 		await cart.changeProductQuantity('2');
 	});
 
@@ -103,7 +103,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
 	test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 		const discountCode = getCouponCode(browserName);
 
 		await cart.applyDiscountCode(discountCode);
@@ -115,7 +115,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
 	test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 		const discountCode = getCouponCode(browserName);
 
 		await cart.applyDiscountCode(discountCode);
@@ -127,7 +127,7 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Invalid_coupon_code_is_rejected',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page}) => {
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 		await cart.enterWrongCouponCode("Incorrect Coupon Code");
 	});
 });
@@ -145,10 +145,10 @@ test.describe('Price checking tests', () => {
 		let productPageAmount: string;
 		let checkoutProductDetails: string[];
 
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 
 		await test.step('Step: Add simple product to cart', async () =>{
-			const productPage = new ProductPage(page);
+			const productPage = new BaseProductPage(page);
 			await page.goto(slugs.frontend.product.simple);
 			// set quantity to 2 so we can see that the math works
 			await page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
@@ -163,7 +163,7 @@ test.describe('Price checking tests', () => {
 			await page.waitForLoadState();
 
 			// returns productPriceInCheckout and productQuantityInCheckout
-			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.simpleProduct, productPagePrice, productPageAmount);
+			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.simpleProduct);
 		});
 
 		await test.step('Step: Calculate and check expectations', async () =>{
@@ -180,10 +180,10 @@ test.describe('Price checking tests', () => {
 		var productPageAmount: string;
 		var checkoutProductDetails: string[];
 
-		const cart = new CartPage(page);
+		const cart = new BaseCartPage(page);
 
 		await test.step('Step: Add configurable product to cart', async () =>{
-			const productPage = new ProductPage(page);
+			const productPage = new BaseProductPage(page);
 			// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
 			await page.goto(slugs.frontend.product.configurable);
 			// set quantity to 2 so we can see that the math works
@@ -202,9 +202,7 @@ test.describe('Price checking tests', () => {
 			await page.waitForLoadState();
 
 			// returns productPriceInCheckout and productQuantityInCheckout
-			checkoutProductDetails = await cart.getCheckoutValues(
-				UIReference.text.frontend.product.configurableProduct, productPagePrice, productPageAmount
-			);
+			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.configurableProduct);
 		});
 
 		await test.step('Step: Calculate and check expectations', async () =>{

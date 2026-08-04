@@ -1,51 +1,63 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { UIReference ,slugs } from '@config';
+import { UIReference, slugs } from '@config';
 
-import ProductPage from '@poms/frontend/product.page';
-import LoginPage from '@poms/frontend/login.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
-test.describe('Product page tests',{ tag: '@product',}, () => {
-  test('Add_product_to_compare',{ tag: '@cold'}, async ({page}) => {
-    const productPage = new ProductPage(page);
-    await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
-  });
+test.describe('Product page tests', { tag: '@product', }, () => {
+	test('Add_product_to_compare', { tag: '@cold' }, async ({ page }) => {
+		const productPage = new BaseProductPage(page);
+		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+	});
 
-  test.fixme('Add_product_to_wishlist',{ tag: '@cold'}, async ({page, browserName}) => {
-    /**
-     * This test is currently (October 2025) set to be fixed, since it causes regular timeouts.
-     * Various fixes have been tried, unsuccessfully.
-     */
-    await test.step('Log in with account', async () =>{
-		const id = test.info().parallelIndex;
-		let user = `playwright+${id}@elgentos.nl`;
-		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+	test('Add_product_to_wishlist', { tag: '@hot' }, async ({ page, browserName }) => {
+		/**
+		 * This test is currently (October 2025) set to be fixed, since it causes regular timeouts.
+		 * Various fixes have been tried, unsuccessfully.
+		 */
+		await test.step('Log in with account', async () => {
+			const id = test.info().parallelIndex;
+			let user = `playwright+${id}@elgentos.nl`;
+			let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-      const loginPage = new LoginPage(page);
-      await loginPage.login(user, password);
-    });
+			const loginPage = new BaseLoginPage(page);
+			await loginPage.goToLoginPage();
+			await loginPage.login(user, password);
+		});
 
-    await test.step('Add product to wishlist', async () =>{
-      const productPage = new ProductPage(page);
-      await productPage.addProductToWishlist(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
-    });
-  });
+		await test.step('Add product to wishlist', async () => {
+			const productPage = new BaseProductPage(page);
+			await productPage.addProductToWishlist(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		});
+	});
 
+	/**
+	 * Test: a guest leaves a review for a product
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Leave_a_product_review', { tag: '@cold' }, async ({ page }) => {
+		const productPage = new BaseProductPage(page);
+		await productPage.leaveProductReview(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+	});
 
-  test.fixme('Leave a product review (Test currently fails due to error on website)',{ tag: '@cold'}, async ({}) => {
-    // const productPage = new ProductPage(page);
-    // await productPage.leaveProductReview(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
-  });
+	/**
+	 * Test: open the pictures of a product page and scroll through them
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Open_pictures_in_lightbox_and_scroll', async ({ page }) => {
+		const productPage = new BaseProductPage(page);
+		await productPage.openLightboxAndScrollThrough(UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable);
+	});
 
-  test('Open_pictures_in_lightbox_and_scroll', async ({page}) => {
-    const productPage = new ProductPage(page);
-    await productPage.openLightboxAndScrollThrough(slugs.frontend.product.configurable);
-  });
-
-  test('Change_number_of_reviews_shown_on_product_page', async ({page}) => {
-    const productPage = new ProductPage(page);
-    await productPage.changeReviewCountAndVerify(slugs.frontend.product.simple);
-  });
+	/**
+	 * Test: change the number of reviews shwon on the product page
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test('Change_number_of_reviews_shown_on_product_page', async ({ page }) => {
+		const productPage = new BaseProductPage(page);
+		await productPage.changeReviewCountAndVerify(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+	});
 });

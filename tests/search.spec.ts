@@ -4,12 +4,12 @@ import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-import SearchPage from '@poms/frontend/search.page';
+import {BaseSearchPage} from '@poms/frontend/search.page';
 
-test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', () => {
+test.describe('Search functionality - needs to be adapted to OpenSearch', () => {
   test('Search_query_returns_multiple_results', async ({ page }) => {
     await page.goto('');
-    const searchPage = new SearchPage(page);
+    const searchPage = new BaseSearchPage(page);
     await searchPage.search(inputValues.search.queryMultipleResults);
     await expect(page).toHaveURL(slugToRegex(slugs.frontend.search.results));
     const results = page.locator(`${UIReference.selectors.frontend.category.productGrid} li`);
@@ -17,17 +17,25 @@ test.describe.fixme('Search functionality - needs t be adapted to OpenSearch', (
     expect(resultCount).toBeGreaterThan(1);
   });
 
-  test('User_can_find_a_specific_product_and_navigate_to_its_page', async ({ page }) => {
+  /**
+   * Test: User_can_find_a_specific_product_and_navigate_to_its_page
+   * @param page { page } - used by playwright to interact with website
+   *
+   * NOTE: THIS TEST IS CURRENTLY SET TO FIXME.
+   * This is because these tests were written for elasticSearch,
+   * but the demo site now uses openSearch
+   */
+  test.fixme('User_can_find_a_specific_product_and_navigate_to_its_page', async ({ page }) => {
     await page.goto('');
-    const searchPage = new SearchPage(page);
+    const searchPage = new BaseSearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
-    // await expect(page).toHaveURL(`**${slugs.frontend.product.simple}`);
+
     expect(page.url()).toEqual(expect.stringContaining(`${slugs.frontend.product.simple}`));
   });
 
   test('No_results_message_is_shown_for_unknown_query', async ({ page }) => {
     await page.goto('');
-    const searchPage = new SearchPage(page);
+    const searchPage = new BaseSearchPage(page);
     await searchPage.search(inputValues.search.queryNoResults);
     await expect(page.getByText(outcomeMarker.search.noResultsMessage)).toBeVisible();
   });

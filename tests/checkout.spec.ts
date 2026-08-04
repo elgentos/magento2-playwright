@@ -3,9 +3,9 @@
 // Import test and expect from utils to ensure authenticated state.
 import { test, expect } from '@utils/fixtures.utils';
 
-import ProductPage from '@poms/frontend/product.page';
-import AccountPage from '@poms/frontend/account.page';
-import CheckoutPage from '@poms/frontend/checkout.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
+import { BaseAccountPage } from '@poms/frontend/account.page';
+import { BaseCheckoutPage } from '@poms/frontend/checkout.page';
 
 import { faker } from '@faker-js/faker';
 import MagewireUtils from '@utils/magewire.utils';
@@ -23,11 +23,10 @@ test.describe('Checkout (logged in user)', () => {
 	 */
 	test.beforeEach(async ({ page }) => {
 		const magewire = new MagewireUtils(page);
-		const productPage = new ProductPage(page);
+		const productPage = new BaseProductPage(page);
 
 		magewire.startMonitoring();
 
-		await page.goto(slugs.frontend.product.simple);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await page.goto(slugs.frontend.checkout.index);
 	});
@@ -37,23 +36,23 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user already has an item in their cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Address_is_pre_filled_in_checkout',{ tag: ['@checkout', '@hot']}, async ({page}) => {
+	test('Address_is_pre_filled_in_checkout', { tag: ['@checkout', '@hot'] }, async ({ page }) => {
 		let signInLink = page.getByRole('link', { name: UIReference.text.shared.buttons.login });
 		let addressField = page.getByLabel(UIReference.text.shared.forms.streetAddress);
 		let addressAlreadyAdded = false;
 
-		if(await signInLink.isVisible()) {
+		if (await signInLink.isVisible()) {
 			throw new Error(`Sign in link found, user is not logged in. Please check the test setup.`);
 		}
 
 		// name field should NOT be on the page
 		await expect(page.getByLabel(UIReference.text.shared.forms.firstName)).toBeHidden();
 
-		if(await addressField.isVisible()) {
-			if(!addressAlreadyAdded){
-			// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
-			const accountPage = new AccountPage(page);
-			await accountPage.addNewAddress();
+		if (await addressField.isVisible()) {
+			if (!addressAlreadyAdded) {
+				// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
+				const accountPage = new BaseAccountPage(page);
+				await accountPage.addNewAddress();
 			} else {
 				throw new Error(`Address field is visible even though an address has been added to the account.`);
 			}
@@ -69,9 +68,9 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user already has an item in their cart and is on the checkout page.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Place_order_for_simple_product',{ tag: ['@simple-product-order', '@hot'],}, async ({page}) => {
-		const checkoutPage = new CheckoutPage(page);
-		const accountPage = new AccountPage(page);
+	test('Place_order_for_simple_product', { tag: ['@simple-product-order', '@hot'], }, async ({ page }) => {
+		const checkoutPage = new BaseCheckoutPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await accountPage.ensureCustomerDetails();
 
 		let orderNumber = await checkoutPage.placeOrder();
@@ -90,14 +89,13 @@ test.describe('Checkout (guest)', () => {
 	 * Before each test: set op monitoring and add product to cart
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async({page}) => {
+	test.beforeEach(async ({ page }) => {
 		// set up magewire monitoring
 		const magewire = new MagewireUtils(page);
 		magewire.startMonitoring();
 
 		// ensure product in cart
-		const productPage = new ProductPage(page);
-		await page.goto(slugs.frontend.product.simple);
+		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		// to checkout
@@ -109,8 +107,8 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test('Add_coupon_code_in_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-		const checkout = new CheckoutPage(page);
+	test('Add_coupon_code_in_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
+		const checkout = new BaseCheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
 		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
@@ -123,19 +121,19 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Verify_price_calculations_in_checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
-		const productPage = new ProductPage(page);
-		const checkoutPage = new CheckoutPage(page);
+		const productPage = new BaseProductPage(page);
+		const checkoutPage = new BaseCheckoutPage(page);
 
 		// Add product to cart and go to checkout
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await page.goto(slugs.frontend.checkout.index);
 
 		// Select shipping method to trigger price calculations
-		await checkoutPage.shippingMethodOptionFixed.check();
+		await checkoutPage.shippingFields.shippingMethodOptionFixed.check();
 
 		// Wait for totals to update
 		await expect(async () => {
-			await page.locator('.magewire\\.messenger').waitFor({state: "hidden"});
+			await page.locator('.magewire\\.messenger').waitFor({ state: "hidden" });
 		}).toPass();
 
 		// Get all price components using the verifyPriceCalculations method from the CheckoutPage fixture
@@ -147,8 +145,8 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test('Remove_coupon_code_from_checkout',{ tag: ['@checkout', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-		const checkout = new CheckoutPage(page);
+	test('Remove_coupon_code_from_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
+		const checkout = new BaseCheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
 		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
@@ -161,34 +159,34 @@ test.describe('Checkout (guest)', () => {
 	 * Test: Using an invalid coupon code does not work
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Invalid_coupon_code_in_checkout_is_rejected',{ tag: ['@checkout', '@coupon-code', '@cold'] }, async ({page}) => {
-		const checkout = new CheckoutPage(page);
+	test('Invalid_coupon_code_in_checkout_is_rejected', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page }) => {
+		const checkout = new BaseCheckoutPage(page);
 		await checkout.enterWrongCouponCode("incorrect discount code");
 	});
 
-  /**
-   * @feature Payment Method Selection
-   * @scenario Guest user selects different payment methods during checkout
-   * @given I have a product in my cart
-   *  @and I am on the checkout page as a guest
-   * @when I select a payment method
-   *  @and I complete the checkout process
-   * @then I should see a confirmation that my order has been placed
-   *  @and a order number should be created and shown to me
-   */
-  test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
-    // Marking test as slow to allow more time befoure timeout
-    test.slow();
-    const checkoutPage = new CheckoutPage(page);
+	/**
+	 * @feature Payment Method Selection
+	 * @scenario Guest user selects different payment methods during checkout
+	 * @given I have a product in my cart
+	 *  @and I am on the checkout page as a guest
+	 * @when I select a payment method
+	 *  @and I complete the checkout process
+	 * @then I should see a confirmation that my order has been placed
+	 *  @and a order number should be created and shown to me
+	 */
+	test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
+		// Marking test as slow to allow more time befoure timeout
+		test.slow();
+		const checkoutPage = new BaseCheckoutPage(page);
 
-    // Test with check/money order payment
-    await test.step('Place order with check/money order payment', async () => {
-      await page.goto(slugs.frontend.checkout.index);
-      await checkoutPage.fillShippingAddress();
-      await checkoutPage.selectShippingMethod('fixed');
-      await checkoutPage.selectPaymentMethod('check');
-      let orderNumber = await checkoutPage.placeOrder();
-      expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
-    });
-  });
+		// Test with check/money order payment
+		await test.step('Place order with check/money order payment', async () => {
+			await page.goto(slugs.frontend.checkout.index);
+			await checkoutPage.fillShippingAddress();
+			await checkoutPage.selectShippingMethod('fixed');
+			await checkoutPage.selectPaymentMethod('check');
+			let orderNumber = await checkoutPage.placeOrder();
+			expect(orderNumber, 'Order number should be generated and returned').toBeTruthy();
+		});
+	});
 });

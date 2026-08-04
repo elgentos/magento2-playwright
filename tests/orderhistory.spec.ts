@@ -9,10 +9,10 @@
 
 import { test } from '@playwright/test';
 
-import LoginPage from '@poms/frontend/login.page';
-import ProductPage from '@poms/frontend/product.page';
-import CheckoutPage from '@poms/frontend/checkout.page';
-import OrderHistoryPage from '@poms/frontend/orderhistory.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
+import { BaseProductPage } from '@poms/frontend/product.page';
+import { BaseCheckoutPage } from '@poms/frontend/checkout.page';
+import { BaseOrderHistoryPage } from '@poms/frontend/orderhistory.page';
 
 import { requireEnv } from '@utils/env.utils';
 import { UIReference, slugs } from '@config';
@@ -26,14 +26,14 @@ test('Recent_order_is_visible_in_history', async ({ page }) => {
 	const email = `playwright+${parallelIndex}@elgentos.nl`;
 	const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-	const loginPage = new LoginPage(page);
-	const productPage = new ProductPage(page);
-	const checkoutPage = new CheckoutPage(page);
-	const orderHistoryPage = new OrderHistoryPage(page);
+	const loginPage = new BaseLoginPage(page);
+	const productPage = new BaseProductPage(page);
+	const checkoutPage = new BaseCheckoutPage(page);
+	const orderHistoryPage = new BaseOrderHistoryPage(page);
 
+	await loginPage.goToLoginPage();
 	await loginPage.login(email, password);
 
-	await page.goto(slugs.frontend.product.simple);
 	await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 	await page.goto(slugs.frontend.checkout.index);
 

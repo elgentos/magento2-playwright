@@ -221,31 +221,23 @@
 			"newsletter": {
 				"generalSubscription": "General Subscription"
 			},
-			"category": {
-				"title": "Women",
-				"activeFilter": "Active filtering",
-				"sizeFilter": "Size filter",
-				"sizeM": "Filter Size M",
-				"sortBy": "Sort by",
-				"viewSwitch": "Products view mode",
-				"viewGrid": "Products view mode - Grid",
-				"viewList": "Products view mode - List"
-			},
-			"product": {
-				"addToCompare": "Add to Compare",
-				"simpleProduct": "Push It Messenger Bag",
-				"secondSimpleProduct": "Aim Analog Watch",
-				"configurableProduct": "Inez Full Zip Jacket",
-				"fullScreenOpen": "Click to view image in",
-				"fullScreenClose": "Close fullscreen",
-				"thumbnail": "View larger image"
-			},
 			"cart": {
 				"title": "Shopping Cart",
 				"applyDiscount": "Apply Discount",
 				"discountBox": "Discount Code",
 				"updateItem": "Update item",
 				"updateCart": "Update Shopping Cart"
+			},
+			"category": {
+				"title": "Women",
+				"activeFilter": "Active filtering",
+				"filterRegion": "Product filters",
+				"sizeFilter": "Size filter",
+				"sizeM": "Filter Size M",
+				"sortBy": "Sort by",
+				"viewSwitch": "Products view mode",
+				"viewGrid": "Products view mode - Grid",
+				"viewList": "Products view mode - List"
 			},
 			"checkout": {
 				"applyCoupon": "Apply Coupon",
@@ -266,29 +258,13 @@
 				"shippingPrice": "Shipping & Handling (Flat Rate - Fixed)",
 				"tax": "Tax"
 			},
-			"minicart": {
-				"empty": "Cart is empty",
-				"checkout": "Checkout",
-				"editProduct": "Edit product",
-				"removeProduct": "Remove product",
-				"toCart": "View and Edit Cart"
-			},
-			"search": {
-				"placeholder": "Search entire store here...",
-				"resultsTitle": "Search results for:",
-				"termsDropdown": "Search terms"
-			},
 			"compare": {
 				"title": "Compare Products",
 				"empty": "You have no items to compare.",
 				"removeProduct": "Remove Product"
 			},
-			"wishlist": {
-				"title": "My Wish List",
-				"update": "Update Wish List"
-			},
-			"orderHistory": {
-				"title": "My Orders"
+			"contact": {
+				"title": "Contact Us"
 			},
 			"footer": {
 				"currencyLabel": "Currency",
@@ -296,6 +272,40 @@
 				"currencyEuro": "EUR - Euro",
 				"newsletterInput": "Email Address",
 				"newsletterSubscribe": "Subscribe"
+			},
+			"login": {
+				"title" : "Customer Login"
+			},
+			"minicart": {
+				"empty": "Cart is empty",
+				"checkout": "Checkout",
+				"editProduct": "Edit product",
+				"removeProduct": "Remove product",
+				"toCart": "View and Edit Cart"
+			},
+			"orderHistory": {
+				"title": "My Orders"
+			},
+			"product": {
+				"addToCompare": "Add to Compare",
+				"simpleProduct": "Push It Messenger Bag",
+				"secondSimpleProduct": "Aim Analog Watch",
+				"configurableProduct": "Inez Full Zip Jacket",
+				"fullScreenOpen": "Click to view image in",
+				"fullScreenClose": "Close fullscreen",
+				"thumbnail": "View larger image"
+			},
+			"register" : {
+				"title" : "Create New Customer Account"
+			},
+			"search": {
+				"placeholder": "Search entire store here...",
+				"resultsTitle": "Search results for:",
+				"termsDropdown": "Search terms"
+			},
+			"wishlist": {
+				"title": "My Wish List",
+				"update": "Update Wish List"
 			}
 		}
 	}
