@@ -24,6 +24,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
     - [Tags and Annotations](#tags-and-annotations)
 - [Customizing the testing suite](#-customizing-the-testing-suite)
   - [Examples](#examples)
+- [Conventions](#-conventions)
 - [Troubleshooting imports](#troubleshooting-imports)
 - [How to help](#how-to-help)
 - [Scenarios](#scenarios)
@@ -379,6 +380,113 @@ test('User can complete the checkout process', async ({ page }) => {
   // Implementation details
 });
 ```
+
+---
+
+## 🧭 Conventions
+
+Guidelines for writing consistent, maintainable Page Object Models (POMs).
+
+### Expose locators through getters
+
+Define locators as `get` accessors rather than assigning them in the constructor. Getters keep the constructor free of setup bloat and build each locator lazily — only when a test actually uses it — while callers still access them exactly like a property (`accountPage.genericSaveButton`).
+
+**Correct Usage**
+
+```ts
+export class BaseAccountPage {
+  constructor(public readonly page: Page) {}
+
+  get genericSaveButton(): Locator {
+    return this.page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+  }
+}
+```
+
+**Wrong Usage**
+
+```ts
+// ❌ Don't build locators eagerly in the constructor
+export class BaseAccountPage {
+  readonly genericSaveButton: Locator;
+
+  constructor(public readonly page: Page) {
+    this.genericSaveButton = page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+  }
+}
+```
+
+### Only group locators you use together
+
+A getter may return an object of related locators, but **only group them when they're likely to be used together** — typically the fields of a single form that a method fills as a set. Grouping expresses a real relationship; bundling unrelated elements creates false cohesion and forces every locator in the group to be rebuilt each time any one of them is accessed.
+
+Standalone elements (page landmarks, a shared save button, individual action buttons) should each have their own getter.
+
+```ts
+// ✅ Cohesive: these fields are filled together as one form
+get accountAddressFields() {
+  return {
+    companyNameField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.company }),
+    phoneNumberField: this.page.getByLabel(UIReference.text.shared.forms.phone),
+    streetAddressField: this.page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true }),
+    // …
+  };
+}
+
+// ✅ Standalone: no shared form, so keep it individual
+get genericSaveButton(): Locator {
+  return this.page.getByRole('button', { name: UIReference.text.shared.buttons.save });
+}
+```
+
+```ts
+// ❌ Don't bundle unrelated locators just to reduce the number of getters
+get accountElements() {
+  return {
+    dashboardTitle: this.page.getByRole('heading', { name: UIReference.text.frontend.account.dashboardTitle }),
+    saveButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.save }),
+    deleteAddressButton: this.page.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress }).first(),
+  };
+}
+```
+
+When you do use a grouped getter repeatedly within a method, destructure it once so the group is materialised a single time:
+
+```ts
+const { companyNameField, phoneNumberField, streetAddressField } = this.accountAddressFields;
+await companyNameField.fill(company);
+await phoneNumberField.fill(phone);
+await streetAddressField.fill(street);
+```
+
+### Assert notifications by role, not by CSS class
+
+Magento notification messages expose `role="alert"`, so target them with `getByRole('alert')` instead of a class selector like `.message.success`. Role locators survive Hyvä's Tailwind class changes and don't need a `UIReference.selectors` entry.
+
+Message text is usually split across child nodes — Magento renders the product name and a link inside the sentence ("You added product X to the *comparison list*.") — so assert with `toContainText`, which normalizes whitespace and matches across those nodes.
+
+```ts
+// ✅ Role-based, matches across the link inside the message
+await expect(this.page.getByRole('alert'),
+  `${product} has been added to comparison`).toContainText(
+  `${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}`);
+```
+
+```ts
+// ❌ Class selector, and hasText can't span the message's child nodes reliably
+await expect(this.page.locator('.message.success').filter(
+  { hasText: `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}` })).toBeVisible();
+```
+
+**Caveat: `getByRole('alert')` is strict.** If a page ever shows two messages at once, the locator resolves to multiple elements and the assertion throws a strict-mode violation instead of passing. When that happens, filter down to the one you mean rather than reaching for `.first()`:
+
+```ts
+await expect(this.page.getByRole('alert').filter(
+  { hasText: `${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}` }),
+  `${product} has been added to comparison`).toBeVisible();
+```
+
+Also give each notification its own marker in `outcome-markers.json`. Reusing a marker from a different flow looks like deduplication but breaks silently: the cart message reads "You added &lt;product&gt;" while the comparison message reads "You added **product** &lt;product&gt; to the comparison list.", so a shared marker matches neither everywhere.
 
 ---
 

@@ -11,9 +11,9 @@
 import { test, expect } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 
-import AccountPage from '@poms/frontend/account.page';
-import LoginPage from '@poms/frontend/login.page';
-import NewsletterSubscriptionPage from '@poms/frontend/newsletter.page';
+import { BaseAccountPage } from '@poms/frontend/account.page';
+import { BaseLoginPage } from '@poms/frontend/login.page';
+import { BaseNewsletterSubscriptionPage } from '@poms/frontend/newsletter.page';
 
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
@@ -44,8 +44,8 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 * @param request - APIRequestContext instance used to create accounts with the API.
 	 */
 	test('Change_password', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new AccountPage(page);
-		const loginPage = new LoginPage(page);
+		const accountPage = new BaseAccountPage(page);
+		const loginPage = new BaseLoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
 		const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
@@ -74,6 +74,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 		});
 
 		// Login and change password via UI
+		await loginPage.goToLoginPage();
 		await loginPage.login(email, password);
 		await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
 		await expect(page.getByRole('textbox', { name: UIReference.text.shared.forms.currentPassword })).toBeVisible();
@@ -92,8 +93,8 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 	 * @param request - APIRequestContext instance used to create accounts with the API.
 	 */
 	test('Update_email_address', { tag: ['@account-credentials', '@hot'] }, async ({ page, request }) => {
-		const accountPage = new AccountPage(page);
-		const loginPage = new LoginPage(page);
+		const accountPage = new BaseAccountPage(page);
+		const loginPage = new BaseLoginPage(page);
 
 		const parallelIndex = test.info().parallelIndex;
 		const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
@@ -134,6 +135,7 @@ test.describe('User credentials tests (API-provisioned)', { annotation:
 		});
 
 		// Login and update email via UI
+		await loginPage.goToLoginPage();
 		await loginPage.login(originalEmail, password);
 		await page.goto(slugs.frontend.account.edit, { waitUntil: 'load' });
 		await expect(page.locator('#form-validate').
@@ -180,7 +182,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Add_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
 		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 
 		const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
 		const company = faker.company.name();
@@ -198,7 +200,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Edit_existing_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
 		let editAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.editAddress}).first();
 		let isDefaultAddress = false;
@@ -230,10 +232,10 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 */
 	test('Missing_required_field_prevents_creation',{ tag: ['@address-actions'] }, async ({page}) => {
 		await page.goto(slugs.frontend.account.addressNew);
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 
-		await accountPage.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
-		await accountPage.saveAddressButton.click();
+		await accountPage.accountAddressFields.phoneNumberField.fill(inputValues.firstAddress.firstPhoneNumberValue);
+		await accountPage.accountAddressFields.saveAddressButton.click();
 
 		const errorMessage = page.getByText(UIReference.text.shared.messages.streetAddressRequired).first();
 		await errorMessage.waitFor();
@@ -246,7 +248,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Delete_an_address',{ tag: ['@address-actions', '@hot'] }, async ({page}) => {
-		const accountPage = new AccountPage(page);
+		const accountPage = new BaseAccountPage(page);
 		await page.goto(slugs.frontend.account.addressBook);
 
 		let deleteAddressButton = page.getByRole('link', {name: UIReference.text.frontend.account.deleteAddress}).first();
@@ -277,7 +279,7 @@ test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', de
 		await page.goto(slugs.frontend.account.overview);
 		await page.waitForLoadState();
 
-		const newsletterPage = new NewsletterSubscriptionPage(page);
+		const newsletterPage = new BaseNewsletterSubscriptionPage(page);
 		let newsletterLink = page.getByRole('link', { name: UIReference.text.frontend.account.newsletterLink });
 		const newsletterCheckElement = page.getByLabel(UIReference.text.frontend.newsletter.generalSubscription);
 

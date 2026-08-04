@@ -1,33 +1,56 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference } from '@config';
+import { UIReference, slugs } from '@config';
+import { slugToRegex } from '@utils/url.utils';
 
-class SearchPage {
-  readonly page: Page;
-  readonly searchToggle: Locator;
-  readonly searchInput: Locator;
-  readonly suggestionBox: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
-    this.searchToggle = page.locator(UIReference.selectors.frontend.search.toggle);
-    this.searchInput = page.locator(UIReference.selectors.frontend.search.input);
-    this.suggestionBox = page.locator(UIReference.selectors.frontend.search.suggestionBox);
-  }
+export class BaseSearchPage {
+	constructor(public readonly page: Page) { }
 
-  async openSearch() {
-    await this.searchToggle.waitFor({ state: 'visible' });
-    await this.searchToggle.click();
-    await expect(this.searchInput).toBeVisible();
-  }
+	// ==============================================
+	// Element getters
+	// ==============================================
 
-  async search(query: string) {
-    await this.openSearch();
-    await this.searchInput.fill(query);
-    await this.searchInput.press('Enter');
-    await this.page.waitForLoadState('networkidle');
-  }
+	/**
+	 * get SearchForm
+	 * Returns the elements associated with the search form
+	 */
+	get SearchForm() {
+		return {
+			toggle : this.page.locator(UIReference.selectors.frontend.search.toggle),
+			inputField : this.page.locator(UIReference.selectors.frontend.search.input),
+			suggestedResultsBox : this.page.locator(UIReference.selectors.frontend.search.suggestionBox)
+		}
+	}
+
+	// ==============================================
+	// Search Interaction Methods
+	// ==============================================
+
+	/**
+	 * Method to open the search form.
+	 * Used in the tests in search.spec.ts.
+	 */
+	async openSearch() {
+		await this.SearchForm.toggle.waitFor({state: 'visible'});
+		await this.SearchForm.toggle.click();
+
+		// Final assertion: confirm search field is now visible
+		await expect(this.SearchForm.inputField, `search field is visible`).toBeVisible();
+	}
+
+	/**
+	 * Method to search for something using the search form.
+	 * @param query {string} - what to search for.
+	 * Used in the tests in search.spec.ts.
+	 */
+	async search(query: string) {
+		await this.openSearch();
+		await this.SearchForm.inputField.fill(query);
+		await this.SearchForm.inputField.press('Enter');
+
+		// Final assertion within method: wait for page to navigate to results
+		await this.page.waitForURL(slugToRegex(slugs.frontend.search.results));
+	}
 }
-
-export default SearchPage;

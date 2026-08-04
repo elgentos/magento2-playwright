@@ -101,7 +101,7 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api']}, async ({ browserName },
 						firstname: `${inputValues.account.firstName}`,
 						lastname: `${inputValues.account.lastName}`
 					},
-					password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`
+					password: `${requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD')}`
 				};
 
 				// Send payload to database

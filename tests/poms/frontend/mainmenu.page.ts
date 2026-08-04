@@ -8,36 +8,72 @@ import { slugToRegex } from '@utils/url.utils';
 // Timeout used to check our authenticated state.
 const CUSTOMER_DATA_TIMEOUT = 10_000;
 
-class MainMenuPage {
-	readonly page: Page;
-	readonly mainMenuElement: Locator;
-	readonly mainMenuAccountButton: Locator;
-	readonly mainMenuMiniCartButton: Locator;
-	readonly mainMenuMyAccountItem: Locator;
-	readonly mainMenuSearchButton: Locator;
-	readonly mainMenuLoginItem: Locator;
-	readonly mainMenuCreateAccountButton: Locator;
-	readonly mainMenuWishListButton: Locator;
-	readonly mainMenuMyOrdersButton: Locator;
-	readonly mainMenuAddressBookButton: Locator;
-	readonly mainMenuLogoutItem: Locator;
+export class BaseMainMenuPage {
+	constructor(public readonly page: Page) { }
 
-	constructor(page: Page) {
-		this.page = page;
-		this.mainMenuElement = page.locator(UIReference.selectors.shared.header);
-		// this.mainMenuAccountButton = this.mainMenuElement.getByRole('button', { name: UIReference.text.frontend.common.navigation.myAccount });
-		this.mainMenuAccountButton = this.page.locator(UIReference.selectors.frontend.common.accountMenu);
-		this.mainMenuMiniCartButton = this.mainMenuElement.getByRole('button', { name: UIReference.text.frontend.common.navigation.toggleMinicart });
-		this.mainMenuMyAccountItem = this.mainMenuElement.getByTitle(UIReference.text.frontend.common.navigation.myAccount);
-		this.mainMenuSearchButton = this.mainMenuElement.getByRole('button', { name: UIReference.text.frontend.common.navigation.searchToggle });
+	// ==============================================
+	// Element getters
+	// ==============================================
 
-		this.mainMenuLoginItem = this.mainMenuElement.getByRole('link', { name: UIReference.text.shared.buttons.login });
-		this.mainMenuCreateAccountButton = this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.createAccount });
-		this.mainMenuWishListButton = this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.wishList });
-		this.mainMenuMyOrdersButton = this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.myOrders });
-		this.mainMenuAddressBookButton = this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.addressBook });
-		this.mainMenuLogoutItem = this.mainMenuElement.getByTitle(UIReference.text.frontend.common.navigation.signOut);
+	// get mainMenuElement: returns the header element that contains the main menu.
+	get mainMenuElement(): Locator {
+		return this.page.locator(UIReference.selectors.shared.header);
 	}
+
+	// get mainMenuAccountButton: returns the account toggle button.
+	// Note: resolved from the page (not the header) via a dedicated selector.
+	get mainMenuAccountButton(): Locator {
+		return this.page.locator(UIReference.selectors.frontend.common.accountMenu);
+	}
+
+	// get mainMenuMiniCartButton: returns the minicart toggle button.
+	get mainMenuMiniCartButton(): Locator {
+		return this.mainMenuElement.getByRole('button', { name: UIReference.text.frontend.common.navigation.toggleMinicart });
+	}
+
+	// get mainMenuMyAccountItem: returns the "My account" menu item.
+	get mainMenuMyAccountItem(): Locator {
+		return this.mainMenuElement.getByTitle(UIReference.text.frontend.common.navigation.myAccount);
+	}
+
+	// get mainMenuSearchButton: returns the search toggle button.
+	get mainMenuSearchButton(): Locator {
+		return this.mainMenuElement.getByRole('button', { name: UIReference.text.frontend.common.navigation.searchToggle });
+	}
+
+	// get mainMenuLoginItem: returns the login menu item.
+	get mainMenuLoginItem(): Locator {
+		return this.mainMenuElement.getByRole('link', { name: UIReference.text.shared.buttons.login });
+	}
+
+	// get mainMenuCreateAccountButton: returns the "Create account" menu item.
+	get mainMenuCreateAccountButton(): Locator {
+		return this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.createAccount });
+	}
+
+	// get mainMenuWishListButton: returns the wishlist menu item.
+	get mainMenuWishListButton(): Locator {
+		return this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.wishList });
+	}
+
+	// get mainMenuMyOrdersButton: returns the "My orders" menu item.
+	get mainMenuMyOrdersButton(): Locator {
+		return this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.myOrders });
+	}
+
+	// get mainMenuAddressBookButton: returns the address book menu item.
+	get mainMenuAddressBookButton(): Locator {
+		return this.mainMenuElement.getByRole('link', { name: UIReference.text.frontend.common.navigation.addressBook });
+	}
+
+	// get mainMenuLogoutItem: returns the "Sign out" menu item.
+	get mainMenuLogoutItem(): Locator {
+		return this.mainMenuElement.getByTitle(UIReference.text.frontend.common.navigation.signOut);
+	}
+
+	// ==============================================
+	// Navigation methods
+	// ==============================================
 
 	/**
 	 * Opens the account menu and waits for the correct menu items to appear.
@@ -162,6 +198,10 @@ class MainMenuPage {
 			`Heading "${UIReference.text.frontend.wishlist.title}" is visible`).toBeVisible();
 	}
 
+	// ==============================================
+	// Menu interaction methods
+	// ==============================================
+
 	/**
 	 * Function for the test Open_the_minicart
 	 */
@@ -223,5 +263,3 @@ class MainMenuPage {
 		await this.page.waitForURL(slugToRegex(requireEnv(`PLAYWRIGHT_BASE_URL`)));
 	}
 }
-
-export default MainMenuPage;

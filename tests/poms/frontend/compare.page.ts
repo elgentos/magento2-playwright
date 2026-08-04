@@ -1,51 +1,108 @@
 // @ts-check
 
-import { expect, type Page } from '@playwright/test';
-import { UIReference, outcomeMarker } from '@config';
+import { expect, type Locator, type Page } from '@playwright/test';
+import { UIReference, outcomeMarker, slugs } from '@config';
 
-class ComparePage {
-  page: Page;
+export class BaseComparePage {
+	constructor(public readonly page: Page) { }
 
-  constructor(page: Page) {
-    this.page = page;
-  }
+	// ==============================================
+	// Element getters
+	// ==============================================
 
-  async removeProductFromCompare(product:string){
-    let comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
-    // if the comparison page is empty, we can't remove anything
-    if (await comparisonPageEmptyText.isVisible()) {
-      return;
-    }
+	// get comparePageTitle: returns title locator for comparison page.
+	protected get comparePageTitle(): Locator {
+		return this.page.getByRole('heading', { name: UIReference.text.frontend.compare.title });
+	}
 
-	const comparisonPageProductTitle = this.page.getByRole('link', {name: product});
-    let removeFromCompareButton = this.page.getByLabel(`${UIReference.text.frontend.compare.removeProduct} ${product}`);
-    await removeFromCompareButton.click();
-    const messageLocator = this.page.locator(UIReference.selectors.shared.message);
-    await messageLocator.waitFor();
-    await this.page.getByRole('button', {name: UIReference.text.shared.buttons.closeMessage}).click();
-    await expect(messageLocator, `notification toast should be hidden`).toBeHidden();
-	  await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
-  }
+	// get compareActionButtons: returns action buttons on comparison page.
+	get compareActionButtons() {
+		return {
+			removeFromCompareButton: (product: string): Locator =>
+				this.page.getByLabel(`${UIReference.text.frontend.compare.removeProduct} ${product}`),
+			addToCartButton: (product: string): Locator =>
+				this.page.getByRole('cell', { name: product }).getByRole('button', { name: UIReference.text.shared.buttons.addToCart }),
+			addToWishListButton: (product: string): Locator =>
+				this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`)
+		}
+	}
 
-  async addToCart(product:string){
-    const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
-    let productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+	// get messageLocators: return message locators
+	get messageLocators() {
+		return {
+			generalMessage : this.page.locator(UIReference.selectors.shared.message),
+			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
+		}
+	}
 
-    const productCell = this.page.getByRole('cell', {name: product});
-    const addToCartButton = productCell.getByRole('button', {name: UIReference.text.shared.buttons.addToCart});
+	// ==============================================
+	// Navigation methods
+	// ==============================================
 
-    await addToCartButton.click();
-    await successMessage.waitFor();
-    await expect(productAddedNotification).toBeVisible();
-  }
+	/**
+	 * Method to navigate to comparison page
+	 */
+	async goToComparePage() {
+		await this.page.goto(slugs.frontend.product.comparison);
+		await this.page.waitForLoadState();
 
-  async addToWishList(product:string){
-    const successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
-    let addToWishlistButton = this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`);
-    let productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
+		await expect(this.comparePageTitle, 'Checkpoint: comparison page title is visible').toBeVisible();
+	}
 
-    await addToWishlistButton.click();
-    await successMessage.waitFor();
-  }
+	// ==============================================
+	// Product interaction methods
+	// ==============================================
+
+	/**
+	 * Method: remove provided product from the comparison list.
+	 * @param product {string} - product title that should be removed
+	 * @returns {empty} - returns early if comparison page is empty
+	 */
+	async removeProductFromCompare(product: string) {
+		let comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
+		// if the comparison page is empty, we can't remove anything
+		if (await comparisonPageEmptyText.isVisible()) {
+			return;
+		}
+
+		const comparisonPageProductTitle = this.page.getByRole('link', { name: product });
+
+		await this.compareActionButtons.removeFromCompareButton(product).click();
+		await this.messageLocators.generalMessage.waitFor();
+		await this.page.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage }).click();
+
+		// Assertions to confirm test ran correctly.
+		await expect(this.messageLocators.generalMessage, `notification toast should be hidden`).toBeHidden();
+		await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
+	}
+
+	/**
+	 * Method: add product to cart from the comparison page.
+	 * Used in test "Add_product_to_cart_from_comparison_page"
+	 * @param product {string} - name of the product used in the test.
+	 */
+	async addToCart(product: string) {
+		let productAddedNotification = this.page.getByText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+
+		this.compareActionButtons.addToCartButton(product).click();
+		await this.messageLocators.successMessage.waitFor();
+
+		// Final assertion to confirm test ran correctly.
+		await expect(productAddedNotification).toBeVisible();
+	}
+
+	/**
+	 * Method: add product to wishlist from comparison page.
+	 * Used in the test "Add_product_to_wishlist_from_comparison_page"
+	 * @param product {string} - name of the product used in the test.
+	 */
+	async addToWishList(product: string) {
+		let productAddedNotification = this.page.getByText(`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`);
+
+		await this.compareActionButtons.addToWishListButton(product).click();
+		await this.messageLocators.successMessage.waitFor();
+
+		// Final assertion to confirm test ran correctly.
+		await expect(productAddedNotification).toBeVisible();
+	}
 }
-export default ComparePage;
