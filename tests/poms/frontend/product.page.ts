@@ -77,8 +77,8 @@ export class BaseProductPage {
 	 */
 	get lightboxElements() {
 		return {
-			fullScreenOpener: this.page.getByLabel(UIReference.text.frontend.product.fullScreenOpen),
-			fullScreenCloser: this.page.getByLabel(UIReference.text.frontend.product.fullScreenClose),
+			fullScreenOpener: this.page.locator('.group.stack').first(),
+			fullScreenCloser: this.page.locator('.absolute.right-2'),
 			thumbnails: this.page.getByRole('button', { name: UIReference.text.frontend.product.thumbnail }).all()
 		}
 	}
