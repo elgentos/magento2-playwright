@@ -243,11 +243,8 @@ class AdminLogin {
 	 * @param password - admin's password, sourced from .env
 	 */
 	async loginAdmin(username:string, password:string){
-		const captchaNotification = this.page.locator(UIReference.selectors.admin.common.message).filter(
+		const captchaNotification = this.page.locator(UIReference.selectors.shared.message).filter(
 			{hasText : UIReference.text.shared.messages.captchaIncorrect}
-		);
-		const invalidFormKeyNotification = this.page.locator(UIReference.selectors.admin.common.message).filter(
-			{hasText: UIReference.text.shared.messages.invalidFormKey}
 		);
 		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.text.admin.login.welcome);
 
@@ -263,33 +260,18 @@ class AdminLogin {
 			await expect(adminLoginHeading, `"Please sign in" text is visible`).toBeVisible();
 		}).toPass();
 
-		for(let attempt = 0; attempt < 2; attempt++) {
-			await this.adminLoginEmailField.fill(username);
-			await this.adminLoginPasswordField.fill(password);
-			await this.adminLoginPasswordField.press('Enter');
+		await this.adminLoginEmailField.fill(username);
+		await this.adminLoginPasswordField.fill(password);
+		await this.adminLoginButton.click();
 
-			await expect(
-				this.mainMenuStoresButton.or(captchaNotification).or(invalidFormKeyNotification)
-			).toBeVisible({ timeout: 15_000 });
-
-			if(await captchaNotification.isVisible()){
-				throw new Error(`CAPTCHA field found, automated login failed.`);
-			}
-
-			if(!await invalidFormKeyNotification.isVisible()){
-				break;
-			}
-
-			if(attempt === 1) {
-				throw new Error(`Admin login failed after refresh: ${UIReference.text.shared.messages.invalidFormKey}`);
-			}
-
-			await this.page.reload({ waitUntil: 'load' });
-			await expect(adminLoginHeading, `"Please sign in" text is visible`).toBeVisible();
+		if(await captchaNotification.isVisible()){
+			throw new Error(`CAPTCHA field found, automated login failed.`);
 		}
 
 		// Confirm the admin navigation needed by the next setup step is ready.
-		await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
+		await expect(async() => {
+			await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
+		}).toPass();
 
 		// WORKAROUND
 		// Add a timeout to ensure Magento has time to bind JS to buttons

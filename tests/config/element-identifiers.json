@@ -118,7 +118,6 @@
 			},
 			"messages": {
 				"captchaIncorrect": "Incorrect CAPTCHA.",
-				"invalidFormKey": "Invalid Form Key. Please refresh the page.",
 				"streetAddressRequired": "Street Address field is required."
 			}
 		},
