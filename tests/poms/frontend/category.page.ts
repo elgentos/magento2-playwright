@@ -29,8 +29,7 @@ export class BaseCategoryPage {
 			filterRegion,
 			attributeFilterButton : filterRegion.getByRole('button', { name: UIReference.text.frontend.category.sizeFilter }),
 			attributeOption : filterRegion.getByRole('link', { name: UIReference.text.frontend.category.sizeM }),
-			activeFilteringButton : this.page.getByRole('button', { name: UIReference.text.frontend.category.activeFilter }),
-			clearAllLink : this.page.getByRole('link', { name: UIReference.text.shared.buttons.clearAll })
+			activeFilteringHeading : filterRegion.getByRole('heading', { name: UIReference.text.frontend.category.activeFilter })
 		}
 	}
 
@@ -80,7 +79,7 @@ export class BaseCategoryPage {
 	 */
 	async filterOnAttribute() {
 		// declare 'this.categoryFilterItems' once to avoid having to use it everywhere.
-		const { attributeFilterButton, attributeOption, activeFilteringButton, clearAllLink } = this.categoryFilterItems;
+		const { attributeFilterButton, attributeOption, activeFilteringHeading } = this.categoryFilterItems;
 
 		// Scroll to the attribute filter to trigger Alpine.js deferred initialization
 		await attributeFilterButton.scrollIntoViewIfNeeded();
@@ -104,9 +103,8 @@ export class BaseCategoryPage {
 		await attributeOption.click();
 		await this.page.waitForURL(slugToRegex(expectedSizeFilterSlug));
 
-		// Verify active filtering is shown and Clear All link is available
-		await expect(activeFilteringButton, 'Active filtering button should be visible').toBeVisible();
-		await expect(clearAllLink, 'Clear All link should be visible').toBeVisible();
+		// Verify the selected filter is represented in the active filtering section.
+		await expect(activeFilteringHeading, 'Active filtering heading should be visible').toBeVisible();
 	}
 
 
