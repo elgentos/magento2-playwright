@@ -177,30 +177,33 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 Style is mechanically enforced. A blocking `lint` job runs on every pull request and GitLab pipeline.
 
 ```bash
+npm run typecheck     # TypeScript compiler validation
 npm run lint          # ESLint: type-aware TS rules + Playwright rules
-npm run lint:fix      # auto-fix what ESLint can
-npm run format        # Prettier: rewrite files
-npm run format:check  # Prettier: verify only (what CI runs)
+npm run lint:ci       # ESLint with the current warning baseline
+npm run format        # Prettier: rewrite JS, TS, and JSON files
+npm run format:check  # Prettier: verify JS, TS, and JSON files
 ```
 
 Config lives in `eslint.config.mjs` and `.prettierrc.json`. Both are `.npmignore`d — they are
 contributor tooling and are not shipped to consumers of the package.
 
 `base-tests/` is never linted; it is generated from `tests/` by `build.js`. Warnings mark
-pre-existing debt with a hit count in `eslint.config.mjs` — do not add new ones, and do not silence a
-rule to make output quiet. Refresh hit-count comments with `npx eslint . -f json` (pipe through a
-counter per rule), not by hand — hand-counted comments drift out of sync with the next reformat or
-autofix.
+pre-existing debt — do not increase the total, and lower the `lint:ci` warning baseline when warnings
+are removed.
+
+Prettier intentionally formats source code and JSON only. Markdown and YAML retain their existing
+formatting to avoid unrelated documentation and pipeline diffs.
 
 Run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once, so the bulk Prettier commit does
 not obscure `git blame`.
 
 ## CI/CD Pipeline
 
-`.gitlab-ci.yml` has three stages: `lint`, `testing_suite`, `mirror`. The `lint` stage runs
-`npm run lint` and `npm run format:check` and blocks the pipeline on failure. `testing_suite` runs
-`npx playwright test`; setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as
-a dependency of the chromium/firefox/webkit projects — no separate setup stage.
+`.gitlab-ci.yml` has three stages: `lint`, `testing_suite`, `mirror`. The `lint` stage runs type
+checking, ESLint with the warning baseline, and Prettier, and blocks the pipeline on failure.
+`testing_suite` runs `npx playwright test`; setup (`init.setup.ts`, the `setup` Playwright project)
+runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup
+stage.
 
 Run locally:
 

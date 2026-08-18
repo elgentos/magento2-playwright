@@ -84,10 +84,13 @@ jobs:
       # --ignore-scripts: the postinstall runs the interactive install.js
       # wizard, and build.js deletes tests/ when CI=true.
       - name: Install dependencies
-        run: npm install --ignore-scripts
+        run: npm ci --ignore-scripts
+
+      - name: TypeScript
+        run: npm run typecheck
 
       - name: ESLint
-        run: npm run lint
+        run: npm run lint:ci
 
       - name: Prettier
         run: npm run format:check

@@ -10,10 +10,3 @@ package-lock.json
 
 # gitignored + machine-specific
 /*.config.ts
-
-# Prettier reflows large tables into unreviewable diffs
-*.md
-
-# YAML: forbids tab indentation, and CI config is out of scope for the reformat
-*.yml
-*.yaml
