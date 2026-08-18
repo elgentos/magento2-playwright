@@ -15,8 +15,10 @@
     "@axe-core/playwright": "^4.12.1",
     "@faker-js/faker": "^10.2.0",
     "@playwright/test": "^1.57.0",
+    "@types/lodash.merge": "^4.6.9",
     "@types/node": "^25.5.0",
     "csv-parse": "^6.1.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "lodash.merge": "^4.6.2"
   }
 }
