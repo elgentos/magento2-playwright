@@ -262,7 +262,7 @@ class AdminLogin {
 
 		await this.adminLoginEmailField.fill(username);
 		await this.adminLoginPasswordField.fill(password);
-		await this.adminLoginButton.click();
+		await this.adminLoginPasswordField.press('Enter');
 
 		if(await captchaNotification.isVisible()){
 			throw new Error(`CAPTCHA field found, automated login failed.`);
