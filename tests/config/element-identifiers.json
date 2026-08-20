@@ -4,6 +4,7 @@
 			"spinner": "#container .spinner",
 			"header": "#header",
 			"pageTitle": "h1.page-title",
+			"notification": "#messages .message, .magewire.notification.message",
 			"message": "#messages div div.messages div div.message span",
 			"errorMessage": "#messages div .messages div .error span",
 			"successMessage": "div.message.success"

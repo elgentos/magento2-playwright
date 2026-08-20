@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class BaseContactPage {
 	constructor(public readonly page: Page) { }
@@ -23,13 +24,6 @@ export class BaseContactPage {
 			emailField : this.page.getByRole('textbox', {name: UIReference.text.shared.forms.email, exact: true }),
 			messageField : this.page.locator(UIReference.selectors.frontend.contact.message),
 			sendFormButton : this.page.getByRole('button', { name: UIReference.text.shared.buttons.submit })
-		}
-	}
-
-	// get messageLocators: return message locators
-	get messageLocators() {
-		return {
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
 		}
 	}
 
@@ -67,11 +61,9 @@ export class BaseContactPage {
 		await this.formFields.messageField.fill(faker.lorem.paragraph());
 
 		await this.formFields.sendFormButton.click();
-		// wait for success message div to show.
-		await this.messageLocators.successMessage.waitFor();
 
 		// Final assertions to confirm test performed correctly.
-		await expect(this.page.getByText(messageSentConfirmationText)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(messageSentConfirmationText);
 		await expect(this.formFields.nameField, 'name should be empty now').toBeEmpty();
 		await expect(this.formFields.emailField, 'email should be empty now').toBeEmpty();
 		await expect(this.formFields.messageField, 'message should be empty now').toBeEmpty();

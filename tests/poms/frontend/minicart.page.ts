@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class BaseMiniCartPage {
@@ -59,6 +60,7 @@ export class BaseMiniCartPage {
 		// ensure button is visible
 		await removeProductMiniCartButton.waitFor();
 		await removeProductMiniCartButton.click();
+		await new NotificationValidatorUtils(this.page).validate(productRemovedNotification);
 		await expect(removeProductMiniCartButton, `Button to move product from minicart is no longer visible`).toBeHidden();
 		await expect(this.page.getByText(UIReference.text.frontend.minicart.empty), `Minicart shows text "Cart is empty"`).toBeVisible();
 	}
@@ -76,7 +78,7 @@ export class BaseMiniCartPage {
 		await this.productQuantityField.fill(amount);
 
 		await this.updateItemButton.click();
-		await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(productQuantityChangedNotification);
 
 		let productQuantityInCart = await this.page.getByLabel(UIReference.text.frontend.common.quantityAbbr).first().inputValue();
 		expect(productQuantityInCart).toBe(amount);

@@ -7,6 +7,8 @@ import { BaseComparePage } from '@poms/frontend/compare.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
 import { BaseProductPage } from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
@@ -42,15 +44,12 @@ test('Add_product_to_cart_from_comparison_page', { tag: ['@comparison-page', '@c
  * @then I should see an error message
  */
 test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page', '@cold'] }, async ({ page }) => {
-	const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
-
 	let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
 	let addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
 	await addToWishlistButton.click();
-	await errorMessage.waitFor();
-	await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
+	await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
 
-	await expect(page.url(), `Page has been redirect to login page`).toContain(slugs.frontend.account.login);
+	await expect(page, `Page has been redirected to login page`).toHaveURL(slugToRegex(slugs.frontend.account.login));
 });
 
 /**

@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, inputValues, outcomeMarker, slugs } from '@config';
 import { requireEnv } from "@utils/env.utils";
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 class AdminCustomers {
@@ -117,11 +118,10 @@ class AdminCustomers {
 	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
 	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
 	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
-
-	  await expect(
-		this.page.locator(UIReference.selectors.shared.message).filter({hasText: 'You saved the customer.'})
-	  ).toBeVisible();
 	}
+	await new NotificationValidatorUtils(this.page).validate(
+	  outcomeMarker.magentoAdmin.customerSavedText
+	);
 
 	await this.approveAccount(email);
   }
@@ -159,7 +159,7 @@ class AdminCustomers {
 	await this.page.getByRole('cell', {name:email}).locator('div').isVisible();
 
 	await expect(async() => {
-	  editAccountButton.click();
+	  await editAccountButton.click();
 	}).toPass();
 
 	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
@@ -177,11 +177,9 @@ class AdminCustomers {
 		console.log('Spinner is visible');
 		await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
 	  }
-	  await expect(
-		this.page
-		  .locator(UIReference.selectors.shared.message)
-		  .filter({ hasText: 'Customer account has been approved!' })
-	  ).toBeVisible();
+	  await new NotificationValidatorUtils(this.page).validate(
+		outcomeMarker.magentoAdmin.customerApprovedText
+	  );
 	}
   }
 }

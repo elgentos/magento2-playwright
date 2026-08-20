@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference } from '@config';
 
 
@@ -104,8 +105,9 @@ class AdminLogin {
 			await expect(this.storeFrontCaptchaOption, `CAPTCHA is disabled for customers`).toHaveValue('0');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 	}
 
@@ -154,8 +156,9 @@ class AdminLogin {
 			await expect(this.customerCreateReCaptchaOption, `reCAPTCHA is disabled for customer creation`).toHaveValue('');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 	}
 
@@ -231,8 +234,9 @@ class AdminLogin {
 			await expect(this.adminSharingOption, `Account sharing option enabled`).toHaveValue('1');
 
 			await this.saveConfigButton.click();
-			await expect(this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 
 	}
@@ -244,8 +248,8 @@ class AdminLogin {
 	 */
 	async loginAdmin(username:string, password:string){
 		const dashboardLabel = this.page.getByRole('heading', {name: UIReference.text.admin.common.dashboardTitle});
-		const captchaNotification = this.page.locator(UIReference.selectors.shared.message).filter(
-			{hasText : UIReference.text.shared.messages.captchaIncorrect}
+		const captchaNotification = this.page.locator(UIReference.selectors.shared.notification).filter(
+			{ hasText: UIReference.text.shared.messages.captchaIncorrect, visible: true }
 		);
 		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.text.admin.login.welcome);
 
@@ -265,12 +269,11 @@ class AdminLogin {
 		await this.adminLoginPasswordField.fill(password);
 		await this.adminLoginButton.click();
 
-		if(await captchaNotification.isVisible()){
-			throw new Error(`CAPTCHA field found, automated login failed.`);
-		}
-
 		// Confirm the page has loaded correctly by checking for the presence of text.
 		await expect(async() => {
+			if (await captchaNotification.isVisible()) {
+				throw new Error(`CAPTCHA field found, automated login failed.`);
+			}
 			await expect(dashboardLabel, `Dashboard Title is visible`).toBeVisible();
 		}).toPass();
 

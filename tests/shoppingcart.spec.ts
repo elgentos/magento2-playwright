@@ -14,7 +14,6 @@ import { BaseLoginPage } from '@poms/frontend/login.page';
 import { BaseProductPage } from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
-import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
 
 /**
@@ -24,15 +23,10 @@ test.describe('Cart functionalities (guest)', () => {
 	/**
 	 * Before each test: add a product to the cart, navigate to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
-	 * @param testInfo -  Playwright class that allows interaction with the report.
 	 */
-	test.beforeEach(async ({ page }, testInfo) => {
+	test.beforeEach(async ({ page }) => {
 		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
-
-		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
-		const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-		await notificationValidator.validate(productAddedNotification);
 
 		await page.goto(slugs.frontend.cart.index);
 	});
