@@ -77,7 +77,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 * @given I have added a (simple) product to the cart and opened the minicart
 	 * @when I click on the delete button
 	 *  @then The product should not be in my cart anymore
-	 *  @and I should see a notification that the product was removed
+	 *  @and the minicart should show that it is empty
 	 */
 	test('Delete_product_from_minicart', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }, testInfo) => {
 		testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.` });

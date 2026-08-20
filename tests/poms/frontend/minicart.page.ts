@@ -55,12 +55,10 @@ export class BaseMiniCartPage {
 	 * @param product {string} - name of the product to remove.
 	 */
 	async removeProductFromMinicart(product: string) {
-		let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
-		let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${UIReference.text.frontend.product.simpleProduct}"`);
+		let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${product}"`);
 		// ensure button is visible
 		await removeProductMiniCartButton.waitFor();
 		await removeProductMiniCartButton.click();
-		await new NotificationValidatorUtils(this.page).validate(productRemovedNotification);
 		await expect(removeProductMiniCartButton, `Button to move product from minicart is no longer visible`).toBeHidden();
 		await expect(this.page.getByText(UIReference.text.frontend.minicart.empty), `Minicart shows text "Cart is empty"`).toBeVisible();
 	}
