@@ -232,6 +232,7 @@
 			"category": {
 				"title": "Women",
 				"activeFilter": "Active filtering",
+				"filterSelected": "filter selected",
 				"filterRegion": "Product filters",
 				"sizeFilter": "Size filter",
 				"sizeM": "Filter Size M",
