@@ -29,8 +29,7 @@ export class BaseCategoryPage {
 			filterRegion,
 			attributeFilterButton : filterRegion.getByRole('button', { name: UIReference.text.frontend.category.sizeFilter }),
 			attributeOption : filterRegion.getByRole('link', { name: UIReference.text.frontend.category.sizeM }),
-			activeFilteringHeading : filterRegion.getByRole('heading', { name: UIReference.text.frontend.category.activeFilter })
-			activeFilteringHeading : filterRegion.getByRole('heading', { name: UIReference.text.frontend.category.activeFilter, level: 3 })
+			activeFilteringHeading : filterRegion.getByRole('heading', { name: UIReference.text.frontend.category.activeFilter, level:3 })
 		}
 	}
 
