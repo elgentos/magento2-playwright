@@ -234,9 +234,11 @@ export class BaseProductPage {
 
 		await this.reviewFormFields.loader.waitFor({ state: 'hidden' });
 
-		await new NotificationValidatorUtils(this.page).validate(
-			outcomeMarker.productPage.reviewSubmittedNotification
-		);
+		// We don't use the notificationvalidator here,
+		// since this noitification is appended to the review form rather than up top -
+		// meaning the notificationvalidator won't find this.
+		await expect(this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
+			`Notification that review has been submitted for moderation is visible`).toBeVisible();
 	}
 
 	/**
