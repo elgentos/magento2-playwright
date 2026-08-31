@@ -13,7 +13,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { requireEnv, getHttpCredentials } from '@utils/env.utils';
-import { UIReference, slugs } from '@config';
+import { UIReference, slugs, toggles } from '@config';
 
 function regressionSnapshotName(label: string, browser: string, extension: 'png' | 'yml'): string {
 	const now = new Date();
@@ -149,6 +149,7 @@ test.describe('Smoke tests for critical pages', () => {
  * and used as the baseline that the base URL is compared against.
  */
 test.describe('Visual Regression Tests', () => {
+	test.skip(toggles.visualRegression === false, 'Disabled by test toggle: visualRegression');
 
 	// Pin the viewport and DPR so screenshots are byte-comparable regardless of
 	// the project's device profile. Desktop Safari defaults deviceScaleFactor

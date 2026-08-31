@@ -14,7 +14,7 @@ import { test, expect } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 
-import { inputValues, UIReference } from '@config';
+import { inputValues, UIReference, toggles } from '@config';
 
 import AdminLogin from '@poms/admin/adminlogin.page';
 
@@ -176,6 +176,7 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
  * already exists and is active.
  */
 test(`Set_coupon_codes`, { tag: '@api' }, async () => {
+	test.skip(toggles.couponCodes === false, 'Disabled by test toggle: couponCodes');
 
 	const couponCodeEntries = Object.entries(inputValues.coupon.codes) as [string, string][];
 

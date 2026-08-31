@@ -10,7 +10,7 @@
 import { test } from '@utils/fixtures.utils';
 import { requireEnv } from '@utils/env.utils';
 
-import { inputValues} from '@config';
+import { inputValues, toggles } from '@config';
 
 import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
 
@@ -39,15 +39,19 @@ test.describe('User tests (logged in)', () => {
 		await mainMenu.gotoMyAccount();
 	});
 
-	/**
-	 * Test: a user navigates to their wishlist, using the menu
-	 * @assume the user is already logged in
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
-		const mainMenu = new BaseMainMenuPage(page);
-		await mainMenu.openAccountMenu(true);
-		await mainMenu.goToWishList();
+	test.describe(() => {
+		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+
+		/**
+		 * Test: a user navigates to their wishlist, using the menu
+		 * @assume the user is already logged in
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+			const mainMenu = new BaseMainMenuPage(page);
+			await mainMenu.openAccountMenu(true);
+			await mainMenu.goToWishList();
+		});
 	});
 
 	/**
