@@ -17,7 +17,7 @@ import { BaseNewsletterSubscriptionPage } from '@poms/frontend/newsletter.page';
 
 import { requireEnv } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
-import { UIReference, outcomeMarker, slugs, inputValues} from '@config';
+import { UIReference, outcomeMarker, slugs, inputValues, toggles } from '@config';
 
 /**
  * Test group: User credentials tests
@@ -264,6 +264,7 @@ test.describe.serial('Account address book actions', { annotation: {type: 'Accou
  * @assume we're using the fixture with an authenticated account
  */
 test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
+	test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
 
 	/**
 	 * Test: The user (un)subscribes from the newsletter

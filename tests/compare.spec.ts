@@ -1,7 +1,7 @@
 // @ts-check
 
 import { test, expect } from '@playwright/test';
-import { UIReference, outcomeMarker, slugs } from '@config';
+import { UIReference, outcomeMarker, slugs, toggles } from '@config';
 
 import { BaseComparePage } from '@poms/frontend/compare.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
@@ -12,6 +12,8 @@ import { slugToRegex } from '@utils/url.utils';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
+	test.skip(toggles.compare === false, 'Disabled by test toggle: compare');
+
 	await test.step('Add products to compare', async () => {
 		const productPage = new BaseProductPage(page);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
@@ -44,6 +46,9 @@ test('Add_product_to_cart_from_comparison_page', { tag: ['@comparison-page', '@c
  * @then I should see an error message
  */
 test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page', '@cold'] }, async ({ page }) => {
+	test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+	const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
+
 	let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
 	let addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
 	await addToWishlistButton.click();
@@ -61,6 +66,7 @@ test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page
  * @then I should see a notification that the product has been added to my wishlist
  */
 test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page', '@hot'] }, async ({ page, browserName }) => {
+	test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 	await test.step('Log in with account', async () => {
 		const id = test.info().parallelIndex;
 		let user = `playwright+${id}@elgentos.nl`;
@@ -88,6 +94,10 @@ test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page',
 
 
 test.afterEach('Remove products from compare', async ({ page }) => {
+	if (toggles.compare === false) {
+		return;
+	}
+
 	// ensure we are on the right page
 	await page.goto(slugs.frontend.product.comparison);
 

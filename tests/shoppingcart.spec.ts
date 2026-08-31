@@ -14,7 +14,8 @@ import { BaseLoginPage } from '@poms/frontend/login.page';
 import { BaseProductPage } from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
-import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { UIReference, slugs, outcomeMarker, inputValues, toggles } from '@config';
 
 /**
  * Test Group: Cart functionalities for guests
@@ -24,7 +25,12 @@ test.describe('Cart functionalities (guest)', () => {
 	 * Before each test: add a product to the cart, navigate to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(async ({ page }, testInfo) => {
+		test.skip(
+			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
+			'Disabled by test toggle: couponCodes'
+		);
+
 		const productPage = new BaseProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
