@@ -55,10 +55,11 @@ Five JSON config files live in `config/`. The loader (`config/index.ts`) deep-me
 | `input-values.json` | `inputValues` | Test data (names, addresses, credit cards, search terms) |
 | `slugs.json` | `slugs` | URL paths for all pages |
 | `outcome-markers.json` | `outcomeMarker` | Expected success/error messages |
+| `test-toggles.json` | `toggles` | Persistent switches for optional store capabilities |
 
 **Import config like this:**
 ```typescript
-import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
+import { UIReference, slugs, outcomeMarker, inputValues, toggles } from '@config';
 ```
 
 ## Path Aliases
@@ -222,7 +223,7 @@ npx playwright test --project=setup                   # Run setup only (rarely n
 4. **Use the authenticated `test` fixture** from `@utils/fixtures.utils` when the test needs a logged-in user.
 5. **Use POMs** for page interactions. Don't put locator logic directly in spec files.
 6. **Config is deep-merged.** When overriding config in `tests/config/`, you only need to specify the keys you're changing.
-7. **Setup runs as a project dependency.** `init.setup.ts` creates accounts, disables admin CAPTCHA, and sets up coupon codes. It runs automatically before any browser test via `dependencies: ['setup']` in `playwright.config.ts` — never invoke it manually.
+7. **Setup runs as a project dependency.** `init.setup.ts` creates accounts, disables admin CAPTCHA, and sets up coupon codes when the `couponCodes` toggle is enabled. It runs automatically before any browser test via `dependencies: ['setup']` in `playwright.config.ts` — never invoke it manually.
 8. **Browser-specific data** uses env vars suffixed with the browser engine name (e.g., `_CHROMIUM`, `_FIREFOX`, `_WEBKIT`).
 9. **Magewire pages** (checkout, cart) need `waitForMagewireRequests()` after interactions that trigger Magewire calls.
 10. **Commit messages:** Write concise messages describing the change.

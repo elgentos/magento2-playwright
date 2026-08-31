@@ -15,13 +15,17 @@ import { BaseCheckoutPage } from '@poms/frontend/checkout.page';
 import { BaseOrderHistoryPage } from '@poms/frontend/orderhistory.page';
 
 import { requireEnv } from '@utils/env.utils';
-import { UIReference, slugs } from '@config';
+import { UIReference, slugs, toggles } from '@config';
 
 /**
  * Test: User places an order, then verifies it's in their order history
  * @param page - Playwright page instance used to interact with the website.
  */
 test('Recent_order_is_visible_in_history', async ({ page }) => {
+	test.skip(
+		toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false,
+		'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+	);
 	const parallelIndex = test.info().parallelIndex;
 	const email = `playwright+${parallelIndex}@elgentos.nl`;
 	const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');

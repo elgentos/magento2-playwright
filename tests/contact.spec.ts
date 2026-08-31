@@ -1,6 +1,7 @@
 // @ts-check
 
 import { test } from '@playwright/test';
+import { toggles } from '@config';
 import { BaseContactPage } from '@poms/frontend/contact.page';
 
 /**
@@ -14,6 +15,7 @@ import { BaseContactPage } from '@poms/frontend/contact.page';
  *  @and the fields should be empty again.
  */
 test('Send_message_through_contact_form', { tag: ['@contact-form', '@hot'] }, async ({ page }) => {
+	test.skip(toggles.contactForm === false, 'Disabled by test toggle: contactForm');
 	const contactPage = new BaseContactPage(page);
 	await contactPage.goToContactPage();
 	await contactPage.fillOutForm();

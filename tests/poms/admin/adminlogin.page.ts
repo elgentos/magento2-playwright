@@ -331,18 +331,13 @@ class AdminLogin {
 	 * @param username - admin's username, sourced from .env
 	 * @param password - admin's password, sourced from .env
 	 */
-	async loginAdmin(username: string, password: string) {
-		const dashboardLabel = this.page.getByRole('heading', {
-			name: UIReference.text.admin.common.dashboardTitle,
-		});
-		const captchaNotification = this.page
-			.locator(UIReference.selectors.shared.message)
-			.filter({ hasText: UIReference.text.shared.messages.captchaIncorrect });
-		const adminLoginHeading = this.page
-			.locator('legend')
-			.getByText(UIReference.text.admin.login.welcome);
+	async loginAdmin(username:string, password:string){
+		const captchaNotification = this.page.locator(UIReference.selectors.shared.message).filter(
+			{hasText : UIReference.text.shared.messages.captchaIncorrect}
+		);
+		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.text.admin.login.welcome);
 
-		if (await dashboardLabel.isVisible()) {
+		if(await this.mainMenuStoresButton.isVisible()){
 			// already logged in
 			return;
 		}
@@ -362,9 +357,9 @@ class AdminLogin {
 			throw new Error(`CAPTCHA field found, automated login failed.`);
 		}
 
-		// Confirm the page has loaded correctly by checking for the presence of text.
-		await expect(async () => {
-			await expect(dashboardLabel, `Dashboard Title is visible`).toBeVisible();
+		// Confirm the admin navigation needed by the next setup step is ready.
+		await expect(async() => {
+			await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
 		}).toPass();
 
 		// WORKAROUND

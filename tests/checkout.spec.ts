@@ -9,7 +9,7 @@ import { BaseCheckoutPage } from '@poms/frontend/checkout.page';
 
 import { faker } from '@faker-js/faker';
 import MagewireUtils from '@utils/magewire.utils';
-import { UIReference, slugs, inputValues } from '@config';
+import { UIReference, slugs, inputValues, toggles } from '@config';
 
 /**
  * Test Group: Checkout tests
@@ -21,7 +21,13 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(async ({ page }, testInfo) => {
+		test.skip(
+			testInfo.tags.includes('@simple-product-order') &&
+				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
+			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+		);
+
 		const magewire = new MagewireUtils(page);
 		const productPage = new BaseProductPage(page);
 
@@ -105,7 +111,21 @@ test.describe('Checkout (guest)', () => {
 	 * Before each test: set op monitoring and add product to cart
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }) => {
+	test.beforeEach(async ({ page }, testInfo) => {
+		test.skip(
+			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
+			'Disabled by test toggle: couponCodes'
+		);
+		test.skip(
+			testInfo.tags.includes('@price-calculation') && toggles.fixedRateShipping === false,
+			'Disabled by test toggle: fixedRateShipping'
+		);
+		test.skip(
+			testInfo.tags.includes('@payment-methods') &&
+				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
+			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+		);
+
 		// set up magewire monitoring
 		const magewire = new MagewireUtils(page);
 		magewire.startMonitoring();
