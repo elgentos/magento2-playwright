@@ -5,6 +5,7 @@ import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 
 export class BaseCheckoutPage extends MagewireUtils {
@@ -204,7 +205,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification visible, 'cancel coupon' button is visible, discountfield has code filled in.
-		await expect.soft(this.page.getByText(`${outcomeMarker.checkout.couponAppliedNotification}`), `Notification that discount code ${code} has been applied`).toBeVisible({ timeout: 30000 });
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponAppliedNotification);
 		await expect(cancelCouponButton, `cancel coupon button is visible`).toBeVisible();
 		await expect(async () => {
 			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
@@ -232,7 +233,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification that code is incorrect shows up, the input field is still editable.
-		await expect.soft(this.page.getByText(outcomeMarker.checkout.incorrectDiscountNotification), `Code should not work`).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.incorrectDiscountNotification);
 		await expect(codeInputField).toBeEditable();
 	}
 
@@ -254,7 +255,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
-		await expect.soft(this.page.getByText(outcomeMarker.checkout.couponRemovedNotification), `Notification should be visible`).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponRemovedNotification);
 		await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol), `'-$' should not be on the page`).toBeHidden();
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();

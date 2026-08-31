@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class BaseMiniCartPage {
@@ -54,8 +55,7 @@ export class BaseMiniCartPage {
 	 * @param product {string} - name of the product to remove.
 	 */
 	async removeProductFromMinicart(product: string) {
-		let productRemovedNotification = outcomeMarker.miniCart.productRemovedConfirmation;
-		let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${UIReference.text.frontend.product.simpleProduct}"`);
+		let removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${product}"`);
 		// ensure button is visible
 		await removeProductMiniCartButton.waitFor();
 		await removeProductMiniCartButton.click();
@@ -76,7 +76,7 @@ export class BaseMiniCartPage {
 		await this.productQuantityField.fill(amount);
 
 		await this.updateItemButton.click();
-		await expect.soft(this.page.getByText(productQuantityChangedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(productQuantityChangedNotification);
 
 		let productQuantityInCart = await this.page.getByLabel(UIReference.text.frontend.common.quantityAbbr).first().inputValue();
 		expect(productQuantityInCart).toBe(amount);
