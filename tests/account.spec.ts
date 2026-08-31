@@ -335,18 +335,24 @@ test.describe.serial(
  * Test Group: Newsletter tests
  * @assume we're using the fixture with an authenticated account
  */
-test.describe('Newsletter actions', { annotation: {type: 'Account Dashboard', description: 'Newsletter tests'},}, () => {
-	test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
+test.describe(
+	'Newsletter actions',
+	{ annotation: { type: 'Account Dashboard', description: 'Newsletter tests' } },
+	() => {
+		test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
 
-	/**
-	 * Test: The user (un)subscribes from the newsletter
-	 * @assume the user is already logged in.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Update_newsletter_subscription',{ tag: ['@newsletter-actions', '@cold'] }, async ({page}) => {
-		// Navigate to a page.
-		await page.goto(slugs.frontend.account.overview);
-		await page.waitForLoadState();
+		/**
+		 * Test: The user (un)subscribes from the newsletter
+		 * @assume the user is already logged in.
+		 * @param page - Playwright page instance used to interact with the website.
+		 */
+		test(
+			'Update_newsletter_subscription',
+			{ tag: ['@newsletter-actions', '@cold'] },
+			async ({ page }) => {
+				// Navigate to a page.
+				await page.goto(slugs.frontend.account.overview);
+				await page.waitForLoadState();
 
 				const newsletterPage = new BaseNewsletterSubscriptionPage(page);
 				const newsletterLink = page.getByRole('link', {

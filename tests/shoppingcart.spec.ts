@@ -29,7 +29,7 @@ test.describe('Cart functionalities (guest)', () => {
 	test.beforeEach(async ({ page }, testInfo) => {
 		test.skip(
 			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
-			'Disabled by test toggle: couponCodes'
+			'Disabled by test toggle: couponCodes',
 		);
 
 		const productPage = new BaseProductPage(page);

@@ -25,7 +25,7 @@ test.describe('Checkout (logged in user)', () => {
 		test.skip(
 			testInfo.tags.includes('@simple-product-order') &&
 				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
-			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
 		);
 
 		const magewire = new MagewireUtils(page);
@@ -114,16 +114,16 @@ test.describe('Checkout (guest)', () => {
 	test.beforeEach(async ({ page }, testInfo) => {
 		test.skip(
 			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
-			'Disabled by test toggle: couponCodes'
+			'Disabled by test toggle: couponCodes',
 		);
 		test.skip(
 			testInfo.tags.includes('@price-calculation') && toggles.fixedRateShipping === false,
-			'Disabled by test toggle: fixedRateShipping'
+			'Disabled by test toggle: fixedRateShipping',
 		);
 		test.skip(
 			testInfo.tags.includes('@payment-methods') &&
 				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
-			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
 		);
 
 		// set up magewire monitoring

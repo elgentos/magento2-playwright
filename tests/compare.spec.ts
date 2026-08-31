@@ -53,9 +53,12 @@ test(
  * @when I click the 'add to wishlist' button
  * @then I should see an error message
  */
-test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page', '@cold'] }, async ({ page }) => {
-	test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
-	const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
+test(
+	'Guests_can_not_add_a_product_to_their_wishlist',
+	{ tag: ['@comparison-page', '@cold'] },
+	async ({ page }) => {
+		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+		const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
 		const productNotWishlistedNotificationText =
 			outcomeMarker.comparePage.productNotWishlistedNotificationText;
@@ -80,12 +83,15 @@ test('Guests_can_not_add_a_product_to_their_wishlist', { tag: ['@comparison-page
  * @when I click the 'add to wishlist' button
  * @then I should see a notification that the product has been added to my wishlist
  */
-test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page', '@hot'] }, async ({ page, browserName }) => {
-	test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
-	await test.step('Log in with account', async () => {
-		const id = test.info().parallelIndex;
-		const user = `playwright+${id}@elgentos.nl`;
-		const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+test(
+	'Add_product_to_wishlist_from_comparison_page',
+	{ tag: ['@comparison-page', '@hot'] },
+	async ({ page, browserName }) => {
+		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+		await test.step('Log in with account', async () => {
+			const id = test.info().parallelIndex;
+			const user = `playwright+${id}@elgentos.nl`;
+			const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 			const loginPage = new BaseLoginPage(page);
 			await loginPage.goToLoginPage();

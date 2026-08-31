@@ -331,13 +331,15 @@ class AdminLogin {
 	 * @param username - admin's username, sourced from .env
 	 * @param password - admin's password, sourced from .env
 	 */
-	async loginAdmin(username:string, password:string){
-		const captchaNotification = this.page.locator(UIReference.selectors.shared.message).filter(
-			{hasText : UIReference.text.shared.messages.captchaIncorrect}
-		);
-		const adminLoginHeading = this.page.locator('legend').getByText(UIReference.text.admin.login.welcome);
+	async loginAdmin(username: string, password: string) {
+		const captchaNotification = this.page
+			.locator(UIReference.selectors.shared.message)
+			.filter({ hasText: UIReference.text.shared.messages.captchaIncorrect });
+		const adminLoginHeading = this.page
+			.locator('legend')
+			.getByText(UIReference.text.admin.login.welcome);
 
-		if(await this.mainMenuStoresButton.isVisible()){
+		if (await this.mainMenuStoresButton.isVisible()) {
 			// already logged in
 			return;
 		}
@@ -358,8 +360,11 @@ class AdminLogin {
 		}
 
 		// Confirm the admin navigation needed by the next setup step is ready.
-		await expect(async() => {
-			await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
+		await expect(async () => {
+			await expect(
+				this.mainMenuStoresButton,
+				`Stores link in admin menu is visible`,
+			).toBeVisible();
 		}).toPass();
 
 		// WORKAROUND

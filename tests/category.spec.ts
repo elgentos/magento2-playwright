@@ -14,10 +14,10 @@ import { BaseCategoryPage } from '@poms/frontend/category.page';
  * @then the URL should reflect this filter
  * @and I should see fewer products
  */
-test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page}) => {
+test('Filter_category_on_attribute', { tag: ['@category', '@cold'] }, async ({ page }) => {
 	test.skip(toggles.categoryFilters === false, 'Disabled by test toggle: categoryFilters');
-  const categoryPage = new BaseCategoryPage(page);
-  await categoryPage.goToCategoryPage();
+	const categoryPage = new BaseCategoryPage(page);
+	await categoryPage.goToCategoryPage();
 
 	await categoryPage.filterOnAttribute();
 });

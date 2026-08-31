@@ -33,10 +33,14 @@ test.describe('Footer', () => {
 	 * Fills in the fields and clicks the subscribe button.
 	 * Finally, checks if user is notified of success.
 	 */
-	test('Footer_newsletter_subscription', {tag: ['@footer', '@cold']}, async ({page}, testInfo) => {
-		test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
-		const footer = new BaseFooter(page);
-		await footer.goToFooterElement();
-		await footer.subscribeToNewsletter();
-	});
-})
+	test(
+		'Footer_newsletter_subscription',
+		{ tag: ['@footer', '@cold'] },
+		async ({ page }, testInfo) => {
+			test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
+			const footer = new BaseFooter(page);
+			await footer.goToFooterElement();
+			await footer.subscribeToNewsletter();
+		},
+	);
+});

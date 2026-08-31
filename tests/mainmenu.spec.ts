@@ -47,7 +47,7 @@ test.describe('User tests (logged in)', () => {
 		 * @assume the user is already logged in
 		 * @param page - Playwright page instance used to interact with the website.
 		 */
-		test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+		test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 			const mainMenu = new BaseMainMenuPage(page);
 			await mainMenu.openAccountMenu(true);
 			await mainMenu.goToWishList();
