@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class BaseCartPage {
 	constructor(public readonly page: Page) { };
@@ -103,16 +104,14 @@ export class BaseCartPage {
 		await this.discountFormFields.applyDiscountButton.click();
 		await this.page.waitForLoadState();
 
-		const notificationBanner = this.page.locator(UIReference.selectors.shared.successMessage)
-			.filter({ hasText: outcomeMarker.cart.discountAppliedNotification });
-		await notificationBanner.waitFor();
-
 		// Final assertions: check for notification, and the presence of a discount amount
-		await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`), `Notification that discount code ${code} has been applied`).toBeVisible();
+		const notification = await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.cart.discountAppliedNotification} "${code}"`
+		);
 		// WORKAROUND: hardcoded '-' symbol because the space between - and $ is not always present.
 		await expect(this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`), `'- $' should be visible on the page`).toBeVisible();
 		// Close message to prevent difficulties with other tests.
-		await this.page.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
+		await notification.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
 	}
 
 	/**
@@ -128,7 +127,7 @@ export class BaseCartPage {
 		await this.page.waitForLoadState();
 
 		// Final assertions: check for notification and confirm the discount text is no longer visible.
-		await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification), `Notification should be visible`).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.cart.discountRemovedNotification);
 		await expect(this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`), `'- $' should not be on the page`).toBeHidden();
 	}
 
@@ -150,7 +149,7 @@ export class BaseCartPage {
 		let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
 		// Final assertions: notification that code was incorrect & discount code field is still editable
-		await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(incorrectNotification);
 		await expect(this.discountFormFields.codeInputField).toBeEditable();
 	}
 

@@ -1,8 +1,9 @@
 // @ts-check
 
-import { expect, type Locator, type Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues } from '@config';
 import { faker } from '@faker-js/faker';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class BaseNewsletterSubscriptionPage {
 	constructor(public readonly page: Page) { }
@@ -49,7 +50,7 @@ export class BaseNewsletterSubscriptionPage {
 			subscribed = true;
 		}
 
-		await expect(this.page.getByText(subscriptionUpdatedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(subscriptionUpdatedNotification);
 		return subscribed;
 	}
 }
