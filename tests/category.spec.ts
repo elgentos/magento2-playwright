@@ -1,6 +1,7 @@
 // @ts-check
 
 import { test } from '@playwright/test';
+import { toggles } from '@config';
 
 import { BaseCategoryPage } from '@poms/frontend/category.page';
 
@@ -14,6 +15,7 @@ import { BaseCategoryPage } from '@poms/frontend/category.page';
  * @and I should see fewer products
  */
 test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page}) => {
+	test.skip(toggles.categoryFilters === false, 'Disabled by test toggle: categoryFilters');
   const categoryPage = new BaseCategoryPage(page);
   await categoryPage.goToCategoryPage();
 

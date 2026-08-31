@@ -101,7 +101,7 @@ After the installation, a variety of folders will have been created. Most notabl
 npx playwright test --trace on
 ```
 
-`npx playwright test` always runs the `setup` project first — Playwright wires this in automatically as a project dependency. Setup disables the admin login CAPTCHA, creates the test accounts, and ensures the coupon codes exist before any browser test starts. The setup steps are idempotent, so re-running on an already-configured environment is safe.
+`npx playwright test` always runs the `setup` project first — Playwright wires this in automatically as a project dependency. Setup disables the admin login CAPTCHA, creates the test accounts, and, when the `couponCodes` test toggle is enabled, ensures the coupon codes exist before any browser test starts. The setup steps are idempotent, so re-running on an already-configured environment is safe.
 
 You can run a subset by adding `--project=`, `--grep`, or a filename:
 
@@ -205,6 +205,37 @@ npx playwright test --grep-invert @coupon-code
 ```
 
 Setup tests no longer need to be skipped — they run as a project dependency, not as part of the regular suite. (See "Running the suite" above.)
+
+### Disabling unavailable store features
+
+Use `tests/config/test-toggles.json` to persistently disable tests for capabilities that a store does not provide. The default configuration enables every capability, so existing coverage is unchanged after upgrading.
+
+Custom configuration is deep-merged with the defaults. Only include the values that differ for your store:
+
+```json
+{
+	"compare": false,
+	"wishlist": false,
+	"couponCodes": false
+}
+```
+
+Available toggles:
+
+| Toggle | Tests affected |
+|---|---|
+| `compare` | Product comparison and comparison-page tests |
+| `wishlist` | Product, account-menu, and comparison-page wishlist tests; comparison-page coverage also requires `compare` |
+| `couponCodes` | Cart and checkout coupon tests, including coupon setup |
+| `newsletter` | Account and footer newsletter tests |
+| `reviews` | Product review tests |
+| `contactForm` | Contact form test |
+| `categoryFilters` | Layered-navigation attribute filter test |
+| `fixedRateShipping` | Price calculation and order flows that require fixed-rate shipping |
+| `checkMoneyOrder` | Payment and order flows that require check/money-order |
+| `visualRegression` | Visual regression tests; regular smoke tests remain enabled |
+
+Only the boolean value `false` disables a capability. Disabled tests remain visible in Playwright reports as skipped tests with a reason. Test names and tags remain available, so toggles can be combined with `--grep` and `--grep-invert` for one-off test selection.
 
 ### Tags and Annotations
 
@@ -535,6 +566,10 @@ Up-to-date as of the `[Unreleased]` CHANGELOG entry.
 |                      |                                    | :heavy_check_mark: Plp_returns_200                                                |
 |                      |                                    | :heavy_check_mark: Pdp_returns_200                                                |
 |                      |                                    | :heavy_check_mark: Checkout_returns_200                                           |
+|                      | Visual regression                  | :heavy_check_mark: homepage_matches_visual_baseline                               |
+|                      |                                    | :heavy_check_mark: plp_matches_visual_baseline                                    |
+|                      |                                    | :heavy_check_mark: pdp_matches_visual_baseline                                    |
+|                      |                                    | :heavy_check_mark: cart_matches_visual_baseline                                   |
 | login.spec.ts        |                                    | :heavy_check_mark: User_logs_in_with_valid_credentials                            |
 |                      |                                    | :heavy_check_mark: Invalid_credentials_are_rejected                               |
 |                      |                                    | :heavy_check_mark: Login_fails_with_missing_password                              |
