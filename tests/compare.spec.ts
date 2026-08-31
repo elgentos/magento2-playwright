@@ -84,8 +84,8 @@ test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page',
 	test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 	await test.step('Log in with account', async () => {
 		const id = test.info().parallelIndex;
-		let user = `playwright+${id}@elgentos.nl`;
-		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+		const user = `playwright+${id}@elgentos.nl`;
+		const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 			const loginPage = new BaseLoginPage(page);
 			await loginPage.goToLoginPage();
