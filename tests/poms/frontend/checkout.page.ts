@@ -7,14 +7,14 @@ import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-
 export class BaseCheckoutPage extends MagewireUtils {
-	constructor(public readonly page: Page) { super(page) };
+	constructor(public readonly page: Page) {
+		super(page);
+	}
 
 	// ==============================================
 	// Element getters
 	// ==============================================
-
 
 	/**
 	 * get contactInfoFields
@@ -23,18 +23,28 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	get contactInfoFields() {
 		return {
-			newAddressButton : this.page.getByRole('button', { name: 'New Address' }),
-			emailField : this.page.getByLabel(UIReference.text.shared.forms.emailCheckout, { exact: true }),
-			firstNameField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.firstName }),
-			lastNameField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.lastName }),
-			streetAddressField : this.page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true }),
-			zipCodeField : this.page.getByLabel(UIReference.text.shared.forms.zipCode),
-			cityField : this.page.getByLabel(UIReference.text.shared.forms.city),
-			phoneField : this.page.getByLabel(UIReference.text.shared.forms.phone),
-			countrySelector : this.page.getByLabel(UIReference.text.shared.forms.country),
-			stateDropDown : this.page.getByLabel(UIReference.text.shared.forms.province),
-			regionInputField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province })
-		}
+			newAddressButton: this.page.getByRole('button', { name: 'New Address' }),
+			emailField: this.page.getByLabel(UIReference.text.shared.forms.emailCheckout, {
+				exact: true,
+			}),
+			firstNameField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.firstName,
+			}),
+			lastNameField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.lastName,
+			}),
+			streetAddressField: this.page.getByLabel(UIReference.text.shared.forms.streetAddress, {
+				exact: true,
+			}),
+			zipCodeField: this.page.getByLabel(UIReference.text.shared.forms.zipCode),
+			cityField: this.page.getByLabel(UIReference.text.shared.forms.city),
+			phoneField: this.page.getByLabel(UIReference.text.shared.forms.phone),
+			countrySelector: this.page.getByLabel(UIReference.text.shared.forms.country),
+			stateDropDown: this.page.getByLabel(UIReference.text.shared.forms.province),
+			regionInputField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.province,
+			}),
+		};
 	}
 
 	/**
@@ -43,9 +53,13 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	get shippingFields() {
 		return {
-			shippingMethodOptionFixed : this.page.getByLabel(UIReference.text.frontend.checkout.shippingFixed),
-			shippingMethodTableRateFixed : this.page.getByLabel(UIReference.text.frontend.checkout.shippingTableRate),
-		}
+			shippingMethodOptionFixed: this.page.getByLabel(
+				UIReference.text.frontend.checkout.shippingFixed,
+			),
+			shippingMethodTableRateFixed: this.page.getByLabel(
+				UIReference.text.frontend.checkout.shippingTableRate,
+			),
+		};
 	}
 
 	/**
@@ -54,14 +68,28 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	get paymentFields() {
 		return {
-			paymentMethodOptionCheck : this.page.getByRole('radio', { name: UIReference.text.frontend.checkout.paymentCheck }),
-			paymentMethodOptionCreditCard : this.page.getByLabel(UIReference.text.frontend.checkout.paymentCreditCard),
-			paymentMethodOptionPaypal : this.page.getByLabel(UIReference.text.frontend.checkout.paymentPaypal),
-			creditCardNumberField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardNumber),
-			creditCardExpiryField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardExpiry),
-			creditCardCVVField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardCVV),
-			creditCardNameField : this.page.getByLabel(UIReference.text.frontend.checkout.creditCardName),
-		}
+			paymentMethodOptionCheck: this.page.getByRole('radio', {
+				name: UIReference.text.frontend.checkout.paymentCheck,
+			}),
+			paymentMethodOptionCreditCard: this.page.getByLabel(
+				UIReference.text.frontend.checkout.paymentCreditCard,
+			),
+			paymentMethodOptionPaypal: this.page.getByLabel(
+				UIReference.text.frontend.checkout.paymentPaypal,
+			),
+			creditCardNumberField: this.page.getByLabel(
+				UIReference.text.frontend.checkout.creditCardNumber,
+			),
+			creditCardExpiryField: this.page.getByLabel(
+				UIReference.text.frontend.checkout.creditCardExpiry,
+			),
+			creditCardCVVField: this.page.getByLabel(
+				UIReference.text.frontend.checkout.creditCardCVV,
+			),
+			creditCardNameField: this.page.getByLabel(
+				UIReference.text.frontend.checkout.creditCardName,
+			),
+		};
 	}
 
 	/**
@@ -70,12 +98,22 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	get orderSummaryFields() {
 		return {
-			subtotalElement : this.page.getByText(`${UIReference.text.frontend.common.subtotal} ${UIReference.text.frontend.common.priceSymbol}`),
-			shippingElement : this.page.getByText(`${UIReference.text.frontend.checkout.shippingPrice} ${UIReference.text.frontend.common.priceSymbol}`),
-			taxElement : this.page.getByText(`${UIReference.text.frontend.checkout.tax} ${UIReference.text.frontend.common.priceSymbol}`),
-			grandTotalElement : this.page.getByText(`${UIReference.text.frontend.common.grandTotal} ${UIReference.text.frontend.common.priceSymbol}`),
-			placeOrderButton : this.page.getByRole('button', { name: UIReference.text.frontend.checkout.placeOrder }),
-		}
+			subtotalElement: this.page.getByText(
+				`${UIReference.text.frontend.common.subtotal} ${UIReference.text.frontend.common.priceSymbol}`,
+			),
+			shippingElement: this.page.getByText(
+				`${UIReference.text.frontend.checkout.shippingPrice} ${UIReference.text.frontend.common.priceSymbol}`,
+			),
+			taxElement: this.page.getByText(
+				`${UIReference.text.frontend.checkout.tax} ${UIReference.text.frontend.common.priceSymbol}`,
+			),
+			grandTotalElement: this.page.getByText(
+				`${UIReference.text.frontend.common.grandTotal} ${UIReference.text.frontend.common.priceSymbol}`,
+			),
+			placeOrderButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.checkout.placeOrder,
+			}),
+		};
 	}
 
 	/**
@@ -84,12 +122,22 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	get discountFormFields() {
 		return {
-			openFormButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.applyDiscountCode }),
-			codeInputField : this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput),
-			applyCodeButton : this.page.getByRole('button', { name: UIReference.text.frontend.checkout.applyCoupon }),
-			discountBox : this.page.getByRole('textbox', { name: UIReference.text.frontend.cart.discountBox }),
-			cancelCouponButton: this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon })
-		}
+			openFormButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.common.applyDiscountCode,
+			}),
+			codeInputField: this.page.getByPlaceholder(
+				UIReference.text.frontend.common.discountInput,
+			),
+			applyCodeButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.checkout.applyCoupon,
+			}),
+			discountBox: this.page.getByRole('textbox', {
+				name: UIReference.text.frontend.cart.discountBox,
+			}),
+			cancelCouponButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.common.cancelCoupon,
+			}),
+		};
 	}
 
 	/**
@@ -98,9 +146,10 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 * This is visible after an order has been placed.
 	 */
 	get continueShoppingButton() {
-		return this.page.getByRole('link', { name: UIReference.text.frontend.checkout.continueShopping });
+		return this.page.getByRole('link', {
+			name: UIReference.text.frontend.checkout.continueShopping,
+		});
 	}
-
 
 	// ==============================================
 	// Order-related methods
@@ -111,7 +160,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 * @returns {string} Ordernumber - the order to confirm the test with
 	 */
 	async placeOrder() {
-		let orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
+		const orderPlacedNotification = outcomeMarker.checkout.orderPlacedNotification;
 
 		// If we're not already on the checkout page, go there
 		if (!this.page.url().includes(slugs.frontend.checkout.index)) {
@@ -128,16 +177,24 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.paymentFields.paymentMethodOptionCheck.check();
 		await this.waitForMagewireRequests();
 
-		await expect(this.paymentFields.paymentMethodOptionCheck, 'payment method is selected').toBeChecked();
+		await expect(
+			this.paymentFields.paymentMethodOptionCheck,
+			'payment method is selected',
+		).toBeChecked();
 
 		// wait for placeOrderbutton to be actionable, then submit the order.
 		await expect(this.orderSummaryFields.placeOrderButton).toBeEnabled();
 		await this.submitOrder();
 
 		await expect.soft(this.page.getByText(orderPlacedNotification)).toBeVisible();
-		let orderNumber = this.page.locator('p').filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
+		const orderNumber = this.page
+			.locator('p')
+			.filter({ hasText: outcomeMarker.checkout.orderPlacedNumberText });
 
-		await expect(this.continueShoppingButton, `${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`).toBeVisible();
+		await expect(
+			this.continueShoppingButton,
+			`${outcomeMarker.checkout.orderPlacedNumberText} ${orderNumber}`,
+		).toBeVisible();
 		return orderNumber;
 	}
 
@@ -157,12 +214,14 @@ export class BaseCheckoutPage extends MagewireUtils {
 
 		for (let attempt = 1; attempt <= attempts; attempt++) {
 			// Start watching before the click, so a fast post cannot be missed.
-			const orderRequest = this.page.waitForRequest(/\/magewire\//, { timeout: requestWindow }).catch(() => null);
+			const orderRequest = this.page
+				.waitForRequest(/\/magewire\//, { timeout: requestWindow })
+				.catch(() => null);
 			await this.orderSummaryFields.placeOrderButton.click();
 
 			// A click that registered always posts to Magewire. Once it has, the
 			// order is on its way: wait it out rather than risk a second order.
-			if (await orderRequest || successUrl.test(this.page.url())) {
+			if ((await orderRequest) || successUrl.test(this.page.url())) {
 				await this.page.waitForURL(successUrl);
 				return;
 			}
@@ -171,7 +230,9 @@ export class BaseCheckoutPage extends MagewireUtils {
 			await this.waitForMagewireRequests();
 		}
 
-		throw new Error(`[Checkout] 'Place Order' produced no order request after ${attempts} attempts`);
+		throw new Error(
+			`[Checkout] 'Place Order' produced no order request after ${attempts} attempts`,
+		);
 	}
 
 	// ==============================================
@@ -184,7 +245,8 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	async applyDiscountCodeCheckout(code: string) {
 		// Shorten discount form elements
-		const { openFormButton, codeInputField, applyCodeButton, discountBox, cancelCouponButton } = this.discountFormFields;
+		const { openFormButton, codeInputField, applyCodeButton, discountBox, cancelCouponButton } =
+			this.discountFormFields;
 
 		// Ensure the discount code form is visible.
 		if (await codeInputField.isHidden()) {
@@ -205,7 +267,9 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification visible, 'cancel coupon' button is visible, discountfield has code filled in.
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponAppliedNotification);
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.couponAppliedNotification,
+		);
 		await expect(cancelCouponButton, `cancel coupon button is visible`).toBeVisible();
 		await expect(async () => {
 			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
@@ -233,7 +297,9 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification that code is incorrect shows up, the input field is still editable.
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.incorrectDiscountNotification);
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.incorrectDiscountNotification,
+		);
 		await expect(codeInputField).toBeEditable();
 	}
 
@@ -251,16 +317,25 @@ export class BaseCheckoutPage extends MagewireUtils {
 			await this.waitForMagewireRequests();
 		}
 
-		let cancelCouponButton = this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon });
+		const cancelCouponButton = this.page.getByRole('button', {
+			name: UIReference.text.frontend.common.cancelCoupon,
+		});
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponRemovedNotification);
-		await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol), `'-$' should not be on the page`).toBeHidden();
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.couponRemovedNotification,
+		);
+		await expect(
+			this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),
+			`'-$' should not be on the page`,
+		).toBeHidden();
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 
-		let checkoutDiscountField = this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput);
+		const checkoutDiscountField = this.page.getByPlaceholder(
+			UIReference.text.frontend.common.discountInput,
+		);
 		await expect(checkoutDiscountField).toBeEditable();
 	}
 
@@ -299,9 +374,11 @@ export class BaseCheckoutPage extends MagewireUtils {
 		// Also check displayed grand total equals calculated total.
 		expect(subtotal, `Subtotal (${subtotal}) should be greater than 0`).toBeGreaterThan(0);
 		expect(shipping, `Shipping cost (${shipping}) should be greater than 0`).toBeGreaterThan(0);
-		expect(grandTotal, `Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`).toBe(calculatedTotal);
+		expect(
+			grandTotal,
+			`Grand total (${grandTotal}) should equal calculated total (${calculatedTotal})`,
+		).toBe(calculatedTotal);
 	}
-
 
 	/**
 	 * Method to select a payment method in the checkout
@@ -309,8 +386,15 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	async selectPaymentMethod(method: 'check' | 'creditcard' | 'paypal'): Promise<void> {
 		// Simplify paymentField variables
-		const { paymentMethodOptionCheck, paymentMethodOptionCreditCard, paymentMethodOptionPaypal,
-				creditCardNumberField,creditCardExpiryField,creditCardCVVField,creditCardNameField } = this.paymentFields;
+		const {
+			paymentMethodOptionCheck,
+			paymentMethodOptionCreditCard,
+			paymentMethodOptionPaypal,
+			creditCardNumberField,
+			creditCardExpiryField,
+			creditCardCVVField,
+			creditCardNameField,
+		} = this.paymentFields;
 
 		// switch based on the payment method that was used as input.
 		switch (method) {
@@ -320,10 +404,16 @@ export class BaseCheckoutPage extends MagewireUtils {
 			case 'creditcard':
 				await paymentMethodOptionCreditCard.check();
 				// Fill credit card details
-				await creditCardNumberField.fill(inputValues.payment?.creditCard?.number || '4111111111111111');
-				await creditCardExpiryField.fill(inputValues.payment?.creditCard?.expiry || '12/25');
+				await creditCardNumberField.fill(
+					inputValues.payment?.creditCard?.number || '4111111111111111',
+				);
+				await creditCardExpiryField.fill(
+					inputValues.payment?.creditCard?.expiry || '12/25',
+				);
 				await creditCardCVVField.fill(inputValues.payment?.creditCard?.cvv || '123');
-				await creditCardNameField.fill(inputValues.payment?.creditCard?.name || 'Test User');
+				await creditCardNameField.fill(
+					inputValues.payment?.creditCard?.name || 'Test User',
+				);
 				break;
 			case 'paypal':
 				await paymentMethodOptionPaypal.check();
@@ -350,7 +440,6 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 	}
 
-
 	/**
 	 * Method to fill in the shipping address.
 	 * Fills in all fields, then selects a country from a pre made list (3, see input-values.json)
@@ -359,8 +448,18 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 */
 	async fillShippingAddress() {
 		// Simplify the shipping address fields locators
-		const { emailField, firstNameField, lastNameField, streetAddressField, zipCodeField, cityField, phoneField,
-				countrySelector, regionInputField, stateDropDown} = this.contactInfoFields;
+		const {
+			emailField,
+			firstNameField,
+			lastNameField,
+			streetAddressField,
+			zipCodeField,
+			cityField,
+			phoneField,
+			countrySelector,
+			regionInputField,
+			stateDropDown,
+		} = this.contactInfoFields;
 
 		// Fill required shipping address fields
 		await emailField.fill(faker.internet.email());
@@ -376,7 +475,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 
 		// get the currently selected country (default)
 		const defaultSelectedCountry = await countrySelector.evaluate(
-			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text,
 		);
 
 		// If the default country !== the country we're using in this test, select our country of choice.

@@ -9,6 +9,9 @@ node_modules/
 /auth-storage/
 /playwright-report/
 /base-tests/
+/docs/
+/.superpowers/
+/.playwright-mcp/
 
 #files
 /*.config.ts
@@ -16,3 +19,8 @@ node_modules/
 /tsconfig.json
 /.gitlab-ci.yml
 /.auth
+/eslint.config.mjs
+/.prettierrc.json
+/.prettierignore
+/tsconfig.eslint.json
+/.git-blame-ignore-revs

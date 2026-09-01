@@ -4,9 +4,8 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-
 export class BaseSearchPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -18,10 +17,12 @@ export class BaseSearchPage {
 	 */
 	get SearchForm() {
 		return {
-			toggle : this.page.locator(UIReference.selectors.frontend.search.toggle),
-			inputField : this.page.locator(UIReference.selectors.frontend.search.input),
-			suggestedResultsBox : this.page.locator(UIReference.selectors.frontend.search.suggestionBox)
-		}
+			toggle: this.page.locator(UIReference.selectors.frontend.search.toggle),
+			inputField: this.page.locator(UIReference.selectors.frontend.search.input),
+			suggestedResultsBox: this.page.locator(
+				UIReference.selectors.frontend.search.suggestionBox,
+			),
+		};
 	}
 
 	// ==============================================
@@ -33,7 +34,7 @@ export class BaseSearchPage {
 	 * Used in the tests in search.spec.ts.
 	 */
 	async openSearch() {
-		await this.SearchForm.toggle.waitFor({state: 'visible'});
+		await this.SearchForm.toggle.waitFor({ state: 'visible' });
 		await this.SearchForm.toggle.click();
 
 		// Final assertion: confirm search field is now visible

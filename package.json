@@ -1,22 +1,37 @@
 {
-  "name": "@elgentos/magento2-playwright",
-  "version": "6.0.0",
-  "author": "elgentos",
-  "license": "ISC",
-  "description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
-  "bin": {
-    "magento2-playwright": "./bin/cli.js"
-  },
-  "scripts": {
-    "postinstall": "node build.js; node install.js; npx playwright install",
-    "translate": "node translate-json.js nl_NL"
-  },
-  "dependencies": {
-    "@axe-core/playwright": "^4.12.1",
-    "@faker-js/faker": "^10.2.0",
-    "@playwright/test": "^1.57.0",
-    "@types/node": "^25.5.0",
-    "csv-parse": "^6.1.0",
-    "dotenv": "^17.2.3"
-  }
+	"name": "@elgentos/magento2-playwright",
+	"version": "6.0.0",
+	"author": "elgentos",
+	"license": "ISC",
+	"description": "A Playwright End-To-End (E2E) testing suite for Magento 2 with Hyva that helps you find (potential) issues on your webshop.",
+	"bin": {
+		"magento2-playwright": "./bin/cli.js"
+	},
+	"scripts": {
+		"postinstall": "node build.js; node install.js; npx playwright install",
+		"translate": "node translate-json.js nl_NL",
+		"lint": "eslint .",
+		"lint:ci": "eslint . --max-warnings 166",
+		"typecheck": "tsc --noEmit -p tsconfig.eslint.json",
+		"format": "prettier --write \"**/*.{js,mjs,ts,json}\"",
+		"format:check": "prettier --check \"**/*.{js,mjs,ts,json}\""
+	},
+	"dependencies": {
+		"@axe-core/playwright": "^4.12.1",
+		"@faker-js/faker": "^10.2.0",
+		"@playwright/test": "^1.57.0",
+		"@types/node": "^25.5.0",
+		"csv-parse": "^6.1.0",
+		"dotenv": "^17.2.3"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"eslint": "^10.8.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-playwright": "^2.11.0",
+		"globals": "^17.9.0",
+		"prettier": "^3.9.6",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.66.0"
+	}
 }

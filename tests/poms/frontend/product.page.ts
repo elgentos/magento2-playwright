@@ -5,9 +5,8 @@ import { UIReference, outcomeMarker, slugs } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
-
 export class BaseProductPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -20,7 +19,8 @@ export class BaseProductPage {
 	 * @param product {string} - name of the product
 	 */
 	protected get productPageTitle() {
-		return (product: string) => this.page.getByLabel('Product Info').getByText(product, { exact: true });
+		return (product: string) =>
+			this.page.getByLabel('Product Info').getByText(product, { exact: true });
 	}
 
 	/**
@@ -29,12 +29,22 @@ export class BaseProductPage {
 	 */
 	get productInteraction() {
 		return {
-			addToCartButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.addToCart, exact: true }),
-			addToCompareButton: this.page.getByLabel(UIReference.text.frontend.product.addToCompare, { exact: true }),
-			addToWishlistButton: this.page.getByLabel(UIReference.text.shared.buttons.addToWishlist, { exact: true }),
-			quantityField: this.page.getByRole('spinbutton', { name: UIReference.text.shared.forms.quantity })
-
-		}
+			addToCartButton: this.page.getByRole('button', {
+				name: UIReference.text.shared.buttons.addToCart,
+				exact: true,
+			}),
+			addToCompareButton: this.page.getByLabel(
+				UIReference.text.frontend.product.addToCompare,
+				{ exact: true },
+			),
+			addToWishlistButton: this.page.getByLabel(
+				UIReference.text.shared.buttons.addToWishlist,
+				{ exact: true },
+			),
+			quantityField: this.page.getByRole('spinbutton', {
+				name: UIReference.text.shared.forms.quantity,
+			}),
+		};
 	}
 
 	/**
@@ -44,8 +54,8 @@ export class BaseProductPage {
 	get configurableProductOptions() {
 		const field = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 		return {
-			options: field.getByRole('radiogroup')
-		}
+			options: field.getByRole('radiogroup'),
+		};
 	}
 
 	/**
@@ -59,8 +69,8 @@ export class BaseProductPage {
 			summary: this.page.getByPlaceholder('Summary*'),
 			review: this.page.getByPlaceholder('Review*'),
 			submitButton: this.page.getByRole('button', { name: 'Submit Review' }),
-			loader: this.page.getByRole('img', { name: 'loader' })
-		}
+			loader: this.page.getByRole('img', { name: 'loader' }),
+		};
 	}
 
 	/**
@@ -80,8 +90,10 @@ export class BaseProductPage {
 		return {
 			fullScreenOpener: this.page.locator('.group.stack').first(),
 			fullScreenCloser: this.page.locator('.absolute.right-2'),
-			thumbnails: this.page.getByRole('button', { name: UIReference.text.frontend.product.thumbnail }).all()
-		}
+			thumbnails: this.page
+				.getByRole('button', { name: UIReference.text.frontend.product.thumbnail })
+				.all(),
+		};
 	}
 
 	// ==============================================
@@ -114,11 +126,13 @@ export class BaseProductPage {
 	async addSimpleProductToCart(product: string, slug: string, quantity?: string) {
 		await this.goToProductPage(product, slug);
 
-		if (quantity) { await this.productInteraction.quantityField.fill(quantity) };
+		if (quantity) {
+			await this.productInteraction.quantityField.fill(quantity);
+		}
 		await this.productInteraction.addToCartButton.click();
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
 		);
 	}
 
@@ -133,20 +147,28 @@ export class BaseProductPage {
 		await this.page.goto(url);
 		await expect(this.productPageTitle(product), `Checkpoint: title is visible`).toBeVisible();
 
-		let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`;
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`;
 		const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
 		// each product option (size, color) is a fieldset, which maps to the 'group' role
 		const productOptionGroups = productOptions.getByRole('group');
 
 		// wait for the color and size selectors are actually visible
-		await expect(productOptionGroups.first(), `Checkpoint: first product option is visible`).toBeVisible();
-		await expect(productOptionGroups.last(), `Checkpoint: last product option is visible`).toBeVisible();
+		await expect(
+			productOptionGroups.first(),
+			`Checkpoint: first product option is visible`,
+		).toBeVisible();
+		await expect(
+			productOptionGroups.last(),
+			`Checkpoint: last product option is visible`,
+		).toBeVisible();
 
 		// loop through each product option within the form
 		for (const option of await productOptionGroups.all()) {
 			// option values that do not exist for the current selection stay in the DOM but are disabled
-			const optionValue = option.locator(`${UIReference.selectors.frontend.product.optionValue}:enabled`).first();
+			const optionValue = option
+				.locator(`${UIReference.selectors.frontend.product.optionValue}:enabled`)
+				.first();
 			await optionValue.check();
 			await expect(optionValue, `Checkpoint: product option is selected`).toBeChecked();
 		}
@@ -176,16 +198,20 @@ export class BaseProductPage {
 		await this.productInteraction.addToCompareButton.click();
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productAddedNotificationTextTwo}`
+			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productAddedNotificationTextTwo}`,
 		);
 
 		await this.page.goto(slugs.frontend.product.comparison);
 
 		// Final assertions: page should load and title should be visible.
 		// Additionally, name of the product we added should in the list.
-		await expect(this.page.getByRole('heading', { name: UIReference.text.frontend.compare.title }),
-			`Checkpoint: comparison page title is visible`).toBeVisible();
-		await expect(this.page.getByRole('cell', { name: product }).getByText(product, { exact: true })).toBeVisible();
+		await expect(
+			this.page.getByRole('heading', { name: UIReference.text.frontend.compare.title }),
+			`Checkpoint: comparison page title is visible`,
+		).toBeVisible();
+		await expect(
+			this.page.getByRole('cell', { name: product }).getByText(product, { exact: true }),
+		).toBeVisible();
 	}
 
 	/**
@@ -201,14 +227,15 @@ export class BaseProductPage {
 		await this.page.waitForURL(slugToRegex(slugs.frontend.wishlist.index));
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`
+			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
 		);
 
 		await expect(
-			this.page.locator(UIReference.selectors.frontend.wishlist.itemGrid).getByText(product, { exact: true }),
-			`Product name is shown in wishlist item overview`
+			this.page
+				.locator(UIReference.selectors.frontend.wishlist.itemGrid)
+				.getByText(product, { exact: true }),
+			`Product name is shown in wishlist item overview`,
 		).toBeVisible();
-
 	}
 
 	// ==============================================
@@ -229,7 +256,9 @@ export class BaseProductPage {
 		await this.reviewFormFields.stars.click();
 		await this.reviewFormFields.nickname.fill('John');
 		await this.reviewFormFields.summary.fill('Summary of my review');
-		await this.reviewFormFields.review.fill('A longer paragraph containing details of my opinions of the product');
+		await this.reviewFormFields.review.fill(
+			'A longer paragraph containing details of my opinions of the product',
+		);
 		await this.reviewFormFields.submitButton.click();
 
 		await this.reviewFormFields.loader.waitFor({ state: 'hidden' });
@@ -237,8 +266,10 @@ export class BaseProductPage {
 		// We don't use the notificationvalidator here,
 		// since this noitification is appended to the review form rather than up top -
 		// meaning the notificationvalidator won't find this.
-		await expect(this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
-			`Notification that review has been submitted for moderation is visible`).toBeVisible();
+		await expect(
+			this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
+			`Notification that review has been submitted for moderation is visible`,
+		).toBeVisible();
 	}
 
 	/**
@@ -251,28 +282,30 @@ export class BaseProductPage {
 
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
 		// get the actual number shown on 'Show' dropdown on the page
-		let initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
-			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
+		const initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim(),
 		);
 
 		// Select a new amount of reviews that's different from the current amount.
 		let newValue;
-		initialReviewAmount == '20' ? newValue = '50' : newValue = '20';
+		initialReviewAmount == '20' ? (newValue = '50') : (newValue = '20');
 		await this.reviewsPerPageDropdown.selectOption({ label: newValue });
-		newValue == '20' ? await this.page.waitForURL(/[?&]limit=20/) : await this.page.waitForURL(/[?&]limit=50/);
+		newValue == '20'
+			? await this.page.waitForURL(/[?&]limit=20/)
+			: await this.page.waitForURL(/[?&]limit=50/);
 
 		// Retrieve new value shown on page
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
-		let newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
-			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim()
+		const newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim(),
 		);
 
 		// Final assertions: confirm the reviewAmount on the page is updated
-		expect(initialReviewAmount,
-			`initial amount of reviews (${initialReviewAmount}) does not equal new amount (${newReviewAmount})`
+		expect(
+			initialReviewAmount,
+			`initial amount of reviews (${initialReviewAmount}) does not equal new amount (${newReviewAmount})`,
 		).not.toEqual(newReviewAmount);
 	}
-
 
 	// ==============================================
 	// Media gallery-related methods
@@ -294,15 +327,17 @@ export class BaseProductPage {
 			await img.click();
 			// wait for transition animation
 			await this.page.waitForTimeout(500);
-			await expect(img, `CSS class 'border-primary' appended to button`)
-				.toHaveClass(new RegExp(outcomeMarker.productPage.borderClassRegex)
-				);
+			await expect(img, `CSS class 'border-primary' appended to button`).toHaveClass(
+				new RegExp(outcomeMarker.productPage.borderClassRegex),
+			);
 		}
 
 		await this.lightboxElements.fullScreenCloser.click();
 
 		// Final assertion: after closing the lightbox, the 'close lightbox' button should be hidden
-		await expect(this.lightboxElements.fullScreenCloser, `'close lightbox' button should be hidden`).toBeHidden();
+		await expect(
+			this.lightboxElements.fullScreenCloser,
+			`'close lightbox' button should be hidden`,
+		).toBeHidden();
 	}
-
 }
