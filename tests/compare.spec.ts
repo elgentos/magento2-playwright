@@ -3,9 +3,9 @@
 import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs, toggles } from '@config';
 
-import { BaseComparePage } from '@poms/frontend/compare.page';
-import { BaseLoginPage } from '@poms/frontend/login.page';
-import { BaseProductPage } from '@poms/frontend/product.page';
+import { ComparePage } from '@poms/frontend/compare.page';
+import { LoginPage } from '@poms/frontend/login.page';
+import { ProductPage } from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
 
 // TODO: Create a fixture for this
@@ -13,13 +13,13 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
 	test.skip(toggles.compare === false, 'Disabled by test toggle: compare');
 
 	await test.step('Add products to compare', async () => {
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
 	});
 
 	await test.step('Navigate to product comparison page', async () => {
-		const comparePage = new BaseComparePage(page);
+		const comparePage = new ComparePage(page);
 		await comparePage.goToComparePage();
 	});
 });
@@ -32,7 +32,7 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
  * @then I should see a notification that the product has been added
  */
 test('Add_product_to_cart_from_comparison_page', { tag: ['@comparison-page', '@cold'] }, async ({ page }) => {
-	const comparePage = new BaseComparePage(page);
+	const comparePage = new ComparePage(page);
 	await comparePage.addToCart(UIReference.text.frontend.product.simpleProduct);
 });
 
@@ -71,19 +71,19 @@ test('Add_product_to_wishlist_from_comparison_page', { tag: ['@comparison-page',
 		let user = `playwright+${id}@elgentos.nl`;
 		let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-		const loginPage = new BaseLoginPage(page);
+		const loginPage = new LoginPage(page);
 		await loginPage.goToLoginPage();
 		await loginPage.login(user, password);
 	});
 
 	await test.step('Add product to compare', async () => {
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await page.goto(slugs.frontend.product.comparison);
 		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 	});
 
 	await test.step('Add product to wishlist', async () => {
-		const comparePage = new BaseComparePage(page);
+		const comparePage = new ComparePage(page);
 		await comparePage.addToWishList(UIReference.text.frontend.product.simpleProduct);
 
 		//TODO: Also remove the product for clear testing environment)
@@ -101,7 +101,7 @@ test.afterEach('Remove products from compare', async ({ page }) => {
 	await page.goto(slugs.frontend.product.comparison);
 
 	page.on('dialog', dialog => dialog.accept());
-	const comparePage = new BaseComparePage(page);
+	const comparePage = new ComparePage(page);
 	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
 	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.secondSimpleProduct);
 });

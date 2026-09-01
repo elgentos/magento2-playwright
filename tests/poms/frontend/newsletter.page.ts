@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues } from '@config';
 import { faker } from '@faker-js/faker';
 
-export class BaseNewsletterSubscriptionPage {
+export class NewsletterSubscriptionPage {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

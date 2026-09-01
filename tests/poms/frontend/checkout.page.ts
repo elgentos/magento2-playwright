@@ -7,7 +7,7 @@ import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 
 
-export class BaseCheckoutPage extends MagewireUtils {
+export class CheckoutPage extends MagewireUtils {
 	constructor(public readonly page: Page) { super(page) };
 
 	// ==============================================

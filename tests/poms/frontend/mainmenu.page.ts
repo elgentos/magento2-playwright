@@ -8,7 +8,7 @@ import { slugToRegex } from '@utils/url.utils';
 // Timeout used to check our authenticated state.
 const CUSTOMER_DATA_TIMEOUT = 10_000;
 
-export class BaseMainMenuPage {
+export class MainMenuPage {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

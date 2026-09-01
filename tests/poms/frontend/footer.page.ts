@@ -4,7 +4,7 @@ import { expect, Locator, type Page } from '@playwright/test';
 import { UIReference , outcomeMarker } from '@config';
 import { faker } from '@faker-js/faker';
 
-export class BaseFooter {
+export class Footer {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

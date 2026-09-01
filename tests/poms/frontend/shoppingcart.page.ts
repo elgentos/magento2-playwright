@@ -3,7 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
 
-export class BaseCartPage {
+export class CartPage {
 	constructor(public readonly page: Page) { };
 
 

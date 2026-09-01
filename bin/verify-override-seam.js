@@ -19,9 +19,9 @@ const { execFileSync } = require('child_process');
 const REPO = path.resolve(__dirname, '..');
 
 // Renamed in Task 3. Keep every class name the harness needs in this one block.
-const POM_CLASS = 'BaseLoginPage';
+const POM_CLASS = 'LoginPage';
 const POM_MODULE = 'poms/frontend/login.page';
-const CHECKOUT_CLASS = 'BaseCheckoutPage';
+const CHECKOUT_CLASS = 'CheckoutPage';
 const CHECKOUT_MODULE = 'poms/frontend/checkout.page';
 
 const SENTINEL = '#seam-override-marker';

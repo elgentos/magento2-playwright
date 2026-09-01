@@ -4,7 +4,7 @@ import { expect, type Page } from '@playwright/test';
 import { slugs } from '@config';
 
 
-export class BaseOrderHistoryPage {
+export class OrderHistoryPage {
 	constructor(public readonly page: Page) { };
 
 	/**

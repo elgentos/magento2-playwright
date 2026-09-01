@@ -3,9 +3,9 @@
 import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
-import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
-import { BaseProductPage } from '@poms/frontend/product.page';
-import { BaseMiniCartPage } from '@poms/frontend/minicart.page';
+import { MainMenuPage } from '@poms/frontend/mainmenu.page';
+import { ProductPage } from '@poms/frontend/product.page';
+import { MiniCartPage } from '@poms/frontend/minicart.page';
 
 test.describe('Minicart Actions', { annotation: { type: 'Minicart', description: 'Minicart simple product tests' }, }, () => {
 
@@ -21,8 +21,8 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 *  @and I should see the product in the minicart
 	 */
 	test.beforeEach(async ({ page }) => {
-		const mainMenu = new BaseMainMenuPage(page);
-		const productPage = new BaseProductPage(page);
+		const mainMenu = new MainMenuPage(page);
+		const productPage = new ProductPage(page);
 
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 		await mainMenu.openMiniCart();
@@ -38,7 +38,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 */
 
 	test('Add_product_to_minicart_and_go_to_checkout', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }) => {
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.goToCheckout();
 	});
 
@@ -51,7 +51,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 */
 
 	test('Add_product_to_minicart_and_go_to_cart', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }) => {
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.goToCart();
 	});
 
@@ -67,7 +67,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 *    @and the new amount should be shown in the minicart
 	 */
 	test('Change_product_quantity_in_minicart', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }) => {
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.updateProduct('3');
 	});
 
@@ -81,7 +81,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 */
 	test('Delete_product_from_minicart', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }, testInfo) => {
 		testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.` });
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.removeProductFromMinicart(UIReference.text.frontend.product.simpleProduct);
 	});
 
@@ -92,7 +92,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 * @then the price listed in the minicart (per product) should be the same as the price on the PDP
 	*/
 	test('Pdp_price_matches_minicart_price', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }) => {
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.checkPriceWithProductPage();
 	});
 });
@@ -110,8 +110,8 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 *  @and I should see the product in the minicart
 	 */
 	test.beforeEach(async ({ page }) => {
-		const mainMenu = new BaseMainMenuPage(page);
-		const productPage = new BaseProductPage(page);
+		const mainMenu = new MainMenuPage(page);
+		const productPage = new ProductPage(page);
 
 		await productPage.addConfigurableProductToCart(UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable, '2');
 		await mainMenu.openMiniCart();
@@ -125,7 +125,7 @@ test.describe('Minicart Actions', { annotation: { type: 'Minicart', description:
 	 * @then the price listed in the minicart (per product) should be the same as the price on the PDP
 	*/
 	test('Configurable_pdp_price_matches_minicart_price', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }) => {
-		const miniCart = new BaseMiniCartPage(page);
+		const miniCart = new MiniCartPage(page);
 		await miniCart.checkPriceWithProductPage();
 	});
 });

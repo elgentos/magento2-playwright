@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-export class BaseMiniCartPage {
+export class MiniCartPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

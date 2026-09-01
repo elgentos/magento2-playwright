@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
 import { slugToRegex, isLocalhost } from '@utils/url.utils';
 
-export class BaseCategoryPage {
+export class CategoryPage {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

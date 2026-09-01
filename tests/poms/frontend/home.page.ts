@@ -3,7 +3,7 @@
 import { type Page, type Locator, expect } from '@playwright/test';
 import { UIReference } from '@config';
 
-export class BaseHomePage {
+export class HomePage {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

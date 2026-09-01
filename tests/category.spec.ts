@@ -3,7 +3,7 @@
 import { test } from '@playwright/test';
 import { toggles } from '@config';
 
-import { BaseCategoryPage } from '@poms/frontend/category.page';
+import { CategoryPage } from '@poms/frontend/category.page';
 
 /**
  * @feature Filter category page
@@ -16,7 +16,7 @@ import { BaseCategoryPage } from '@poms/frontend/category.page';
  */
 test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page}) => {
 	test.skip(toggles.categoryFilters === false, 'Disabled by test toggle: categoryFilters');
-  const categoryPage = new BaseCategoryPage(page);
+  const categoryPage = new CategoryPage(page);
   await categoryPage.goToCategoryPage();
 
   await categoryPage.filterOnAttribute();
@@ -32,7 +32,7 @@ test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page
  * @and I should see products sorted by price
  */
 test('Sort_category_by_price',{ tag: ['@category', '@cold']}, async ({page}) => {
-  const categoryPage = new BaseCategoryPage(page);
+  const categoryPage = new CategoryPage(page);
   await categoryPage.goToCategoryPage();
 
   await categoryPage.sortProducts('price');
@@ -47,7 +47,7 @@ test('Sort_category_by_price',{ tag: ['@category', '@cold']}, async ({page}) => 
  * @and the amount of items should be the new amount I've selected
  */
 test('Change_amount_of_products_shown',{ tag: ['@category', '@cold'],}, async ({page}) => {
-  const categoryPage = new BaseCategoryPage(page);
+  const categoryPage = new CategoryPage(page);
   await categoryPage.goToCategoryPage();
 
   await categoryPage.showMoreProducts();
@@ -62,7 +62,7 @@ test('Change_amount_of_products_shown',{ tag: ['@category', '@cold'],}, async ({
  * @and the reported selected view should not be the same as it was before I clicked the button
  */
 test('Switch_from_grid_to_list_view',{ tag: ['@category', '@cold'],}, async ({page}) => {
-  const categoryPage = new BaseCategoryPage(page);
+  const categoryPage = new CategoryPage(page);
   await categoryPage.goToCategoryPage();
   await categoryPage.switchView();
 });

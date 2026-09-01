@@ -6,7 +6,7 @@ import { requireEnv } from '@utils/env.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 
-export class BaseRegisterPage {
+export class RegisterPage {
 	constructor(public readonly page: Page) { }
 
 	// ==============================================

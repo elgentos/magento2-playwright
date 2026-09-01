@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-export class BaseAccountPage {
+export class AccountPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

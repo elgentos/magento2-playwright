@@ -3,9 +3,9 @@
 // Import test and expect from utils to ensure authenticated state.
 import { test, expect } from '@utils/fixtures.utils';
 
-import { BaseProductPage } from '@poms/frontend/product.page';
-import { BaseAccountPage } from '@poms/frontend/account.page';
-import { BaseCheckoutPage } from '@poms/frontend/checkout.page';
+import { ProductPage } from '@poms/frontend/product.page';
+import { AccountPage } from '@poms/frontend/account.page';
+import { CheckoutPage } from '@poms/frontend/checkout.page';
 
 import { faker } from '@faker-js/faker';
 import MagewireUtils from '@utils/magewire.utils';
@@ -29,7 +29,7 @@ test.describe('Checkout (logged in user)', () => {
 		);
 
 		const magewire = new MagewireUtils(page);
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 
 		magewire.startMonitoring();
 
@@ -57,7 +57,7 @@ test.describe('Checkout (logged in user)', () => {
 		if (await addressField.isVisible()) {
 			if (!addressAlreadyAdded) {
 				// Address field is visible and addressalreadyAdded is not true, so we need to add an address to the account.
-				const accountPage = new BaseAccountPage(page);
+				const accountPage = new AccountPage(page);
 				await accountPage.addNewAddress();
 			} else {
 				throw new Error(`Address field is visible even though an address has been added to the account.`);
@@ -75,8 +75,8 @@ test.describe('Checkout (logged in user)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Place_order_for_simple_product', { tag: ['@simple-product-order', '@hot'], }, async ({ page }) => {
-		const checkoutPage = new BaseCheckoutPage(page);
-		const accountPage = new BaseAccountPage(page);
+		const checkoutPage = new CheckoutPage(page);
+		const accountPage = new AccountPage(page);
 		await accountPage.ensureCustomerDetails();
 
 		let orderNumber = await checkoutPage.placeOrder();
@@ -115,7 +115,7 @@ test.describe('Checkout (guest)', () => {
 		magewire.startMonitoring();
 
 		// ensure product in cart
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
 
 		// to checkout
@@ -128,7 +128,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
 	test('Add_coupon_code_in_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
-		const checkout = new BaseCheckoutPage(page);
+		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
 		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
@@ -141,8 +141,8 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Verify_price_calculations_in_checkout', { tag: ['@checkout', '@price-calculation'] }, async ({ page }) => {
-		const productPage = new BaseProductPage(page);
-		const checkoutPage = new BaseCheckoutPage(page);
+		const productPage = new ProductPage(page);
+		const checkoutPage = new CheckoutPage(page);
 
 		// Add product to cart and go to checkout
 		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
@@ -166,7 +166,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
 	test('Remove_coupon_code_from_checkout', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page, browserName }) => {
-		const checkout = new BaseCheckoutPage(page);
+		const checkout = new CheckoutPage(page);
 		const browserEngine = browserName?.toUpperCase() || "UNKNOWN";
 		const discountCode = inputValues.coupon.codes[browserEngine];
 		expect(discountCode, `No coupon code in inputValues.coupon.codes for "${browserEngine}"`).toBeTruthy();
@@ -180,7 +180,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Invalid_coupon_code_in_checkout_is_rejected', { tag: ['@checkout', '@coupon-code', '@cold'] }, async ({ page }) => {
-		const checkout = new BaseCheckoutPage(page);
+		const checkout = new CheckoutPage(page);
 		await checkout.enterWrongCouponCode("incorrect discount code");
 	});
 
@@ -197,7 +197,7 @@ test.describe('Checkout (guest)', () => {
 	test('Guest_can_select_payment_methods', { tag: ['@checkout', '@payment-methods', '@hot'] }, async ({ page }) => {
 		// Marking test as slow to allow more time befoure timeout
 		test.slow();
-		const checkoutPage = new BaseCheckoutPage(page);
+		const checkoutPage = new CheckoutPage(page);
 
 		// Test with check/money order payment
 		await test.step('Place order with check/money order payment', async () => {

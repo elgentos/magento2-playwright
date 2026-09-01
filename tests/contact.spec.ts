@@ -2,7 +2,7 @@
 
 import { test } from '@playwright/test';
 import { toggles } from '@config';
-import { BaseContactPage } from '@poms/frontend/contact.page';
+import { ContactPage } from '@poms/frontend/contact.page';
 
 /**
  * @feature Magento 2 Contact Form
@@ -16,7 +16,7 @@ import { BaseContactPage } from '@poms/frontend/contact.page';
  */
 test('Send_message_through_contact_form', { tag: ['@contact-form', '@hot'] }, async ({ page }) => {
 	test.skip(toggles.contactForm === false, 'Disabled by test toggle: contactForm');
-	const contactPage = new BaseContactPage(page);
+	const contactPage = new ContactPage(page);
 	await contactPage.goToContactPage();
 	await contactPage.fillOutForm();
 });

@@ -4,12 +4,12 @@ import { test, expect } from '@playwright/test';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 
-import {BaseSearchPage} from '@poms/frontend/search.page';
+import {SearchPage} from '@poms/frontend/search.page';
 
 test.describe('Search functionality - needs to be adapted to OpenSearch', () => {
   test('Search_query_returns_multiple_results', async ({ page }) => {
     await page.goto('');
-    const searchPage = new BaseSearchPage(page);
+    const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryMultipleResults);
     await expect(page).toHaveURL(slugToRegex(slugs.frontend.search.results));
     const results = page.locator(`${UIReference.selectors.frontend.category.productGrid} li`);
@@ -27,7 +27,7 @@ test.describe('Search functionality - needs to be adapted to OpenSearch', () => 
    */
   test.fixme('User_can_find_a_specific_product_and_navigate_to_its_page', async ({ page }) => {
     await page.goto('');
-    const searchPage = new BaseSearchPage(page);
+    const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.querySpecificProduct);
 
     expect(page.url()).toEqual(expect.stringContaining(`${slugs.frontend.product.simple}`));
@@ -35,7 +35,7 @@ test.describe('Search functionality - needs to be adapted to OpenSearch', () => 
 
   test('No_results_message_is_shown_for_unknown_query', async ({ page }) => {
     await page.goto('');
-    const searchPage = new BaseSearchPage(page);
+    const searchPage = new SearchPage(page);
     await searchPage.search(inputValues.search.queryNoResults);
     await expect(page.getByText(outcomeMarker.search.noResultsMessage)).toBeVisible();
   });
