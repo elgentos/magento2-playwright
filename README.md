@@ -117,16 +117,25 @@ In every case Playwright pulls the `setup` project in automatically as a depende
 
 ## 🔁 Migrating from 6.x
 
-The next major release moves setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
+This major release moved setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
 
 1. Open `playwright.config.example.ts` (refreshed by the new package). Copy these into your own `playwright.config.ts`:
    - the `getSetupFiles()` helper
    - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
    - the `setup` project block at the top of `projects:`
    - the `dependencies: ['setup']` line on each browser project
-2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
-3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
-4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
+2. Add the `@base/*` alias to your existing root `tsconfig.json`, as the **first** entry under `paths`:
+
+   ```json
+   "@base/*": [
+     "./base-tests/*"
+   ],
+   ```
+
+   `build.js` never overwrites an existing `tsconfig.json`, so upgrading the package alone does not add this alias for you — it must be added by hand. Without it, any POM override in `tests/poms/` fails to resolve: `tsc` reports `TS2307` and Playwright fails at collection with a module-not-found error.
+3. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
+4. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
+5. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
 
 After these changes, `npx playwright test` runs setup automatically and you no longer need a separate `--grep "@setup"` invocation.
 
@@ -259,7 +268,9 @@ npx playwright test --grep-invert @coupon-code
 
 ## ✏️ Customizing the testing suite
 
-The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, create a copy of `login.page.ts` and place it `tests/poms/frontend/` and make your edits in this file. The next time you run the testing suite, it will automatically use these custom files.
+The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, the preferred approach is to **subclass** the packaged POM rather than copy it wholesale: place a `login.page.ts` in `tests/poms/frontend/` that extends the base class through the `@base/*` alias and overrides only the method or getter that differs. See [§ Conventions → Overriding a POM for your store](#overriding-a-pom-for-your-store) for the full pattern. The next time you run the testing suite, it will automatically use these custom files.
+
+Only fall back to a full copy of the packaged file when you need to rewrite a POM entirely — for example, when nearly every method differs. A full copy must still export the same symbol name as the packaged version, and stops receiving any future fixes made to that file in `base-tests/`.
 
 ### Module Imports
 
@@ -281,7 +292,7 @@ To keep the project structure clean and maintainable, we use **TypeScript path a
 import { UIReference } from '@config';
 import { requireEnv } from '@utils/env.utils';
 
-import HomePage from '@poms/frontend/home.page';
+import { HomePage } from '@poms/frontend/home.page';
 ```
 
 **Wrong Usage**
@@ -291,7 +302,7 @@ import HomePage from '@poms/frontend/home.page';
 import { UIReference } from '../config';
 import { requireEnv } from '../utils/env.utils';
 
-import HomePage from '../poms/frontend/home.page';
+import { HomePage } from '../poms/frontend/home.page';
 ```
 
 ---
@@ -544,10 +555,14 @@ export class LoginPage extends BaseLoginPage {
 }
 ```
 
-After adding an override, run `node bin/verify-override-seam.js` to confirm it
-resolves the way you expect — it builds a small consumer-shaped fixture and
-checks that both `tsc` and Playwright pick up your `tests/` version rather
-than the packaged one.
+`bin/verify-override-seam.js` is a maintainer/CI tool that verifies the
+suite's own override *mechanism* — it builds its own throwaway
+consumer-shaped fixture from scratch and checks that both `tsc` and
+Playwright pick up a `tests/` file over its `base-tests/` counterpart. It
+does not read your `tests/` folder or your `tsconfig.json`, so running it
+does not confirm that your specific override resolves — for that, run
+`npx tsc --noEmit` and `npx playwright test --list` in your own project and
+confirm your override's file shows up where you expect.
 
 ---
 
@@ -563,7 +578,7 @@ This package, and therefore the testing suite, is part of our open-source initia
 
 ## Scenarios
 
-Up-to-date as of the `[Unreleased]` CHANGELOG entry.
+Up-to-date as of the `7.0.0` CHANGELOG entry.
 
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|

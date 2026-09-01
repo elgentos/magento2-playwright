@@ -73,6 +73,7 @@ Defined in `tsconfig.json`. Always use these instead of relative paths:
 | `@poms/*` | `base-tests/poms/*` or `tests/poms/*` |
 | `@types/*` | `base-tests/types/*` or `tests/types/*` |
 | `@fixtures/*` | `base-tests/fixtures/*` or `tests/fixtures/*` |
+| `@base/*` | `base-tests/*` only. This is how a `tests/` override imports the packaged class it extends — `@poms/*` would resolve back to the override itself. |
 
 ## Authentication & Fixtures
 
@@ -96,32 +97,31 @@ import { test, expect } from '@playwright/test';
 ## Page Object Model Pattern
 
 POMs live in `poms/frontend/` and `poms/admin/`. Each POM:
-- Takes a `Page` in its constructor.
-- Defines locators as `readonly` properties using config values (never hardcoded strings).
+- Takes a `Page` via `constructor(public readonly page: Page) {}`.
+- Defines locators as `get` accessors using config values (never hardcoded strings), built lazily rather than assigned in the constructor.
 - Exposes action methods (e.g., `login()`, `addToCart()`).
 - Uses `UIReference` for element labels and `slugs` for navigation.
+- Is a **named export**, using the unprefixed class name (`LoginPage`, not `BaseLoginPage`) — no default export.
 
-Example:
+Example (see `tests/poms/frontend/login.page.ts` for the real file this is based on):
 ```typescript
 import { UIReference, slugs } from '@config';
+import type { Locator, Page } from '@playwright/test';
 
-class LoginPage {
-  readonly page: Page;
-  readonly loginEmailField: Locator;
+export class LoginPage {
+  constructor(public readonly page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-    this.loginEmailField = page.getByRole('textbox', {
-      name: UIReference.credentials.emailFieldLabel, exact: true
+  get loginEmailField(): Locator {
+    return this.page.getByRole('textbox', {
+      name: UIReference.text.shared.forms.email, exact: true
     });
   }
 
   async login(email: string, password: string) {
-    await this.page.goto(slugs.account.loginSlug);
+    await this.page.goto(slugs.frontend.account.login);
     // ...
   }
 }
-export default LoginPage;
 ```
 
 Some POMs extend `MagewireUtils` (for pages with Hyva Magewire reactivity) to get `waitForMagewireRequests()`.
@@ -180,7 +180,7 @@ import { test } from '@utils/fixtures.utils';
 import { test as base, expect } from '@playwright/test';
 
 import { outcomeMarker, inputValues } from '@config';
-import LoginPage from '@poms/frontend/login.page';
+import { LoginPage } from '@poms/frontend/login.page';
 
 base('Test_name_uses_underscores', { tag: '@hot' }, async ({ page, browserName }) => {
   const loginPage = new LoginPage(page);

@@ -23,8 +23,13 @@ const POM_CLASS = 'LoginPage';
 const POM_MODULE = 'poms/frontend/login.page';
 const CHECKOUT_CLASS = 'CheckoutPage';
 const CHECKOUT_MODULE = 'poms/frontend/checkout.page';
+const MAINMENU_CLASS = 'MainMenuPage';
+const MAINMENU_MODULE = 'poms/frontend/mainmenu.page';
 
 const SENTINEL = '#seam-override-marker';
+// Distinct from SENTINEL so a false-positive match between the two checks is
+// not possible.
+const COMPOSE_SENTINEL = '#seam-compose-marker';
 const LAYER_DIRS = ['poms', 'utils', 'config', 'types'];
 
 /**
@@ -48,9 +53,17 @@ function readShippedCompilerOptions() {
   return JSON.parse(stripped).compilerOptions;
 }
 
-function buildFixture(dir) {
-  const source = baseLayerSource();
+/**
+ * The real login page title from config, used to build a SEAM_PROTECTED value
+ * that only the actual protected getter (not an arbitrary getByRole call) can
+ * produce. See the `checks` comment in main() for why.
+ */
+function readLoginTitle(source) {
+  const raw = fs.readFileSync(path.join(source, 'config', 'element-identifiers.json'), 'utf-8');
+  return JSON.parse(raw).text.frontend.login.title;
+}
 
+function buildFixture(dir, source) {
   for (const layer of LAYER_DIRS) {
     const from = path.join(source, layer);
     if (fs.existsSync(from)) {
@@ -72,8 +85,11 @@ function buildFixture(dir) {
 
   // playwrightRequestConfig.ts imports './tests/utils/env.utils' by a hardcoded
   // relative path (not an alias), so the fixture needs a tests/utils/ mirror
-  // too — same as a real consumer, whose tests/ starts as a full copy of the
-  // base layer before they override individual files.
+  // too. This does NOT model a real consumer's tests/ — build.js:96 creates a
+  // real consumer's tests/ directory empty via mkdirSync. The mirror exists
+  // purely so the hardcoded relative-import chain (global-setup.ts ->
+  // ../../playwrightRequestConfig -> ./tests/utils/env.utils) has something to
+  // resolve against for type-checking.
   const utilsSource = path.join(source, 'utils');
   if (fs.existsSync(utilsSource)) {
     fs.cpSync(utilsSource, path.join(dir, 'tests', 'utils'), { recursive: true });
@@ -112,6 +128,27 @@ function buildFixture(dir) {
     ].join('\n'),
   );
 
+  // A second store override, of the POM the first one composes internally.
+  // Proves cross-POM composition: LoginPage.login() does `new MainMenuPage(this.page)`
+  // via @poms/*, and that must resolve to THIS file, not the packaged base class.
+  // The sentinel lives in the constructor (rather than a getter) so it fires the
+  // moment login() constructs the instance, with no dependency on a real Page.
+  fs.writeFileSync(
+    path.join(dir, 'tests', MAINMENU_MODULE + '.ts'),
+    [
+      `import { ${MAINMENU_CLASS} as Parent } from '@base/${MAINMENU_MODULE}';`,
+      `import type { Page } from '@playwright/test';`,
+      ``,
+      `export class ${MAINMENU_CLASS} extends Parent {`,
+      `\tconstructor(page: Page) {`,
+      `\t\tsuper(page);`,
+      `\t\tconsole.log('SEAM_COMPOSE=${COMPOSE_SENTINEL}');`,
+      `\t}`,
+      `}`,
+      ``,
+    ].join('\n'),
+  );
+
   fs.writeFileSync(
     path.join(dir, 'tests', 'seam.spec.ts'),
     [
@@ -120,7 +157,7 @@ function buildFixture(dir) {
       ``,
       `const stub: any = {`,
       `\tlocator: (selector: string) => ({ selector }),`,
-      `\tgetByRole: () => ({ selector: 'role' }),`,
+      `\tgetByRole: (role: string, opts?: any) => ({ selector: 'role:' + role + ':' + (opts && opts.name || '') }),`,
       `\tgetByLabel: () => ({ selector: 'label' }),`,
       `\ton: () => {},`,
       `};`,
@@ -128,6 +165,11 @@ function buildFixture(dir) {
       `const pom = new ${POM_CLASS}(stub);`,
       `console.log('SEAM_EMAIL=' + (pom.loginFormFields.emailField as any).selector);`,
       `console.log('SEAM_PROTECTED=' + (pom as any).seamProbeTitle.selector);`,
+      ``,
+      `// login() is inherited (not overridden) on this subclass. Its first statement,`,
+      `// \`new ${MAINMENU_CLASS}(this.page)\`, runs synchronously and fires the sentinel`,
+      `// above before the rest of the method fails against this minimal stub.`,
+      `pom.login('seam@example.test', 'irrelevant').catch(() => {});`,
       ``,
       `test('seam placeholder', () => {});`,
       ``,
@@ -162,7 +204,9 @@ function run(dir, args) {
 function main() {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'seam-'));
   try {
-    buildFixture(dir);
+    const source = baseLayerSource();
+    const loginTitle = readLoginTitle(source);
+    buildFixture(dir, source);
 
     try {
       run(dir, ['tsc', '--noEmit', '-p', 'tsconfig.json']);
@@ -179,7 +223,12 @@ function main() {
 
     const checks = [
       [`SEAM_EMAIL=${SENTINEL}`, 'store override did not shadow the base POM'],
-      ['SEAM_PROTECTED=role', 'protected member was not reachable, or super getter was lost'],
+      // Checks the exact role+name the real protected getter builds from config,
+      // not just that some getByRole call happened — a bare 'role' sentinel would
+      // pass for any getByRole call and would not actually prove the protected
+      // member was reached.
+      [`SEAM_PROTECTED=role:heading:${loginTitle}`, 'protected member was not reachable, or super getter was lost'],
+      [`SEAM_COMPOSE=${COMPOSE_SENTINEL}`, 'cross-POM composition did not pick up the store override of the composed POM'],
     ];
 
     for (const [needle, message] of checks) {
@@ -188,7 +237,7 @@ function main() {
       }
     }
 
-    console.log('PASS: store override shadows the base POM and can extend it');
+    console.log('PASS: store override shadows the base POM, can extend it, and is picked up when composed by another base POM');
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
