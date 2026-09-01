@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class CartPage {
 	constructor(public readonly page: Page) {}
@@ -60,14 +61,14 @@ export class CartPage {
 			.filter({ hasText: UIReference.text.frontend.product.simpleProduct });
 
 		// If the amount to update to is the same as the current amount in cart, update the amount to change to.
-		let currentQuantity = await productRow
+		const currentQuantity = await productRow
 			.getByRole('spinbutton', { name: UIReference.text.frontend.common.quantityAbbr })
 			.inputValue();
 		if (currentQuantity == amount) {
 			amount = '3';
 		}
 
-		let subTotalBeforeUpdate = await productRow
+		const subTotalBeforeUpdate = await productRow
 			.getByText(UIReference.text.frontend.common.priceSymbol)
 			.last()
 			.innerText();
@@ -77,7 +78,7 @@ export class CartPage {
 
 		// Checkpoint: wait until the subtotal changed
 		await expect(async () => {
-			let subTotalAfterUpdate = await productRow
+			const subTotalAfterUpdate = await productRow
 				.getByText(UIReference.text.frontend.common.priceSymbol)
 				.last()
 				.innerText();
@@ -86,7 +87,7 @@ export class CartPage {
 			);
 		}).toPass();
 
-		let updatedQuantity = await productRow
+		const updatedQuantity = await productRow
 			.getByLabel(UIReference.text.frontend.common.quantityAbbr)
 			.inputValue();
 
@@ -103,7 +104,7 @@ export class CartPage {
 	 */
 	async removeProduct(productTitle: string) {
 		// Define the delete button here because it depends on the name of the product.
-		let removeButton = this.page.getByLabel(
+		const removeButton = this.page.getByLabel(
 			`${UIReference.text.shared.buttons.remove} ${productTitle}`,
 		);
 		await removeButton.click();
@@ -138,25 +139,17 @@ export class CartPage {
 		await this.discountFormFields.applyDiscountButton.click();
 		await this.page.waitForLoadState();
 
-		const notificationBanner = this.page
-			.locator(UIReference.selectors.shared.successMessage)
-			.filter({ hasText: outcomeMarker.cart.discountAppliedNotification });
-		await notificationBanner.waitFor();
-
 		// Final assertions: check for notification, and the presence of a discount amount
-		await expect
-			.soft(
-				this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),
-				`Notification that discount code ${code} has been applied`,
-			)
-			.toBeVisible();
+		const notification = await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.cart.discountAppliedNotification} "${code}"`,
+		);
 		// WORKAROUND: hardcoded '-' symbol because the space between - and $ is not always present.
 		await expect(
 			this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`),
 			`'- $' should be visible on the page`,
 		).toBeVisible();
 		// Close message to prevent difficulties with other tests.
-		await this.page.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
+		await notification.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
 	}
 
 	/**
@@ -172,12 +165,9 @@ export class CartPage {
 		await this.page.waitForLoadState();
 
 		// Final assertions: check for notification and confirm the discount text is no longer visible.
-		await expect
-			.soft(
-				this.page.getByText(outcomeMarker.cart.discountRemovedNotification),
-				`Notification should be visible`,
-			)
-			.toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.cart.discountRemovedNotification,
+		);
 		await expect(
 			this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`),
 			`'- $' should not be on the page`,
@@ -198,12 +188,10 @@ export class CartPage {
 		await this.discountFormFields.applyDiscountButton.click();
 		await this.page.waitForLoadState();
 
-		let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
+		const incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
 		// Final assertions: notification that code was incorrect & discount code field is still editable
-		await expect
-			.soft(this.page.getByText(incorrectNotification), `Code should not work`)
-			.toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(incorrectNotification);
 		await expect(this.discountFormFields.codeInputField).toBeEditable();
 	}
 
@@ -231,17 +219,17 @@ export class CartPage {
 		}
 
 		// Get product details section in checkout and retrieve values
-		let productInCheckout = this.page
+		const productInCheckout = this.page
 			.locator(UIReference.selectors.frontend.checkout.cartDetails)
 			.filter({ hasText: productName })
 			.nth(1);
-		let productPriceInCheckout = (
+		const productPriceInCheckout = (
 			await productInCheckout
 				.getByText(UIReference.text.frontend.common.priceSymbol)
 				.last()
 				.innerText()
 		).trim();
-		let productQuantityInCheckout = (
+		const productQuantityInCheckout = (
 			await productInCheckout.locator('.product-price').getByText('x').innerText()
 		).substring(0, 1);
 
@@ -265,9 +253,9 @@ export class CartPage {
 	) {
 		// perform magic to calculate price * amount and mold it into the correct form again
 		pricePDP = pricePDP.replace(UIReference.text.frontend.common.priceSymbol, '');
-		let pricePDPInt = Number(pricePDP);
-		let quantityPDPInt = parseInt(amountPDP);
-		let calculatedPricePDP =
+		const pricePDPInt = Number(pricePDP);
+		const quantityPDPInt = parseInt(amountPDP);
+		const calculatedPricePDP =
 			`${UIReference.text.frontend.common.priceSymbol}` +
 			(pricePDPInt * quantityPDPInt).toFixed(2);
 

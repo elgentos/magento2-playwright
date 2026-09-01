@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page, test, TestInfo } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class AccountPage {
@@ -224,6 +225,9 @@ export class AccountPage {
 		await saveAddressButton.click();
 		// wait for the address index url
 		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.address.newAddressAddedNotification,
+		);
 	}
 
 	async editExistingAddress(
@@ -266,7 +270,7 @@ export class AccountPage {
 			? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click()
 			: await this.editAddressButton.click();
 
-		let oldAddress = await streetAddressField.inputValue();
+		const oldAddress = await streetAddressField.inputValue();
 
 		await expect(
 			this.userNameFields.firstNameField,
@@ -337,14 +341,17 @@ export class AccountPage {
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
 		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.address.newAddressAddedNotification,
+		);
 
 		// await expect(this.page.getByText(streetName).last()).toBeVisible();
 		if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
 	}
 
 	async deleteFirstAddressFromAddressBook() {
-		let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
-		let addressBookSection = this.page.locator(
+		const addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
+		const addressBookSection = this.page.locator(
 			UIReference.selectors.frontend.account.addressBookArea,
 		);
 
@@ -355,14 +362,14 @@ export class AccountPage {
 		});
 
 		// Retrieve all text in the 'address book' section
-		let addressBookArray = await addressBookSection.allInnerTexts();
+		const addressBookArray = await addressBookSection.allInnerTexts();
 		// split by each new line
-		let arraySplit = addressBookArray[0].split('\n');
+		const arraySplit = addressBookArray[0].split('\n');
 		// Retrieve index 6, because:
 		// index 0 to 3 are the table headers (i.e. Name, Street Address etc.)
 		// index 5 is name, index 6 is address.
 		// if this table changes, the index number should change.
-		let addressToBeDeleted = arraySplit[6];
+		const addressToBeDeleted = arraySplit[6];
 
 		// Annotate the report so the user knows what address should be deleted
 		test.info().annotations.push({
@@ -374,7 +381,7 @@ export class AccountPage {
 		// wait for the address index url
 		await this.page.waitForURL(/customer\/address\/(index|)/, { waitUntil: 'load' });
 
-		await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(addressDeletedNotification);
 		await expect(
 			addressBookSection,
 			`${addressToBeDeleted} should not be visible`,
@@ -392,7 +399,7 @@ export class AccountPage {
 	 *
 	 */
 	async updatePassword(currentPassword: string, newPassword: string) {
-		let passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
+		const passwordUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
 
 		await this.passwordFormElements.changePasswordSwitch.check();
 		await this.passwordFormElements.currentPasswordField.fill(currentPassword);
@@ -401,22 +408,22 @@ export class AccountPage {
 		await this.genericSaveButton.click();
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
-		await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(passwordUpdatedNotification);
 	}
 
 	async updateEmail(currentPassword: string, newEmail: string) {
-		let accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
+		const accountUpdatedNotification = outcomeMarker.account.changedCredentialsInformation;
 		await this.changeEmailCheck.check();
 		await this.accountCreationFields.emailField.fill(newEmail);
 		await this.passwordFormElements.currentPasswordField.fill(currentPassword);
 		await this.genericSaveButton.click();
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
-		await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(accountUpdatedNotification);
 	}
 
 	async deleteAllAddresses() {
-		let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
+		const addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
 
 		this.page.on('dialog', async (dialog) => {
 			if (dialog.type() === 'confirm') {
@@ -427,7 +434,7 @@ export class AccountPage {
 		while (await this.deleteAddressButton.isVisible()) {
 			await this.deleteAddressButton.click();
 			await this.page.waitForLoadState();
-			await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
+			await new NotificationValidatorUtils(this.page).validate(addressDeletedNotification);
 		}
 	}
 

@@ -1,7 +1,8 @@
 // @ts-check
 
 import { type Page, type Locator, expect } from '@playwright/test';
-import { UIReference } from '@config';
+import { outcomeMarker, UIReference } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class HomePage {
 	constructor(public readonly page: Page) {}
@@ -37,13 +38,16 @@ export class HomePage {
 	 * Used for the test "Add_product_on_homepage_to_cart"
 	 */
 	async addHomepageProductToCart() {
-		let buyProductButton = this.page
+		const buyProductButton = this.page
 			.getByRole('button')
 			.filter({ hasText: UIReference.text.shared.buttons.addToCart })
 			.first();
 
 		if (await buyProductButton.isVisible()) {
 			await buyProductButton.click();
+			await new NotificationValidatorUtils(this.page).validate(
+				`${outcomeMarker.productPage.simpleProductAddedNotification} ${outcomeMarker.homePage.firstProductName} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
+			);
 		} else {
 			throw new Error(`No 'Add to Cart' button found on homepage`);
 		}

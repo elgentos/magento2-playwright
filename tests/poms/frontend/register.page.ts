@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class RegisterPage {
@@ -102,8 +103,7 @@ export class RegisterPage {
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
 
-		// Checkpoint: success message visible.
-		await expect(this.page.getByRole('alert'), `account has been created`).toContainText(
+		await new NotificationValidatorUtils(this.page).validate(
 			outcomeMarker.account.accountCreatedNotificationText,
 		);
 

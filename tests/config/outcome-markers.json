@@ -12,7 +12,7 @@
 	},
 	"address": {
 		"addressDeletedNotification": "You deleted the address.",
-		"newAddressAddedNotifcation": "You saved the address."
+		"newAddressAddedNotification": "You saved the address."
 	},
 	"adminGeneral": {
 		"searchResultsFoundText": "records found",
@@ -62,6 +62,8 @@
 	"magentoAdmin": {
 		"configurationSavedText": "You saved the configuration.",
 		"couponRuleSavedText": "You saved the rule.",
+		"customerApprovedText": "Customer account has been approved!",
+		"customerSavedText": "You saved the customer.",
 		"noResultsFoundText": "We couldn't find any records."
 	},
 	"miniCart": {
@@ -73,6 +75,8 @@
 	},
 	"productPage": {
 		"borderClassRegex": ".* border-primary$",
+		"productAddedNotificationSuffix": "to your shopping cart.",
+		"reviewSubmittedNotification": "You submitted your review for moderation",
 		"simpleProductAddedNotification": "You added"
 	},
 	"login": {

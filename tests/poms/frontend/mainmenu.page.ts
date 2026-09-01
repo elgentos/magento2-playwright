@@ -278,7 +278,9 @@ export class MainMenuPage {
 		// By adding 'force', we can bypass the 'aria-disabled' tag.
 		await this.mainMenuMiniCartButton.click({ force: true });
 
-		let miniCartDrawer = this.page.locator(UIReference.selectors.frontend.minicart.cartDrawer);
+		const miniCartDrawer = this.page.locator(
+			UIReference.selectors.frontend.minicart.cartDrawer,
+		);
 		await expect(async () => {
 			await expect(
 				miniCartDrawer.getByText(outcomeMarker.miniCart.miniCartTitle),

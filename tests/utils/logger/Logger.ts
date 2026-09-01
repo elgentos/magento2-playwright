@@ -35,7 +35,6 @@ export class Logger {
 				process.stdout.write(msg);
 			}
 		} else {
-			// eslint-disable-next-line no-console
 			switch (level) {
 				case 'log':
 				case 'info':

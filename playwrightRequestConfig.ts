@@ -1,7 +1,6 @@
 // @ts-check
 
-import type { APIRequestContext, APIResponse, HTTPCredentials } from '@playwright/test';
-import { request } from '@playwright/test';
+import type { HTTPCredentials } from '@playwright/test';
 
 import { getHttpCredentials, requireEnv } from './tests/utils/env.utils';
 

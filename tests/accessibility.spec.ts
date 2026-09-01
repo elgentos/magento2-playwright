@@ -53,7 +53,7 @@ test.describe('Accessibility Tests: EEA compliance', () => {
 			async ({ page }, testInfo) => {
 				await page.goto(slug);
 				await page.waitForLoadState();
-				let pageHeading = page.getByRole('heading', { name: pageTitle }).first();
+				const pageHeading = page.getByRole('heading', { name: pageTitle }).first();
 
 				await expect(
 					pageHeading,

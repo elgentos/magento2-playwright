@@ -217,6 +217,7 @@ function main() {
 		} catch (err) {
 			throw new Error(
 				'type check failed in fixture:\n' + (err.stdout || '') + (err.stderr || ''),
+				{ cause: err },
 			);
 		}
 
@@ -226,6 +227,7 @@ function main() {
 		} catch (err) {
 			throw new Error(
 				'playwright --list failed in fixture:\n' + (err.stdout || '') + (err.stderr || ''),
+				{ cause: err },
 			);
 		}
 

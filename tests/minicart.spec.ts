@@ -96,7 +96,7 @@ test.describe(
 		 * @given I have added a (simple) product to the cart and opened the minicart
 		 * @when I click on the delete button
 		 *  @then The product should not be in my cart anymore
-		 *  @and I should see a notification that the product was removed
+		 *  @and the minicart should show that it is empty
 		 */
 		test(
 			'Delete_product_from_minicart',

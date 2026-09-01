@@ -7,6 +7,8 @@ import { ComparePage } from '@poms/frontend/compare.page';
 import { LoginPage } from '@poms/frontend/login.page';
 import { ProductPage } from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
@@ -28,6 +30,22 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
 		const comparePage = new ComparePage(page);
 		await comparePage.goToComparePage();
 	});
+});
+
+test.afterEach('Remove products from compare', async ({ page }) => {
+	if (toggles.compare === false) {
+		return;
+	}
+
+	// ensure we are on the right page
+	await page.goto(slugs.frontend.product.comparison);
+
+	page.on('dialog', (dialog) => dialog.accept());
+	const comparePage = new ComparePage(page);
+	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
+	await comparePage.removeProductFromCompare(
+		UIReference.text.frontend.product.secondSimpleProduct,
+	);
 });
 
 /**
@@ -60,17 +78,16 @@ test(
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 		const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
-		let productNotWishlistedNotificationText =
+		const productNotWishlistedNotificationText =
 			outcomeMarker.comparePage.productNotWishlistedNotificationText;
-		let addToWishlistButton = page.getByLabel(
+		const addToWishlistButton = page.getByLabel(
 			`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`,
 		);
 		await addToWishlistButton.click();
-		await errorMessage.waitFor();
-		await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
+		await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
 
-		await expect(page.url(), `Page has been redirect to login page`).toContain(
-			slugs.frontend.account.login,
+		await expect(page, `Page has been redirected to login page`).toHaveURL(
+			slugToRegex(slugs.frontend.account.login),
 		);
 	},
 );
@@ -88,10 +105,11 @@ test(
 	{ tag: ['@comparison-page', '@hot'] },
 	async ({ page, browserName }) => {
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+
 		await test.step('Log in with account', async () => {
 			const id = test.info().parallelIndex;
-			let user = `playwright+${id}@elgentos.nl`;
-			let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+			const user = `playwright+${id}@elgentos.nl`;
+			const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 			const loginPage = new LoginPage(page);
 			await loginPage.goToLoginPage();
@@ -115,19 +133,3 @@ test(
 		});
 	},
 );
-
-test.afterEach('Remove products from compare', async ({ page }) => {
-	if (toggles.compare === false) {
-		return;
-	}
-
-	// ensure we are on the right page
-	await page.goto(slugs.frontend.product.comparison);
-
-	page.on('dialog', (dialog) => dialog.accept());
-	const comparePage = new ComparePage(page);
-	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
-	await comparePage.removeProductFromCompare(
-		UIReference.text.frontend.product.secondSimpleProduct,
-	);
-});

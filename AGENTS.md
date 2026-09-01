@@ -209,7 +209,7 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 
 ## Style Guide
 
-- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON.
+- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON. Enforced by Prettier — run `npm run format` rather than hand-aligning.
 - **No hardcoded strings.** All UI labels, URLs, messages, and test data come from config JSON files. If a value doesn't exist in config, add it there first, then reference it.
 - **Locator strategy:** Prefer `page.getByRole()` with config labels. Fall back to `page.locator()` with a config selector only when roles don't work.
 - **Test names:** Use `Underscored_names_describing_the_scenario`.
@@ -219,9 +219,38 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 - **Use path aliases** (`@config`, `@poms/*`, etc.), never relative paths for cross-directory imports.
 - **Use `.press("Enter")` instead of `.click()`** on submit buttons to avoid WebKit issues.
 
+### Linting
+
+Style is mechanically enforced. A blocking `lint` job runs on every pull request and GitLab pipeline.
+
+```bash
+npm run typecheck     # TypeScript compiler validation
+npm run lint          # ESLint: type-aware TS rules + Playwright rules
+npm run lint:ci       # ESLint with the current warning baseline
+npm run format        # Prettier: rewrite JS, TS, and JSON files
+npm run format:check  # Prettier: verify JS, TS, and JSON files
+```
+
+Config lives in `eslint.config.mjs` and `.prettierrc.json`. Both are `.npmignore`d — they are
+contributor tooling and are not shipped to consumers of the package.
+
+`base-tests/` is never linted; it is generated from `tests/` by `build.js`. Warnings mark
+pre-existing debt — do not increase the total, and lower the `lint:ci` warning baseline when warnings
+are removed.
+
+Prettier intentionally formats source code and JSON only. Markdown and YAML retain their existing
+formatting to avoid unrelated documentation and pipeline diffs.
+
+Run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once, so the bulk Prettier commit does
+not obscure `git blame`.
+
 ## CI/CD Pipeline
 
-A single `testing_suite` stage in `.gitlab-ci.yml` runs `npx playwright test`. Setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup stage.
+`.gitlab-ci.yml` has three stages: `lint`, `testing_suite`, `mirror`. The `lint` stage runs type
+checking, ESLint with the warning baseline, and Prettier, and blocks the pipeline on failure.
+`testing_suite` runs `npx playwright test`; setup (`init.setup.ts`, the `setup` Playwright project)
+runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup
+stage.
 
 Run locally:
 

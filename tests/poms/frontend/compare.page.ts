@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class ComparePage {
 	constructor(public readonly page: Page) {}
@@ -28,14 +29,6 @@ export class ComparePage {
 					.getByRole('button', { name: UIReference.text.shared.buttons.addToCart }),
 			addToWishListButton: (product: string): Locator =>
 				this.page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${product}`),
-		};
-	}
-
-	// get messageLocators: return message locators
-	get messageLocators() {
-		return {
-			generalMessage: this.page.locator(UIReference.selectors.shared.message),
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage),
 		};
 	}
 
@@ -66,7 +59,9 @@ export class ComparePage {
 	 * @returns {empty} - returns early if comparison page is empty
 	 */
 	async removeProductFromCompare(product: string) {
-		let comparisonPageEmptyText = this.page.getByText(UIReference.text.frontend.compare.empty);
+		const comparisonPageEmptyText = this.page.getByText(
+			UIReference.text.frontend.compare.empty,
+		);
 		// if the comparison page is empty, we can't remove anything
 		if (await comparisonPageEmptyText.isVisible()) {
 			return;
@@ -75,16 +70,15 @@ export class ComparePage {
 		const comparisonPageProductTitle = this.page.getByRole('link', { name: product });
 
 		await this.compareActionButtons.removeFromCompareButton(product).click();
-		await this.messageLocators.generalMessage.waitFor();
-		await this.page
+		const notification = await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.comparePage.productRemovedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productRemovedNotificationTextTwo}`,
+		);
+		await notification
 			.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage })
 			.click();
 
 		// Assertions to confirm test ran correctly.
-		await expect(
-			this.messageLocators.generalMessage,
-			`notification toast should be hidden`,
-		).toBeHidden();
+		await expect(notification, `notification toast should be hidden`).toBeHidden();
 		await expect(
 			comparisonPageProductTitle,
 			`Link to product is no longer visible`,
@@ -97,15 +91,10 @@ export class ComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToCart(product: string) {
-		let productAddedNotification = this.page.getByText(
-			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`,
+		await this.compareActionButtons.addToCartButton(product).click();
+		await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
 		);
-
-		this.compareActionButtons.addToCartButton(product).click();
-		await this.messageLocators.successMessage.waitFor();
-
-		// Final assertion to confirm test ran correctly.
-		await expect(productAddedNotification).toBeVisible();
 	}
 
 	/**
@@ -114,14 +103,9 @@ export class ComparePage {
 	 * @param product {string} - name of the product used in the test.
 	 */
 	async addToWishList(product: string) {
-		let productAddedNotification = this.page.getByText(
+		await this.compareActionButtons.addToWishListButton(product).click();
+		await new NotificationValidatorUtils(this.page).validate(
 			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
 		);
-
-		await this.compareActionButtons.addToWishListButton(product).click();
-		await this.messageLocators.successMessage.waitFor();
-
-		// Final assertion to confirm test ran correctly.
-		await expect(productAddedNotification).toBeVisible();
 	}
 }

@@ -7,12 +7,12 @@ import { CategoryPage } from '@poms/frontend/category.page';
 
 /**
  * @feature Filter category page
- * @scenario User filters category page on size L
+ * @scenario User filters category page on size M
  * @given I navigate to the category page
  * @when I open the Size filter category
- * @and I click the size L button
+ * @and I click the size M button
  * @then the URL should reflect this filter
- * @and I should see fewer products
+ * @and I should see the selected filter
  */
 test('Filter_category_on_attribute', { tag: ['@category', '@cold'] }, async ({ page }) => {
 	test.skip(toggles.categoryFilters === false, 'Disabled by test toggle: categoryFilters');

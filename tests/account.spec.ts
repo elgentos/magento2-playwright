@@ -230,13 +230,6 @@ test.describe.serial(
 				page.getByText(address).first(),
 				`Expect new address to be listed`,
 			).toBeVisible();
-			let addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-			await expect
-				.soft(
-					page.getByText(addressAddedNotification),
-					`message that confirms actions should be visible`,
-				)
-				.toBeVisible();
 		});
 
 		/**
@@ -247,7 +240,7 @@ test.describe.serial(
 		test('Edit_existing_address', { tag: ['@address-actions', '@hot'] }, async ({ page }) => {
 			const accountPage = new AccountPage(page);
 			await page.goto(slugs.frontend.account.addressBook);
-			let editAddressButton = page
+			const editAddressButton = page
 				.getByRole('link', { name: UIReference.text.frontend.account.editAddress })
 				.first();
 			let isDefaultAddress = false;
@@ -275,8 +268,6 @@ test.describe.serial(
 
 			// await expect(page.getByText(companyName)).toBeVisible();
 			await expect(page.getByText(address).first()).toBeVisible();
-			let addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-			await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
 		});
 
 		/**
@@ -316,7 +307,7 @@ test.describe.serial(
 			const accountPage = new AccountPage(page);
 			await page.goto(slugs.frontend.account.addressBook);
 
-			let deleteAddressButton = page
+			const deleteAddressButton = page
 				.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress })
 				.first();
 
@@ -355,7 +346,7 @@ test.describe(
 				await page.waitForLoadState();
 
 				const newsletterPage = new NewsletterSubscriptionPage(page);
-				let newsletterLink = page.getByRole('link', {
+				const newsletterLink = page.getByRole('link', {
 					name: UIReference.text.frontend.account.newsletterLink,
 				});
 				const newsletterCheckElement = page.getByLabel(
@@ -369,7 +360,7 @@ test.describe(
 					}),
 				).toBeVisible();
 
-				let updateSubscription = await newsletterPage.updateNewsletterSubscription();
+				const updateSubscription = await newsletterPage.updateNewsletterSubscription();
 
 				await newsletterLink.click();
 

@@ -24,7 +24,6 @@ test.describe('Cart functionalities (guest)', () => {
 	/**
 	 * Before each test: add a product to the cart, navigate to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
-	 * @param testInfo -  Playwright class that allows interaction with the report.
 	 */
 	test.beforeEach(async ({ page }, testInfo) => {
 		test.skip(
@@ -37,10 +36,6 @@ test.describe('Cart functionalities (guest)', () => {
 			UIReference.text.frontend.product.simpleProduct,
 			slugs.frontend.product.simple,
 		);
-
-		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
-		const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-		await notificationValidator.validate(productAddedNotification);
 
 		await page.goto(slugs.frontend.cart.index);
 	});
@@ -96,11 +91,9 @@ test.describe('Cart functionalities (guest)', () => {
 				`${UIReference.text.frontend.product.simpleProduct} should still be in cart`,
 			).toBeVisible();
 			await expect(
-				page
-					.getByRole('heading')
-					.getByRole('link', {
-						name: UIReference.text.frontend.product.secondSimpleProduct,
-					}),
+				page.getByRole('heading').getByRole('link', {
+					name: UIReference.text.frontend.product.secondSimpleProduct,
+				}),
 				`${UIReference.text.frontend.product.secondSimpleProduct} should still be in cart`,
 			).toBeVisible();
 		},
@@ -239,9 +232,9 @@ test.describe('Price checking tests', () => {
 		'Configurable_product_cart_data_consistent_from_PDP_to_checkout',
 		{ tag: ['@cart-price-check', '@cold'] },
 		async ({ page }) => {
-			var productPagePrice: string;
-			var productPageAmount: string;
-			var checkoutProductDetails: string[];
+			let productPagePrice: string;
+			let productPageAmount: string;
+			let checkoutProductDetails: string[];
 
 			const cart = new CartPage(page);
 

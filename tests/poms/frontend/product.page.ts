@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class ProductPage {
@@ -130,11 +131,9 @@ export class ProductPage {
 		}
 		await this.productInteraction.addToCartButton.click();
 
-		// Final assertion to confirm product has been added to cart
-		await expect(
-			this.page.getByRole('alert'),
-			`${product} has been added to cart`,
-		).toContainText(`${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`);
+		await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
+		);
 	}
 
 	/**
@@ -148,7 +147,7 @@ export class ProductPage {
 		await this.page.goto(url);
 		await expect(this.productPageTitle(product), `Checkpoint: title is visible`).toBeVisible();
 
-		let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product}`;
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`;
 		const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
 		// each product option (size, color) is a fieldset, which maps to the 'group' role
@@ -180,9 +179,7 @@ export class ProductPage {
 		}
 
 		await this.productInteraction.addToCartButton.click();
-		let successMessage = this.page.locator(UIReference.selectors.shared.successMessage);
-		await successMessage.waitFor();
-		await expect(this.page.getByText(productAddedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(productAddedNotification);
 	}
 
 	// ==============================================
@@ -200,12 +197,9 @@ export class ProductPage {
 
 		await this.productInteraction.addToCompareButton.click();
 
-		// Checkpoint: notification confirms the product was added.
-		// Message text is split across nodes (text, link, period), so assert containment.
-		await expect(
-			this.page.getByRole('alert'),
-			`${product} has been added to comparison`,
-		).toContainText(`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product}`);
+		await new NotificationValidatorUtils(this.page).validate(
+			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productAddedNotificationTextTwo}`,
+		);
 
 		await this.page.goto(slugs.frontend.product.comparison);
 
@@ -232,13 +226,9 @@ export class ProductPage {
 		await this.productInteraction.addToWishlistButton.click();
 		await this.page.waitForURL(slugToRegex(slugs.frontend.wishlist.index));
 
-		// Final assertions: success notification shown to user, product in wishlist.
-		await expect(
-			this.page.getByText(
-				`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
-			),
-			`Product has been added to wishlist notification`,
-		).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(
+			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
+		);
 
 		await expect(
 			this.page
@@ -273,8 +263,13 @@ export class ProductPage {
 
 		await this.reviewFormFields.loader.waitFor({ state: 'hidden' });
 
-		// Final assertion: confirm the message "review submitted for moderation" is visible.
-		await expect(this.page.getByText('You submitted your review for moderation')).toBeVisible();
+		// We don't use the notificationvalidator here,
+		// since this noitification is appended to the review form rather than up top -
+		// meaning the notificationvalidator won't find this.
+		await expect(
+			this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
+			`Notification that review has been submitted for moderation is visible`,
+		).toBeVisible();
 	}
 
 	/**
@@ -287,7 +282,7 @@ export class ProductPage {
 
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
 		// get the actual number shown on 'Show' dropdown on the page
-		let initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+		const initialReviewAmount = await this.reviewsPerPageDropdown.evaluate(
 			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim(),
 		);
 
@@ -301,8 +296,8 @@ export class ProductPage {
 
 		// Retrieve new value shown on page
 		await this.reviewsPerPageDropdown.scrollIntoViewIfNeeded();
-		let newReviewAmount = await this.reviewsPerPageDropdown.evaluate((el: HTMLSelectElement) =>
-			el.selectedOptions[0].textContent?.trim(),
+		const newReviewAmount = await this.reviewsPerPageDropdown.evaluate(
+			(el: HTMLSelectElement) => el.selectedOptions[0].textContent?.trim(),
 		);
 
 		// Final assertions: confirm the reviewAmount on the page is updated

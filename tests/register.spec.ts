@@ -28,13 +28,13 @@ test(
 
 		// Retrieve desired password from .env file
 		const existingAccountPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-		let firstName = faker.person.firstName();
-		let lastName = faker.person.lastName();
+		const firstName = faker.person.firstName();
+		const lastName = faker.person.lastName();
 
 		const browserEngine = browserName?.toUpperCase() || 'UNKNOWN';
-		let randomNumber = Math.floor(Math.random() * 1000);
-		let emailHandle = inputValues.accountCreation.emailHandleValue;
-		let emailHost = inputValues.accountCreation.emailHostValue;
+		const randomNumber = Math.floor(Math.random() * 1000);
+		const emailHandle = inputValues.accountCreation.emailHandleValue;
+		const emailHost = inputValues.accountCreation.emailHostValue;
 		const accountEmail = `${emailHandle}${randomNumber}-${browserEngine}@${emailHost}`;
 
 		if (!accountEmail) {
