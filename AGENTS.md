@@ -168,8 +168,24 @@ The arrays are ordered base-first so Playwright picks `tests/` — **do not
 - IDE go-to-definition follows `tsc`, so it lands on the base copy while the
   runtime uses the store copy.
 
-The seam is covered by `node bin/verify-override-seam.js`, which builds a
-consumer-shaped fixture in a temp dir. Run it after changing any alias.
+### Verifying the seam — run this locally
+
+The override mechanism is covered by `npm run verify:seam`, which builds a
+consumer-shaped fixture in a temp dir and checks that a `tests/` file shadows
+its `base-tests/` counterpart, can extend it, and is picked up when another POM
+composes it.
+
+**It does not run in CI — it is a local pre-merge check, and nothing enforces
+it.** Run it, and make sure it prints `PASS`, whenever you change any of:
+
+- a `paths` entry in `tsconfig.json` or `tsconfig.example.json`
+- a POM's class name, or its export style
+- a POM member's visibility (`private` / `protected` / `public`)
+- the Playwright version
+
+That last one matters most. The whole mechanism rests on Playwright resolving
+`paths` arrays last-match-wins, which is undocumented upstream and could change
+in a patch release. This harness is the only thing that would catch it.
 
 ## Test Spec Patterns
 

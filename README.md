@@ -555,11 +555,13 @@ export class LoginPage extends BaseLoginPage {
 }
 ```
 
-`bin/verify-override-seam.js` is a maintainer/CI tool that verifies the
-suite's own override *mechanism* — it builds its own throwaway
-consumer-shaped fixture from scratch and checks that both `tsc` and
-Playwright pick up a `tests/` file over its `base-tests/` counterpart. It
-does not read your `tests/` folder or your `tsconfig.json`, so running it
+`npm run verify:seam` is a maintainer tool that verifies the suite's own
+override *mechanism* — it builds its own throwaway consumer-shaped fixture
+from scratch and checks that both `tsc` and Playwright pick up a `tests/`
+file over its `base-tests/` counterpart. It is run locally by contributors
+to this suite, not in CI.
+
+It does not read your `tests/` folder or your `tsconfig.json`, so running it
 does not confirm that your specific override resolves — for that, run
 `npx tsc --noEmit` and `npx playwright test --list` in your own project and
 confirm your override's file shows up where you expect.

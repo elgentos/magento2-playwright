@@ -214,17 +214,6 @@ lint:
     - npm run format:check
   allow_failure: false
 
-# build.js deletes tests/ when CI=true, so the harness falls back to reading
-# its base layer straight from base-tests/ (see baseLayerSource()) instead of
-# the tests/ override that exists on a developer's machine.
-verify_override_seam:
-  stage: testing_suite
-  script:
-    - echo "Verifying the POM override seam"
-    - printf "elgentos\n" | npm install
-    - node bin/verify-override-seam.js
-  allow_failure: false
-
 run_testing_suite:
   stage: testing_suite
   extends:

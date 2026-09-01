@@ -39,7 +39,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - `@base/*` path alias, so a POM override in `tests/` can extend its packaged
   parent without a relative `../../base-tests/` path.
-- `bin/verify-override-seam.js`, which verifies the override mechanism.
+- `bin/verify-override-seam.js` (`npm run verify:seam`), which verifies the override mechanism against a throwaway consumer-shaped fixture. It is a local pre-merge check for contributors, deliberately not wired into CI.
 - CLI tool `magento2-playwright` (registered under `bin` in `package.json`) with two commands: `setup` (interactive wizard that configures `.env` with base URL and admin credentials) and `create-coupons` (creates coupon codes in Magento per browser engine via the admin API). New `bin/cli.js`, `bin/commands/`, and `bin/helpers/` files.
 - Visual regression tests in `healthcheck.spec.ts` (ticket 164): a new "Visual Regression Tests" group that captures a fresh production baseline per page/browser, then compares the base URL against it with `toHaveScreenshot` (using per-page mask selectors). Viewport and device scale factor are pinned so screenshots are byte-comparable across browsers. Tagged `@smoke @visual @cold`.
 - Consent-cookie global setup `tests/utils/global-setup.ts` (ticket 480): captures the consentmanager.net "Reject all" cookies once and persists them as a storageState file (`tests/utils/.auth/consentCookies.json`) so tests skip the consent modal.

@@ -13,6 +13,7 @@
 		"lint": "eslint .",
 		"lint:ci": "eslint . --max-warnings 166",
 		"typecheck": "tsc --noEmit -p tsconfig.eslint.json",
+		"verify:seam": "node bin/verify-override-seam.js",
 		"format": "prettier --write \"**/*.{js,mjs,ts,json}\"",
 		"format:check": "prettier --check \"**/*.{js,mjs,ts,json}\""
 	},
