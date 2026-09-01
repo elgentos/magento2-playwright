@@ -147,7 +147,7 @@ export class BaseProductPage {
 		await this.page.goto(url);
 		await expect(this.productPageTitle(product), `Checkpoint: title is visible`).toBeVisible();
 
-		let productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`;
+		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`;
 		const productOptions = this.page.locator(UIReference.selectors.frontend.product.optionForm);
 
 		// each product option (size, color) is a fieldset, which maps to the 'group' role

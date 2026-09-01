@@ -32,6 +32,22 @@ test.beforeEach('Add 2 products to compare, then navigate to comparison page', a
 	});
 });
 
+test.afterEach('Remove products from compare', async ({ page }) => {
+	if (toggles.compare === false) {
+		return;
+	}
+
+	// ensure we are on the right page
+	await page.goto(slugs.frontend.product.comparison);
+
+	page.on('dialog', (dialog) => dialog.accept());
+	const comparePage = new BaseComparePage(page);
+	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
+	await comparePage.removeProductFromCompare(
+		UIReference.text.frontend.product.secondSimpleProduct,
+	);
+});
+
 /**
  * @feature Add product to cart from the comparison page
  * @scenario User adds a product to their cart from the comparison page
@@ -62,8 +78,8 @@ test(
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 		const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
-	let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
-	let addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
+	const productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
+	const addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
 	await addToWishlistButton.click();
 	await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
 
@@ -83,6 +99,7 @@ test(
 	{ tag: ['@comparison-page', '@hot'] },
 	async ({ page, browserName }) => {
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
+
 		await test.step('Log in with account', async () => {
 			const id = test.info().parallelIndex;
 			const user = `playwright+${id}@elgentos.nl`;
@@ -111,18 +128,4 @@ test(
 	},
 );
 
-test.afterEach('Remove products from compare', async ({ page }) => {
-	if (toggles.compare === false) {
-		return;
-	}
 
-	// ensure we are on the right page
-	await page.goto(slugs.frontend.product.comparison);
-
-	page.on('dialog', (dialog) => dialog.accept());
-	const comparePage = new BaseComparePage(page);
-	await comparePage.removeProductFromCompare(UIReference.text.frontend.product.simpleProduct);
-	await comparePage.removeProductFromCompare(
-		UIReference.text.frontend.product.secondSimpleProduct,
-	);
-});
