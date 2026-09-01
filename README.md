@@ -425,7 +425,7 @@ Define locators as `get` accessors rather than assigning them in the constructor
 **Correct Usage**
 
 ```ts
-export class BaseAccountPage {
+export class AccountPage {
   constructor(public readonly page: Page) {}
 
   get genericSaveButton(): Locator {
@@ -438,7 +438,7 @@ export class BaseAccountPage {
 
 ```ts
 // ❌ Don't build locators eagerly in the constructor
-export class BaseAccountPage {
+export class AccountPage {
   readonly genericSaveButton: Locator;
 
   constructor(public readonly page: Page) {
@@ -518,6 +518,36 @@ await expect(this.page.getByRole('alert').filter(
 ```
 
 Also give each notification its own marker in `outcome-markers.json`. Reusing a marker from a different flow looks like deduplication but breaks silently: the cart message reads "You added &lt;product&gt;" while the comparison message reads "You added **product** &lt;product&gt; to the comparison list.", so a shared marker matches neither everywhere.
+
+### Overriding a POM for your store
+
+Sometimes you only need to change one method of a packaged POM — not the whole
+file. Rather than copying `login.page.ts` into your own `tests/` and
+maintaining a full duplicate, subclass it and override just the part that
+differs.
+
+A file you place in `tests/poms/` completely replaces the packaged
+`base-tests/` file of the same name, so it must export the same symbol name.
+Reach the packaged version through the `@base/*` alias, which always points at
+the original file regardless of your override — importing from `@poms/*`
+instead would resolve back to your own file:
+
+```ts
+// tests/poms/frontend/login.page.ts
+import { LoginPage as BaseLoginPage } from '@base/poms/frontend/login.page';
+
+export class LoginPage extends BaseLoginPage {
+  // only what differs for this store
+  async login(email: string, password: string) {
+    // custom implementation
+  }
+}
+```
+
+After adding an override, run `node bin/verify-override-seam.js` to confirm it
+resolves the way you expect — it builds a small consumer-shaped fixture and
+checks that both `tsc` and Playwright pick up your `tests/` version rather
+than the packaged one.
 
 ---
 

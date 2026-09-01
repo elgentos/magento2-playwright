@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 7.0.0
+
+### Breaking
+
+POM classes no longer carry the `Base` prefix. If you have copied spec files or
+POMs into your own `tests/`, rename the imports:
+
+```bash
+find tests -name '*.ts' -exec sed -i -E 's/\bBase(AccountPage|CategoryPage|CheckoutPage|ComparePage|ContactPage|HomePage|LoginPage|MainMenuPage|MiniCartPage|NewsletterSubscriptionPage|OrderHistoryPage|ProductPage|RegisterPage|SearchPage)\b/\1/g; s/\bBaseFooter\b/Footer/g; s/\bBaseCartPage\b/CartPage/g' {} +
+```
+
+`AdminLogin` changed from a default to a named export:
+
+```diff
+-import AdminLogin from '@poms/admin/adminlogin.page';
++import { AdminLogin } from '@poms/admin/adminlogin.page';
+```
+
+### Added
+
+- `@base/*` path alias, so a POM override in `tests/` can extend its packaged
+  parent without a relative `../../base-tests/` path.
+- `bin/verify-override-seam.js`, which verifies the override mechanism.
+
+### Changed
+
+- `CheckoutPage.submitOrder` and the `MagewireUtils` internals are `protected`
+  instead of `private`, so stores can override them.
+- `AdminLogin` locators are getters instead of constructor-assigned properties.
+
 ## [Unreleased]
 
 ### Added
