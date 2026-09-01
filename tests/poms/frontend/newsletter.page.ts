@@ -6,7 +6,7 @@ import { faker } from '@faker-js/faker';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class BaseNewsletterSubscriptionPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -15,9 +15,13 @@ export class BaseNewsletterSubscriptionPage {
 	// get newsLetterFormFields - returns field locators to update newsletter subscription
 	get newsLetterFormFields() {
 		return {
-			newsletterCheckElement : this.page.getByRole('switch', { name: UIReference.text.frontend.newsletter.generalSubscription }),
-			saveSubscriptionsButton : this.page.getByRole('button', { name: UIReference.text.shared.buttons.save })
-		}
+			newsletterCheckElement: this.page.getByRole('switch', {
+				name: UIReference.text.frontend.newsletter.generalSubscription,
+			}),
+			saveSubscriptionsButton: this.page.getByRole('button', {
+				name: UIReference.text.shared.buttons.save,
+			}),
+		};
 	}
 
 	// ==============================================
@@ -30,7 +34,7 @@ export class BaseNewsletterSubscriptionPage {
 	 * false if the user is unsubscribed.
 	 */
 	async updateNewsletterSubscription() {
-		const {newsletterCheckElement , saveSubscriptionsButton } = this.newsLetterFormFields;
+		const { newsletterCheckElement, saveSubscriptionsButton } = this.newsLetterFormFields;
 
 		let subscriptionUpdatedNotification = outcomeMarker.account.newsletterRemovedNotification;
 		let subscribed = false;
@@ -39,7 +43,6 @@ export class BaseNewsletterSubscriptionPage {
 			// user is already subscribed, test runs unsubscribe
 			await newsletterCheckElement.uncheck();
 			await saveSubscriptionsButton.click();
-
 		} else {
 			// user is not yet subscribed, test runs subscribe
 			subscriptionUpdatedNotification = outcomeMarker.account.newsletterSavedNotification;

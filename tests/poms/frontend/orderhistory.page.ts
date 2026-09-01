@@ -3,9 +3,8 @@
 import { expect, type Page } from '@playwright/test';
 import { slugs } from '@config';
 
-
 export class BaseOrderHistoryPage {
-	constructor(public readonly page: Page) { };
+	constructor(public readonly page: Page) {}
 
 	/**
 	 * Method to open the order history page.

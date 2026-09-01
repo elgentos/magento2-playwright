@@ -6,173 +6,177 @@ const readline = require('readline');
 const { execSync } = require('child_process');
 
 class Install {
+	rl = '';
+	currentUser = '';
+	isCi = false;
+	useDefaults = false;
+	pathToMagentoRootGitignore = './';
+	pathToBaseDir = '../../../'; // default: when installed via npm
+	envVars = {};
 
-  rl = '';
-  currentUser = '';
-  isCi = false;
-  useDefaults = false;
-  pathToMagentoRootGitignore = './';
-  pathToBaseDir = '../../../'; // default: when installed via npm
-  envVars = {};
+	rulesToAddToIgnore = [
+		'# playwright',
+		'/playwright-report/',
+		'/test-results/',
+		'/app/design/frontend/<vendor>/<theme>/web/playwright/*',
+		'!/app/design/frontend/<vendor>/<theme>/web/playwright/tests/',
+		'!/app/design/frontend/<vendor>/<theme>/web/playwright/package.json',
+		'!/app/design/frontend/<vendor>/<theme>/web/playwright/package-lock.json',
+	];
 
-  rulesToAddToIgnore = [
-    '# playwright',
-    '/playwright-report/',
-    '/test-results/',
-    '/app/design/frontend/<vendor>/<theme>/web/playwright/*',
-    '!/app/design/frontend/<vendor>/<theme>/web/playwright/tests/',
-    '!/app/design/frontend/<vendor>/<theme>/web/playwright/package.json',
-    '!/app/design/frontend/<vendor>/<theme>/web/playwright/package-lock.json'
-  ]
+	constructor() {
+		this.useDefaults = true;
+		this.isCi = process.env.CI === 'true';
+		this.currentUser = execSync('whoami').toString().trim();
+		const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
 
-  constructor() {
-    this.useDefaults = true
-    this.isCi = process.env.CI === 'true';
-    this.currentUser = execSync('whoami').toString().trim();
-    const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
+		if (isLocalDev) {
+			this.pathToMagentoRootGitignore = './'; // we're in the root of the dev repo
+			this.pathToBaseDir = './';
+		} else {
+			this.pathToMagentoRootGitignore = this.getMagentoRootPath();
+		}
 
-    if (isLocalDev) {
-      this.pathToMagentoRootGitignore = './'; // we're in the root of the dev repo
-      this.pathToBaseDir = './';
-    } else {
-      this.pathToMagentoRootGitignore = this.getMagentoRootPath();
-    }
+		this.envVars = {
+			PLAYWRIGHT_BASE_URL: { default: 'https://hyva-demo.elgentos.io/' },
+			PLAYWRIGHT_PRODUCTION_URL: { default: 'https://hyva-demo.elgentos.io/' },
+			MAGENTO_ADMIN_SLUG: { default: 'admin' },
+			MAGENTO_ADMIN_USERNAME: { default: this.currentUser },
+			MAGENTO_ADMIN_PASSWORD: { default: 'Test1234!' },
+			HTTP_AUTH_USERNAME: { default: 'dev' },
+			HTTP_AUTH_PASSWORD: { default: 'dev' },
+			MAGENTO_EXISTING_ACCOUNT_PASSWORD: { default: 'Test1234!' },
+			MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: { default: 'Change1234!' },
+		};
 
-    this.envVars = {
-      'PLAYWRIGHT_BASE_URL': { default: 'https://hyva-demo.elgentos.io/' },
-      'PLAYWRIGHT_PRODUCTION_URL': { default: 'https://hyva-demo.elgentos.io/' },
-      'MAGENTO_ADMIN_SLUG': { default: 'admin' },
-      'MAGENTO_ADMIN_USERNAME': { default: this.currentUser },
-      'MAGENTO_ADMIN_PASSWORD': { default: 'Test1234!' },
-	  'HTTP_AUTH_USERNAME' : { default: 'dev' },
-	  'HTTP_AUTH_PASSWORD' : { default: 'dev' },
-	  'MAGENTO_EXISTING_ACCOUNT_PASSWORD': { default: 'Test1234!' },
-	  'MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD': { default: 'Change1234!' },
-    }
+		this.rl = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout,
+		});
 
-    this.rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
+		this.init();
+	}
 
-    this.init();
-  }
+	async init() {
+		await this.setEnvVariables();
+		await this.appendToGitIgnore();
 
-  async init() {
-    await this.setEnvVariables();
-    await this.appendToGitIgnore();
+		console.log('\nInstallation completed successfully!');
+		console.log('\nFor more information, please visit:');
 
-    console.log('\nInstallation completed successfully!');
-    console.log('\nFor more information, please visit:');
+		// Close rl when no questions are asked
+		this.rl.close();
+	}
 
-    // Close rl when no questions are asked
-    this.rl.close();
-  }
+	async askQuestion(query) {
+		return new Promise((resolve) => this.rl.question(query, resolve));
+	}
 
-  async askQuestion(query) {
-    return new Promise((resolve) => this.rl.question(query, resolve))
-  }
+	async setEnvVariables() {
+		// Check if user
+		if (!this.isCi) {
+			const initialAnswer = await this.askQuestion(
+				'Do you want to customize environment variables? (y/N): ',
+			);
+			this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
+		}
 
-  async setEnvVariables() {
-    // Check if user
-    if (!this.isCi) {
-      const initialAnswer = await this.askQuestion('Do you want to customize environment variables? (y/N): ');
-      this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
-    }
+		// Read and update .env file
+		const envPath = path.resolve(__dirname, this.pathToBaseDir, '.env');
+		let envContent = '';
 
-    // Read and update .env file
-    const envPath = path.resolve(__dirname, this.pathToBaseDir, '.env');
-    let envContent = '';
+		for (const [key, value] of Object.entries(this.envVars)) {
+			let userInput = '';
+			if (!this.isCi && !this.useDefaults) {
+				userInput = await this.askQuestion(`Enter ${key} (default: ${value.default}): `);
+			}
+			envContent += `${key}=${userInput || value.default}\n`;
+		}
 
-    for (const [key, value] of Object.entries(this.envVars)) {
-      let userInput = '';
-      if (!this.isCi && !this.useDefaults) {
-        userInput = await this.askQuestion(`Enter ${ key } (default: ${ value.default }): `);
-      }
-      envContent += `${ key }=${ userInput || value.default }\n`;
-    }
+		fs.writeFileSync(envPath, envContent);
+	}
 
-    fs.writeFileSync(envPath, envContent);
-  }
+	async appendToGitIgnore() {
+		if (!this.isCi) {
+			const initialAnswer = await this.askQuestion(
+				'Do you want to add lines to gitignore of your project? (y/N): ',
+			);
+			if (initialAnswer.trim().toLowerCase() !== 'y') {
+				return;
+			}
+		}
 
-  async appendToGitIgnore() {
-    if (!this.isCi) {
-      const initialAnswer = await this.askQuestion('Do you want to add lines to gitignore of your project? (y/N): ');
-      if (initialAnswer.trim().toLowerCase() !== 'y') {
-        return;
-      }
-    }
+		console.log('Checking .gitignore and adding lines if necessary...');
 
-    console.log('Checking .gitignore and adding lines if necessary...');
+		const gitignorePath = path.resolve(this.pathToMagentoRootGitignore, '.gitignore');
 
-    const gitignorePath = path.resolve(this.pathToMagentoRootGitignore, '.gitignore');
+		// Read existing content if file exists
+		let existingLines = [];
+		if (fs.existsSync(gitignorePath)) {
+			const content = fs.readFileSync(gitignorePath, 'utf-8');
+			existingLines = content.split(/\r?\n/);
+		}
 
-    // Read existing content if file exists
-    let existingLines = [];
-    if (fs.existsSync(gitignorePath)) {
-      const content = fs.readFileSync(gitignorePath, 'utf-8');
-      existingLines = content.split(/\r?\n/);
-    }
+		// Get vendor and theme
+		const { vendor, theme } = await this.setVendorAndTheme(__dirname);
 
-    // Get vendor and theme
-    const { vendor, theme } = await this.setVendorAndTheme(__dirname);
+		// Append missing lines
+		let updated = false;
+		for (let line of this.rulesToAddToIgnore) {
+			// Replace placeholders with actual values
+			line = line.replace('<vendor>', vendor).replace('<theme>', theme);
 
-      // Append missing lines
-    let updated = false;
-    for (let line of this.rulesToAddToIgnore) {
-        // Replace placeholders with actual values
-        line = line.replace('<vendor>', vendor).replace('<theme>', theme);
+			if (!existingLines.includes(line)) {
+				existingLines.push(line);
+				updated = true;
+			}
+		}
 
-        if (!existingLines.includes(line)) {
-        existingLines.push(line);
-        updated = true;
-      }
-    }
+		// Write back if updated
+		if (updated) {
+			fs.writeFileSync(gitignorePath, existingLines.join('\n'), 'utf-8');
+			console.log('.gitignore updated.');
+		} else {
+			console.log('.gitignore already contains all required lines.');
+		}
+	}
 
-    // Write back if updated
-    if (updated) {
-      fs.writeFileSync(gitignorePath, existingLines.join('\n'), 'utf-8');
-      console.log('.gitignore updated.');
-    } else {
-      console.log('.gitignore already contains all required lines.');
-    }
-  }
+	async setVendorAndTheme() {
+		// Try to derive vendor and theme from the directory structure
+		// Expected: .../app/design/frontend/<vendor>/<theme>/web/playwright/node_modules/@elgentos/magento2-playwright/
+		const projectDir = path.resolve(__dirname, this.pathToBaseDir);
+		const theme = path.basename(path.resolve(projectDir, '../../'));
+		const vendor = path.basename(path.resolve(projectDir, '../../../'));
 
-  async setVendorAndTheme() {
-      // Try to derive vendor and theme from the directory structure
-      // Expected: .../app/design/frontend/<vendor>/<theme>/web/playwright/node_modules/@elgentos/magento2-playwright/
-      const projectDir = path.resolve(__dirname, this.pathToBaseDir);
-      const theme = path.basename(path.resolve(projectDir, '../../'));
-      const vendor = path.basename(path.resolve(projectDir, '../../../'));
+		if (vendor && theme && vendor !== '.' && theme !== '.') {
+			return { vendor, theme };
+		}
 
-      if (vendor && theme && vendor !== '.' && theme !== '.') {
-        return { vendor, theme };
-      }
+		// Fall back to asking the user if path structure is invalid
+		const vendorInput = await this.askQuestion('Enter the vendor name: ');
+		const themeInput = await this.askQuestion('Enter the theme name: ');
 
-      // Fall back to asking the user if path structure is invalid
-      const vendorInput = await this.askQuestion('Enter the vendor name: ');
-      const themeInput = await this.askQuestion('Enter the theme name: ');
+		return { vendor: vendorInput, theme: themeInput };
+	}
 
-      return { vendor: vendorInput, theme: themeInput };
-  }
+	getMagentoRootPath() {
+		const projectDir = path.resolve(__dirname, this.pathToBaseDir);
+		const parts = projectDir.split(path.sep);
+		const appIndex = parts.findIndex(
+			(part, index) =>
+				part === 'app' &&
+				parts[index + 1] === 'design' &&
+				parts[index + 2] === 'frontend' &&
+				parts[index + 5] === 'web' &&
+				parts[index + 6] === 'playwright',
+		);
 
-  getMagentoRootPath() {
-    const projectDir = path.resolve(__dirname, this.pathToBaseDir);
-    const parts = projectDir.split(path.sep);
-    const appIndex = parts.findIndex((part, index) =>
-      part === 'app' &&
-      parts[index + 1] === 'design' &&
-      parts[index + 2] === 'frontend' &&
-      parts[index + 5] === 'web' &&
-      parts[index + 6] === 'playwright'
-    );
+		if (appIndex >= 0) {
+			return path.resolve(projectDir, '../../../../../../../');
+		}
 
-    if (appIndex >= 0) {
-      return path.resolve(projectDir, '../../../../../../../');
-    }
-
-    return projectDir;
-  }
+		return projectDir;
+	}
 }
 
 new Install();

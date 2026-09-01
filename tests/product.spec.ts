@@ -7,11 +7,14 @@ import { BaseProductPage } from '@poms/frontend/product.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
-test.describe('Product page tests', { tag: '@product', }, () => {
+test.describe('Product page tests', { tag: '@product' }, () => {
 	test('Add_product_to_compare', { tag: '@cold' }, async ({ page }) => {
 		test.skip(toggles.compare === false, 'Disabled by test toggle: compare');
 		const productPage = new BaseProductPage(page);
-		await productPage.addProductToCompare(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		await productPage.addProductToCompare(
+			UIReference.text.frontend.product.simpleProduct,
+			slugs.frontend.product.simple,
+		);
 	});
 
 	test('Add_product_to_wishlist', { tag: '@hot' }, async ({ page, browserName }) => {
@@ -22,8 +25,8 @@ test.describe('Product page tests', { tag: '@product', }, () => {
 		 */
 		await test.step('Log in with account', async () => {
 			const id = test.info().parallelIndex;
-			let user = `playwright+${id}@elgentos.nl`;
-			let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+			const user = `playwright+${id}@elgentos.nl`;
+			const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 			const loginPage = new BaseLoginPage(page);
 			await loginPage.goToLoginPage();
@@ -32,7 +35,10 @@ test.describe('Product page tests', { tag: '@product', }, () => {
 
 		await test.step('Add product to wishlist', async () => {
 			const productPage = new BaseProductPage(page);
-			await productPage.addProductToWishlist(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+			await productPage.addProductToWishlist(
+				UIReference.text.frontend.product.simpleProduct,
+				slugs.frontend.product.simple,
+			);
 		});
 	});
 
@@ -43,7 +49,10 @@ test.describe('Product page tests', { tag: '@product', }, () => {
 	test('Leave_a_product_review', { tag: '@cold' }, async ({ page }) => {
 		test.skip(toggles.reviews === false, 'Disabled by test toggle: reviews');
 		const productPage = new BaseProductPage(page);
-		await productPage.leaveProductReview(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		await productPage.leaveProductReview(
+			UIReference.text.frontend.product.simpleProduct,
+			slugs.frontend.product.simple,
+		);
 	});
 
 	/**
@@ -52,7 +61,10 @@ test.describe('Product page tests', { tag: '@product', }, () => {
 	 */
 	test('Open_pictures_in_lightbox_and_scroll', async ({ page }) => {
 		const productPage = new BaseProductPage(page);
-		await productPage.openLightboxAndScrollThrough(UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable);
+		await productPage.openLightboxAndScrollThrough(
+			UIReference.text.frontend.product.configurableProduct,
+			slugs.frontend.product.configurable,
+		);
 	});
 
 	/**
@@ -62,6 +74,9 @@ test.describe('Product page tests', { tag: '@product', }, () => {
 	test('Change_number_of_reviews_shown_on_product_page', async ({ page }) => {
 		test.skip(toggles.reviews === false, 'Disabled by test toggle: reviews');
 		const productPage = new BaseProductPage(page);
-		await productPage.changeReviewCountAndVerify(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		await productPage.changeReviewCountAndVerify(
+			UIReference.text.frontend.product.simpleProduct,
+			slugs.frontend.product.simple,
+		);
 	});
 });

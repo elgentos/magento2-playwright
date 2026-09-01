@@ -6,9 +6,8 @@ import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
-
 export class BaseRegisterPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -28,13 +27,23 @@ export class BaseRegisterPage {
 	 */
 	get registerForm() {
 		return {
-			firstNameField : this.page.getByLabel(UIReference.text.shared.forms.firstName),
-			lastNameField : this.page.getByLabel(UIReference.text.shared.forms.lastName),
-			emailField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.email, exact: true }),
-			passwordField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.password, exact: true }),
-			repeatPasswordField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.passwordConfirm }),
-			createAccountButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.navigation.createAccount })
-		}
+			firstNameField: this.page.getByLabel(UIReference.text.shared.forms.firstName),
+			lastNameField: this.page.getByLabel(UIReference.text.shared.forms.lastName),
+			emailField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.email,
+				exact: true,
+			}),
+			passwordField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.password,
+				exact: true,
+			}),
+			repeatPasswordField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.passwordConfirm,
+			}),
+			createAccountButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.common.navigation.createAccount,
+			}),
+		};
 	}
 
 	/**
@@ -43,7 +52,9 @@ export class BaseRegisterPage {
 	 * in the dashboard after creating an account.
 	 */
 	get accountInfoField() {
-		return this.page.locator(UIReference.selectors.frontend.account.accountInformationField).first();
+		return this.page
+			.locator(UIReference.selectors.frontend.account.accountInformationField)
+			.first();
 	}
 
 	// ==============================================
@@ -74,7 +85,14 @@ export class BaseRegisterPage {
 	 */
 	async createNewAccount(firstName: string, lastName: string, email: string, password: string) {
 		// declare form elements from getter here to simplify variables.
-		const { firstNameField, lastNameField, emailField, passwordField, repeatPasswordField, createAccountButton } = this.registerForm;
+		const {
+			firstNameField,
+			lastNameField,
+			emailField,
+			passwordField,
+			repeatPasswordField,
+			createAccountButton,
+		} = this.registerForm;
 
 		await firstNameField.fill(firstName);
 		await lastNameField.fill(lastName);
@@ -86,16 +104,22 @@ export class BaseRegisterPage {
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
 
 		await new NotificationValidatorUtils(this.page).validate(
-			outcomeMarker.account.accountCreatedNotificationText
+			outcomeMarker.account.accountCreatedNotificationText,
 		);
 
 		// Final assertion: navigate to account dashboard and confirm our email is visible
 		await this.page.goto(slugs.frontend.account.overview);
 
-		await expect(this.page.getByRole('heading',
-			{ name: UIReference.text.frontend.account.dashboardTitle, level: 2 }),
-			`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`
+		await expect(
+			this.page.getByRole('heading', {
+				name: UIReference.text.frontend.account.dashboardTitle,
+				level: 2,
+			}),
+			`Heading "${UIReference.text.frontend.account.dashboardTitle}" is visible`,
 		).toBeVisible();
-		await expect(this.accountInfoField, `Account information should contain email: ${email}`).toContainText(email);
+		await expect(
+			this.accountInfoField,
+			`Account information should contain email: ${email}`,
+		).toContainText(email);
 	}
 }

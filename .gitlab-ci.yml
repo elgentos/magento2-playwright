@@ -1,6 +1,7 @@
 image: mcr.microsoft.com/playwright:v1.57.0-jammy
 
 stages:
+  - lint
   - testing_suite
   - mirror
 
@@ -197,6 +198,21 @@ test_mirror_pipeline:
     - git config --global user.email "developer@elgentos.nl"
   script:
     - git ls-remote git@github.com:elgentos/magento2-playwright.git
+
+lint:
+  stage: lint
+  # ESLint 10 requires Node 20.19+, so linting uses Node 22 instead of the
+  # top-level Playwright image.
+  image: node:22
+  before_script: []
+  script:
+    # --ignore-scripts: build.js deletes tests/ when CI=true, and
+    # install.js is an interactive wizard.
+    - npm ci --ignore-scripts
+    - npm run typecheck
+    - npm run lint:ci
+    - npm run format:check
+  allow_failure: false
 
 run_testing_suite:
   stage: testing_suite
