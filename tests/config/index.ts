@@ -13,20 +13,31 @@ function deepMerge(target: any, source: any): any {
   return { ...target, ...source };
 }
 
+/**
+ * Both config layers sit exactly two levels below the project root:
+ *   <root>/base-tests/config  - defaults, regenerated from the package on install
+ *   <root>/tests/config       - store overrides
+ * Deriving the root from __dirname keeps the layers fixed no matter which of the
+ * two the @config alias resolved this module from, so the fallback merge holds
+ * whether or not a store keeps its own copy of this file.
+ */
+const projectRoot = path.resolve(__dirname, '../..');
+const fallbackDir = path.join(projectRoot, 'base-tests', 'config');
+const overrideDir = path.join(projectRoot, 'tests', 'config');
+
+function readConfigFile(dirPath: string, fileName: string) {
+  const filePath = path.join(dirPath, fileName);
+
+  if (!fs.existsSync(filePath)) {
+	return {};
+  }
+
+  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+}
+
 function loadAndMergeConfig(fileName: string) {
-  const fallbackPath = path.resolve(__dirname, fileName);
-  const currentPath = path.resolve(__dirname, '../../tests/config/', fileName);
-
-  let currentConfig = {};
-  let fallbackConfig = {};
-
-  if (fs.existsSync(currentPath)) {
-	currentConfig = JSON.parse(fs.readFileSync(currentPath, 'utf-8'));
-  }
-
-  if (fs.existsSync(fallbackPath)) {
-	fallbackConfig = JSON.parse(fs.readFileSync(fallbackPath, 'utf-8'));
-  }
+  const fallbackConfig = readConfigFile(fallbackDir, fileName);
+  const currentConfig = readConfigFile(overrideDir, fileName);
 
   // Use deepMerge instead of shallow merge
   return deepMerge(fallbackConfig, currentConfig);
