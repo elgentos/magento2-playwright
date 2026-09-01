@@ -3,6 +3,7 @@
 import { expect, Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
 import { faker } from '@faker-js/faker';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 export class BaseFooter {
 	constructor(public readonly page: Page) {}
@@ -26,14 +27,6 @@ export class BaseFooter {
 			subscribeButton: this.page.getByRole('button', {
 				name: UIReference.text.frontend.footer.newsletterSubscribe,
 			}),
-		};
-	}
-
-	// get messageLocators: return message locators
-	get messageLocators() {
-		return {
-			generalMessage: this.page.locator(UIReference.selectors.shared.message),
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage),
 		};
 	}
 
@@ -109,9 +102,8 @@ export class BaseFooter {
 
 		await this.newsLetterFormItems.emailField.fill(faker.internet.email());
 		await this.newsLetterFormItems.subscribeButton.click();
-		await this.messageLocators.successMessage.waitFor();
 
 		// Final assertion to confirm test ran correctly.
-		await expect(this.messageLocators.successMessage).toContainText(subscriptionOutput);
+		await new NotificationValidatorUtils(this.page).validate(subscriptionOutput);
 	}
 }

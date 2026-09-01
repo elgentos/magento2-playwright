@@ -1,7 +1,8 @@
 // @ts-check
 
 import { expect, type Locator, type Page } from '@playwright/test';
-import { UIReference, inputValues, outcomeMarker } from '@config';
+import {UIReference, inputValues, outcomeMarker} from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
 class AdminMarketing {
 	readonly page: Page;
@@ -100,17 +101,14 @@ class AdminMarketing {
 				});
 				await saveCouponButton.click();
 
-				await expect(
-					this.page
-						.locator(UIReference.selectors.shared.message)
-						.filter({ hasText: outcomeMarker.magentoAdmin.couponRuleSavedText }),
-					"Message 'you saved the rule' is visible",
-				).toBeVisible();
-				resultMessage = `Coupon code ${magentoCouponCode} has been activated.`;
-			}
-		} else {
-			// coupon is not set
-			await addCartPriceRuleButton.click();
+		await new NotificationValidatorUtils(this.page).validate(
+		  outcomeMarker.magentoAdmin.couponRuleSavedText
+		);
+		resultMessage = `Coupon code ${magentoCouponCode} has been activated.`;
+	  }
+	} else {
+	  // coupon is not set
+	  await addCartPriceRuleButton.click();
 
 			const websiteSelector = this.page.getByLabel(
 				UIReference.text.admin.cartPriceRules.websites,
@@ -152,20 +150,14 @@ class AdminMarketing {
 				.getByLabel(UIReference.text.admin.cartPriceRules.discountAmount)
 				.fill('10');
 
-			const couponSaveButton = this.page.getByRole('button', {
-				name: UIReference.text.shared.buttons.save,
-				exact: true,
-			});
-			await couponSaveButton.scrollIntoViewIfNeeded();
-			await couponSaveButton.click({ force: true });
-			await expect(
-				this.page
-					.locator(UIReference.selectors.shared.message)
-					.filter({ hasText: outcomeMarker.magentoAdmin.couponRuleSavedText }),
-				"Message 'you saved the rule' is visible",
-			).toBeVisible();
-			resultMessage = `Coupon code ${magentoCouponCode} has been set and activated.`;
-		}
+	  const couponSaveButton = this.page.getByRole('button', { name: UIReference.text.shared.buttons.save, exact: true });
+	  await couponSaveButton.scrollIntoViewIfNeeded();
+	  await couponSaveButton.click({force:true});
+	  await new NotificationValidatorUtils(this.page).validate(
+		outcomeMarker.magentoAdmin.couponRuleSavedText
+	  );
+	  resultMessage = `Coupon code ${magentoCouponCode} has been set and activated.`;
+	}
 
 		// Clear the search field
 		await couponSearchField.waitFor();

@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page, test, TestInfo } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
 export class BaseAccountPage {
@@ -223,7 +224,8 @@ export class BaseAccountPage {
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
 		// wait for the address index url
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.address.newAddressAddedNotification);
 	}
 
 	async editExistingAddress(
@@ -336,7 +338,8 @@ export class BaseAccountPage {
 
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
+		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.address.newAddressAddedNotification);
 
 		// await expect(this.page.getByText(streetName).last()).toBeVisible();
 		if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
@@ -374,11 +377,8 @@ export class BaseAccountPage {
 		// wait for the address index url
 		await this.page.waitForURL(/customer\/address\/(index|)/, { waitUntil: 'load' });
 
-		await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
-		await expect(
-			addressBookSection,
-			`${addressToBeDeleted} should not be visible`,
-		).not.toContainText(addressToBeDeleted);
+		await new NotificationValidatorUtils(this.page).validate(addressDeletedNotification);
+		await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
 	}
 
 	// ==============================================
@@ -401,7 +401,7 @@ export class BaseAccountPage {
 		await this.genericSaveButton.click();
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
-		await expect(this.page.getByText(passwordUpdatedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(passwordUpdatedNotification);
 	}
 
 	async updateEmail(currentPassword: string, newEmail: string) {
@@ -412,7 +412,7 @@ export class BaseAccountPage {
 		await this.genericSaveButton.click();
 
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.login));
-		await expect(this.page.getByText(accountUpdatedNotification)).toBeVisible();
+		await new NotificationValidatorUtils(this.page).validate(accountUpdatedNotification);
 	}
 
 	async deleteAllAddresses() {
@@ -427,7 +427,7 @@ export class BaseAccountPage {
 		while (await this.deleteAddressButton.isVisible()) {
 			await this.deleteAddressButton.click();
 			await this.page.waitForLoadState();
-			await expect.soft(this.page.getByText(addressDeletedNotification)).toBeVisible();
+			await new NotificationValidatorUtils(this.page).validate(addressDeletedNotification);
 		}
 	}
 

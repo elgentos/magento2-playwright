@@ -226,18 +226,8 @@ test.describe.serial(
 
 			await accountPage.addNewAddress({ company: company, street: address });
 
-			await expect(
-				page.getByText(address).first(),
-				`Expect new address to be listed`,
-			).toBeVisible();
-			const addressAddedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-			await expect
-				.soft(
-					page.getByText(addressAddedNotification),
-					`message that confirms actions should be visible`,
-				)
-				.toBeVisible();
-		});
+		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
+	});
 
 		/**
 		 * Test: The user edits an existing address to their account
@@ -273,11 +263,9 @@ test.describe.serial(
 			const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
 			await accountPage.editExistingAddress({ street: address }, isDefaultAddress);
 
-			// await expect(page.getByText(companyName)).toBeVisible();
-			await expect(page.getByText(address).first()).toBeVisible();
-			const addressModifiedNotification = outcomeMarker.address.newAddressAddedNotifcation;
-			await expect.soft(page.getByText(addressModifiedNotification)).toBeVisible();
-		});
+		// await expect(page.getByText(companyName)).toBeVisible();
+		await expect(page.getByText(address).first()).toBeVisible();
+	});
 
 		/**
 		 * Test: The user can't add an address if they don't fill in all the required fields

@@ -90,28 +90,19 @@ test.describe(
 			},
 		);
 
-		/**
-		 * @feature Magento 2 minicart product deletion
-		 * @scenario User adds product to cart, then removes from minicart
-		 * @given I have added a (simple) product to the cart and opened the minicart
-		 * @when I click on the delete button
-		 *  @then The product should not be in my cart anymore
-		 *  @and I should see a notification that the product was removed
-		 */
-		test(
-			'Delete_product_from_minicart',
-			{ tag: ['@minicart-simple-product', '@cold'] },
-			async ({ page }, testInfo) => {
-				testInfo.annotations.push({
-					type: 'WARNING (FIREFOX)',
-					description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.`,
-				});
-				const miniCart = new BaseMiniCartPage(page);
-				await miniCart.removeProductFromMinicart(
-					UIReference.text.frontend.product.simpleProduct,
-				);
-			},
-		);
+	/**
+	 * @feature Magento 2 minicart product deletion
+	 * @scenario User adds product to cart, then removes from minicart
+	 * @given I have added a (simple) product to the cart and opened the minicart
+	 * @when I click on the delete button
+	 *  @then The product should not be in my cart anymore
+	 *  @and the minicart should show that it is empty
+	 */
+	test('Delete_product_from_minicart', { tag: ['@minicart-simple-product', '@cold'] }, async ({ page }, testInfo) => {
+		testInfo.annotations.push({ type: 'WARNING (FIREFOX)', description: `The minicart icon does not lose its aria-disabled=true flag when the first product is added. This prevents Playwright from clicking it. A fix will be added in the future.` });
+		const miniCart = new BaseMiniCartPage(page);
+		await miniCart.removeProductFromMinicart(UIReference.text.frontend.product.simpleProduct);
+	});
 
 		/**
 		 * @feature Price Check: Simple Product on Product Detail Page (PDP) and Minicart

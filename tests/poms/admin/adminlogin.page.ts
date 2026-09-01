@@ -2,6 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference } from '@config';
 
 class AdminLogin {
@@ -154,10 +155,9 @@ class AdminLogin {
 			).toHaveValue('0');
 
 			await this.saveConfigButton.click();
-			await expect(
-				this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`,
-			).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 	}
 
@@ -220,10 +220,9 @@ class AdminLogin {
 			).toHaveValue('');
 
 			await this.saveConfigButton.click();
-			await expect(
-				this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`,
-			).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 	}
 
@@ -319,10 +318,9 @@ class AdminLogin {
 			);
 
 			await this.saveConfigButton.click();
-			await expect(
-				this.page.locator(UIReference.selectors.admin.common.message),
-				`Notification "Configuration Saved" is visible.`,
-			).toContainText(UIReference.text.admin.common.configurationSaved);
+			await new NotificationValidatorUtils(this.page).validate(
+				UIReference.text.admin.common.configurationSaved
+			);
 		}
 	}
 
@@ -355,16 +353,12 @@ class AdminLogin {
 		await this.adminLoginPasswordField.fill(password);
 		await this.adminLoginButton.click();
 
-		if (await captchaNotification.isVisible()) {
-			throw new Error(`CAPTCHA field found, automated login failed.`);
-		}
-
-		// Confirm the admin navigation needed by the next setup step is ready.
-		await expect(async () => {
-			await expect(
-				this.mainMenuStoresButton,
-				`Stores link in admin menu is visible`,
-			).toBeVisible();
+		// Confirm the page has loaded correctly by checking for the presence of text.
+		await expect(async() => {
+			if (await captchaNotification.isVisible()) {
+				throw new Error(`CAPTCHA field found, automated login failed.`);
+			}
+			await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
 		}).toPass();
 
 		// WORKAROUND

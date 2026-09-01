@@ -7,6 +7,8 @@ import { BaseComparePage } from '@poms/frontend/compare.page';
 import { BaseLoginPage } from '@poms/frontend/login.page';
 import { BaseProductPage } from '@poms/frontend/product.page';
 import { requireEnv } from '@utils/env.utils';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { slugToRegex } from '@utils/url.utils';
 
 // TODO: Create a fixture for this
 test.beforeEach('Add 2 products to compare, then navigate to comparison page', async ({ page }) => {
@@ -60,20 +62,13 @@ test(
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 		const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
-		const productNotWishlistedNotificationText =
-			outcomeMarker.comparePage.productNotWishlistedNotificationText;
-		const addToWishlistButton = page.getByLabel(
-			`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`,
-		);
-		await addToWishlistButton.click();
-		await errorMessage.waitFor();
-		await expect(page.getByText(productNotWishlistedNotificationText)).toBeVisible();
+	let productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
+	let addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
+	await addToWishlistButton.click();
+	await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
 
-		await expect(page.url(), `Page has been redirect to login page`).toContain(
-			slugs.frontend.account.login,
-		);
-	},
-);
+	await expect(page, `Page has been redirected to login page`).toHaveURL(slugToRegex(slugs.frontend.account.login));
+});
 
 /**
  * @feature Add product to wishlist from the comparison page
