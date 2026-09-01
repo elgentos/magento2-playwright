@@ -147,7 +147,7 @@ The Magento 2 Playwright Testing Suite supports translations, allowing you to ru
 
 ### Setting Up Translations
 
-1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/{vendor}/{theme}/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
+1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/frontend/{vendor}/{theme}/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
 
 
 2. **(Optional) Create Test Files**: Go to step 3 when this is the NPM installed package. Create the following directories and file:
@@ -278,13 +278,19 @@ To keep the project structure clean and maintainable, we use **TypeScript path a
 
 #### Guidelines
 
-**Always use `@` imports** when importing from one of the core module folders, such as:
+**Always use `@` imports** when importing from one of the core module folders:
 
-- `@poms` – Page Object Models
-- `@config` – Test configuration and data
-- `@utils` – Shared utility functions
-- `@steps` – Common step definitions
-- `@features` – (Optional) Gherkin feature files
+| Alias | Resolves to | Use for |
+|---|---|---|
+| `@config` | your `tests/config`, else the packaged `base-tests/config` | `UIReference`, `slugs`, `inputValues`, `outcomeMarker`, `toggles` |
+| `@poms/*` | your `tests/poms/*`, else `base-tests/poms/*` | Page Object Models |
+| `@utils/*` | your `tests/utils/*`, else `base-tests/utils/*` | Shared utility functions |
+| `@types/*` | your `tests/types/*`, else `base-tests/types/*` | TypeScript declarations |
+| `@base/*` | `base-tests/*` **only** | Reaching the packaged original from a file that overrides it — see [Overriding a POM for your store](#overriding-a-pom-for-your-store) |
+
+`@base/*` is the one alias that never resolves to your own `tests/` folder. That is deliberate: an override needs a way to name the file it is replacing, and `@poms/*` would resolve back to itself.
+
+> `tsconfig.json` also defines `@fixtures/*`, but neither `tests/fixtures/` nor `base-tests/fixtures/` exists, so importing from it will not resolve.
 
 **Correct Usage**
 
@@ -570,7 +576,9 @@ confirm your override's file shows up where you expect.
 
 ## Troubleshooting imports
 
-If an `@` import doesn’t work, make sure your local `tsconfig.json` matches the one provided by the npm package.
+If an `@` import doesn’t work, make sure your local `tsconfig.json` matches the one provided by the npm package (`tsconfig.example.json`).
+
+**Upgrading from 6.x and a POM override won't resolve?** Check for the `@base/*` alias first. `build.js` never overwrites an existing `tsconfig.json`, so upgrading the package does not add it — it has to be added by hand. Without it, `tsc` reports `TS2307: Cannot find module '@base/…'` and Playwright fails at collection with a module-not-found error. See [Migrating from 6.x](#-migrating-from-6x), step 2.
 
 ---
 
@@ -657,6 +665,10 @@ Up-to-date as of the `7.0.0` CHANGELOG entry.
 | search.spec.ts       | Search functionality               | :heavy_check_mark: Search_query_returns_multiple_results                          |
 |                      |                                    | :heavy_check_mark: User_can_find_a_specific_product_and_navigate_to_its_page      |
 |                      |                                    | :heavy_check_mark: No_results_message_is_shown_for_unknown_query                  |
+| accessibility.spec.ts | Accessibility Tests: EEA compliance | :heavy_check_mark: homepage_passes_wcag2a_scan                                   |
+|                      |                                    | :heavy_check_mark: plppage_passes_wcag2a_scan                                     |
+|                      |                                    | :heavy_check_mark: pdppage_passes_wcag2a_scan                                     |
+|                      |                                    | :heavy_check_mark: cartpage_passes_wcag2a_scan                                    |
 | init.setup.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha_and_enable_multiple_login                |
 |                      |                                    | :heavy_check_mark: Set_coupon_codes                                               |
 |                      |                                    | :heavy_check_mark: Create_test_accounts                                           |
