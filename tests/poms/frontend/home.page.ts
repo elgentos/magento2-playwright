@@ -4,7 +4,7 @@ import { type Page, type Locator, expect } from '@playwright/test';
 import { UIReference } from '@config';
 
 export class HomePage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -12,7 +12,10 @@ export class HomePage {
 
 	// get comparePageTitle: returns title locator for comparison page.
 	protected get homePageTitle(): Locator {
-		return this.page.getByRole('heading', { name: UIReference.text.frontend.home.title , level:1});
+		return this.page.getByRole('heading', {
+			name: UIReference.text.frontend.home.title,
+			level: 1,
+		});
 	}
 
 	// ==============================================
@@ -34,7 +37,10 @@ export class HomePage {
 	 * Used for the test "Add_product_on_homepage_to_cart"
 	 */
 	async addHomepageProductToCart() {
-		let buyProductButton = this.page.getByRole('button').filter({ hasText: UIReference.text.shared.buttons.addToCart }).first();
+		let buyProductButton = this.page
+			.getByRole('button')
+			.filter({ hasText: UIReference.text.shared.buttons.addToCart })
+			.first();
 
 		if (await buyProductButton.isVisible()) {
 			await buyProductButton.click();

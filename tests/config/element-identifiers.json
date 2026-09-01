@@ -274,7 +274,7 @@
 				"newsletterSubscribe": "Subscribe"
 			},
 			"login": {
-				"title" : "Customer Login"
+				"title": "Customer Login"
 			},
 			"minicart": {
 				"empty": "Cart is empty",
@@ -295,8 +295,8 @@
 				"fullScreenClose": "Close fullscreen",
 				"thumbnail": "View larger image"
 			},
-			"register" : {
-				"title" : "Create New Customer Account"
+			"register": {
+				"title": "Create New Customer Account"
 			},
 			"search": {
 				"placeholder": "Search entire store here...",

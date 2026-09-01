@@ -5,13 +5,12 @@ import { toggles } from '@config';
 import { Footer } from '@poms/frontend/footer.page';
 
 test.describe('Footer', () => {
-
 	/**
 	 * Test: confirm the footer is available
 	 * Navigates to the home page, then scrolls to the footer if needed.
 	 * Finally, checks footer is visible.
 	 */
-	test('Footer_is_available', {tag: ['@footer', '@cold']}, async ({page}) => {
+	test('Footer_is_available', { tag: ['@footer', '@cold'] }, async ({ page }) => {
 		const footer = new Footer(page);
 		await footer.goToFooterElement();
 	});
@@ -22,7 +21,7 @@ test.describe('Footer', () => {
 	 * This means this test fails and causes the entire suite to fail.
 	 * Unset 'fixme' when caching issue has been resolved.
 	 */
-	test.fixme('Footer_switch_currency', {tag: ['@footer', '@cold']}, async ({page}) => {
+	test.fixme('Footer_switch_currency', { tag: ['@footer', '@cold'] }, async ({ page }) => {
 		const footer = new Footer(page);
 		await footer.goToFooterElement();
 		await footer.switchCurrency();
@@ -34,10 +33,14 @@ test.describe('Footer', () => {
 	 * Fills in the fields and clicks the subscribe button.
 	 * Finally, checks if user is notified of success.
 	 */
-	test('Footer_newsletter_subscription', {tag: ['@footer', '@cold']}, async ({page}, testInfo) => {
-		test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
-		const footer = new Footer(page);
-		await footer.goToFooterElement();
-		await footer.subscribeToNewsletter();
-	});
-})
+	test(
+		'Footer_newsletter_subscription',
+		{ tag: ['@footer', '@cold'] },
+		async ({ page }, testInfo) => {
+			test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
+			const footer = new Footer(page);
+			await footer.goToFooterElement();
+			await footer.subscribeToNewsletter();
+		},
+	);
+});

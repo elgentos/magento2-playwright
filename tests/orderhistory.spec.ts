@@ -24,7 +24,7 @@ import { UIReference, slugs, toggles } from '@config';
 test('Recent_order_is_visible_in_history', async ({ page }) => {
 	test.skip(
 		toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false,
-		'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder'
+		'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
 	);
 	const parallelIndex = test.info().parallelIndex;
 	const email = `playwright+${parallelIndex}@elgentos.nl`;
@@ -38,7 +38,10 @@ test('Recent_order_is_visible_in_history', async ({ page }) => {
 	await loginPage.goToLoginPage();
 	await loginPage.login(email, password);
 
-	await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+	await productPage.addSimpleProductToCart(
+		UIReference.text.frontend.product.simpleProduct,
+		slugs.frontend.product.simple,
+	);
 	await page.goto(slugs.frontend.checkout.index);
 
 	const orderNumberLocator = await checkoutPage.placeOrder();

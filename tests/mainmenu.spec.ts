@@ -23,7 +23,7 @@ test.describe('User tests (logged in)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('User_logs_out', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+	test('User_logs_out', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.logout();
 	});
@@ -33,7 +33,7 @@ test.describe('User tests (logged in)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Navigate_to_account_page', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+	test('Navigate_to_account_page', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.openAccountMenu(true);
 		await mainMenu.gotoMyAccount();
@@ -47,7 +47,7 @@ test.describe('User tests (logged in)', () => {
 		 * @assume the user is already logged in
 		 * @param page - Playwright page instance used to interact with the website.
 		 */
-		test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+		test('Navigate_to_wishlist', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 			const mainMenu = new MainMenuPage(page);
 			await mainMenu.openAccountMenu(true);
 			await mainMenu.goToWishList();
@@ -59,7 +59,7 @@ test.describe('User tests (logged in)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Navigate_to_orders', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+	test('Navigate_to_orders', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.openAccountMenu(true);
 		await mainMenu.goToOrders();
@@ -70,7 +70,7 @@ test.describe('User tests (logged in)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Navigate_to_address_book', { tag: ['@mainmenu', '@hot'] }, async ({page}) => {
+	test('Navigate_to_address_book', { tag: ['@mainmenu', '@hot'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.openAccountMenu(true);
 		await mainMenu.goToAddressBook();
@@ -79,7 +79,7 @@ test.describe('User tests (logged in)', () => {
 
 test.describe('Guest tests (not logged in)', () => {
 	// We're using the authenticated fixture, we need to log out explicitly.
-	test.beforeEach(async({page}) => {
+	test.beforeEach(async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.logout();
 	});
@@ -88,7 +88,7 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest navigates to the login page, using the menu
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('User_navigates_to_login', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+	test('User_navigates_to_login', { tag: ['@mainmenu', '@cold'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.goToLoginPage();
 	});
@@ -97,7 +97,7 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest navigates to the register page, using the menu
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('User_navigates_to_create_account', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+	test('User_navigates_to_create_account', { tag: ['@mainmenu', '@cold'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.goToCreateAccountPage();
 	});
@@ -106,7 +106,7 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest navigates to a category page, using the menu
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Navigate_to_category_page', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+	test('Navigate_to_category_page', { tag: ['@mainmenu', '@cold'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.goToCategoryPage();
 	});
@@ -115,17 +115,24 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest navigates to a subcategory page, using the menu
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Navigate_to_subcategory_page', { tag: ['@mainmenu', '@cold'] }, async ({page, browserName}) => {
-		test.skip(browserName === 'firefox', 'Skipped due to known issue: https://github.com/microsoft/playwright/issues/27969');
-		const mainMenu = new MainMenuPage(page);
-		await mainMenu.goToSubCategoryPage();
-	});
+	test(
+		'Navigate_to_subcategory_page',
+		{ tag: ['@mainmenu', '@cold'] },
+		async ({ page, browserName }) => {
+			test.skip(
+				browserName === 'firefox',
+				'Skipped due to known issue: https://github.com/microsoft/playwright/issues/27969',
+			);
+			const mainMenu = new MainMenuPage(page);
+			await mainMenu.goToSubCategoryPage();
+		},
+	);
 
 	/**
 	 * Test: a guest opens the mini cart in the menu
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
+	test('Open_the_minicart', { tag: ['@mainmenu', '@cold'] }, async ({ page }) => {
 		const mainMenu = new MainMenuPage(page);
 		await page.goto(requireEnv('PLAYWRIGHT_BASE_URL'));
 		await mainMenu.mainMenuMiniCartButton.waitFor();
@@ -136,8 +143,11 @@ test.describe('Guest tests (not logged in)', () => {
 	 * Test: a guest uses the search function to search for products.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.fixme('User_searches_for_product', { tag: ['@mainmenu', '@cold'] }, async ({page}) => {
-		test.info().annotations.push({type: `fixme notice`, description: `See ticket 414 in Gitlab.`});
+	test.fixme('User_searches_for_product', { tag: ['@mainmenu', '@cold'] }, async ({ page }) => {
+		test.info().annotations.push({
+			type: `fixme notice`,
+			description: `See ticket 414 in Gitlab.`,
+		});
 		const mainMenu = new MainMenuPage(page);
 		await mainMenu.searchForProduct(inputValues.search.queryMultipleResults);
 	});

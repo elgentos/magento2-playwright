@@ -4,13 +4,13 @@ import fs from 'fs';
 import path from 'path';
 
 function deepMerge(target: any, source: any): any {
-  for (const key in source) {
-	if (source[key] instanceof Object && key in target) {
-	  Object.assign(source[key], deepMerge(target[key], source[key]));
+	for (const key in source) {
+		if (source[key] instanceof Object && key in target) {
+			Object.assign(source[key], deepMerge(target[key], source[key]));
+		}
 	}
-  }
-  // Combine the two objects
-  return { ...target, ...source };
+	// Combine the two objects
+	return { ...target, ...source };
 }
 
 /**
@@ -26,21 +26,21 @@ const fallbackDir = path.join(projectRoot, 'base-tests', 'config');
 const overrideDir = path.join(projectRoot, 'tests', 'config');
 
 function readConfigFile(dirPath: string, fileName: string) {
-  const filePath = path.join(dirPath, fileName);
+	const filePath = path.join(dirPath, fileName);
 
-  if (!fs.existsSync(filePath)) {
-	return {};
-  }
+	if (!fs.existsSync(filePath)) {
+		return {};
+	}
 
-  return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+	return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
 }
 
 function loadAndMergeConfig(fileName: string) {
-  const fallbackConfig = readConfigFile(fallbackDir, fileName);
-  const currentConfig = readConfigFile(overrideDir, fileName);
+	const fallbackConfig = readConfigFile(fallbackDir, fileName);
+	const currentConfig = readConfigFile(overrideDir, fileName);
 
-  // Use deepMerge instead of shallow merge
-  return deepMerge(fallbackConfig, currentConfig);
+	// Use deepMerge instead of shallow merge
+	return deepMerge(fallbackConfig, currentConfig);
 }
 
 export const UIReference = loadAndMergeConfig('element-identifiers.json');

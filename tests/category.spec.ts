@@ -14,12 +14,12 @@ import { CategoryPage } from '@poms/frontend/category.page';
  * @then the URL should reflect this filter
  * @and I should see fewer products
  */
-test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page}) => {
+test('Filter_category_on_attribute', { tag: ['@category', '@cold'] }, async ({ page }) => {
 	test.skip(toggles.categoryFilters === false, 'Disabled by test toggle: categoryFilters');
-  const categoryPage = new CategoryPage(page);
-  await categoryPage.goToCategoryPage();
+	const categoryPage = new CategoryPage(page);
+	await categoryPage.goToCategoryPage();
 
-  await categoryPage.filterOnAttribute();
+	await categoryPage.filterOnAttribute();
 });
 
 /**
@@ -31,11 +31,11 @@ test('Filter_category_on_attribute',{ tag: ['@category', '@cold']}, async ({page
  * @then the URL should reflect this filter
  * @and I should see products sorted by price
  */
-test('Sort_category_by_price',{ tag: ['@category', '@cold']}, async ({page}) => {
-  const categoryPage = new CategoryPage(page);
-  await categoryPage.goToCategoryPage();
+test('Sort_category_by_price', { tag: ['@category', '@cold'] }, async ({ page }) => {
+	const categoryPage = new CategoryPage(page);
+	await categoryPage.goToCategoryPage();
 
-  await categoryPage.sortProducts('price');
+	await categoryPage.sortProducts('price');
 });
 
 /**
@@ -46,11 +46,11 @@ test('Sort_category_by_price',{ tag: ['@category', '@cold']}, async ({page}) => 
  * @then the URl should reflect this filter
  * @and the amount of items should be the new amount I've selected
  */
-test('Change_amount_of_products_shown',{ tag: ['@category', '@cold'],}, async ({page}) => {
-  const categoryPage = new CategoryPage(page);
-  await categoryPage.goToCategoryPage();
+test('Change_amount_of_products_shown', { tag: ['@category', '@cold'] }, async ({ page }) => {
+	const categoryPage = new CategoryPage(page);
+	await categoryPage.goToCategoryPage();
 
-  await categoryPage.showMoreProducts();
+	await categoryPage.showMoreProducts();
 });
 
 /**
@@ -61,8 +61,8 @@ test('Change_amount_of_products_shown',{ tag: ['@category', '@cold'],}, async ({
  * @then the URl should reflect this updated view
  * @and the reported selected view should not be the same as it was before I clicked the button
  */
-test('Switch_from_grid_to_list_view',{ tag: ['@category', '@cold'],}, async ({page}) => {
-  const categoryPage = new CategoryPage(page);
-  await categoryPage.goToCategoryPage();
-  await categoryPage.switchView();
+test('Switch_from_grid_to_list_view', { tag: ['@category', '@cold'] }, async ({ page }) => {
+	const categoryPage = new CategoryPage(page);
+	await categoryPage.goToCategoryPage();
+	await categoryPage.switchView();
 });

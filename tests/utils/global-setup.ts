@@ -17,45 +17,51 @@ const EMPTY_STATE = { cookies: [], origins: [] };
  * referencing this file via `use.storageState` skip the consent modal entirely.
  */
 export default async function globalSetup(_config: FullConfig): Promise<void> {
-    fs.mkdirSync(path.dirname(STORAGE_PATH), { recursive: true });
-    if (!fs.existsSync(STORAGE_PATH)) {
-        fs.writeFileSync(STORAGE_PATH, JSON.stringify(EMPTY_STATE));
-    }
+	fs.mkdirSync(path.dirname(STORAGE_PATH), { recursive: true });
+	if (!fs.existsSync(STORAGE_PATH)) {
+		fs.writeFileSync(STORAGE_PATH, JSON.stringify(EMPTY_STATE));
+	}
 
-    const { baseURL } = getPlaywrightRequestConfig(process.env.PLAYWRIGHT_BASE_URL);
-    const httpCredentials = getHttpCredentials();
+	const { baseURL } = getPlaywrightRequestConfig(process.env.PLAYWRIGHT_BASE_URL);
+	const httpCredentials = getHttpCredentials();
 
-    const browser = await chromium.launch();
-    const context = await browser.newContext({
-        baseURL,
-        httpCredentials,
-        ignoreHTTPSErrors: true,
-    });
+	const browser = await chromium.launch();
+	const context = await browser.newContext({
+		baseURL,
+		httpCredentials,
+		ignoreHTTPSErrors: true,
+	});
 
-    try {
-        const page = await context.newPage();
-        await page.goto('/', { waitUntil: 'domcontentloaded' });
+	try {
+		const page = await context.newPage();
+		await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-        const heading = page.getByRole('heading', { name: UIReference.text.frontend.common.cookieConsentTitle });
-        const appeared = await heading.isVisible({ timeout: 15_000 }).catch(() => false);
+		const heading = page.getByRole('heading', {
+			name: UIReference.text.frontend.common.cookieConsentTitle,
+		});
+		const appeared = await heading.isVisible({ timeout: 15_000 }).catch(() => false);
 
-        if (appeared) {
-            await page.getByRole('button', { name: UIReference.text.shared.buttons.cookieReject }).click();
-            await heading.waitFor({ state: 'hidden', timeout: 10_000 });
-        } else {
-            console.warn('[global-setup] Consent modal did not appear within 15s — saving current state anyway.');
-        }
+		if (appeared) {
+			await page
+				.getByRole('button', { name: UIReference.text.shared.buttons.cookieReject })
+				.click();
+			await heading.waitFor({ state: 'hidden', timeout: 10_000 });
+		} else {
+			console.warn(
+				'[global-setup] Consent modal did not appear within 15s — saving current state anyway.',
+			);
+		}
 
-        await context.storageState({ path: STORAGE_PATH });
+		await context.storageState({ path: STORAGE_PATH });
 
-        const cookies = await context.cookies();
-        const cmpCookies = cookies.filter((c) => /cmp|consent|euconsent/i.test(c.name));
-        console.log(
-            `[global-setup] Wrote ${STORAGE_PATH} (${cookies.length} cookies, ` +
-            `${cmpCookies.length} consent-related: ${cmpCookies.map((c) => c.name).join(', ') || 'none'})`,
-        );
-    } finally {
-        await context.close();
-        await browser.close();
-    }
+		const cookies = await context.cookies();
+		const cmpCookies = cookies.filter((c) => /cmp|consent|euconsent/i.test(c.name));
+		console.log(
+			`[global-setup] Wrote ${STORAGE_PATH} (${cookies.length} cookies, ` +
+				`${cmpCookies.length} consent-related: ${cmpCookies.map((c) => c.name).join(', ') || 'none'})`,
+		);
+	} finally {
+		await context.close();
+		await browser.close();
+	}
 }

@@ -4,8 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
 
 export class CartPage {
-	constructor(public readonly page: Page) { };
-
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -18,9 +17,13 @@ export class CartPage {
 	 */
 	get cartInteraction() {
 		return {
-			openDiscountForm : this.page.locator('summary').filter({ hasText: UIReference.text.frontend.common.applyDiscountCode }),
-			updateCartButton : this.page.getByRole('button', { name: UIReference.text.frontend.cart.updateCart })
-		}
+			openDiscountForm: this.page
+				.locator('summary')
+				.filter({ hasText: UIReference.text.frontend.common.applyDiscountCode }),
+			updateCartButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.cart.updateCart,
+			}),
+		};
 	}
 
 	/**
@@ -29,12 +32,18 @@ export class CartPage {
 	 */
 	get discountFormFields() {
 		return {
-			applyDiscountButton : this.page.getByRole('button', { name: UIReference.text.frontend.cart.applyDiscount, exact: true }),
-			cancelDiscountButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.cancelCoupon }),
-			codeInputField : this.page.getByPlaceholder(UIReference.text.frontend.common.discountInput)
-		}
+			applyDiscountButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.cart.applyDiscount,
+				exact: true,
+			}),
+			cancelDiscountButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.common.cancelCoupon,
+			}),
+			codeInputField: this.page.getByPlaceholder(
+				UIReference.text.frontend.common.discountInput,
+			),
+		};
 	}
-
 
 	// ==============================================
 	// Product-related methods
@@ -46,27 +55,46 @@ export class CartPage {
 	 */
 	async changeProductQuantity(amount: string) {
 		// Define the row the product is in to retrieve values from.
-		const productRow = this.page.getByRole('listitem').filter({ hasText: UIReference.text.frontend.product.simpleProduct });
+		const productRow = this.page
+			.getByRole('listitem')
+			.filter({ hasText: UIReference.text.frontend.product.simpleProduct });
 
 		// If the amount to update to is the same as the current amount in cart, update the amount to change to.
-		let currentQuantity = await productRow.getByRole('spinbutton', { name: UIReference.text.frontend.common.quantityAbbr }).inputValue();
-		if (currentQuantity == amount) { amount = '3'; }
+		let currentQuantity = await productRow
+			.getByRole('spinbutton', { name: UIReference.text.frontend.common.quantityAbbr })
+			.inputValue();
+		if (currentQuantity == amount) {
+			amount = '3';
+		}
 
-		let subTotalBeforeUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
+		let subTotalBeforeUpdate = await productRow
+			.getByText(UIReference.text.frontend.common.priceSymbol)
+			.last()
+			.innerText();
 
 		await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).fill(amount);
 		await this.cartInteraction.updateCartButton.click();
 
 		// Checkpoint: wait until the subtotal changed
 		await expect(async () => {
-			let subTotalAfterUpdate = await productRow.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText();
-			expect(subTotalBeforeUpdate, `Checkpoint: listed subtotal should change`).not.toEqual(subTotalAfterUpdate);
+			let subTotalAfterUpdate = await productRow
+				.getByText(UIReference.text.frontend.common.priceSymbol)
+				.last()
+				.innerText();
+			expect(subTotalBeforeUpdate, `Checkpoint: listed subtotal should change`).not.toEqual(
+				subTotalAfterUpdate,
+			);
 		}).toPass();
 
-		let updatedQuantity = await productRow.getByLabel(UIReference.text.frontend.common.quantityAbbr).inputValue();
+		let updatedQuantity = await productRow
+			.getByLabel(UIReference.text.frontend.common.quantityAbbr)
+			.inputValue();
 
 		// Final assertion: the quantity of the product in the cart has updated.
-		expect(updatedQuantity, `updated quantity (${updatedQuantity}) should equal amount we've requested (${amount})`).toEqual(amount);
+		expect(
+			updatedQuantity,
+			`updated quantity (${updatedQuantity}) should equal amount we've requested (${amount})`,
+		).toEqual(amount);
 	}
 
 	/**
@@ -75,15 +103,22 @@ export class CartPage {
 	 */
 	async removeProduct(productTitle: string) {
 		// Define the delete button here because it depends on the name of the product.
-		let removeButton = this.page.getByLabel(`${UIReference.text.shared.buttons.remove} ${productTitle}`);
+		let removeButton = this.page.getByLabel(
+			`${UIReference.text.shared.buttons.remove} ${productTitle}`,
+		);
 		await removeButton.click();
 		await this.page.waitForLoadState();
 
 		// Assertions: product has been removed.
-		await expect(removeButton, `Button to remove specified product is not visible in the cart`).toBeHidden();
-		await expect(this.page.getByRole('cell', { name: productTitle }), `Product is not visible in cart`).toBeHidden();
+		await expect(
+			removeButton,
+			`Button to remove specified product is not visible in the cart`,
+		).toBeHidden();
+		await expect(
+			this.page.getByRole('cell', { name: productTitle }),
+			`Product is not visible in cart`,
+		).toBeHidden();
 	}
-
 
 	// ==============================================
 	// Discount-related methods
@@ -103,14 +138,23 @@ export class CartPage {
 		await this.discountFormFields.applyDiscountButton.click();
 		await this.page.waitForLoadState();
 
-		const notificationBanner = this.page.locator(UIReference.selectors.shared.successMessage)
+		const notificationBanner = this.page
+			.locator(UIReference.selectors.shared.successMessage)
 			.filter({ hasText: outcomeMarker.cart.discountAppliedNotification });
 		await notificationBanner.waitFor();
 
 		// Final assertions: check for notification, and the presence of a discount amount
-		await expect.soft(this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`), `Notification that discount code ${code} has been applied`).toBeVisible();
+		await expect
+			.soft(
+				this.page.getByText(`${outcomeMarker.cart.discountAppliedNotification} "${code}"`),
+				`Notification that discount code ${code} has been applied`,
+			)
+			.toBeVisible();
 		// WORKAROUND: hardcoded '-' symbol because the space between - and $ is not always present.
-		await expect(this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`), `'- $' should be visible on the page`).toBeVisible();
+		await expect(
+			this.page.getByText(`- ${outcomeMarker.cart.priceReducedSymbols}`),
+			`'- $' should be visible on the page`,
+		).toBeVisible();
 		// Close message to prevent difficulties with other tests.
 		await this.page.getByLabel(UIReference.text.shared.buttons.closeMessage).click();
 	}
@@ -124,12 +168,20 @@ export class CartPage {
 			await this.cartInteraction.openDiscountForm.click();
 		}
 
-		await this.discountFormFields.cancelDiscountButton.click()
+		await this.discountFormFields.cancelDiscountButton.click();
 		await this.page.waitForLoadState();
 
 		// Final assertions: check for notification and confirm the discount text is no longer visible.
-		await expect.soft(this.page.getByText(outcomeMarker.cart.discountRemovedNotification), `Notification should be visible`).toBeVisible();
-		await expect(this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`), `'- $' should not be on the page`).toBeHidden();
+		await expect
+			.soft(
+				this.page.getByText(outcomeMarker.cart.discountRemovedNotification),
+				`Notification should be visible`,
+			)
+			.toBeVisible();
+		await expect(
+			this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`),
+			`'- $' should not be on the page`,
+		).toBeHidden();
 	}
 
 	/**
@@ -146,14 +198,14 @@ export class CartPage {
 		await this.discountFormFields.applyDiscountButton.click();
 		await this.page.waitForLoadState();
 
-
 		let incorrectNotification = `${outcomeMarker.cart.incorrectCouponCodeNotificationOne} "${code}" ${outcomeMarker.cart.incorrectCouponCodeNotificationTwo}`;
 
 		// Final assertions: notification that code was incorrect & discount code field is still editable
-		await expect.soft(this.page.getByText(incorrectNotification), `Code should not work`).toBeVisible();
+		await expect
+			.soft(this.page.getByText(incorrectNotification), `Code should not work`)
+			.toBeVisible();
 		await expect(this.discountFormFields.codeInputField).toBeEditable();
 	}
-
 
 	// ==============================================
 	// Additional methods
@@ -167,17 +219,31 @@ export class CartPage {
 	 */
 	async getCheckoutValues(productName: string) {
 		// Ensure the cart details are visible in the checkout
-		const checkoutCartDetails = this.page.locator(UIReference.selectors.frontend.checkout.cartDetailsContainer);
-		const openCartDetailsButton = this.page.locator(UIReference.selectors.frontend.checkout.openCartDetails);
+		const checkoutCartDetails = this.page.locator(
+			UIReference.selectors.frontend.checkout.cartDetailsContainer,
+		);
+		const openCartDetailsButton = this.page.locator(
+			UIReference.selectors.frontend.checkout.openCartDetails,
+		);
 
 		if (await checkoutCartDetails.isHidden()) {
 			await openCartDetailsButton.click();
 		}
 
 		// Get product details section in checkout and retrieve values
-		let productInCheckout = this.page.locator(UIReference.selectors.frontend.checkout.cartDetails).filter({ hasText: productName }).nth(1);
-		let productPriceInCheckout = (await productInCheckout.getByText(UIReference.text.frontend.common.priceSymbol).last().innerText()).trim();
-		let productQuantityInCheckout = (await productInCheckout.locator('.product-price').getByText('x').innerText()).substring(0, 1);
+		let productInCheckout = this.page
+			.locator(UIReference.selectors.frontend.checkout.cartDetails)
+			.filter({ hasText: productName })
+			.nth(1);
+		let productPriceInCheckout = (
+			await productInCheckout
+				.getByText(UIReference.text.frontend.common.priceSymbol)
+				.last()
+				.innerText()
+		).trim();
+		let productQuantityInCheckout = (
+			await productInCheckout.locator('.product-price').getByText('x').innerText()
+		).substring(0, 1);
 
 		// Return price and quantity values
 		return [productPriceInCheckout, productQuantityInCheckout];
@@ -191,16 +257,29 @@ export class CartPage {
 	 * @param priceCheckout {string} - price of product in the checkout
 	 * @param amountCheckout {string} - amount of product in the checkout
 	 */
-	async calculateProductPricesAndCompare(pricePDP: string, amountPDP: string, priceCheckout: string, amountCheckout: string) {
+	async calculateProductPricesAndCompare(
+		pricePDP: string,
+		amountPDP: string,
+		priceCheckout: string,
+		amountCheckout: string,
+	) {
 		// perform magic to calculate price * amount and mold it into the correct form again
 		pricePDP = pricePDP.replace(UIReference.text.frontend.common.priceSymbol, '');
 		let pricePDPInt = Number(pricePDP);
 		let quantityPDPInt = parseInt(amountPDP);
-		let calculatedPricePDP = `${UIReference.text.frontend.common.priceSymbol}` + (pricePDPInt * quantityPDPInt).toFixed(2);
+		let calculatedPricePDP =
+			`${UIReference.text.frontend.common.priceSymbol}` +
+			(pricePDPInt * quantityPDPInt).toFixed(2);
 
 		// Final assertions: confirm the quantities are the same in cart and checkout,
 		// then confirm the price listed in the checkout equals our calculcated price.
-		expect(amountPDP, `Amount on PDP (${amountPDP}) equals amount in checkout (${amountCheckout})`).toEqual(amountCheckout);
-		expect(calculatedPricePDP, `Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${priceCheckout})`).toEqual(priceCheckout);
+		expect(
+			amountPDP,
+			`Amount on PDP (${amountPDP}) equals amount in checkout (${amountCheckout})`,
+		).toEqual(amountCheckout);
+		expect(
+			calculatedPricePDP,
+			`Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${priceCheckout})`,
+		).toEqual(priceCheckout);
 	}
 }

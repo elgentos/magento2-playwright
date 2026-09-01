@@ -6,7 +6,7 @@ import { slugToRegex } from '@utils/url.utils';
 import { MainMenuPage } from '@poms/frontend/mainmenu.page';
 
 export class LoginPage {
-	constructor(public readonly page: Page) { }
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -14,16 +14,26 @@ export class LoginPage {
 
 	// get comparePageTitle: returns title locator for comparison page.
 	protected get loginPageTitle(): Locator {
-		return this.page.getByRole('heading', { name: UIReference.text.frontend.login.title, level:1 });
+		return this.page.getByRole('heading', {
+			name: UIReference.text.frontend.login.title,
+			level: 1,
+		});
 	}
 
 	// get loginFormFields: returns the input and button locators of the login form.
 	get loginFormFields() {
 		return {
-			emailField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.email, exact: true }),
-			passwordField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.password }),
-			loginButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.login })
-		}
+			emailField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.email,
+				exact: true,
+			}),
+			passwordField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.password,
+			}),
+			loginButton: this.page.getByRole('button', {
+				name: UIReference.text.shared.buttons.login,
+			}),
+		};
 	}
 
 	// ==============================================
@@ -65,7 +75,10 @@ export class LoginPage {
 			// Open the account menu, then check the 'Sign Out' button is visible.
 			await mainmenu.mainMenuAccountButton.waitFor();
 			await mainmenu.mainMenuAccountButton.click();
-			await expect(mainmenu.mainMenuLogoutItem, 'Sign Out button is visible, user is logged in').toBeVisible();
+			await expect(
+				mainmenu.mainMenuLogoutItem,
+				'Sign Out button is visible, user is logged in',
+			).toBeVisible();
 		}).toPass();
 	}
 
@@ -83,6 +96,8 @@ export class LoginPage {
 		await this.page.waitForLoadState('networkidle');
 
 		// Assertion to confirm the login attempt failed.
-		await expect(this.page, 'Should stay on login page').toHaveURL(slugToRegex(slugs.frontend.account.login));
+		await expect(this.page, 'Should stay on login page').toHaveURL(
+			slugToRegex(slugs.frontend.account.login),
+		);
 	}
 }

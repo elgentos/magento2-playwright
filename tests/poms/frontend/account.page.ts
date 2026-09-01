@@ -13,11 +13,15 @@ export class AccountPage {
 	// ==============================================
 
 	protected get accountDashboardTitle(): Locator {
-		return this.page.getByRole('heading', { name: UIReference.text.frontend.account.dashboardTitle });
+		return this.page.getByRole('heading', {
+			name: UIReference.text.frontend.account.dashboardTitle,
+		});
 	}
 
 	get changeEmailCheck(): Locator {
-		return this.page.getByRole('switch', { name: UIReference.text.frontend.account.changeEmail });
+		return this.page.getByRole('switch', {
+			name: UIReference.text.frontend.account.changeEmail,
+		});
 	}
 
 	get genericSaveButton(): Locator {
@@ -29,11 +33,15 @@ export class AccountPage {
 	}
 
 	get deleteAddressButton(): Locator {
-		return this.page.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress }).first();
+		return this.page
+			.getByRole('link', { name: UIReference.text.frontend.account.deleteAddress })
+			.first();
 	}
 
 	get editAddressButton(): Locator {
-		return this.page.getByRole('link', { name: UIReference.text.frontend.account.editAddress }).first();
+		return this.page
+			.getByRole('link', { name: UIReference.text.frontend.account.editAddress })
+			.first();
 	}
 
 	/**
@@ -42,11 +50,19 @@ export class AccountPage {
 	 */
 	get passwordFormElements() {
 		return {
-			changePasswordSwitch : this.page.getByRole('switch', { name: UIReference.text.frontend.account.changePassword }),
-			confirmNewPasswordField : this.page.getByLabel(UIReference.text.shared.forms.newPasswordConfirm),
-			currentPasswordField : this.page.getByLabel(UIReference.text.shared.forms.currentPassword),
-			newPasswordField : this.page.getByLabel(UIReference.text.shared.forms.newPassword, { exact: true })
-		}
+			changePasswordSwitch: this.page.getByRole('switch', {
+				name: UIReference.text.frontend.account.changePassword,
+			}),
+			confirmNewPasswordField: this.page.getByLabel(
+				UIReference.text.shared.forms.newPasswordConfirm,
+			),
+			currentPasswordField: this.page.getByLabel(
+				UIReference.text.shared.forms.currentPassword,
+			),
+			newPasswordField: this.page.getByLabel(UIReference.text.shared.forms.newPassword, {
+				exact: true,
+			}),
+		};
 	}
 
 	/**
@@ -56,8 +72,8 @@ export class AccountPage {
 	get userNameFields() {
 		return {
 			firstNameField: this.page.getByLabel(UIReference.text.shared.forms.firstName),
-			lastNameField: this.page.getByLabel(UIReference.text.shared.forms.lastName)
-		}
+			lastNameField: this.page.getByLabel(UIReference.text.shared.forms.lastName),
+		};
 	}
 
 	/**
@@ -66,17 +82,23 @@ export class AccountPage {
 	 */
 	get accountAddressFields() {
 		return {
-			companyNameField : this.page.getByRole('textbox', { name: UIReference.text.shared.forms.company }),
-			phoneNumberField : this.page.getByLabel(UIReference.text.shared.forms.phone),
-			streetAddressField : this.page.getByLabel(UIReference.text.shared.forms.streetAddress, { exact: true }),
-			zipCodeField : this.page.getByLabel(UIReference.text.shared.forms.zipCode),
-			cityField : this.page.getByLabel(UIReference.text.shared.forms.city),
-			countrySelectorField : this.page.getByLabel(UIReference.text.shared.forms.country),
-			stateInputField : this.page.getByLabel(UIReference.text.shared.forms.province),
+			companyNameField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.company,
+			}),
+			phoneNumberField: this.page.getByLabel(UIReference.text.shared.forms.phone),
+			streetAddressField: this.page.getByLabel(UIReference.text.shared.forms.streetAddress, {
+				exact: true,
+			}),
+			zipCodeField: this.page.getByLabel(UIReference.text.shared.forms.zipCode),
+			cityField: this.page.getByLabel(UIReference.text.shared.forms.city),
+			countrySelectorField: this.page.getByLabel(UIReference.text.shared.forms.country),
+			stateInputField: this.page.getByLabel(UIReference.text.shared.forms.province),
 			// Target the <select> directly: filtering by option text races the JS that populates the options.
-			stateSelectorField : this.page.locator(UIReference.selectors.frontend.common.region),
-			saveAddressButton : this.page.getByRole('button', { name: UIReference.text.frontend.account.saveAddress }),
-		}
+			stateSelectorField: this.page.locator(UIReference.selectors.frontend.common.region),
+			saveAddressButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.account.saveAddress,
+			}),
+		};
 	}
 
 	/**
@@ -85,15 +107,20 @@ export class AccountPage {
 	 */
 	get accountCreationFields() {
 		return {
-			firstNameField : this.page.getByLabel(UIReference.text.shared.forms.firstName),
-			lastNameField : this.page.getByLabel(UIReference.text.shared.forms.lastName),
-			emailField : this.page.getByLabel(UIReference.text.shared.forms.email, { exact: true }),
-			passwordField : this.page.getByLabel(UIReference.text.shared.forms.password, { exact: true }),
-			passwordRepeatField : this.page.getByLabel(UIReference.text.shared.forms.passwordConfirm),
-			confirmButton : this.page.getByRole('button', { name: UIReference.text.frontend.common.navigation.createAccount })
-		}
+			firstNameField: this.page.getByLabel(UIReference.text.shared.forms.firstName),
+			lastNameField: this.page.getByLabel(UIReference.text.shared.forms.lastName),
+			emailField: this.page.getByLabel(UIReference.text.shared.forms.email, { exact: true }),
+			passwordField: this.page.getByLabel(UIReference.text.shared.forms.password, {
+				exact: true,
+			}),
+			passwordRepeatField: this.page.getByLabel(
+				UIReference.text.shared.forms.passwordConfirm,
+			),
+			confirmButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.common.navigation.createAccount,
+			}),
+		};
 	}
-
 
 	// ==============================================
 	// Address-related methods
@@ -113,12 +140,24 @@ export class AccountPage {
 		country?: string;
 	}) {
 		const {
-			companyNameField, phoneNumberField, streetAddressField, zipCodeField,
-			cityField, countrySelectorField, stateSelectorField, saveAddressButton
+			companyNameField,
+			phoneNumberField,
+			streetAddressField,
+			zipCodeField,
+			cityField,
+			countrySelectorField,
+			stateSelectorField,
+			saveAddressButton,
 		} = this.accountAddressFields;
 
-		await expect(this.userNameFields.firstNameField, `first name should be pre-filled`).not.toBeEmpty();
-		await expect(this.userNameFields.lastNameField, `last name should be pre-filled`).not.toBeEmpty();
+		await expect(
+			this.userNameFields.firstNameField,
+			`first name should be pre-filled`,
+		).not.toBeEmpty();
+		await expect(
+			this.userNameFields.lastNameField,
+			`last name should be pre-filled`,
+		).not.toBeEmpty();
 
 		const phone = values?.phone || faker.phone.number({ style: 'national' }); // Use 'national' style to prevent input errors
 		const streetName = values?.street || faker.location.streetAddress();
@@ -139,24 +178,38 @@ export class AccountPage {
 		// short-circuit below can compare against a stale default.
 		await expect(countrySelectorField).toBeEnabled();
 		const defaultSelectedCountry = await countrySelectorField.evaluate(
-			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text
+			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text,
 		);
 
 		if (country !== defaultSelectedCountry) {
 			await countrySelectorField.selectOption({ label: country });
 		}
 		const regionDropdown = this.page.locator(UIReference.selectors.frontend.common.region);
-		const regionInputField = this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province });
+		const regionInputField = this.page.getByRole('textbox', {
+			name: UIReference.text.shared.forms.province,
+		});
 
 		if (country !== 'United States') {
-			await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
-			await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
+			await expect(
+				regionDropdown,
+				`Region dropdown should be hidden for non-US country`,
+			).toBeHidden();
+			await expect(
+				regionInputField,
+				`Region input field should be visible for non-US country`,
+			).toBeVisible();
 
 			await regionInputField.fill(stateName);
 			await expect(regionInputField).toHaveValue(stateName);
 		} else {
-			await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
-			await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+			await expect(
+				regionInputField,
+				`Region input field should be hidden for US country`,
+			).toBeHidden();
+			await expect(
+				regionDropdown,
+				`Region dropdown should be visible for US country`,
+			).toBeVisible();
 			await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
 
 			// The state list is populated by JS after the country switches; wait for real options.
@@ -170,25 +223,32 @@ export class AccountPage {
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
 		// wait for the address index url
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
 	}
 
-
-
-	async editExistingAddress(values?: {
-		firstName?: string;
-		lastName?: string;
-		company?: string;
-		phone?: string;
-		street?: string;
-		zip?: string;
-		city?: string;
-		state?: string;
-		country?: string;
-	}, defaultAddress: boolean = false) {
+	async editExistingAddress(
+		values?: {
+			firstName?: string;
+			lastName?: string;
+			company?: string;
+			phone?: string;
+			street?: string;
+			zip?: string;
+			city?: string;
+			state?: string;
+			country?: string;
+		},
+		defaultAddress: boolean = false,
+	) {
 		const {
-			companyNameField, phoneNumberField, streetAddressField, zipCodeField,
-			cityField, countrySelectorField, stateSelectorField, saveAddressButton
+			companyNameField,
+			phoneNumberField,
+			streetAddressField,
+			zipCodeField,
+			cityField,
+			countrySelectorField,
+			stateSelectorField,
+			saveAddressButton,
 		} = this.accountAddressFields;
 
 		const firstName = values?.firstName || faker.person.firstName();
@@ -202,12 +262,20 @@ export class AccountPage {
 		const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
 		// click the correct button based on if there's more than one address (defaultAddress boolean)
-		defaultAddress ? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click() : await this.editAddressButton.click();
+		defaultAddress
+			? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click()
+			: await this.editAddressButton.click();
 
 		let oldAddress = await streetAddressField.inputValue();
 
-		await expect(this.userNameFields.firstNameField, `first name field should be filled in automatically`).not.toBeEmpty();
-		await expect(this.userNameFields.lastNameField, `first name field should be filled in automatically`).not.toBeEmpty();
+		await expect(
+			this.userNameFields.firstNameField,
+			`first name field should be filled in automatically`,
+		).not.toBeEmpty();
+		await expect(
+			this.userNameFields.lastNameField,
+			`first name field should be filled in automatically`,
+		).not.toBeEmpty();
 
 		// contact information section
 		await this.userNameFields.firstNameField.fill(firstName);
@@ -223,23 +291,39 @@ export class AccountPage {
 		// Wait for the country selector to hydrate before reading its value, otherwise the
 		// short-circuit below can compare against a stale default.
 		await expect(countrySelectorField).toBeEnabled();
-		const defaultSelectedCountry = await countrySelectorField.evaluate((select: HTMLSelectElement) => select.options[select.selectedIndex]?.text);
+		const defaultSelectedCountry = await countrySelectorField.evaluate(
+			(select: HTMLSelectElement) => select.options[select.selectedIndex]?.text,
+		);
 		if (country !== defaultSelectedCountry) {
 			await countrySelectorField.selectOption({ label: country });
 		}
 
 		const regionDropdown = this.page.locator(UIReference.selectors.frontend.common.region);
-		const regionInputField = this.page.getByRole('textbox', { name: UIReference.text.shared.forms.province });
+		const regionInputField = this.page.getByRole('textbox', {
+			name: UIReference.text.shared.forms.province,
+		});
 
 		if (country !== 'United States') {
-			await expect(regionDropdown, `Region dropdown should be hidden for non-US country`).toBeHidden();
-			await expect(regionInputField, `Region input field should be visible for non-US country`).toBeVisible();
+			await expect(
+				regionDropdown,
+				`Region dropdown should be hidden for non-US country`,
+			).toBeHidden();
+			await expect(
+				regionInputField,
+				`Region input field should be visible for non-US country`,
+			).toBeVisible();
 
 			await regionInputField.fill(stateName);
 			await expect(regionInputField).toHaveValue(stateName);
 		} else {
-			await expect(regionInputField, `Region input field should be hidden for US country`).toBeHidden();
-			await expect(regionDropdown, `Region dropdown should be visible for US country`).toBeVisible();
+			await expect(
+				regionInputField,
+				`Region input field should be hidden for US country`,
+			).toBeHidden();
+			await expect(
+				regionDropdown,
+				`Region dropdown should be visible for US country`,
+			).toBeVisible();
 			await expect(regionDropdown, `Region dropdown should be editable`).toBeEditable();
 
 			// The state list is populated by JS after the country switches; wait for real options.
@@ -252,7 +336,7 @@ export class AccountPage {
 
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
 
 		// await expect(this.page.getByText(streetName).last()).toBeVisible();
 		if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
@@ -260,7 +344,9 @@ export class AccountPage {
 
 	async deleteFirstAddressFromAddressBook() {
 		let addressDeletedNotification = outcomeMarker.address.addressDeletedNotification;
-		let addressBookSection = this.page.locator(UIReference.selectors.frontend.account.addressBookArea);
+		let addressBookSection = this.page.locator(
+			UIReference.selectors.frontend.account.addressBookArea,
+		);
 
 		this.page.on('dialog', async (dialog) => {
 			if (dialog.type() === 'confirm') {
@@ -268,27 +354,32 @@ export class AccountPage {
 			}
 		});
 
-    // Retrieve all text in the 'address book' section
-    let addressBookArray = await addressBookSection.allInnerTexts();
-    // split by each new line
-    let arraySplit = addressBookArray[0].split('\n');
-    // Retrieve index 6, because:
-    // index 0 to 3 are the table headers (i.e. Name, Street Address etc.)
-    // index 5 is name, index 6 is address.
-    // if this table changes, the index number should change.
-    let addressToBeDeleted = arraySplit[6];
+		// Retrieve all text in the 'address book' section
+		let addressBookArray = await addressBookSection.allInnerTexts();
+		// split by each new line
+		let arraySplit = addressBookArray[0].split('\n');
+		// Retrieve index 6, because:
+		// index 0 to 3 are the table headers (i.e. Name, Street Address etc.)
+		// index 5 is name, index 6 is address.
+		// if this table changes, the index number should change.
+		let addressToBeDeleted = arraySplit[6];
 
 		// Annotate the report so the user knows what address should be deleted
-		test.info().annotations.push({ type: `Address to be deleted`, description: addressToBeDeleted });
+		test.info().annotations.push({
+			type: `Address to be deleted`,
+			description: addressToBeDeleted,
+		});
 
 		await this.deleteAddressButton.click();
 		// wait for the address index url
-		await this.page.waitForURL(/customer\/address\/(index|)/, { waitUntil: "load" });
+		await this.page.waitForURL(/customer\/address\/(index|)/, { waitUntil: 'load' });
 
 		await expect(this.page.getByText(addressDeletedNotification)).toBeVisible();
-		await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
+		await expect(
+			addressBookSection,
+			`${addressToBeDeleted} should not be visible`,
+		).not.toContainText(addressToBeDeleted);
 	}
-
 
 	// ==============================================
 	// Account credential-related methods
@@ -340,13 +431,18 @@ export class AccountPage {
 		}
 	}
 
-
 	/**
- * Checks that customer details have been filled in.
- * Fills in faker() values otherwise.
- */
+	 * Checks that customer details have been filled in.
+	 * Fills in faker() values otherwise.
+	 */
 	async ensureCustomerDetails() {
-		const { streetAddressField, stateSelectorField, zipCodeField, cityField, phoneNumberField } = this.accountAddressFields;
+		const {
+			streetAddressField,
+			stateSelectorField,
+			zipCodeField,
+			cityField,
+			phoneNumberField,
+		} = this.accountAddressFields;
 
 		// the button 'New Address' is only visible if there is a default address.
 		if (await this.newAddressButton.isHidden()) {
@@ -361,5 +457,4 @@ export class AccountPage {
 
 		return;
 	}
-
 }
