@@ -13,7 +13,7 @@ import { requireEnv, getCouponCode } from '@utils/env.utils';
 import ApiClient from '@utils/apiClient.utils';
 import { inputValues } from '@config';
 
-import AdminLogin from '@poms/admin/adminlogin.page';
+import { AdminLogin } from '@poms/admin/adminlogin.page';
 
 /**
  * Set variables we'll be using throughout the file.
