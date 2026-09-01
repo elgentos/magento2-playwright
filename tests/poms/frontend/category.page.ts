@@ -29,10 +29,17 @@ export class BaseCategoryPage {
 		});
 		return {
 			filterRegion,
-			attributeFilterButton : filterRegion.getByRole('button', { name: UIReference.text.frontend.category.sizeFilter }),
-			attributeOption : filterRegion.getByRole('link', { name: UIReference.text.frontend.category.sizeM }),
-			activeFilteringHeading : filterRegion.getByRole('heading', { name: UIReference.text.frontend.category.activeFilter, level:3 })
-		}
+			attributeFilterButton: filterRegion.getByRole('button', {
+				name: UIReference.text.frontend.category.sizeFilter,
+			}),
+			attributeOption: filterRegion.getByRole('link', {
+				name: UIReference.text.frontend.category.sizeM,
+			}),
+			activeFilteringHeading: filterRegion.getByRole('heading', {
+				name: UIReference.text.frontend.category.activeFilter,
+				level: 3,
+			}),
+		};
 	}
 
 	get moreProductItems() {
@@ -108,9 +115,18 @@ export class BaseCategoryPage {
 		await this.page.waitForURL(slugToRegex(expectedSizeFilterSlug));
 
 		// Verify the active filtering section and selected option are exposed accessibly.
-		await expect(activeFilteringHeading, 'Active filtering heading should be visible').toBeVisible();
-		await expect(attributeOption, 'Selected size filter should be visible').toHaveAccessibleName(
-			new RegExp(`${UIReference.text.frontend.category.sizeM}.*${UIReference.text.frontend.category.filterSelected}`, 'i')
+		await expect(
+			activeFilteringHeading,
+			'Active filtering heading should be visible',
+		).toBeVisible();
+		await expect(
+			attributeOption,
+			'Selected size filter should be visible',
+		).toHaveAccessibleName(
+			new RegExp(
+				`${UIReference.text.frontend.category.sizeM}.*${UIReference.text.frontend.category.filterSelected}`,
+				'i',
+			),
 		);
 	}
 

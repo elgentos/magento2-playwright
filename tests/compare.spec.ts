@@ -78,13 +78,19 @@ test(
 		test.skip(toggles.wishlist === false, 'Disabled by test toggle: wishlist');
 		const errorMessage = page.locator(UIReference.selectors.shared.errorMessage);
 
-	const productNotWishlistedNotificationText = outcomeMarker.comparePage.productNotWishlistedNotificationText;
-	const addToWishlistButton = page.getByLabel(`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`);
-	await addToWishlistButton.click();
-	await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
+		const productNotWishlistedNotificationText =
+			outcomeMarker.comparePage.productNotWishlistedNotificationText;
+		const addToWishlistButton = page.getByLabel(
+			`${UIReference.text.shared.buttons.addToWishlist} ${UIReference.text.frontend.product.simpleProduct}`,
+		);
+		await addToWishlistButton.click();
+		await new NotificationValidatorUtils(page).validate(productNotWishlistedNotificationText);
 
-	await expect(page, `Page has been redirected to login page`).toHaveURL(slugToRegex(slugs.frontend.account.login));
-});
+		await expect(page, `Page has been redirected to login page`).toHaveURL(
+			slugToRegex(slugs.frontend.account.login),
+		);
+	},
+);
 
 /**
  * @feature Add product to wishlist from the comparison page
@@ -127,5 +133,3 @@ test(
 		});
 	},
 );
-
-

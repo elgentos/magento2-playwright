@@ -156,7 +156,7 @@ class AdminLogin {
 
 			await this.saveConfigButton.click();
 			await new NotificationValidatorUtils(this.page).validate(
-				UIReference.text.admin.common.configurationSaved
+				UIReference.text.admin.common.configurationSaved,
 			);
 		}
 	}
@@ -221,7 +221,7 @@ class AdminLogin {
 
 			await this.saveConfigButton.click();
 			await new NotificationValidatorUtils(this.page).validate(
-				UIReference.text.admin.common.configurationSaved
+				UIReference.text.admin.common.configurationSaved,
 			);
 		}
 	}
@@ -319,7 +319,7 @@ class AdminLogin {
 
 			await this.saveConfigButton.click();
 			await new NotificationValidatorUtils(this.page).validate(
-				UIReference.text.admin.common.configurationSaved
+				UIReference.text.admin.common.configurationSaved,
 			);
 		}
 	}
@@ -354,11 +354,14 @@ class AdminLogin {
 		await this.adminLoginButton.click();
 
 		// Confirm the page has loaded correctly by checking for the presence of text.
-		await expect(async() => {
+		await expect(async () => {
 			if (await captchaNotification.isVisible()) {
 				throw new Error(`CAPTCHA field found, automated login failed.`);
 			}
-			await expect(this.mainMenuStoresButton, `Stores link in admin menu is visible`).toBeVisible();
+			await expect(
+				this.mainMenuStoresButton,
+				`Stores link in admin menu is visible`,
+			).toBeVisible();
 		}).toPass();
 
 		// WORKAROUND

@@ -62,8 +62,8 @@
 	"magentoAdmin": {
 		"configurationSavedText": "You saved the configuration.",
 		"couponRuleSavedText": "You saved the rule.",
-    "customerApprovedText" : "Customer account has been approved!",
-    "customerSavedText" : "You saved the customer.",
+		"customerApprovedText": "Customer account has been approved!",
+		"customerSavedText": "You saved the customer.",
 		"noResultsFoundText": "We couldn't find any records."
 	},
 	"miniCart": {
@@ -75,8 +75,8 @@
 	},
 	"productPage": {
 		"borderClassRegex": ".* border-primary$",
-    "productAddedNotificationSuffix": "to your shopping cart.",
-    "reviewSubmittedNotification": "You submitted your review for moderation",
+		"productAddedNotificationSuffix": "to your shopping cart.",
+		"reviewSubmittedNotification": "You submitted your review for moderation",
 		"simpleProductAddedNotification": "You added"
 	},
 	"login": {

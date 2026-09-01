@@ -2,7 +2,7 @@
 
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, inputValues, outcomeMarker, slugs } from '@config';
-import { requireEnv } from "@utils/env.utils";
+import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
@@ -153,13 +153,17 @@ class AdminCustomers {
 		await allowBulkPurchaseSwitcher.click();
 		await accountCreationConfirmButton.click();
 
-	await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
-	if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
-	  await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
-	}
-	await new NotificationValidatorUtils(this.page).validate(
-	  outcomeMarker.magentoAdmin.customerSavedText
-	);
+		await this.page.waitForURL(
+			slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`),
+		);
+		if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+			await this.page
+				.locator(UIReference.selectors.shared.spinner)
+				.waitFor({ state: 'hidden' });
+		}
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.magentoAdmin.customerSavedText,
+		);
 
 		await this.approveAccount(email);
 	}
@@ -203,9 +207,9 @@ class AdminCustomers {
 		// Return true (email found) or false (email not found)
 		await this.page.getByRole('cell', { name: email }).locator('div').isVisible();
 
-	await expect(async() => {
-	  await editAccountButton.click();
-	}).toPass();
+		await expect(async () => {
+			await editAccountButton.click();
+		}).toPass();
 
 		await this.page.waitForURL(
 			slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`),
@@ -221,16 +225,20 @@ class AdminCustomers {
 		if (await approvalButtonAccountEdit.isVisible()) {
 			await approvalButtonAccountEdit.click();
 
-	  await this.page.waitForURL(slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`));
-	  if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
-		console.log('Spinner is visible');
-		await this.page.locator(UIReference.selectors.shared.spinner).waitFor({state: 'hidden'});
-	  }
-	  await new NotificationValidatorUtils(this.page).validate(
-		outcomeMarker.magentoAdmin.customerApprovedText
-	  );
+			await this.page.waitForURL(
+				slugToRegex(`/${requireEnv('MAGENTO_ADMIN_SLUG')}${slugs.admin.customers.edit}`),
+			);
+			if (await this.page.locator(UIReference.selectors.shared.spinner).isVisible()) {
+				console.log('Spinner is visible');
+				await this.page
+					.locator(UIReference.selectors.shared.spinner)
+					.waitFor({ state: 'hidden' });
+			}
+			await new NotificationValidatorUtils(this.page).validate(
+				outcomeMarker.magentoAdmin.customerApprovedText,
+			);
+		}
 	}
-  }
 }
 
 export default AdminCustomers;

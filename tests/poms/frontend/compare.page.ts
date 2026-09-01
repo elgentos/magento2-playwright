@@ -71,13 +71,18 @@ export class BaseComparePage {
 
 		await this.compareActionButtons.removeFromCompareButton(product).click();
 		const notification = await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.comparePage.productRemovedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productRemovedNotificationTextTwo}`
+			`${outcomeMarker.comparePage.productRemovedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productRemovedNotificationTextTwo}`,
 		);
-		await notification.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage }).click();
+		await notification
+			.getByRole('button', { name: UIReference.text.shared.buttons.closeMessage })
+			.click();
 
 		// Assertions to confirm test ran correctly.
 		await expect(notification, `notification toast should be hidden`).toBeHidden();
-		await expect(comparisonPageProductTitle, `Link to product is no longer visible`).toBeHidden();
+		await expect(
+			comparisonPageProductTitle,
+			`Link to product is no longer visible`,
+		).toBeHidden();
 	}
 
 	/**
@@ -88,7 +93,7 @@ export class BaseComparePage {
 	async addToCart(product: string) {
 		await this.compareActionButtons.addToCartButton(product).click();
 		await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
 		);
 	}
 
@@ -100,7 +105,7 @@ export class BaseComparePage {
 	async addToWishList(product: string) {
 		await this.compareActionButtons.addToWishListButton(product).click();
 		await new NotificationValidatorUtils(this.page).validate(
-			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`
+			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
 		);
 	}
 }

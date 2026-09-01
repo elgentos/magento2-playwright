@@ -104,7 +104,7 @@ export class BaseRegisterPage {
 		await this.page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
 
 		await new NotificationValidatorUtils(this.page).validate(
-			outcomeMarker.account.accountCreatedNotificationText
+			outcomeMarker.account.accountCreatedNotificationText,
 		);
 
 		// Final assertion: navigate to account dashboard and confirm our email is visible

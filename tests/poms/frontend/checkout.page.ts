@@ -7,7 +7,6 @@ import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-
 export class BaseCheckoutPage extends MagewireUtils {
 	constructor(public readonly page: Page) {
 		super(page);
@@ -268,7 +267,9 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification visible, 'cancel coupon' button is visible, discountfield has code filled in.
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponAppliedNotification);
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.couponAppliedNotification,
+		);
 		await expect(cancelCouponButton, `cancel coupon button is visible`).toBeVisible();
 		await expect(async () => {
 			await expect(discountBox, `discount code is filled in`).toHaveValue(code);
@@ -296,7 +297,9 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await this.waitForMagewireRequests();
 
 		// Final assertions: notification that code is incorrect shows up, the input field is still editable.
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.incorrectDiscountNotification);
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.incorrectDiscountNotification,
+		);
 		await expect(codeInputField).toBeEditable();
 	}
 
@@ -320,8 +323,13 @@ export class BaseCheckoutPage extends MagewireUtils {
 		await cancelCouponButton.click();
 		await this.waitForMagewireRequests();
 
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.checkout.couponRemovedNotification);
-		await expect(this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol), `'-$' should not be on the page`).toBeHidden();
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.checkout.couponRemovedNotification,
+		);
+		await expect(
+			this.page.getByText(outcomeMarker.checkout.checkoutPriceReducedSymbol),
+			`'-$' should not be on the page`,
+		).toBeHidden();
 		// await expect(this.page.locator('#quote-summary div').
 		//   getByText(`Discount`),`The word 'Discount (' should not be on the page anymore`).toBeHidden();
 

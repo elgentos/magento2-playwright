@@ -55,7 +55,9 @@ export class BaseMiniCartPage {
 	 * @param product {string} - name of the product to remove.
 	 */
 	async removeProductFromMinicart(product: string) {
-		const removeProductMiniCartButton = this.page.getByLabel(`${UIReference.text.frontend.minicart.removeProduct} "${product}"`);
+		const removeProductMiniCartButton = this.page.getByLabel(
+			`${UIReference.text.frontend.minicart.removeProduct} "${product}"`,
+		);
 		// ensure button is visible
 		await removeProductMiniCartButton.waitFor();
 		await removeProductMiniCartButton.click();
@@ -83,7 +85,9 @@ export class BaseMiniCartPage {
 		await this.productQuantityField.fill(amount);
 
 		await this.updateItemButton.click();
-		await new NotificationValidatorUtils(this.page).validate(productQuantityChangedNotification);
+		await new NotificationValidatorUtils(this.page).validate(
+			productQuantityChangedNotification,
+		);
 
 		const productQuantityInCart = await this.page
 			.getByLabel(UIReference.text.frontend.common.quantityAbbr)

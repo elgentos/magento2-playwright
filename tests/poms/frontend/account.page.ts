@@ -224,8 +224,10 @@ export class BaseAccountPage {
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
 		// wait for the address index url
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.address.newAddressAddedNotification);
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.address.newAddressAddedNotification,
+		);
 	}
 
 	async editExistingAddress(
@@ -338,8 +340,10 @@ export class BaseAccountPage {
 
 		await saveAddressButton.scrollIntoViewIfNeeded();
 		await saveAddressButton.click();
-		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: "load" });
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.address.newAddressAddedNotification);
+		await this.page.waitForURL(/customer\/address\/index/, { waitUntil: 'load' });
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.address.newAddressAddedNotification,
+		);
 
 		// await expect(this.page.getByText(streetName).last()).toBeVisible();
 		if (oldAddress != null) await expect(this.page.getByText(oldAddress)).not.toBeVisible();
@@ -378,7 +382,10 @@ export class BaseAccountPage {
 		await this.page.waitForURL(/customer\/address\/(index|)/, { waitUntil: 'load' });
 
 		await new NotificationValidatorUtils(this.page).validate(addressDeletedNotification);
-		await expect(addressBookSection, `${addressToBeDeleted} should not be visible`).not.toContainText(addressToBeDeleted);
+		await expect(
+			addressBookSection,
+			`${addressToBeDeleted} should not be visible`,
+		).not.toContainText(addressToBeDeleted);
 	}
 
 	// ==============================================

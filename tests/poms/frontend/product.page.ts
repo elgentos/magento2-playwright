@@ -132,7 +132,7 @@ export class BaseProductPage {
 		await this.productInteraction.addToCartButton.click();
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`
+			`${outcomeMarker.productPage.simpleProductAddedNotification} ${product} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
 		);
 	}
 
@@ -198,7 +198,7 @@ export class BaseProductPage {
 		await this.productInteraction.addToCompareButton.click();
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productAddedNotificationTextTwo}`
+			`${outcomeMarker.comparePage.productAddedNotificationTextOne} ${product} ${outcomeMarker.comparePage.productAddedNotificationTextTwo}`,
 		);
 
 		await this.page.goto(slugs.frontend.product.comparison);
@@ -227,7 +227,7 @@ export class BaseProductPage {
 		await this.page.waitForURL(slugToRegex(slugs.frontend.wishlist.index));
 
 		await new NotificationValidatorUtils(this.page).validate(
-			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`
+			`${product} ${outcomeMarker.wishListPage.wishListAddedNotification}`,
 		);
 
 		await expect(
@@ -266,8 +266,10 @@ export class BaseProductPage {
 		// We don't use the notificationvalidator here,
 		// since this noitification is appended to the review form rather than up top -
 		// meaning the notificationvalidator won't find this.
-		await expect(this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
-			`Notification that review has been submitted for moderation is visible`).toBeVisible();
+		await expect(
+			this.page.getByText(outcomeMarker.productPage.reviewSubmittedNotification),
+			`Notification that review has been submitted for moderation is visible`,
+		).toBeVisible();
 	}
 
 	/**

@@ -141,7 +141,7 @@ export class BaseCartPage {
 
 		// Final assertions: check for notification, and the presence of a discount amount
 		const notification = await new NotificationValidatorUtils(this.page).validate(
-			`${outcomeMarker.cart.discountAppliedNotification} "${code}"`
+			`${outcomeMarker.cart.discountAppliedNotification} "${code}"`,
 		);
 		// WORKAROUND: hardcoded '-' symbol because the space between - and $ is not always present.
 		await expect(
@@ -165,8 +165,13 @@ export class BaseCartPage {
 		await this.page.waitForLoadState();
 
 		// Final assertions: check for notification and confirm the discount text is no longer visible.
-		await new NotificationValidatorUtils(this.page).validate(outcomeMarker.cart.discountRemovedNotification);
-		await expect(this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`), `'- $' should not be on the page`).toBeHidden();
+		await new NotificationValidatorUtils(this.page).validate(
+			outcomeMarker.cart.discountRemovedNotification,
+		);
+		await expect(
+			this.page.getByText(`-${outcomeMarker.cart.priceReducedSymbols}`),
+			`'- $' should not be on the page`,
+		).toBeHidden();
 	}
 
 	/**

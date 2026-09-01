@@ -226,8 +226,11 @@ test.describe.serial(
 
 			await accountPage.addNewAddress({ company: company, street: address });
 
-		await expect(page.getByText(address).first(), `Expect new address to be listed`).toBeVisible();
-	});
+			await expect(
+				page.getByText(address).first(),
+				`Expect new address to be listed`,
+			).toBeVisible();
+		});
 
 		/**
 		 * Test: The user edits an existing address to their account
@@ -263,9 +266,9 @@ test.describe.serial(
 			const address = `${faker.location.streetAddress()} ${Math.floor(Math.random() * 100 + 1)}`;
 			await accountPage.editExistingAddress({ street: address }, isDefaultAddress);
 
-		// await expect(page.getByText(companyName)).toBeVisible();
-		await expect(page.getByText(address).first()).toBeVisible();
-	});
+			// await expect(page.getByText(companyName)).toBeVisible();
+			await expect(page.getByText(address).first()).toBeVisible();
+		});
 
 		/**
 		 * Test: The user can't add an address if they don't fill in all the required fields

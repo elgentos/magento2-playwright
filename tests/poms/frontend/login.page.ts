@@ -97,14 +97,18 @@ export class BaseLoginPage {
 		await this.page.waitForLoadState('networkidle');
 
 		// Assertion to confirm the login attempt failed.
-		await expect(this.page, 'Should stay on login page').toHaveURL(slugToRegex(slugs.frontend.account.login));
+		await expect(this.page, 'Should stay on login page').toHaveURL(
+			slugToRegex(slugs.frontend.account.login),
+		);
 		if (errorMessage) {
 			await new NotificationValidatorUtils(this.page).validate(errorMessage);
 		} else {
 			const validationMessage = await this.loginFormFields.passwordField.evaluate(
-				(field: HTMLInputElement) => field.validationMessage
+				(field: HTMLInputElement) => field.validationMessage,
 			);
-			expect(validationMessage, 'Password field should report a validation error').not.toBe('');
+			expect(validationMessage, 'Password field should report a validation error').not.toBe(
+				'',
+			);
 		}
 	}
 }

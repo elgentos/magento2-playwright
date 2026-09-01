@@ -46,7 +46,7 @@ export class BaseHomePage {
 		if (await buyProductButton.isVisible()) {
 			await buyProductButton.click();
 			await new NotificationValidatorUtils(this.page).validate(
-				`${outcomeMarker.productPage.simpleProductAddedNotification} ${outcomeMarker.homePage.firstProductName} ${outcomeMarker.productPage.productAddedNotificationSuffix}`
+				`${outcomeMarker.productPage.simpleProductAddedNotification} ${outcomeMarker.homePage.firstProductName} ${outcomeMarker.productPage.productAddedNotificationSuffix}`,
 			);
 		} else {
 			throw new Error(`No 'Add to Cart' button found on homepage`);
