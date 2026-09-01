@@ -21,6 +21,8 @@ const REPO = path.resolve(__dirname, '..');
 // Renamed in Task 3. Keep every class name the harness needs in this one block.
 const POM_CLASS = 'BaseLoginPage';
 const POM_MODULE = 'poms/frontend/login.page';
+const CHECKOUT_CLASS = 'BaseCheckoutPage';
+const CHECKOUT_MODULE = 'poms/frontend/checkout.page';
 
 const SENTINEL = '#seam-override-marker';
 const LAYER_DIRS = ['poms', 'utils', 'config', 'types'];
@@ -128,6 +130,26 @@ function buildFixture(dir) {
       `console.log('SEAM_PROTECTED=' + (pom as any).seamProbeTitle.selector);`,
       ``,
       `test('seam placeholder', () => {});`,
+      ``,
+    ].join('\n'),
+  );
+
+  // Proves the members a store needs to customise are reachable from a subclass.
+  // Compiles only while submitOrder and the MagewireUtils internals are protected.
+  fs.writeFileSync(
+    path.join(dir, 'tests', CHECKOUT_MODULE + '.ts'),
+    [
+      `import { ${CHECKOUT_CLASS} as Parent } from '@base/${CHECKOUT_MODULE}';`,
+      ``,
+      `export class ${CHECKOUT_CLASS} extends Parent {`,
+      `\tprotected async submitOrder(attempts: number = 3) {`,
+      `\t\tawait super.submitOrder(attempts);`,
+      `\t}`,
+      ``,
+      `\tasync seamProbeMagewire() {`,
+      `\t\treturn this.isMagewireRequest('https://example.test/magewire/message');`,
+      `\t}`,
+      `}`,
       ``,
     ].join('\n'),
   );
