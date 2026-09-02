@@ -6,7 +6,7 @@ import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
-export class BaseAccountPage {
+export class AccountPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

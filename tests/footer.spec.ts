@@ -2,7 +2,7 @@
 
 import { test } from '@playwright/test';
 import { toggles } from '@config';
-import { BaseFooter } from '@poms/frontend/footer.page';
+import { Footer } from '@poms/frontend/footer.page';
 
 test.describe('Footer', () => {
 	/**
@@ -11,7 +11,7 @@ test.describe('Footer', () => {
 	 * Finally, checks footer is visible.
 	 */
 	test('Footer_is_available', { tag: ['@footer', '@cold'] }, async ({ page }) => {
-		const footer = new BaseFooter(page);
+		const footer = new Footer(page);
 		await footer.goToFooterElement();
 	});
 
@@ -22,7 +22,7 @@ test.describe('Footer', () => {
 	 * Unset 'fixme' when caching issue has been resolved.
 	 */
 	test.fixme('Footer_switch_currency', { tag: ['@footer', '@cold'] }, async ({ page }) => {
-		const footer = new BaseFooter(page);
+		const footer = new Footer(page);
 		await footer.goToFooterElement();
 		await footer.switchCurrency();
 	});
@@ -38,7 +38,7 @@ test.describe('Footer', () => {
 		{ tag: ['@footer', '@cold'] },
 		async ({ page }, testInfo) => {
 			test.skip(toggles.newsletter === false, 'Disabled by test toggle: newsletter');
-			const footer = new BaseFooter(page);
+			const footer = new Footer(page);
 			await footer.goToFooterElement();
 			await footer.subscribeToNewsletter();
 		},

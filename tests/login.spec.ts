@@ -9,7 +9,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { BaseLoginPage } from '@poms/frontend/login.page';
+import { LoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
 import { outcomeMarker, inputValues } from '@config';
@@ -24,7 +24,7 @@ test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) =>
 	const user = `playwright+${id}@elgentos.nl`;
 	const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-	const loginPage = new BaseLoginPage(page);
+	const loginPage = new LoginPage(page);
 	await loginPage.goToLoginPage();
 	await loginPage.login(user, password);
 
@@ -56,7 +56,7 @@ test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) =>
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Invalid_credentials_are_rejected', async ({ page }) => {
-	const loginPage = new BaseLoginPage(page);
+	const loginPage = new LoginPage(page);
 	await loginPage.loginExpectError(
 		'invalid@example.com',
 		'wrongpassword',
@@ -69,6 +69,6 @@ test('Invalid_credentials_are_rejected', async ({ page }) => {
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Login_fails_with_missing_password', async ({ page }) => {
-	const loginPage = new BaseLoginPage(page);
+	const loginPage = new LoginPage(page);
 	await loginPage.loginExpectError('invalid@example.com', '', '');
 });

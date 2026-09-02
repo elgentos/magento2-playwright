@@ -4,7 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseComparePage {
+export class ComparePage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

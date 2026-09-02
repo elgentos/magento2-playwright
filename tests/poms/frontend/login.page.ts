@@ -4,9 +4,9 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
-import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
+import { MainMenuPage } from '@poms/frontend/mainmenu.page';
 
-export class BaseLoginPage {
+export class LoginPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================
@@ -61,7 +61,7 @@ export class BaseLoginPage {
 	 * @param password {string} - password of the account to log in with.
 	 */
 	async login(email: string, password: string) {
-		const mainmenu = new BaseMainMenuPage(this.page);
+		const mainmenu = new MainMenuPage(this.page);
 
 		await this.loginFormFields.emailField.fill(email);
 		await this.loginFormFields.passwordField.fill(password);

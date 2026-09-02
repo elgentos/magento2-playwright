@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseContactPage {
+export class ContactPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

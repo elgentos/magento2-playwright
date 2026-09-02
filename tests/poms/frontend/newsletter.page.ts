@@ -5,7 +5,7 @@ import { UIReference, outcomeMarker, inputValues } from '@config';
 import { faker } from '@faker-js/faker';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseNewsletterSubscriptionPage {
+export class NewsletterSubscriptionPage {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

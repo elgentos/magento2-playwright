@@ -26,7 +26,7 @@ class MagewireUtils {
 	 * never called startMonitoring() sees an empty set forever, turning
 	 * waitForMagewireRequests() into a fixed short sleep.
 	 */
-	private static readonly traffic = new WeakMap<Page, MagewireTraffic>();
+	protected static readonly traffic = new WeakMap<Page, MagewireTraffic>();
 
 	protected page: Page;
 
@@ -67,7 +67,7 @@ class MagewireUtils {
 		this.page.on('requestfailed', settle);
 	}
 
-	private get traffic(): MagewireTraffic {
+	protected get traffic(): MagewireTraffic {
 		return MagewireUtils.traffic.get(this.page) ?? { inFlight: new Set(), lastActivityAt: 0 };
 	}
 
@@ -122,22 +122,7 @@ class MagewireUtils {
 		throw new Error('[Magewire] Timeout: Still pending requests after wait');
 	}
 
-	// private async waitForMagewireDomIdle(): Promise<void> {
-	//   // look for the magewire pop-up
-	//   // const element = this.page.locator('.magewire.messenger');
-	//   const element = this.page.locator('#magewire-loader-notifications > div');
-	//
-	//   // LocatorHandler will keep looking for pop-up
-	//   await this.page.addLocatorHandler(element, async() => {
-	//     // Keep retrying, waiting for element to be hidden.
-	//     await expect(async () => {
-	// 	  // await expect(element).toBeHidden();
-	//       await expect(element).toHaveCount(0);
-	//     }).toPass();
-	//   }, {noWaitAfter: true})
-	// }
-
-	private async waitForMagewireDomIdle(): Promise<void> {
+	protected async waitForMagewireDomIdle(): Promise<void> {
 		// 1. Check if there is no processing ongoing
 		await this.page.waitForFunction(
 			() => {
@@ -151,7 +136,7 @@ class MagewireUtils {
 		await expect(loader).toHaveCount(0, { timeout: 30000 });
 	}
 
-	private isMagewireRequest(url: string): boolean {
+	protected isMagewireRequest(url: string): boolean {
 		// Magewire posts go to /magewire/post/livewire/message/...
 		return url.includes('/magewire/');
 	}

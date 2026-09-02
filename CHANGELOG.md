@@ -3,9 +3,43 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 7.0.0
+
+### Breaking
+
+- Existing installs upgrading to this version must update their root
+  `playwright.config.ts` to mirror `playwright.config.example.ts` (new
+  `setup` project + `getSetupFiles()` helper + `dependencies: ['setup']` on
+  browser projects). Without this update, setup will not run and downstream
+  tests will fail. See README → "Migrating from 6.x".
+- Existing installs must also add the `@base/*` alias to their root
+  `tsconfig.json`, as the first entry under `paths` (`build.js` never
+  overwrites an existing `tsconfig.json`, so upgrading the package alone does
+  not add it). Without it, any POM override fails to resolve: `tsc` reports
+  `TS2307` and Playwright fails at collection with a module-not-found error.
+  See README → "Migrating from 6.x".
+- CI pipelines that filter on `@setup` (e.g. `--grep @setup`,
+  `--grep-invert @setup`) no longer match anything — replace with the
+  appropriate flag-less invocation.
+- POM classes no longer carry the `Base` prefix. If you have copied spec files or
+  POMs into your own `tests/`, rename the imports:
+
+  ```bash
+  find tests -name '*.ts' -exec sed -i -E 's/\bBase(AccountPage|CategoryPage|CheckoutPage|ComparePage|ContactPage|HomePage|LoginPage|MainMenuPage|MiniCartPage|NewsletterSubscriptionPage|OrderHistoryPage|ProductPage|RegisterPage|SearchPage)\b/\1/g; s/\bBaseFooter\b/Footer/g; s/\bBaseCartPage\b/CartPage/g' {} +
+  ```
+
+- `AdminLogin` changed from a default to a named export:
+
+  ```diff
+  -import AdminLogin from '@poms/admin/adminlogin.page';
+  +import { AdminLogin } from '@poms/admin/adminlogin.page';
+  ```
 
 ### Added
+
+- `@base/*` path alias, so a POM override in `tests/` can extend its packaged
+  parent without a relative `../../base-tests/` path.
+- `bin/verify-override-seam.js` (`npm run verify:seam`), which verifies the override mechanism against a throwaway consumer-shaped fixture. It is a local pre-merge check for contributors, deliberately not wired into CI.
 - CLI tool `magento2-playwright` (registered under `bin` in `package.json`) with two commands: `setup` (interactive wizard that configures `.env` with base URL and admin credentials) and `create-coupons` (creates coupon codes in Magento per browser engine via the admin API). New `bin/cli.js`, `bin/commands/`, and `bin/helpers/` files.
 - Visual regression tests in `healthcheck.spec.ts` (ticket 164): a new "Visual Regression Tests" group that captures a fresh production baseline per page/browser, then compares the base URL against it with `toHaveScreenshot` (using per-page mask selectors). Viewport and device scale factor are pinned so screenshots are byte-comparable across browsers. Tagged `@smoke @visual @cold`.
 - Consent-cookie global setup `tests/utils/global-setup.ts` (ticket 480): captures the consentmanager.net "Reject all" cookies once and persists them as a storageState file (`tests/utils/.auth/consentCookies.json`) so tests skip the consent modal.
@@ -16,6 +50,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - README sections: "Running the suite", "Migrating from 6.x", and troubleshooting guidance for translations and module imports.
 
 ### Changed
+
+- `CheckoutPage.submitOrder` and the `MagewireUtils` internals are `protected`
+  instead of `private`, so stores can override them.
+- `AdminLogin` locators are getters instead of constructor-assigned properties.
 - Setup is now a Playwright **project dependency**, not a tagged spec. `npx playwright test` runs `init.setup.ts` (the `setup` project) once automatically before any browser test. The separate `npx playwright test --grep "@setup"` step is no longer required.
 - Coupon codes moved from per-browser env vars (`MAGENTO_COUPON_CODE_*`) to a `coupon.codes` map in `input-values.json` (keyed by uppercase browser name). Adding a new browser is now a one-line config change.
 - CI pipelines (both `.gitlab-ci.yml` and `.github/workflows/main.yml`) collapsed from two stages to one — Playwright's project dependency handles ordering.
@@ -27,19 +65,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Expanded `.gitignore` to cover IDE/editor folders, `.auth/`, generated config from `*.example.*` templates, Playwright artifacts, and visual-regression snapshots.
 
 ### Fixed
+
 - Corrected the `HTTP_AUTH_USERNAME` / `HTTP_AUTH_PASSWORD` env variable names and removed unused environment variables and references (ticket 419).
 - `Footer_switch_currency` marked `test.fixme` due to caching issues on the demo site that caused the whole suite to fail.
+- `tests/config/index.ts`: both config layer paths were derived from `__dirname`, which collapsed onto the same directory once Playwright resolved `@config` to `tests/config` — so `base-tests/config` defaults were never merged in a real install. A store that copied `tests/config/index.ts` into `tests/config/` and overrode a couple of keys silently lost every other default. This changes effective config values on upgrade for any store that had copied this file.
 
 ### Removed
-- `tests/setup.spec.ts` (replaced by `tests/init.setup.ts`).
+
 - `MAGENTO_COUPON_CODE_CHROMIUM`, `MAGENTO_COUPON_CODE_FIREFOX`, `MAGENTO_COUPON_CODE_WEBKIT` env vars.
 - `@setup` tag (no longer needed; setup is gated by project dependency, not by tag filtering).
 - Unused env variables from `.env.example`: `PLAYWRIGHT_REVIEW_URL`, `MAGENTO_THEME_LOCALE`, `MAGENTO_NEW_ACCOUNT_PASSWORD`, and the per-browser `MAGENTO_EXISTING_ACCOUNT_EMAIL_*` variables (emails are now generated).
 - ARIA regression tests and an unused `@faker-js/faker` import.
-
-### Breaking Changes
-- Existing installs upgrading to this version must update their root `playwright.config.ts` to mirror `playwright.config.example.ts` (new `setup` project + `getSetupFiles()` helper + `dependencies: ['setup']` on browser projects). Without this update, setup will not run and downstream tests will fail. See README → "Migrating from 6.x".
-- CI pipelines that filter on `@setup` (e.g. `--grep @setup`, `--grep-invert @setup`) no longer match anything — replace with the appropriate flag-less invocation.
 
 ## [6.0.0] - 2026-04-20
 
