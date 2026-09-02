@@ -4,7 +4,7 @@ import { test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { inputValues } from '@config';
 
-import { BaseRegisterPage } from '@poms/frontend/register.page';
+import { RegisterPage } from '@poms/frontend/register.page';
 import { requireEnv } from '@utils/env.utils';
 
 // Reset storageState to ensure we're not logged in before running these tests.
@@ -23,7 +23,7 @@ test(
 	'User_registers_an_account',
 	{ tag: ['@account-creation', '@hot'] },
 	async ({ page, browserName }, testInfo) => {
-		const registerPage = new BaseRegisterPage(page);
+		const registerPage = new RegisterPage(page);
 		await registerPage.goToRegisterPage();
 
 		// Retrieve desired password from .env file

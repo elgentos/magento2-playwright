@@ -5,100 +5,125 @@ import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference } from '@config';
 
-class AdminLogin {
-	// General
-	readonly page: Page;
-	readonly pageHeadingOne: Locator;
-	readonly saveConfigButton: Locator;
-	// Input Fields
-	readonly adminLoginEmailField: Locator;
-	readonly adminLoginPasswordField: Locator;
-	readonly adminLoginButton: Locator;
-	// Navigation
-	readonly mainMenuStoresButton: Locator;
-	readonly storesConfigurationButton: Locator;
-	readonly storesCustomersTab: Locator;
-	readonly advancedSettingsTab: Locator;
-	readonly customerConfigurationLink: Locator;
-	readonly adminSettingsLink: Locator;
-	// Settings
-	readonly customerCaptchaAccordion: Locator;
-	readonly adminSecurityAccordion: Locator;
-	readonly storeFrontCaptchaOption: Locator;
-	readonly adminSharingOption: Locator;
-	readonly customerCAPTCHAInheritCheckbox: Locator;
-	readonly adminInheritCheckbox: Locator;
-	// reCAPTCHA settings
-	readonly storesSecurityTab: Locator;
-	readonly googleReCaptchaStorefrontLink: Locator;
-	readonly storefrontReCaptchaAccordion: Locator;
-	readonly customerCreateReCaptchaOption: Locator;
-	readonly customerCreateReCaptchaInheritCheckbox: Locator;
+export class AdminLogin {
+	constructor(public readonly page: Page) {}
 
-	constructor(page: Page) {
-		// General
-		this.page = page;
-		this.pageHeadingOne = page.locator(UIReference.selectors.shared.pageTitle);
-		this.saveConfigButton = page.getByRole('button', {
-			name: UIReference.text.admin.common.saveConfig,
-		});
-		// Input Fields
-		this.adminLoginEmailField = page.locator(UIReference.selectors.admin.login.username);
-		this.adminLoginPasswordField = page.locator(UIReference.selectors.admin.login.password);
-		this.adminLoginButton = page.locator(UIReference.selectors.admin.login.loginButton);
-		// Navigation
-		this.mainMenuStoresButton = page
+	// ==============================================
+	// Element getters
+	// ==============================================
+
+	// General
+	get pageHeadingOne(): Locator {
+		return this.page.locator(UIReference.selectors.shared.pageTitle);
+	}
+
+	get saveConfigButton(): Locator {
+		return this.page.getByRole('button', { name: UIReference.text.admin.common.saveConfig });
+	}
+
+	// Input Fields
+	get adminLoginEmailField(): Locator {
+		return this.page.locator(UIReference.selectors.admin.login.username);
+	}
+
+	get adminLoginPasswordField(): Locator {
+		return this.page.locator(UIReference.selectors.admin.login.password);
+	}
+
+	get adminLoginButton(): Locator {
+		return this.page.locator(UIReference.selectors.admin.login.loginButton);
+	}
+
+	// Navigation
+	get mainMenuStoresButton(): Locator {
+		return this.page
 			.locator(UIReference.selectors.admin.common.adminMenu)
 			.getByRole('link', { name: UIReference.text.admin.common.stores });
-		this.storesConfigurationButton = page
+	}
+
+	get storesConfigurationButton(): Locator {
+		return this.page
 			.getByRole('link', { name: UIReference.text.admin.common.configuration })
 			.first();
-		this.storesCustomersTab = page
+	}
+
+	get storesCustomersTab(): Locator {
+		return this.page
 			.locator(UIReference.selectors.admin.common.configTabs)
 			.getByText(UIReference.text.admin.common.customers);
-		this.advancedSettingsTab = page
+	}
+
+	get advancedSettingsTab(): Locator {
+		return this.page
 			.getByRole('strong')
 			.filter({ hasText: UIReference.text.admin.common.advanced });
-		this.customerConfigurationLink = page.getByRole('link', {
+	}
+
+	get customerConfigurationLink(): Locator {
+		return this.page.getByRole('link', {
 			name: UIReference.text.admin.common.customerConfiguration,
 		});
-		this.adminSettingsLink = page.getByRole('link', {
+	}
+
+	get adminSettingsLink(): Locator {
+		return this.page.getByRole('link', {
 			name: UIReference.text.admin.common.admin,
 			exact: true,
 		});
-		// Settings
-		this.customerCaptchaAccordion = page
+	}
+
+	// Settings
+	get customerCaptchaAccordion(): Locator {
+		return this.page
 			.getByRole('link', { name: 'CAPTCHA' })
 			.filter({ hasNotText: 'documentation' });
-		this.adminSecurityAccordion = page.getByRole('link', {
-			name: UIReference.text.admin.common.security,
-		});
-		this.storeFrontCaptchaOption = page.getByLabel(
-			UIReference.text.admin.configuration.captchaEnabled,
-		);
-		this.adminSharingOption = page.getByLabel(
-			UIReference.text.admin.configuration.adminSharing,
-		);
-		this.customerCAPTCHAInheritCheckbox = page.locator(
-			UIReference.selectors.admin.configuration.captchaEnableInherit,
-		);
-		this.adminInheritCheckbox = page.locator(
-			UIReference.selectors.admin.configuration.accountSharingInherit,
-		);
-		// reCAPTCHA settings
-		this.storesSecurityTab = page
+	}
+
+	get adminSecurityAccordion(): Locator {
+		return this.page.getByRole('link', { name: UIReference.text.admin.common.security });
+	}
+
+	get storeFrontCaptchaOption(): Locator {
+		return this.page.getByLabel(UIReference.text.admin.configuration.captchaEnabled);
+	}
+
+	get adminSharingOption(): Locator {
+		return this.page.getByLabel(UIReference.text.admin.configuration.adminSharing);
+	}
+
+	get customerCAPTCHAInheritCheckbox(): Locator {
+		return this.page.locator(UIReference.selectors.admin.configuration.captchaEnableInherit);
+	}
+
+	get adminInheritCheckbox(): Locator {
+		return this.page.locator(UIReference.selectors.admin.configuration.accountSharingInherit);
+	}
+
+	// reCAPTCHA settings
+	get storesSecurityTab(): Locator {
+		return this.page
 			.locator(UIReference.selectors.admin.common.configTabs)
 			.getByText(UIReference.text.admin.common.security, { exact: true });
-		this.googleReCaptchaStorefrontLink = page.getByRole('link', {
+	}
+
+	get googleReCaptchaStorefrontLink(): Locator {
+		return this.page.getByRole('link', {
 			name: UIReference.text.admin.configuration.googleRecaptcha,
 		});
-		this.storefrontReCaptchaAccordion = page
+	}
+
+	get storefrontReCaptchaAccordion(): Locator {
+		return this.page
 			.getByRole('link', { name: UIReference.text.admin.common.storefront })
 			.filter({ hasNotText: 'Google' });
-		this.customerCreateReCaptchaOption = page.locator(
-			UIReference.selectors.admin.configuration.recaptchaCustomerCreate,
-		);
-		this.customerCreateReCaptchaInheritCheckbox = page.locator(
+	}
+
+	get customerCreateReCaptchaOption(): Locator {
+		return this.page.locator(UIReference.selectors.admin.configuration.recaptchaCustomerCreate);
+	}
+
+	get customerCreateReCaptchaInheritCheckbox(): Locator {
+		return this.page.locator(
 			UIReference.selectors.admin.configuration.recaptchaCustomerCreateInherit,
 		);
 	}
@@ -369,5 +394,3 @@ class AdminLogin {
 		await this.page.waitForTimeout(3000);
 	}
 }
-
-export default AdminLogin;

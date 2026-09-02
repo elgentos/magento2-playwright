@@ -16,7 +16,7 @@ import ApiClient from '@utils/apiClient.utils';
 
 import { inputValues, UIReference, toggles } from '@config';
 
-import AdminLogin from '@poms/admin/adminlogin.page';
+import { AdminLogin } from '@poms/admin/adminlogin.page';
 
 const magentoAdminUsername = requireEnv(`MAGENTO_ADMIN_USERNAME`);
 const magentoAdminPassword = requireEnv(`MAGENTO_ADMIN_PASSWORD`);

@@ -12,21 +12,33 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ## Table of contents
 
+**Getting started**
+
 - [Prerequisites](#prerequisites)
 - [Installing the suite](#-installing-the-suite)
 - [Before you run](#-before-you-run)
-- [Running the suite](#-running-the-suite)
+- [Running tests](#-running-tests)
+- [Selecting what runs](#-selecting-what-runs)
 - [Migrating from 6.x](#-migrating-from-6x)
-- [Generate Translations](#-generate-translations)
-- [How to use the testing suite](#-how-to-use-the-testing-suite)
-    - [Running tests](#running-tests)
-    - [Skipping specific tests](#skipping-specific-tests)
-    - [Tags and Annotations](#tags-and-annotations)
+- [Generate translations](#-generate-translations)
+
+**Making it yours**
+
 - [Customizing the testing suite](#-customizing-the-testing-suite)
-  - [Examples](#examples)
+    - [Module imports](#module-imports)
+    - [Element identifiers](#element-identifiers)
+    - [Slugs](#slugs)
+    - [Examples](#examples)
 - [Conventions](#-conventions)
+    - [Expose locators through getters](#expose-locators-through-getters)
+    - [Only group locators you use together](#only-group-locators-you-use-together)
+    - [Assert notifications by role, not by CSS class](#assert-notifications-by-role-not-by-css-class)
+    - [Overriding a POM for your store](#overriding-a-pom-for-your-store)
+
+**Reference**
+
+- [Contributing](#contributing)
 - [Troubleshooting imports](#troubleshooting-imports)
-- [How to help](#how-to-help)
 - [Scenarios](#scenarios)
 - [Roadmap](#roadmap)
 
@@ -34,6 +46,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
 
 ## Prerequisites
 
+* **Node.js 18 or newer** — required by Playwright.
 * This testing suite has been designed to work within a Hyvä theme in Magento 2, but can work with other themes.
 * **Magento 2 instance:** A running instance of Magento 2 for testing purposes. Elgentos sponsors a [Hyvä demo website](https://hyva-demo.elgentos.io/) for this project.
 
@@ -93,17 +106,21 @@ After the installation, a variety of folders will have been created. Most notabl
 
 ---
 
-## 🤖 Running the suite
+## 🤖 Running tests
+
+The suite runs every test against Chromium, Firefox and WebKit.
 
 `npx playwright test` is all you need:
 
 ```bash
-npx playwright test --trace on
+npx playwright test
 ```
 
-`npx playwright test` always runs the `setup` project first — Playwright wires this in automatically as a project dependency. Setup disables the admin login CAPTCHA, creates the test accounts, and, when the `couponCodes` test toggle is enabled, ensures the coupon codes exist before any browser test starts. The setup steps are idempotent, so re-running on an already-configured environment is safe.
+This runs every spec in `base-tests`, substituting your own version of a file whenever one exists in `tests` (see [Customizing the testing suite](#-customizing-the-testing-suite)).
 
-You can run a subset by adding `--project=`, `--grep`, or a filename:
+Playwright always pulls in the `setup` project first — it is wired as a project dependency, so it runs no matter how you invoke the suite. Setup disables the admin login CAPTCHA, creates the test accounts, and, when the `couponCodes` toggle is enabled, ensures the coupon codes exist before any browser test starts. Every step is idempotent, so re-running against an already-configured environment is safe.
+
+To run a subset, add a filename, `--grep`, or `--project`:
 
 ```bash
 npx playwright test login.spec.ts
@@ -111,22 +128,92 @@ npx playwright test --grep "@hot"
 npx playwright test --project=chromium
 ```
 
-In every case Playwright pulls the `setup` project in automatically as a dependency.
+### Debugging a run
+
+[UI mode](https://playwright.dev/docs/running-tests#debug-tests-in-ui-mode) is the default way to develop and debug tests — it shows you what the browser is doing step by step:
+
+```bash
+npx playwright test --ui
+```
+
+When you would rather run headless and inspect afterwards, collect a trace instead:
+
+```bash
+npx playwright test --trace on
+```
+
+---
+
+## 🎯 Selecting what runs
+
+There are two mechanisms, and they solve different problems. Use **tags** for a one-off selection on the command line; use **toggles** to permanently switch off a capability your store does not have.
+
+### Tags — one-off selection
+
+Most tests carry a tag, so you can run or skip a group. Coupon code tests, for example, are tagged `@coupon-code`:
+
+```bash
+npx playwright test --grep @coupon-code              # only these
+npx playwright test --grep "@coupon-code|@cart"      # either tag
+npx playwright test --grep-invert @coupon-code       # everything except these
+```
+
+See [Playwright: Tag Annotations](https://playwright.dev/docs/test-annotations#tag-tests) for the full syntax.
+
+Setup tests never need to be skipped — they run as a project dependency rather than as part of the regular suite.
+
+### Toggles — permanently disable a capability
+
+Use `tests/config/test-toggles.json` to switch off tests for features your store does not provide. Defaults enable every capability, so coverage is unchanged after upgrading.
+
+Your configuration is deep-merged with the defaults, so list only what differs:
+
+```json
+{
+	"compare": false,
+	"wishlist": false,
+	"couponCodes": false
+}
+```
+
+| Toggle | Tests affected |
+|---|---|
+| `compare` | Product comparison and comparison-page tests |
+| `wishlist` | Product, account-menu, and comparison-page wishlist tests; comparison-page coverage also requires `compare` |
+| `couponCodes` | Cart and checkout coupon tests, including coupon setup |
+| `newsletter` | Account and footer newsletter tests |
+| `reviews` | Product review tests |
+| `contactForm` | Contact form test |
+| `categoryFilters` | Layered-navigation attribute filter test |
+| `fixedRateShipping` | Price calculation and order flows that require fixed-rate shipping |
+| `checkMoneyOrder` | Payment and order flows that require check/money-order |
+| `visualRegression` | Visual regression tests; regular smoke tests remain enabled |
+
+Only the boolean `false` disables a capability. Disabled tests still appear in Playwright reports as skipped, with a reason, and keep their names and tags — so toggles combine freely with `--grep` and `--grep-invert`.
 
 ---
 
 ## 🔁 Migrating from 6.x
 
-The next major release moves setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
+This major release moved setup from a tagged spec (`setup.spec.ts`) to a Playwright project dependency (`init.setup.ts`). For existing installs:
 
 1. Open `playwright.config.example.ts` (refreshed by the new package). Copy these into your own `playwright.config.ts`:
    - the `getSetupFiles()` helper
    - the `EXCLUDED_SPEC_FILES` set inside `getTestFiles()`
    - the `setup` project block at the top of `projects:`
    - the `dependencies: ['setup']` line on each browser project
-2. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
-3. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
-4. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
+2. Add the `@base/*` alias to your existing root `tsconfig.json`, as the **first** entry under `paths`:
+
+   ```json
+   "@base/*": [
+     "./base-tests/*"
+   ],
+   ```
+
+   `build.js` never overwrites an existing `tsconfig.json`, so upgrading the package alone does not add this alias for you — it must be added by hand. Without it, any POM override in `tests/poms/` fails to resolve: `tsc` reports `TS2307` and Playwright fails at collection with a module-not-found error.
+3. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
+4. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
+5. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
 
 After these changes, `npx playwright test` runs setup automatically and you no longer need a separate `--grep "@setup"` invocation.
 
@@ -138,7 +225,7 @@ The Magento 2 Playwright Testing Suite supports translations, allowing you to ru
 
 ### Setting Up Translations
 
-1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/{vendor}/{theme}/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
+1. **Directory Structure**: Ensure your playwright suite is located in the `app/design/frontend/{vendor}/{theme}/web/playwright` directory within your Magento installation. This is crucial for the Playwright suite to locate and utilize the correct files from magento.
 
 
 2. **(Optional) Create Test Files**: Go to step 3 when this is the NPM installed package. Create the following directories and file:
@@ -164,102 +251,11 @@ Go to line 284 to find what is wrong in your csv file.
 
 ---
 
-## 🚀 How to use the testing suite
-
-The Testing Suite offers a variety of tests for your Magento 2 application in Chromium, Firefox, and Webkit.
-
-### Running tests
-
-To run all tests, run the following command:
-
-```bash
-npx playwright test
-```
-
-This command will run all tests located in the `base-tests` directory. If you have custom tests in the `tests` folder, these will be used instead of their `base-tests` counterpart.
-
-You can also run a specific test file:
-
-```bash
-npx playwright test example.spec.ts
-```
-
-The above commands will run your tests, then offer a report. You can also use [the UI mode](https://playwright.dev/docs/running-tests#debug-tests-in-ui-mode) to see what the tests are doing, which is helpful for debugging. To open up UI mode, run this command:
-
-```bash
-npx playwright test --ui
-```
-
-Playwright also offers a trace view. While using the UI mode is seen as the default for developing and debugging tests, you may want to run the tests and collect a trace instead. This can be done with the following command:
-
-```bash
-npx playwright test --trace on
-```
-
-### Skipping specific tests
-
-Use `--grep` and `--grep-invert` to run subsets by tag. For example, to skip coupon-related tests:
-
-```bash
-npx playwright test --grep-invert @coupon-code
-```
-
-Setup tests no longer need to be skipped — they run as a project dependency, not as part of the regular suite. (See "Running the suite" above.)
-
-### Disabling unavailable store features
-
-Use `tests/config/test-toggles.json` to persistently disable tests for capabilities that a store does not provide. The default configuration enables every capability, so existing coverage is unchanged after upgrading.
-
-Custom configuration is deep-merged with the defaults. Only include the values that differ for your store:
-
-```json
-{
-	"compare": false,
-	"wishlist": false,
-	"couponCodes": false
-}
-```
-
-Available toggles:
-
-| Toggle | Tests affected |
-|---|---|
-| `compare` | Product comparison and comparison-page tests |
-| `wishlist` | Product, account-menu, and comparison-page wishlist tests; comparison-page coverage also requires `compare` |
-| `couponCodes` | Cart and checkout coupon tests, including coupon setup |
-| `newsletter` | Account and footer newsletter tests |
-| `reviews` | Product review tests |
-| `contactForm` | Contact form test |
-| `categoryFilters` | Layered-navigation attribute filter test |
-| `fixedRateShipping` | Price calculation and order flows that require fixed-rate shipping |
-| `checkMoneyOrder` | Payment and order flows that require check/money-order |
-| `visualRegression` | Visual regression tests; regular smoke tests remain enabled |
-
-Only the boolean value `false` disables a capability. Disabled tests remain visible in Playwright reports as skipped tests with a reason. Test names and tags remain available, so toggles can be combined with `--grep` and `--grep-invert` for one-off test selection.
-
-### Tags and Annotations
-
-Most tests have been provided with a tag. This allows the user to run specific groups of tests, or skip specific tests. For example, tests that check the functionality of coupon codes are provided with the tag ‘@coupon-code’. To run only these tests, use:
-
-```bash
-npx playwright test --grep @coupon-code
-```
-
-You can also run multiple tags with logic operators:
-
-```bash
-npx playwright test --grep "@coupon-code|@cart"
-```
-
-Use `--grep-invert` to run all tests **except** the tests with the specified tag. Playwright docs offer more information: [Playwright: Tag Annotations](https://playwright.dev/docs/test-annotations#tag-tests). The following command, for example, skips all tests with the tag ‘@coupon-code’.
-
-```bash
-npx playwright test --grep-invert @coupon-code
-```
-
 ## ✏️ Customizing the testing suite
 
-The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, create a copy of `login.page.ts` and place it `tests/poms/frontend/` and make your edits in this file. The next time you run the testing suite, it will automatically use these custom files.
+The newly created `tests` folder will become your base of operations. In here, you should use the same folder structure that you see in `base-tests`. For example, if your login page works slightly differently from the demo website version, the preferred approach is to **subclass** the packaged POM rather than copy it wholesale: place a `login.page.ts` in `tests/poms/frontend/` that extends the base class through the `@base/*` alias and overrides only the method or getter that differs. See [§ Conventions → Overriding a POM for your store](#overriding-a-pom-for-your-store) for the full pattern. The next time you run the testing suite, it will automatically use these custom files.
+
+Only fall back to a full copy of the packaged file when you need to rewrite a POM entirely — for example, when nearly every method differs. A full copy must still export the same symbol name as the packaged version, and stops receiving any future fixes made to that file in `base-tests/`.
 
 ### Module Imports
 
@@ -267,13 +263,19 @@ To keep the project structure clean and maintainable, we use **TypeScript path a
 
 #### Guidelines
 
-**Always use `@` imports** when importing from one of the core module folders, such as:
+**Always use `@` imports** when importing from one of the core module folders:
 
-- `@poms` – Page Object Models
-- `@config` – Test configuration and data
-- `@utils` – Shared utility functions
-- `@steps` – Common step definitions
-- `@features` – (Optional) Gherkin feature files
+| Alias | Resolves to | Use for |
+|---|---|---|
+| `@config` | your `tests/config`, else the packaged `base-tests/config` | `UIReference`, `slugs`, `inputValues`, `outcomeMarker`, `toggles` |
+| `@poms/*` | your `tests/poms/*`, else `base-tests/poms/*` | Page Object Models |
+| `@utils/*` | your `tests/utils/*`, else `base-tests/utils/*` | Shared utility functions |
+| `@types/*` | your `tests/types/*`, else `base-tests/types/*` | TypeScript declarations |
+| `@base/*` | `base-tests/*` **only** | Reaching the packaged original from a file that overrides it — see [Overriding a POM for your store](#overriding-a-pom-for-your-store) |
+
+`@base/*` is the one alias that never resolves to your own `tests/` folder. That is deliberate: an override needs a way to name the file it is replacing, and `@poms/*` would resolve back to itself.
+
+> `tsconfig.json` also defines `@fixtures/*`, but neither `tests/fixtures/` nor `base-tests/fixtures/` exists, so importing from it will not resolve.
 
 **Correct Usage**
 
@@ -281,7 +283,7 @@ To keep the project structure clean and maintainable, we use **TypeScript path a
 import { UIReference } from '@config';
 import { requireEnv } from '@utils/env.utils';
 
-import HomePage from '@poms/frontend/home.page';
+import { HomePage } from '@poms/frontend/home.page';
 ```
 
 **Wrong Usage**
@@ -291,7 +293,7 @@ import HomePage from '@poms/frontend/home.page';
 import { UIReference } from '../config';
 import { requireEnv } from '../utils/env.utils';
 
-import HomePage from '../poms/frontend/home.page';
+import { HomePage } from '../poms/frontend/home.page';
 ```
 
 ---
@@ -425,7 +427,7 @@ Define locators as `get` accessors rather than assigning them in the constructor
 **Correct Usage**
 
 ```ts
-export class BaseAccountPage {
+export class AccountPage {
   constructor(public readonly page: Page) {}
 
   get genericSaveButton(): Locator {
@@ -438,7 +440,7 @@ export class BaseAccountPage {
 
 ```ts
 // ❌ Don't build locators eagerly in the constructor
-export class BaseAccountPage {
+export class AccountPage {
   readonly genericSaveButton: Locator;
 
   constructor(public readonly page: Page) {
@@ -519,21 +521,72 @@ await expect(this.page.getByRole('alert').filter(
 
 Also give each notification its own marker in `outcome-markers.json`. Reusing a marker from a different flow looks like deduplication but breaks silently: the cart message reads "You added &lt;product&gt;" while the comparison message reads "You added **product** &lt;product&gt; to the comparison list.", so a shared marker matches neither everywhere.
 
+### Overriding a POM for your store
+
+Sometimes you only need to change one method of a packaged POM — not the whole
+file. Rather than copying `login.page.ts` into your own `tests/` and
+maintaining a full duplicate, subclass it and override just the part that
+differs.
+
+A file you place in `tests/poms/` completely replaces the packaged
+`base-tests/` file of the same name, so it must export the same symbol name.
+Reach the packaged version through the `@base/*` alias, which always points at
+the original file regardless of your override — importing from `@poms/*`
+instead would resolve back to your own file:
+
+```ts
+// tests/poms/frontend/login.page.ts
+import { LoginPage as BaseLoginPage } from '@base/poms/frontend/login.page';
+
+export class LoginPage extends BaseLoginPage {
+  // only what differs for this store
+  async login(email: string, password: string) {
+    // custom implementation
+  }
+}
+```
+
+`npm run verify:seam` checks the suite's own override *mechanism* against a
+throwaway fixture — it does not read your `tests/` folder or your
+`tsconfig.json`, so it cannot confirm that *your* override resolves. For that,
+run `npx tsc --noEmit` and `npx playwright test --list` in your own project and
+confirm your override's file shows up where you expect.
+
+---
+
+## Contributing
+
+This package, and therefore the testing suite, is part of our open-source initiative to create an extensive library of end-to-end tests for Magento 2 stores. Do you want to help? Check out the [elgentos Magento 2 Playwright repo on Github](https://github.com/elgentos/magento2-playwright).
+
+When working on the suite itself, these scripts are available:
+
+| Command | Purpose |
+|---|---|
+| `npm run lint` | ESLint over the whole project |
+| `npm run typecheck` | `tsc --noEmit`; run `node build.js` first so `base-tests/` is current |
+| `npm run format` | Prettier write; `npm run format:check` to verify only |
+| `npm run verify:seam` | Verifies the POM override mechanism (see below) |
+
+`npm run verify:seam` builds a throwaway consumer-shaped fixture in a temp dir and checks that a `tests/` file shadows its `base-tests/` counterpart, can extend it through `@base/*`, and is picked up when another POM composes it. **It is not part of CI** — run it locally before merging any change to a `paths` entry, a POM's class name or export style, a member's visibility, or the Playwright version.
+
+That last trigger matters most: the override mechanism relies on Playwright resolving `paths` arrays last-match-wins, which is undocumented upstream, and this check is the only thing that would catch a change to it.
+
 ---
 
 ## Troubleshooting imports
 
-If an `@` import doesn’t work, make sure your local `tsconfig.json` matches the one provided by the npm package.
+If an `@` import doesn’t work, make sure your local `tsconfig.json` matches the one provided by the npm package (`tsconfig.example.json`).
+
+**Upgrading from 6.x and a POM override won't resolve?** Check for the `@base/*` alias first. `build.js` never overwrites an existing `tsconfig.json`, so upgrading the package does not add it — it has to be added by hand. Without it, `tsc` reports `TS2307: Cannot find module '@base/…'` and Playwright fails at collection with a module-not-found error. See [Migrating from 6.x](#-migrating-from-6x), step 2.
 
 ---
 
-## How to help
-
-This package, and therefore the testing suite, is part of our open-source initiative to create an extensive library of end-to-end tests for Magento 2 stores. Do you want to help? Check out the [elgentos Magento 2 Playwright repo on Github](https://github.com/elgentos/magento2-playwright).
-
 ## Scenarios
 
-Up-to-date as of the `[Unreleased]` CHANGELOG entry.
+<details>
+<summary>Every test currently in the suite (click to expand)</summary>
+
+Up-to-date as of the `7.0.0` CHANGELOG entry.
 
 | Spec file            | Group                              | Test                                                                              |
 |----------------------|------------------------------------|-----------------------------------------------------------------------------------|
@@ -610,11 +663,22 @@ Up-to-date as of the `[Unreleased]` CHANGELOG entry.
 | search.spec.ts       | Search functionality               | :heavy_check_mark: Search_query_returns_multiple_results                          |
 |                      |                                    | :heavy_check_mark: User_can_find_a_specific_product_and_navigate_to_its_page      |
 |                      |                                    | :heavy_check_mark: No_results_message_is_shown_for_unknown_query                  |
+| accessibility.spec.ts | Accessibility Tests: EEA compliance | :heavy_check_mark: homepage_passes_wcag2a_scan                                   |
+|                      |                                    | :heavy_check_mark: plppage_passes_wcag2a_scan                                     |
+|                      |                                    | :heavy_check_mark: pdppage_passes_wcag2a_scan                                     |
+|                      |                                    | :heavy_check_mark: cartpage_passes_wcag2a_scan                                    |
 | init.setup.ts        | Setting up the testing environment | :heavy_check_mark: Disable_login_captcha_and_enable_multiple_login                |
 |                      |                                    | :heavy_check_mark: Set_coupon_codes                                               |
 |                      |                                    | :heavy_check_mark: Create_test_accounts                                           |
 
+</details>
+
+---
+
 ## Roadmap
+
+<details>
+<summary>Planned tests, indicative priorities (click to expand)</summary>
 The list below shows tests that will be written in the future. The list is subject to change and priorities/names are merely indicative.
 
 | Spec file            | Group                 | Test                                                        | Priority |
@@ -661,3 +725,5 @@ The list below shows tests that will be written in the future. The list is subje
 | cmspages.spec.ts     | General               | Default_404_is_shown_on_nonexistent_url                     | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_missing_field                 | Medium   |
 | contact.spec.ts      | General               | Form_cannot_be_submitted_with_incorrect_emailaddress_format | Medium   |
+
+</details>

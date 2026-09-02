@@ -7,6 +7,10 @@
 		"allowSyntheticDefaultImports": true,
 		"resolveJsonModule": true,
 		"paths": {
+			// Single candidate: the packaged base layer. Store overrides in tests/
+			// import their parent through this, since @poms/* would resolve to
+			// themselves. Never add a tests/ candidate here.
+			"@base/*": ["./base-tests/*"],
 			"@config": [
 				"./base-tests/config",
 				"./tests/config" // keep this for gitlab and when index.ts needs to be changed.

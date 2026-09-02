@@ -73,6 +73,7 @@ Defined in `tsconfig.json`. Always use these instead of relative paths:
 | `@poms/*` | `base-tests/poms/*` or `tests/poms/*` |
 | `@types/*` | `base-tests/types/*` or `tests/types/*` |
 | `@fixtures/*` | `base-tests/fixtures/*` or `tests/fixtures/*` |
+| `@base/*` | `base-tests/*` only. This is how a `tests/` override imports the packaged class it extends — `@poms/*` would resolve back to the override itself. |
 
 ## Authentication & Fixtures
 
@@ -96,35 +97,95 @@ import { test, expect } from '@playwright/test';
 ## Page Object Model Pattern
 
 POMs live in `poms/frontend/` and `poms/admin/`. Each POM:
-- Takes a `Page` in its constructor.
-- Defines locators as `readonly` properties using config values (never hardcoded strings).
+- Takes a `Page` via `constructor(public readonly page: Page) {}`.
+- Defines locators as `get` accessors using config values (never hardcoded strings), built lazily rather than assigned in the constructor.
 - Exposes action methods (e.g., `login()`, `addToCart()`).
 - Uses `UIReference` for element labels and `slugs` for navigation.
+- Is a **named export**, using the unprefixed class name (`LoginPage`, not `BaseLoginPage`) — no default export.
 
-Example:
+Example (see `tests/poms/frontend/login.page.ts` for the real file this is based on):
 ```typescript
 import { UIReference, slugs } from '@config';
+import type { Locator, Page } from '@playwright/test';
 
-class LoginPage {
-  readonly page: Page;
-  readonly loginEmailField: Locator;
+export class LoginPage {
+  constructor(public readonly page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-    this.loginEmailField = page.getByRole('textbox', {
-      name: UIReference.credentials.emailFieldLabel, exact: true
+  get loginEmailField(): Locator {
+    return this.page.getByRole('textbox', {
+      name: UIReference.text.shared.forms.email, exact: true
     });
   }
 
   async login(email: string, password: string) {
-    await this.page.goto(slugs.account.loginSlug);
+    await this.page.goto(slugs.frontend.account.login);
     // ...
   }
 }
-export default LoginPage;
 ```
 
 Some POMs extend `MagewireUtils` (for pages with Hyva Magewire reactivity) to get `waitForMagewireRequests()`.
+
+## Overriding a POM in a store
+
+To change one method, subclass instead of copying the file. A file in
+`tests/poms/` completely replaces the `base-tests/` file of the same name, so it
+must export the same symbol name — and it reaches its parent through `@base/*`,
+never through `@poms/*` (which would resolve to itself).
+
+```typescript
+// tests/poms/frontend/login.page.ts
+import { LoginPage as BaseLoginPage } from '@base/poms/frontend/login.page';
+
+export class LoginPage extends BaseLoginPage {
+  // only what differs for this store
+  async login(email: string, password: string) {
+    // custom implementation
+  }
+}
+```
+
+Rules:
+
+- Export the **same name** the base file exports. Specs and other POMs import
+  that name; renaming it breaks them.
+- Import the parent from `@base/*`. This is the one alias that always points at
+  the packaged base layer.
+- Locators are `get` accessors, so a subclass can override one by redeclaring
+  the getter, optionally reusing `super.someGetter`.
+- Cross-POM references need nothing special: a base POM doing
+  `new MainMenuPage(this.page)` resolves through `@poms/*` and therefore picks
+  up a store's override automatically.
+
+### Two resolution quirks worth knowing
+
+`tsc` resolves a `paths` array first-match; Playwright resolves it **last**-match.
+The arrays are ordered base-first so Playwright picks `tests/` — **do not
+"fix" the ordering**, it is deliberate. Consequences:
+
+- A stale `base-tests/` makes `npx tsc --noEmit` report errors that do not
+  affect a test run. Run `node build.js` first.
+- IDE go-to-definition follows `tsc`, so it lands on the base copy while the
+  runtime uses the store copy.
+
+### Verifying the seam — run this locally
+
+The override mechanism is covered by `npm run verify:seam`, which builds a
+consumer-shaped fixture in a temp dir and checks that a `tests/` file shadows
+its `base-tests/` counterpart, can extend it, and is picked up when another POM
+composes it.
+
+**It does not run in CI — it is a local pre-merge check, and nothing enforces
+it.** Run it, and make sure it prints `PASS`, whenever you change any of:
+
+- a `paths` entry in `tsconfig.json` or `tsconfig.example.json`
+- a POM's class name, or its export style
+- a POM member's visibility (`private` / `protected` / `public`)
+- the Playwright version
+
+That last one matters most. The whole mechanism rests on Playwright resolving
+`paths` arrays last-match-wins, which is undocumented upstream and could change
+in a patch release. This harness is the only thing that would catch it.
 
 ## Test Spec Patterns
 
@@ -135,7 +196,7 @@ import { test } from '@utils/fixtures.utils';
 import { test as base, expect } from '@playwright/test';
 
 import { outcomeMarker, inputValues } from '@config';
-import LoginPage from '@poms/frontend/login.page';
+import { LoginPage } from '@poms/frontend/login.page';
 
 base('Test_name_uses_underscores', { tag: '@hot' }, async ({ page, browserName }) => {
   const loginPage = new LoginPage(page);
@@ -169,7 +230,8 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 - **Locator strategy:** Prefer `page.getByRole()` with config labels. Fall back to `page.locator()` with a config selector only when roles don't work.
 - **Test names:** Use `Underscored_names_describing_the_scenario`.
 - **Files end with a newline**, no trailing whitespace.
-- **Default exports** for POM classes.
+- **Named exports** for POM classes, using the unprefixed name (`LoginPage`, not `BaseLoginPage`). Every layer exports the same name — that is what makes overrides work.
+- **Never add `instanceof`, `.constructor`, or `Object.getPrototypeOf` checks on POMs.** A base POM and a store's override are separate classes from separate modules, so identity comparisons across them are unreliable by construction.
 - **Use path aliases** (`@config`, `@poms/*`, etc.), never relative paths for cross-directory imports.
 - **Use `.press("Enter")` instead of `.click()`** on submit buttons to avoid WebKit issues.
 

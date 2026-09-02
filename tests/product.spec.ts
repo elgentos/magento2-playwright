@@ -3,14 +3,14 @@
 import { test } from '@playwright/test';
 import { UIReference, slugs, toggles } from '@config';
 
-import { BaseProductPage } from '@poms/frontend/product.page';
-import { BaseLoginPage } from '@poms/frontend/login.page';
+import { ProductPage } from '@poms/frontend/product.page';
+import { LoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
 test.describe('Product page tests', { tag: '@product' }, () => {
 	test('Add_product_to_compare', { tag: '@cold' }, async ({ page }) => {
 		test.skip(toggles.compare === false, 'Disabled by test toggle: compare');
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.addProductToCompare(
 			UIReference.text.frontend.product.simpleProduct,
 			slugs.frontend.product.simple,
@@ -28,13 +28,13 @@ test.describe('Product page tests', { tag: '@product' }, () => {
 			const user = `playwright+${id}@elgentos.nl`;
 			const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-			const loginPage = new BaseLoginPage(page);
+			const loginPage = new LoginPage(page);
 			await loginPage.goToLoginPage();
 			await loginPage.login(user, password);
 		});
 
 		await test.step('Add product to wishlist', async () => {
-			const productPage = new BaseProductPage(page);
+			const productPage = new ProductPage(page);
 			await productPage.addProductToWishlist(
 				UIReference.text.frontend.product.simpleProduct,
 				slugs.frontend.product.simple,
@@ -48,7 +48,7 @@ test.describe('Product page tests', { tag: '@product' }, () => {
 	 */
 	test('Leave_a_product_review', { tag: '@cold' }, async ({ page }) => {
 		test.skip(toggles.reviews === false, 'Disabled by test toggle: reviews');
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.leaveProductReview(
 			UIReference.text.frontend.product.simpleProduct,
 			slugs.frontend.product.simple,
@@ -60,7 +60,7 @@ test.describe('Product page tests', { tag: '@product' }, () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
 	test('Open_pictures_in_lightbox_and_scroll', async ({ page }) => {
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.openLightboxAndScrollThrough(
 			UIReference.text.frontend.product.configurableProduct,
 			slugs.frontend.product.configurable,
@@ -73,7 +73,7 @@ test.describe('Product page tests', { tag: '@product' }, () => {
 	 */
 	test('Change_number_of_reviews_shown_on_product_page', async ({ page }) => {
 		test.skip(toggles.reviews === false, 'Disabled by test toggle: reviews');
-		const productPage = new BaseProductPage(page);
+		const productPage = new ProductPage(page);
 		await productPage.changeReviewCountAndVerify(
 			UIReference.text.frontend.product.simpleProduct,
 			slugs.frontend.product.simple,

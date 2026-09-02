@@ -5,7 +5,7 @@ import { UIReference, outcomeMarker } from '@config';
 import { faker } from '@faker-js/faker';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseFooter {
+export class Footer {
 	constructor(public readonly page: Page) {}
 
 	// ==============================================

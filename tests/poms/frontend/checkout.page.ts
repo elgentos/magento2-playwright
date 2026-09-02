@@ -7,7 +7,7 @@ import { slugToRegex } from '@utils/url.utils';
 import MagewireUtils from '@utils/magewire.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseCheckoutPage extends MagewireUtils {
+export class CheckoutPage extends MagewireUtils {
 	constructor(public readonly page: Page) {
 		super(page);
 	}
@@ -208,7 +208,7 @@ export class BaseCheckoutPage extends MagewireUtils {
 	 * and click again.
 	 * @param attempts {number} - how many times to submit before giving up.
 	 */
-	private async submitOrder(attempts: number = 3) {
+	protected async submitOrder(attempts: number = 3) {
 		const requestWindow = 2000; // a registered click posts well inside this
 		const successUrl = slugToRegex(slugs.frontend.checkout.success);
 
