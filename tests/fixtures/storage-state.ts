@@ -91,12 +91,22 @@ export function filterConsentCookies(
 		return [];
 	}
 
-	return (state.cookies ?? []).filter(
-		(cookie) =>
-			!VOLATILE_COOKIE_NAMES.has(cookie.name) &&
-			typeof cookie.domain === 'string' &&
-			cookie.domain.replace(/^\./, '').endsWith(firstPartyHost),
-	);
+	return (state.cookies ?? []).filter((cookie) => {
+		if (VOLATILE_COOKIE_NAMES.has(cookie.name) || typeof cookie.domain !== 'string') {
+			return false;
+		}
+
+		/**
+		 * A cookie is ours when its domain IS the storefront host, or is a parent
+		 * of it — CMPs commonly set the decision on the registrable domain
+		 * (`.example.com` for `shop.example.com`). A bare
+		 * `strippedDomain.endsWith(firstPartyHost)` gets this wrong in both
+		 * directions: it drops that parent-domain cookie, and it keeps an
+		 * unrelated `evilexample.com` when the host is `example.com`.
+		 */
+		const domain = cookie.domain.replace(/^\./, '');
+		return domain === firstPartyHost || firstPartyHost.endsWith(`.${domain}`);
+	});
 }
 
 /**

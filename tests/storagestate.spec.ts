@@ -65,6 +65,24 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies.map((c) => c.name)).toEqual(['cmpconsent']);
 	});
 
+	test('keeps a consent cookie set on the parent domain', async () => {
+		const cookies = filterConsentCookies(
+			{ cookies: [cookie('CookieConsent', '.example.com')] },
+			'https://shop.example.com/',
+		);
+
+		expect(cookies.map((c) => c.name)).toEqual(['CookieConsent']);
+	});
+
+	test('drops a domain that merely shares a suffix with the host', async () => {
+		const cookies = filterConsentCookies(
+			{ cookies: [cookie('CookieConsent', 'evilexample.com')] },
+			'https://example.com/',
+		);
+
+		expect(cookies).toEqual([]);
+	});
+
 	test('returns no cookies when the first-party host cannot be derived', async () => {
 		const cookies = filterConsentCookies(
 			{ cookies: [cookie('CookieConsent', 'shop.example.com')] },
