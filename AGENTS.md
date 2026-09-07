@@ -15,13 +15,15 @@ Also note that this is an open-source project. The tool is downloaded as an npm 
 │   ├── poms/              # Page Object Models (frontend/ and admin/)
 │   ├── utils/             # Utility modules
 │   ├── types/             # TypeScript type definitions
+│   ├── fixtures/          # Storage-state paths + consent-seed reader
 │   └── *.spec.ts          # Test specifications
 ├── tests/                 # Customization layer (EDIT HERE)
 │   ├── config/            # Config overrides (deep-merged with base-tests)
 │   ├── poms/              # POM overrides
 │   ├── utils/             # Utility overrides
+│   ├── fixtures/          # Fixtures overrides
 │   └── *.spec.ts          # Test overrides and additions
-├── .auth/                 # Per-worker auth storage (worker_0.json..worker_5.json)
+├── .auth/                 # consentCookies.json + per-project worker auth files
 ├── playwright.config.ts   # Playwright configuration
 ├── tsconfig.json          # Path aliases (@config, @utils/*, @poms/*, etc.)
 ├── .env                   # Environment variables
@@ -77,22 +79,45 @@ Defined in `tsconfig.json`. Always use these instead of relative paths:
 
 ## Authentication & Fixtures
 
-Tests that require a logged-in user import `test` from `@utils/fixtures.utils` instead of `@playwright/test`:
+`@utils/fixtures.utils` exports two test objects. Every storefront spec imports
+one of them — never `@playwright/test` directly — because both fold the
+cookie-consent decision captured by `globalSetup` into their storage state.
 
 ```typescript
-import { test } from '@utils/fixtures.utils';
+// Needs a logged-in customer:
+import { test, expect } from '@utils/fixtures.utils';
+
+// Runs as a visitor:
+import { guestTest as test, expect } from '@utils/fixtures.utils';
+
+// A file with both: import both and use guestTest.describe(...) for the guest group.
+import { test, guestTest, expect } from '@utils/fixtures.utils';
 ```
 
-This custom fixture:
-- Assigns each Playwright worker a unique account (`playwright_user_{id}@elgentos.nl`).
-- Stores auth state in `.auth/worker_{id}.json`.
-- Logs in once per worker (not per test) and reuses the session.
-- Validates existing sessions before reusing them.
+Never write `test.use({ storageState: { cookies: [], origins: [] } })` to drop
+authentication: it drops the consent decision too, and `test.use` values are
+evaluated during collection, before `globalSetup` has written the seed. Use
+`guestTest` instead.
 
-Tests that don't need authentication import directly from `@playwright/test`:
-```typescript
-import { test, expect } from '@playwright/test';
-```
+The authenticated object:
+- Logs in as a pre-provisioned account chosen by worker index
+  (`playwright+{parallelIndex}@elgentos.nl`, created by `init.setup.ts`).
+- Stores auth state in `.auth/{projectName}/worker_{parallelIndex}.json`, so
+  chromium, firefox and webkit never share a *state file*. They do still share
+  the Magento *customer* at a given index, which is safe because no spec
+  mutates the shared login — `account.spec.ts` provisions its own throwaway
+  account for credential changes.
+- Logs in once per worker, validates the session before reusing the file, and
+  rebuilds it if the consent cookies are missing.
+- Re-authenticates inline via the `_authGuard` auto-fixture if a session dies
+  mid-run.
+
+`@fixtures/storage-state` owns every path involved (`.auth/consentCookies.json`
+and the worker files) and the consent-seed reader. Both `global-setup.ts` and
+`fixtures.utils.ts` import it, so overriding only one of them in a store's
+`tests/` cannot leave a writer and a reader pointing at different directories.
+Set `COOKIE_CONSENT_CMP_HOST` in `.env` (e.g. `consentmanager.net`) to have the
+auth fixture block the CMP script outright while it logs in.
 
 ## Page Object Model Pattern
 
@@ -216,7 +241,8 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 
 | Module | Purpose |
 |---|---|
-| `fixtures.utils.ts` | Worker-scoped auth fixture |
+| `fixtures.utils.ts` | `test` (per-worker auth) and `guestTest` (consent only) |
+| `../fixtures/storage-state.ts` | Storage-state paths + consent-seed reader |
 | `env.utils.ts` | `requireEnv()` - loads `.env` vars, throws if missing |
 | `apiClient.utils.ts` | Magento REST API client with token management |
 | `magewire.utils.ts` | Monitors Magewire requests, waits for DOM idle |

@@ -35,6 +35,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   +import { AdminLogin } from '@poms/admin/adminlogin.page';
   ```
 
+### Fixtures
+
+- `@utils/fixtures.utils` now exports `guestTest` alongside `test`. Both carry the
+  cookie-consent decision captured by `globalSetup`, which was previously written
+  to `consentCookies.json` and never read. Specs that dropped authentication with
+  `test.use({ storageState: { cookies: [], origins: [] } })` must switch to
+  `guestTest` — the old form also drops the consent cookies.
+- Worker auth state moved from `test-results/.auth/{parallelIndex}.json` to
+  `.auth/{projectName}/worker_{parallelIndex}.json`: it survives Playwright
+  clearing `test-results/`, and chromium/firefox/webkit no longer share one file
+  and one Magento account per index.
+- New `@fixtures/*` layer (`tests/fixtures/storage-state.ts`) owns those paths and
+  the consent-seed reader.
+- `globalSetup` caps consent capture at 30s and can no longer abort the run.
+- New optional `.env` variable `COOKIE_CONSENT_CMP_HOST`.
+
 ### Added
 
 - `@base/*` path alias, so a POM override in `tests/` can extend its packaged

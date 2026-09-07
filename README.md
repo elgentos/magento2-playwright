@@ -29,6 +29,7 @@ If you’re simply looking to install, check the [prerequisites](#prerequisites)
     - [Element identifiers](#element-identifiers)
     - [Slugs](#slugs)
     - [Examples](#examples)
+- [Authentication & Fixtures](#-authentication--fixtures)
 - [Conventions](#-conventions)
     - [Expose locators through getters](#expose-locators-through-getters)
     - [Only group locators you use together](#only-group-locators-you-use-together)
@@ -275,7 +276,7 @@ To keep the project structure clean and maintainable, we use **TypeScript path a
 
 `@base/*` is the one alias that never resolves to your own `tests/` folder. That is deliberate: an override needs a way to name the file it is replacing, and `@poms/*` would resolve back to itself.
 
-> `tsconfig.json` also defines `@fixtures/*`, but neither `tests/fixtures/` nor `base-tests/fixtures/` exists, so importing from it will not resolve.
+> `tsconfig.json` also defines `@fixtures/*`, resolving to your `tests/fixtures`, else the packaged `base-tests/fixtures`. It currently holds one file, `storage-state.ts`, which owns every storage-state path the suite uses and the cookie-consent seed reader — see [🔐 Authentication & Fixtures](#-authentication--fixtures).
 
 **Correct Usage**
 
@@ -412,6 +413,90 @@ test('user_can_register_an_account', async ({ page }) => {
 test('User can complete the checkout process', async ({ page }) => {
   // Implementation details
 });
+```
+
+---
+
+## 🔐 Authentication & Fixtures
+
+`@utils/fixtures.utils` exports two test objects. Every storefront spec should import one of
+them — never `@playwright/test` directly — because both fold the cookie-consent decision
+captured by `globalSetup` into their storage state, so the consent banner never covers up
+whatever the spec is about to click.
+
+| Test object | Storage state | Use for |
+|---|---|---|
+| `test` | Per-worker authenticated session, plus the consent cookies | Specs that need a logged-in customer |
+| `guestTest` | Consent cookies only, no login | Specs that run as a visitor |
+
+```ts
+// Needs a logged-in customer:
+import { test, expect } from '@utils/fixtures.utils';
+
+// Runs as a visitor:
+import { guestTest as test, expect } from '@utils/fixtures.utils';
+
+// A file with both: import both, and use guestTest.describe(...) for the guest group.
+import { test, guestTest, expect } from '@utils/fixtures.utils';
+```
+
+**Never** drop authentication with `test.use({ storageState: { cookies: [], origins: [] } })`.
+Besides logging the visitor out, it discards the consent cookies too — `test.use` values are
+evaluated during Playwright's collection phase, which runs *before* `globalSetup` has written
+the consent seed, so there is no way for a plain `test.use` override to include it. `guestTest`
+exists for exactly this reason: its storage state is built inside a fixture, which runs after
+collection, once the seed is on disk.
+
+### `test`: per-worker authentication
+
+- Logs in as a pre-provisioned account chosen by worker index
+  (`playwright+{parallelIndex}@elgentos.nl`, created by `init.setup.ts`).
+- Stores auth state at `.auth/{projectName}/worker_{parallelIndex}.json`, so chromium,
+  firefox and webkit each keep their own state *file*. They do still share the same Magento
+  *account* at a given worker index — that's safe because no spec mutates the shared login;
+  `account.spec.ts` provisions its own throwaway account whenever it needs to change
+  credentials.
+- Logs in once per worker, validates the cached session — and that it still carries the
+  consent cookies — before reusing the file, and rebuilds it otherwise.
+- Re-authenticates inline mid-run via an `_authGuard` auto-fixture if a session dies between
+  fixture setup and the test that uses it.
+
+### `guestTest`: consent only
+
+`guestTest`'s storage state carries the consent cookies and nothing else, with no dependency
+on the login fixture, so requesting it never triggers a login. Reach for it in any spec, or
+`describe` block, that should run as an anonymous visitor.
+
+### The `.auth/` layout
+
+| Path | Contents |
+|---|---|
+| `.auth/consentCookies.json` | The consent-cookie seed captured once by `globalSetup` |
+| `.auth/{projectName}/worker_{parallelIndex}.json` | One authenticated storage state per (browser project, worker) |
+
+`.auth/` lives outside `test-results/`, which Playwright clears at the start of every run, so
+cached logins survive between runs. `@fixtures/storage-state` is the single owner of both
+paths: `global-setup.ts` and `fixtures.utils.ts` both import them from there, so overriding
+only one of those two files in your `tests/` can never leave a writer and a reader pointing at
+different directories.
+
+### Cookie-consent management (CMP) hosts
+
+If your store's CMP renders an overlay that can cover the login form, set
+`COOKIE_CONSENT_CMP_HOST` in `.env` to its host (e.g. `consentmanager.net`). When set, the
+`test` object aborts requests to that host in the throwaway browser context it uses to log in,
+so the banner can never render there in the first place. It's unset by default and has no
+effect on existing installs that don't set it.
+
+### ESLint: register `guestTest` as a test alias
+
+`eslint-plugin-playwright` only recognizes a test object literally named `test`. If your
+project lints its `tests/` directory with `playwright.configs['flat/recommended']`, add this
+setting to the same config block, or every `expect()` inside a `guestTest.describe(...)` group
+is reported as `playwright/no-standalone-expect`:
+
+```js
+settings: { playwright: { globalAliases: { test: ['guestTest'] } } },
 ```
 
 ---
