@@ -483,6 +483,18 @@ different directories.
 
 ### Cookie-consent management (CMP) hosts
 
+`global-setup.ts` matches the consent banner by text — `UIReference.text.frontend.common.cookieConsentTitle`
+and `UIReference.text.shared.buttons.cookieReject`, which default to consentmanager.net's English
+labels ("Consent to Cookies & Data" and "Reject all"). If your store runs a different CMP (Cookiebot,
+Cookiefirst, …) or the same CMP in another language, override both strings in your own
+`tests/config/element-identifiers.json` to match your banner's heading and reject-button labels. If
+they don't match, `globalSetup` spends 30s retrying, logs a warning, and the suite runs with no
+consent decision — this is the first thing to change when adopting this pattern on a different store.
+
+Note also that the seed carries **cookies only**. A CMP that persists its decision in `localStorage`
+instead of (or in addition to) cookies will not be captured, which makes this feature a no-op for
+that store — check where your CMP stores its decision before relying on this.
+
 If your store's CMP renders an overlay that can cover the login form, set
 `COOKIE_CONSENT_CMP_HOST` in `.env` to its host (e.g. `consentmanager.net`). When set, the
 `test` object aborts requests to that host in the throwaway browser context it uses to log in,
