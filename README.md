@@ -489,10 +489,12 @@ labels ("Consent to Cookies & Data" and "Reject all"). If your store runs a diff
 Cookiefirst, …) or the same CMP in another language, override both strings in your own
 `tests/config/element-identifiers.json` to match your banner's heading and reject-button labels.
 
-If the banner is not present at all — a local Magento install or a review env with the CMP script
-blocked — `globalSetup` detects this within ~5s, logs it informatively, and continues immediately
-with an empty seed; tests run without a consent decision, which is correct because there is no banner
-to intercept their clicks either.
+If the banner is not present at all — a local Magento install with no CMP configured, or an
+environment where the third-party CMP script cannot load (network policy, CSP, a filtering resolver) —
+`globalSetup` detects this within ~5s, logs it informatively, and continues immediately with an empty
+seed; tests run without a consent decision, which is correct because there is no banner to intercept
+their clicks either. `COOKIE_CONSENT_CMP_HOST` plays no part in this: that route-block applies only
+to the throwaway context the auth fixture logs in with.
 
 If a banner IS present but the label strings do not match it, `globalSetup` retries for up to 30s
 before logging a warning and running the suite with no consent decision — this is the first thing to

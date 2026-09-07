@@ -67,7 +67,16 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 		const bannerAppeared = await heading
 			.waitFor({ state: 'visible', timeout: CONSENT_PROBE_MS })
 			.then(() => true)
-			.catch(() => false);
+			.catch((error: unknown) => {
+				// Only a timeout means "no banner here". Anything else — an ambiguous
+				// heading selector, a page error — is a real problem, and claiming
+				// "no CMP" would send the next person debugging in the wrong
+				// direction. Let the outer catch report it.
+				if (!(error instanceof Error) || error.name !== 'TimeoutError') {
+					throw error;
+				}
+				return false;
+			});
 
 		if (!bannerAppeared) {
 			console.log(

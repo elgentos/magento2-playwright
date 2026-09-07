@@ -123,11 +123,12 @@ auth fixture block the CMP script outright while it logs in.
 `UIReference.text.frontend.common.cookieConsentTitle` and
 `UIReference.text.shared.buttons.cookieReject` (consentmanager.net's English
 defaults) — a different CMP or language must override both in
-`tests/config/element-identifiers.json`. If no banner exists, `globalSetup`
-detects it in ~5s and continues with an empty seed; if a banner exists but the
-labels don't match, it retries for up to 30s. The seed carries cookies only
-(a CMP using `localStorage` will not be captured). See [README.md §
-Cookie-consent management (CMP) hosts](README.md#-authentication--fixtures) for
+`tests/config/element-identifiers.json`. If no banner exists (local install or
+network-level blocking), `globalSetup` detects it in ~5s and continues with an
+empty seed; if a banner exists but the labels don't match, it retries for up to
+30s. The seed carries cookies only (a CMP using `localStorage` will not be
+captured); `COOKIE_CONSENT_CMP_HOST` applies only to the auth fixture's context.
+See [README.md § Cookie-consent management (CMP) hosts](README.md#-authentication--fixtures) for
 details.
 
 ## Page Object Model Pattern
