@@ -55,15 +55,10 @@ async function blockConsentManager(context: BrowserContext): Promise<void> {
  */
 export const guestTest = baseTest.extend({
 	// Resolved here, at test-execution time — after globalSetup wrote the seed.
-	// Spread rather than passed straight through: @fixtures/storage-state's
-	// StorageState type declares `origins` without the (always-empty here)
-	// `localStorage` field that Playwright's own storageState type requires: a
-	// fresh `origins: []` literal here is contextually typed against that
-	// target and satisfies it, where the pre-typed return value would not.
 	// Empty destructuring is how Playwright detects this fixture has no
 	// dependencies (see file header) — it is not an unused-pattern mistake.
 	// eslint-disable-next-line no-empty-pattern
-	storageState: async ({}, use) => use({ ...guestStorageState(), origins: [] }),
+	storageState: async ({}, use) => use(guestStorageState()),
 });
 
 /** Authenticated test object (the default for specs that need a session). */

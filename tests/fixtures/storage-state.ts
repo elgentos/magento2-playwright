@@ -28,10 +28,21 @@ export type StorageStateCookie = {
 
 export type StorageState = {
 	cookies: StorageStateCookie[];
-	origins: { origin: string }[];
+	/**
+	 * Playwright's `storageState` option requires `localStorage` on every
+	 * origins entry. We never emit one — the consent decision is a cookie, so
+	 * this array is always empty — but the type has to match or
+	 * `use(guestStorageState())` will not assign to the option.
+	 */
+	origins: { origin: string; localStorage: { name: string; value: string }[] }[];
 };
 
-/** The shape actually found on disk: either field may be missing. */
+/**
+ * The shape actually found on disk: either field may be missing. `origins`
+ * deliberately does NOT require `localStorage` here — only `.origin` is ever
+ * read from it, and demanding the full Playwright shape would reject a seed
+ * that is otherwise perfectly usable.
+ */
 export type PartialStorageState = {
 	cookies?: StorageStateCookie[];
 	origins?: { origin: string }[];
