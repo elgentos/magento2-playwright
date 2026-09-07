@@ -47,6 +47,7 @@ class Install {
 			HTTP_AUTH_PASSWORD: { default: 'dev' },
 			MAGENTO_EXISTING_ACCOUNT_PASSWORD: { default: 'Test1234!' },
 			MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD: { default: 'Change1234!' },
+			COOKIE_CONSENT_CMP_HOST: { default: '' },
 		};
 
 		this.rl = readline.createInterface({
