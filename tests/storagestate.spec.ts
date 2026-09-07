@@ -35,7 +35,7 @@ const cookie = (name: string, domain: string) => ({
 });
 
 test.describe('filterConsentCookies', () => {
-	test('drops volatile session cookies', async () => {
+	test('drops volatile session cookies', () => {
 		const cookies = filterConsentCookies(
 			{
 				cookies: [
@@ -51,7 +51,7 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies.map((c) => c.name)).toEqual(['CookieConsent']);
 	});
 
-	test('drops third-party cookies and keeps leading-dot first-party domains', async () => {
+	test('drops third-party cookies and keeps leading-dot first-party domains', () => {
 		const cookies = filterConsentCookies(
 			{
 				cookies: [
@@ -65,7 +65,7 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies.map((c) => c.name)).toEqual(['cmpconsent']);
 	});
 
-	test('keeps a consent cookie set on the parent domain', async () => {
+	test('keeps a consent cookie set on the parent domain', () => {
 		const cookies = filterConsentCookies(
 			{ cookies: [cookie('CookieConsent', '.example.com')] },
 			'https://shop.example.com/',
@@ -74,7 +74,7 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies.map((c) => c.name)).toEqual(['CookieConsent']);
 	});
 
-	test('drops a domain that merely shares a suffix with the host', async () => {
+	test('drops a domain that merely shares a suffix with the host', () => {
 		const cookies = filterConsentCookies(
 			{ cookies: [cookie('CookieConsent', 'evilexample.com')] },
 			'https://example.com/',
@@ -83,7 +83,7 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies).toEqual([]);
 	});
 
-	test('returns no cookies when the first-party host cannot be derived', async () => {
+	test('returns no cookies when the first-party host cannot be derived', () => {
 		const cookies = filterConsentCookies(
 			{ cookies: [cookie('CookieConsent', 'shop.example.com')] },
 			undefined,
@@ -92,7 +92,7 @@ test.describe('filterConsentCookies', () => {
 		expect(cookies).toEqual([]);
 	});
 
-	test('falls back to the origins entry when no base URL is given', async () => {
+	test('falls back to the origins entry when no base URL is given', () => {
 		const cookies = filterConsentCookies(
 			{
 				cookies: [cookie('CookieConsent', 'shop.example.com')],
@@ -106,7 +106,7 @@ test.describe('filterConsentCookies', () => {
 });
 
 test.describe('readConsentState', () => {
-	test('degrades to an empty state for missing, empty and malformed seeds', async () => {
+	test('degrades to an empty state for missing, empty and malformed seeds', () => {
 		const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'consent-seed-'));
 
 		const missing = path.join(dir, 'missing.json');
@@ -122,7 +122,7 @@ test.describe('readConsentState', () => {
 		fs.rmSync(dir, { recursive: true, force: true });
 	});
 
-	test('reads a well-formed seed', async () => {
+	test('reads a well-formed seed', () => {
 		const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'consent-seed-'));
 		const file = path.join(dir, 'seed.json');
 		fs.writeFileSync(
@@ -137,7 +137,7 @@ test.describe('readConsentState', () => {
 });
 
 test.describe('paths', () => {
-	test('the consent seed and the worker states share one .auth directory', async () => {
+	test('the consent seed and the worker states share one .auth directory', () => {
 		const authDir = path.dirname(CONSENT_STATE_PATH);
 
 		expect(path.basename(authDir)).toBe('.auth');
@@ -146,11 +146,11 @@ test.describe('paths', () => {
 		);
 	});
 
-	test('worker states are scoped per project so browsers cannot collide', async () => {
+	test('worker states are scoped per project so browsers cannot collide', () => {
 		expect(workerAuthStatePath('firefox', 0)).not.toBe(workerAuthStatePath('webkit', 0));
 	});
 
-	test('guestStorageState carries the consent cookies and no origins', async () => {
+	test('guestStorageState carries the consent cookies and no origins', () => {
 		resetConsentCookieCache();
 		const state = guestStorageState();
 
