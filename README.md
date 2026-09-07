@@ -215,6 +215,7 @@ This major release moved setup from a tagged spec (`setup.spec.ts`) to a Playwri
 3. Add a `coupon.codes` block to your `tests/config/input-values.json`, keyed by uppercase browser name (e.g. `"CHROMIUM": "CHROMIUM321"`). One entry per browser project in your `playwright.config.ts`.
 4. Remove `MAGENTO_COUPON_CODE_CHROMIUM`, `_FIREFOX`, and `_WEBKIT` from your `.env` — they are no longer read.
 5. If you had a custom `tests/setup.spec.ts`, port its contents into a new `tests/init.setup.ts`.
+6. Add the `globalSetup` key from `playwright.config.example.ts` to your own `playwright.config.ts`, beside `outputDir`. `build.js` never overwrites an existing `playwright.config.ts`, so upgrading the package alone does not add this for you — it must be added by hand. Without it, the CMP "Reject all" decision is never captured and the consent banner can intercept clicks in every test.
 
 After these changes, `npx playwright test` runs setup automatically and you no longer need a separate `--grep "@setup"` invocation.
 
