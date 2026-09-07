@@ -212,25 +212,91 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 				name: UIReference.text.shared.buttons.login,
 			});
 
-			await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
-			await emailField.waitFor();
+			/**
+			 * The test's own trace does not cover this context, so dump the page
+			 * state into the report instead. Best-effort throughout: diagnostics
+			 * must never mask the real error.
+			 */
+			const dumpFailureState = async (error: unknown): Promise<void> => {
+				const label = `auth-fixture-worker-${id}`;
 
-			await emailField.fill(account.username);
-			await pwField.fill(account.password);
-			await loginButton.click();
+				try {
+					const info = test.info();
 
-			// Anchored: '/customer/account/' is a prefix of
-			// '/customer/account/login/', so an unanchored pattern matches while we
-			// are still on the login page and resolves instantly on a REJECTED
-			// login. slugToRegex's second argument appends '$'.
-			await page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
+					await info.attach(`${label}-screenshot.png`, {
+						body: await page.screenshot({ fullPage: true }),
+						contentType: 'image/png',
+					});
 
-			await expect(async () => {
-				await expect(
-					page.locator(UIReference.selectors.shared.pageTitle),
-					`Account page has the expected title`,
-				).toContainText(UIReference.text.frontend.account.title);
-			}).toPass();
+					// The headings list is the payload that matters for a greeting or
+					// translation mismatch: it shows the text that IS on the page next
+					// to the text we waited for.
+					await info.attach(`${label}-context.txt`, {
+						contentType: 'text/plain',
+						body: [
+							`account:  ${account.username}`,
+							`url:      ${page.url()}`,
+							`title:    ${await page.title()}`,
+							`headings: ${JSON.stringify(await page.getByRole('heading').allTextContents())}`,
+							`error:    ${error instanceof Error ? error.message : String(error)}`,
+						].join(`\n`),
+					});
+
+					await info.attach(`${label}-page.html`, {
+						body: await page.content(),
+						contentType: 'text/html',
+					});
+				} catch (dumpError) {
+					console.error(`[auth fixture] failed to capture failure state: ${String(dumpError)}`);
+				}
+			};
+
+			try {
+				await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
+				await emailField.waitFor();
+
+				await emailField.fill(account.username);
+				await pwField.fill(account.password);
+				await loginButton.click();
+
+				const loginErrorMessage = page.locator(UIReference.selectors.shared.errorMessage);
+
+				/**
+				 * Race the successful navigation against Magento's error message so
+				 * refused credentials fail fast and say why, instead of surfacing as
+				 * a bare timeout. Both branches swallow their own rejection, so the
+				 * loser of the race cannot raise an unhandled rejection.
+				 */
+				const outcome = await Promise.race([
+					page
+						.waitForURL(slugToRegex(slugs.frontend.account.overview, true))
+						.then(() => 'account' as const)
+						.catch(() => 'timeout' as const),
+					loginErrorMessage
+						.waitFor({ state: 'visible' })
+						.then(() => 'error' as const)
+						.catch(() => 'timeout' as const),
+				]);
+
+				if (outcome === 'error') {
+					const message = (await loginErrorMessage.textContent())?.trim();
+					throw new Error(
+						`Auth fixture could not log in as ${account.username}. ` +
+							`Magento returned: "${message}"`,
+					);
+				}
+
+				await expect(async () => {
+					await expect(
+						page.locator(UIReference.selectors.shared.pageTitle),
+						`Account page has the expected title`,
+					).toContainText(UIReference.text.frontend.account.title);
+				}).toPass();
+			} catch (error) {
+				await dumpFailureState(error);
+				await context.close();
+				throw error;
+			}
 
 			// Seed the consent decision into the saved state as well, so it is
 			// present for every test that reuses this file.
