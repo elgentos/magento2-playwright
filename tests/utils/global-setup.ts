@@ -57,7 +57,10 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 			await expect(rejectButton).toBeVisible();
 		}).toPass({ timeout: CONSENT_TIMEOUT_MS });
 
-		await rejectButton.click();
+		// Capped like every other step: Playwright's action timeout defaults to
+		// unlimited (the config sets no `actionTimeout`), so an overlay that
+		// intercepts the click would hang globalSetup until the CI wall clock.
+		await rejectButton.click({ timeout: CONSENT_TIMEOUT_MS });
 
 		// The CMP persists the decision asynchronously after the click. Wait for
 		// the banner to actually be dismissed before snapshotting, otherwise
