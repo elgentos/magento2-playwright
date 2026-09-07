@@ -247,7 +247,9 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 						contentType: 'text/html',
 					});
 				} catch (dumpError) {
-					console.error(`[auth fixture] failed to capture failure state: ${String(dumpError)}`);
+					console.error(
+						`[auth fixture] failed to capture failure state: ${String(dumpError)}`,
+					);
 				}
 			};
 
