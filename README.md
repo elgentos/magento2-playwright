@@ -487,9 +487,16 @@ different directories.
 and `UIReference.text.shared.buttons.cookieReject`, which default to consentmanager.net's English
 labels ("Consent to Cookies & Data" and "Reject all"). If your store runs a different CMP (Cookiebot,
 Cookiefirst, …) or the same CMP in another language, override both strings in your own
-`tests/config/element-identifiers.json` to match your banner's heading and reject-button labels. If
-they don't match, `globalSetup` spends 30s retrying, logs a warning, and the suite runs with no
-consent decision — this is the first thing to change when adopting this pattern on a different store.
+`tests/config/element-identifiers.json` to match your banner's heading and reject-button labels.
+
+If the banner is not present at all — a local Magento install or a review env with the CMP script
+blocked — `globalSetup` detects this within ~5s, logs it informatively, and continues immediately
+with an empty seed; tests run without a consent decision, which is correct because there is no banner
+to intercept their clicks either.
+
+If a banner IS present but the label strings do not match it, `globalSetup` retries for up to 30s
+before logging a warning and running the suite with no consent decision — this is the first thing to
+change when adopting this pattern on a different store.
 
 Note also that the seed carries **cookies only**. A CMP that persists its decision in `localStorage`
 instead of (or in addition to) cookies will not be captured, which makes this feature a no-op for

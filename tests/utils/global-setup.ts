@@ -15,14 +15,25 @@ import { getPlaywrightRequestConfig } from '../../playwrightRequestConfig';
 const CONSENT_TIMEOUT_MS = 30_000;
 
 /**
+ * How long to wait for the banner to exist at all before concluding this
+ * environment has no CMP. A local install or a review env with the CMP script
+ * blocked has no banner to capture, and should not pay the full retry budget
+ * to discover that. A banner that IS present but slow still gets
+ * CONSENT_TIMEOUT_MS below to become interactive.
+ */
+const CONSENT_PROBE_MS = 5_000;
+
+/**
  * Captures the CMP "Reject all" cookies once before the suite runs and persists
  * them as a Playwright storageState seed. Both test objects in
  * `@utils/fixtures.utils` fold that seed into their storage state, so the
  * consent banner never intercepts a click during a test.
  */
 export default async function globalSetup(_config: FullConfig): Promise<void> {
+	const hadExistingSeed = fs.existsSync(CONSENT_STATE_PATH);
+
 	fs.mkdirSync(path.dirname(CONSENT_STATE_PATH), { recursive: true });
-	if (!fs.existsSync(CONSENT_STATE_PATH)) {
+	if (!hadExistingSeed) {
 		fs.writeFileSync(CONSENT_STATE_PATH, JSON.stringify(EMPTY_STATE));
 	}
 
@@ -48,6 +59,24 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 		const rejectButton = page.getByRole('button', {
 			name: UIReference.text.shared.buttons.cookieReject,
 		});
+
+		// Fast path for environments with no CMP: if the banner does not exist at
+		// all, there is nothing to capture and no reason to spend the full retry
+		// budget finding out. Tests then run with an empty seed, which is correct
+		// here — there is no banner to intercept their clicks either.
+		const bannerAppeared = await heading
+			.waitFor({ state: 'visible', timeout: CONSENT_PROBE_MS })
+			.then(() => true)
+			.catch(() => false);
+
+		if (!bannerAppeared) {
+			console.log(
+				`[global-setup] No consent banner found within ${CONSENT_PROBE_MS}ms — ` +
+					`this environment appears to have no CMP, so there is nothing to capture. ` +
+					`Seed left at ${CONSENT_STATE_PATH}.`,
+			);
+			return;
+		}
 
 		// Wait for the banner to be fully rendered — both its heading and the
 		// reject button must be visible before we interact, otherwise the click
@@ -83,8 +112,10 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 		// then surface during a test.
 		const reason = error instanceof Error ? error.message : String(error);
 		console.warn(
-			`[global-setup] Consent capture skipped after ${CONSENT_TIMEOUT_MS}ms: ${reason.split('\n')[0]}. ` +
-				`Falling back to ${CONSENT_STATE_PATH} without consent cookies.`,
+			`[global-setup] Consent capture failed after ${CONSENT_TIMEOUT_MS}ms: ${reason.split('\n')[0]}. ` +
+				(hadExistingSeed
+					? `Leaving the existing seed at ${CONSENT_STATE_PATH} in place.`
+					: `Wrote an empty seed to ${CONSENT_STATE_PATH}; tests will run without a consent decision.`),
 		);
 		if (!fs.existsSync(CONSENT_STATE_PATH)) {
 			fs.writeFileSync(CONSENT_STATE_PATH, JSON.stringify(EMPTY_STATE));

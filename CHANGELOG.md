@@ -54,6 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - New `@fixtures/*` layer (`tests/fixtures/storage-state.ts`) owns those paths and
   the consent-seed reader.
 - `globalSetup` caps consent capture at 30s and can no longer abort the run.
+- `globalSetup` now detects a CMP-less environment in ~5s instead of spending the
+  full 30s retry budget, then continues immediately with an empty seed.
 - New optional `.env` variable `COOKIE_CONSENT_CMP_HOST`.
 
 ### Added
