@@ -30,6 +30,15 @@ import { getConsentCookies, guestStorageState, workerAuthStatePath } from '@fixt
 export * from '@playwright/test';
 
 /**
+ * Cap on each login step. Playwright's action and navigation timeouts default
+ * to unlimited (the config sets neither) and `toPass()` has no default timeout,
+ * so without this a login that never resolves — a CMP overlay swallowing the
+ * click, a renamed field — runs to the 60s test timeout, which aborts the
+ * fixture before `dumpFailureState` can attach anything.
+ */
+const AUTH_TIMEOUT_MS = 20_000;
+
+/**
  * Defence in depth for contexts this module builds itself: global-setup
  * deliberately degrades to an empty seed when consent capture fails, which
  * would put the banner back in front of the login button. The CMP plays no part
@@ -139,15 +148,21 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 					httpCredentials: getHttpCredentials(),
 				});
 
-				const page = await context.newPage();
-				await page.goto(slugs.frontend.account.overview, {
-					waitUntil: 'domcontentloaded',
-				});
+				try {
+					const page = await context.newPage();
+					await page.goto(slugs.frontend.account.overview, {
+						waitUntil: 'domcontentloaded',
+						timeout: AUTH_TIMEOUT_MS,
+					});
 
-				const loggedIn = !page.url().includes(slugs.frontend.account.login);
-
-				await context.close();
-				return loggedIn;
+					return !page.url().includes(slugs.frontend.account.login);
+				} catch {
+					// This is only a cache-validity probe: a transient failure means
+					// "not trustworthy, rebuild", never "fail every test in this worker".
+					return false;
+				} finally {
+					await context.close();
+				}
 			};
 
 			/**
@@ -255,7 +270,7 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 
 			try {
 				await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
-				await emailField.waitFor();
+				await emailField.waitFor({ timeout: AUTH_TIMEOUT_MS });
 
 				await emailField.fill(account.username);
 				await pwField.fill(account.password);
@@ -271,11 +286,13 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 				 */
 				const outcome = await Promise.race([
 					page
-						.waitForURL(slugToRegex(slugs.frontend.account.overview, true))
+						.waitForURL(slugToRegex(slugs.frontend.account.overview, true), {
+							timeout: AUTH_TIMEOUT_MS,
+						})
 						.then(() => 'account' as const)
 						.catch(() => 'timeout' as const),
 					loginErrorMessage
-						.waitFor({ state: 'visible' })
+						.waitFor({ state: 'visible', timeout: AUTH_TIMEOUT_MS })
 						.then(() => 'error' as const)
 						.catch(() => 'timeout' as const),
 				]);
@@ -288,12 +305,19 @@ export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: 
 					);
 				}
 
+				if (outcome === 'timeout') {
+					throw new Error(
+						`Auth fixture: login as ${account.username} neither reached the account ` +
+							`page nor produced an error within ${AUTH_TIMEOUT_MS}ms.`,
+					);
+				}
+
 				await expect(async () => {
 					await expect(
 						page.locator(UIReference.selectors.shared.pageTitle),
 						`Account page has the expected title`,
 					).toContainText(UIReference.text.frontend.account.title);
-				}).toPass();
+				}).toPass({ timeout: AUTH_TIMEOUT_MS });
 			} catch (error) {
 				await dumpFailureState(error);
 				await context.close();
