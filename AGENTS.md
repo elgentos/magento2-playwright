@@ -119,6 +119,15 @@ and the worker files) and the consent-seed reader. Both `global-setup.ts` and
 Set `COOKIE_CONSENT_CMP_HOST` in `.env` (e.g. `consentmanager.net`) to have the
 auth fixture block the CMP script outright while it logs in.
 
+`global-setup.ts` matches the CMP banner by the text in
+`UIReference.text.frontend.common.cookieConsentTitle` and
+`UIReference.text.shared.buttons.cookieReject` (consentmanager.net's English
+defaults) — a different CMP or language must override both in
+`tests/config/element-identifiers.json`, and the seed it captures carries
+cookies only (a CMP using `localStorage` will not be captured). See
+[README.md § Cookie-consent management (CMP) hosts](README.md#-authentication--fixtures)
+for details.
+
 ## Page Object Model Pattern
 
 POMs live in `poms/frontend/` and `poms/admin/`. Each POM:
