@@ -158,6 +158,20 @@ export function getConsentCookies(): StorageStateCookie[] {
 			readConsentState(),
 			process.env.PLAYWRIGHT_BASE_URL,
 		);
+
+		// A zero-cookie result is expected once, right after a fresh checkout —
+		// but a *missing* seed file specifically means globalSetup never ran
+		// (not "ran and found no cookies"), most likely because it isn't
+		// registered in playwright.config.ts. Warn once per worker so that
+		// misconfiguration is visible instead of silently running every test
+		// without a consent decision.
+		if (cachedConsentCookies.length === 0 && !fs.existsSync(CONSENT_STATE_PATH)) {
+			console.warn(
+				`[storage-state] No consent seed at ${CONSENT_STATE_PATH}. Is globalSetup ` +
+					`registered in playwright.config.ts? Tests will run without a consent ` +
+					`decision and the CMP banner may intercept clicks.`,
+			);
+		}
 	}
 	return cachedConsentCookies;
 }
