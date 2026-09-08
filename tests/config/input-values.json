@@ -66,6 +66,7 @@
 		"secondZipCodeValue": "67890"
 	},
 	"product": {
+		"configurableProductQuantity": 2,
 		"simpleProductQuantity": 1
 	},
 	"search": {

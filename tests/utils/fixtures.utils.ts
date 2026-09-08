@@ -64,16 +64,25 @@ async function blockConsentManager(context: BrowserContext): Promise<void> {
  */
 type CartFixtures = {
 	cartWithSimpleProduct: void;
+	cartWithConfigurableProduct: void;
 };
 
 /**
- * The cart a `cartWithSimpleProduct` test starts with. A function rather than a
- * constant so the config read happens per test rather than at import time.
+ * The carts these fixtures start a test with. Functions rather than constants
+ * so the config read happens per test rather than at import time. seedCart
+ * resolves a configurable's variant from its PDP, so both are just a slug.
  */
 const simpleProductCart = (): CartSeedItem[] => [
 	{
 		slug: slugs.frontend.product.simple,
 		quantity: inputValues.product.simpleProductQuantity,
+	},
+];
+
+const configurableProductCart = (): CartSeedItem[] => [
+	{
+		slug: slugs.frontend.product.configurable,
+		quantity: inputValues.product.configurableProductQuantity,
 	},
 ];
 
@@ -95,6 +104,11 @@ export const guestTest = baseTest
 	.extend<CartFixtures>({
 		cartWithSimpleProduct: async ({ page }, use) => {
 			await seedCart(page, simpleProductCart());
+			await use();
+		},
+
+		cartWithConfigurableProduct: async ({ page }, use) => {
+			await seedCart(page, configurableProductCart());
 			await use();
 		},
 	});
@@ -380,6 +394,12 @@ export const test = baseTest
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		cartWithSimpleProduct: async ({ page, _authGuard }, use) => {
 			await seedCart(page, simpleProductCart());
+			await use();
+		},
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		cartWithConfigurableProduct: async ({ page, _authGuard }, use) => {
+			await seedCart(page, configurableProductCart());
 			await use();
 		},
 	});

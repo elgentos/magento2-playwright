@@ -1,11 +1,10 @@
 // @ts-check
 
 import { guestTest as test, expect } from '@utils/fixtures.utils';
-import { UIReference, outcomeMarker, slugs } from '@config';
+import { UIReference, outcomeMarker } from '@config';
 
 import { HomePage } from '@poms/frontend/home.page';
 import { MainMenuPage } from '@poms/frontend/mainmenu.page';
-import { ProductPage } from '@poms/frontend/product.page';
 import { MiniCartPage } from '@poms/frontend/minicart.page';
 
 test.describe(
@@ -134,24 +133,20 @@ test.describe(
 	() => {
 		/**
 		 * @feature BeforeEach runs before each test in this group.
-		 * @scenario Add a configurable product to the cart and confirm it's there.
-		 * @given I am on any page
-		 * @when I navigate to a (simple) product page
-		 *  @and I add it to my cart
-		 *  @then I should see a notification
+		 * @scenario Start with a configurable product already in the cart.
+		 * @given the cartWithConfigurableProduct fixture has seeded a variant
+		 * @when I open the homepage
 		 * @when I click the cart in the main menu
 		 *  @then the minicart should become visible
 		 *  @and I should see the product in the minicart
 		 */
-		test.beforeEach(async ({ page }) => {
+		test.beforeEach(async ({ page, cartWithConfigurableProduct }) => {
+			const homePage = new HomePage(page);
 			const mainMenu = new MainMenuPage(page);
-			const productPage = new ProductPage(page);
 
-			await productPage.addConfigurableProductToCart(
-				UIReference.text.frontend.product.configurableProduct,
-				slugs.frontend.product.configurable,
-				'2',
-			);
+			// The fixture seeds the cart over HTTP without navigating, so the
+			// minicart needs a page to open on before it can be asserted against.
+			await homePage.goToHomePage();
 			await mainMenu.openMiniCart();
 			await expect(
 				page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle),
