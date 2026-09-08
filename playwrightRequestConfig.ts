@@ -2,7 +2,7 @@
 
 import type { HTTPCredentials } from '@playwright/test';
 
-import { getHttpCredentials, requireEnv } from './tests/utils/env.utils';
+import { getHttpCredentials, requireEnv } from '@utils/env.utils';
 
 type PlaywrightRequestConfig = {
 	baseURL: string;

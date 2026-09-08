@@ -126,6 +126,12 @@ const artifactRoot = getArtifactRoot();
 export default defineConfig({
 	/* Directory containing the test files */
 	testDir: '.',
+	/* Capture the CMP "Reject all" cookies once, before any project runs. A store
+	   that overrides tests/utils/global-setup.ts wins; otherwise the packaged
+	   base-tests copy runs. */
+	globalSetup: fs.existsSync(path.join(__dirname, 'tests/utils/global-setup.ts'))
+		? './tests/utils/global-setup.ts'
+		: './base-tests/utils/global-setup.ts',
 	/* Set an output directory */
 	outputDir: path.join(artifactRoot, 'test-results'),
 	/* Run tests in files in parallel */

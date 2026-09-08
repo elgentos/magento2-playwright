@@ -44,3 +44,14 @@ export function getCouponCode(browserName: string): string {
 	const pattern = optionalEnv('MAGENTO_COUPON_CODE_PATTERN', '{browser}321');
 	return pattern.replace('{browser}', browserEngine);
 }
+
+/**
+ * Optional host of the third-party consent-manager script, e.g.
+ * `consentmanager.net` or `cookiebot.com`. When set, contexts that the auth
+ * fixture builds itself abort requests to it, so the banner cannot render in
+ * front of the login form even when the consent seed is empty. Unset (the
+ * default) leaves network traffic untouched.
+ */
+export function getConsentCmpHost(): string {
+	return optionalEnv('COOKIE_CONSENT_CMP_HOST', '');
+}

@@ -8,7 +8,7 @@
  */
 
 // Import test and expect from utils to ensure authenticated state.
-import { test, expect } from '@utils/fixtures.utils';
+import { test, guestTest, expect } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 
 import { AccountPage } from '@poms/frontend/account.page';
@@ -22,7 +22,7 @@ import { UIReference, outcomeMarker, slugs, inputValues, toggles } from '@config
 /**
  * Test group: User credentials tests
  */
-test.describe(
+guestTest.describe(
 	'User credentials tests (API-provisioned)',
 	{
 		annotation: {
@@ -33,14 +33,11 @@ test.describe(
 	() => {
 		let apiClient: ApiClient;
 
-		// Ensure we don't use an authenticated state.
-		test.use({ storageState: { cookies: [], origins: [] } });
-
-		test.beforeAll(async () => {
+		guestTest.beforeAll(async () => {
 			apiClient = await new ApiClient().create();
 		});
 
-		test.afterAll(async () => {
+		guestTest.afterAll(async () => {
 			await apiClient.dispose();
 		});
 
@@ -49,14 +46,14 @@ test.describe(
 		 * @param page - Playwright page instance used to interact with the website.
 		 * @param request - APIRequestContext instance used to create accounts with the API.
 		 */
-		test(
+		guestTest(
 			'Change_password',
 			{ tag: ['@account-credentials', '@hot'] },
 			async ({ page, request }) => {
 				const accountPage = new AccountPage(page);
 				const loginPage = new LoginPage(page);
 
-				const parallelIndex = test.info().parallelIndex;
+				const parallelIndex = guestTest.info().parallelIndex;
 				const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
@@ -109,14 +106,14 @@ test.describe(
 		 * @param page - Playwright page instance used to interact with the website.
 		 * @param request - APIRequestContext instance used to create accounts with the API.
 		 */
-		test(
+		guestTest(
 			'Update_email_address',
 			{ tag: ['@account-credentials', '@hot'] },
 			async ({ page, request }) => {
 				const accountPage = new AccountPage(page);
 				const loginPage = new LoginPage(page);
 
-				const parallelIndex = test.info().parallelIndex;
+				const parallelIndex = guestTest.info().parallelIndex;
 				const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
 				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@elgentos.nl`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');

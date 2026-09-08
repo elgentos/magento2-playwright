@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test } from '@playwright/test';
+import { guestTest as test } from '@utils/fixtures.utils';
 import { UIReference, slugs, toggles } from '@config';
 
 import { ProductPage } from '@poms/frontend/product.page';

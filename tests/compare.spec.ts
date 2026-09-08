@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 import { UIReference, outcomeMarker, slugs, toggles } from '@config';
 
 import { ComparePage } from '@poms/frontend/compare.page';
