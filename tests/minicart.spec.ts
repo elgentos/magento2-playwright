@@ -1,9 +1,8 @@
 // @ts-check
 
 import { guestTest as test, expect } from '@utils/fixtures.utils';
-import { UIReference, outcomeMarker } from '@config';
+import { UIReference, outcomeMarker, slugs } from '@config';
 
-import { HomePage } from '@poms/frontend/home.page';
 import { MainMenuPage } from '@poms/frontend/mainmenu.page';
 import { MiniCartPage } from '@poms/frontend/minicart.page';
 
@@ -15,18 +14,19 @@ test.describe(
 		 * @feature BeforeEach runs before each test in this group.
 		 * @scenario Start with a product already in the cart and confirm it's there.
 		 * @given the cartWithSimpleProduct fixture has seeded a simple product
-		 * @when I open the homepage
+		 * @when I open the product's page
 		 * @when I click the cart in the main menu
 		 *  @then the minicart should become visible
 		 *  @and I should see the product in the minicart
 		 */
 		test.beforeEach(async ({ page, cartWithSimpleProduct }) => {
-			const homePage = new HomePage(page);
 			const mainMenu = new MainMenuPage(page);
 
-			// The fixture seeds the cart over HTTP without navigating, so the
-			// minicart needs a page to open on before it can be asserted against.
-			await homePage.goToHomePage();
+			// The fixture seeds over HTTP without navigating, so this group picks
+			// its own starting page — and it has to be the PDP, because
+			// checkPriceWithProductPage reads the product's price and <h1> from
+			// whatever page happens to be current.
+			await page.goto(slugs.frontend.product.simple);
 			await mainMenu.openMiniCart();
 			await expect(
 				page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle),
@@ -135,18 +135,19 @@ test.describe(
 		 * @feature BeforeEach runs before each test in this group.
 		 * @scenario Start with a configurable product already in the cart.
 		 * @given the cartWithConfigurableProduct fixture has seeded a variant
-		 * @when I open the homepage
+		 * @when I open the product's page
 		 * @when I click the cart in the main menu
 		 *  @then the minicart should become visible
 		 *  @and I should see the product in the minicart
 		 */
 		test.beforeEach(async ({ page, cartWithConfigurableProduct }) => {
-			const homePage = new HomePage(page);
 			const mainMenu = new MainMenuPage(page);
 
-			// The fixture seeds the cart over HTTP without navigating, so the
-			// minicart needs a page to open on before it can be asserted against.
-			await homePage.goToHomePage();
+			// The fixture seeds over HTTP without navigating, so this group picks
+			// its own starting page — and it has to be the PDP, because
+			// checkPriceWithProductPage reads the product's price and <h1> from
+			// whatever page happens to be current.
+			await page.goto(slugs.frontend.product.configurable);
 			await mainMenu.openMiniCart();
 			await expect(
 				page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle),
