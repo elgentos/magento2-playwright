@@ -14,8 +14,9 @@
  * REST endpoints (/rest/V1/guest-carts) are no use for this: their quote is
  * bound to no session, so the browser would never see it.
  *
- * Nothing here navigates. Seeding costs no page loads and leaves the browser
- * wherever the test put it, so a spec still controls where it starts.
+ * Seeding itself performs no navigation and leaves the browser wherever the
+ * test put it. The one exception is bootstrapping a form key for a context that
+ * has none - see getFormKey.
  */
 
 import type { Page } from '@playwright/test';
@@ -50,6 +51,9 @@ interface CartSection {
  * product once however many of its tests seed that product.
  */
 const productIdCache = new Map<string, string>();
+
+/** How long to wait for the form-key script to run after the bootstrap load. */
+const FORM_KEY_TIMEOUT_MS = 5_000;
 
 /**
  * The `product` hidden input in the add-to-cart form is the only place the
@@ -103,27 +107,44 @@ async function readCart(page: Page): Promise<CartSection> {
 	return body.cart ?? {};
 }
 
+/**
+ * Magento sets the form key from JavaScript (Magento_PageCache's
+ * form-key-provider), never through a Set-Cookie header — fetching a page over
+ * HTTP hands back PHPSESSID and nothing else. So a context without a form key
+ * has to be bootstrapped with a real navigation, and the cookie has to be
+ * waited for afterwards: it appears when the script runs, not when the document
+ * arrives.
+ */
 async function getFormKey(page: Page): Promise<string> {
 	const readCookie = async (): Promise<string | undefined> =>
 		(await page.context().cookies()).find((cookie) => cookie.name === 'form_key')?.value;
 
-	let formKey = await readCookie();
-
-	if (!formKey) {
-		// A guest context starts with the consent decision and nothing else. One
-		// cheap GET is enough for Magento to open a session and set a form key.
-		await page.request.get('/');
-		formKey = await readCookie();
+	// An authenticated context inherits a form key from its stored state, so this
+	// costs a page load only for guests.
+	const existing = await readCookie();
+	if (existing) {
+		return existing;
 	}
 
-	if (!formKey) {
-		throw new Error(
-			`Cart seeding: Magento did not set a form_key cookie, so the cart routes ` +
-				`would silently reject every write.`,
-		);
+	await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+	const deadline = Date.now() + FORM_KEY_TIMEOUT_MS;
+	for (;;) {
+		const formKey = await readCookie();
+		if (formKey) {
+			return formKey;
+		}
+		if (Date.now() >= deadline) {
+			break;
+		}
+		await page.waitForTimeout(100);
 	}
 
-	return formKey;
+	throw new Error(
+		`Cart seeding: no form_key cookie ${FORM_KEY_TIMEOUT_MS}ms after loading the ` +
+			`homepage. Magento sets it from JavaScript, so the page's scripts either did ` +
+			`not run or are blocked.`,
+	);
 }
 
 /**
