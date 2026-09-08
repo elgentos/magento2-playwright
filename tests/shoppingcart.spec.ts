@@ -9,13 +9,13 @@
 
 import { test, expect } from '@playwright/test';
 
-import { BaseCartPage } from '@poms/frontend/shoppingcart.page';
-import { BaseLoginPage } from '@poms/frontend/login.page';
-import { BaseProductPage } from '@poms/frontend/product.page';
+import { CartPage } from '@poms/frontend/shoppingcart.page';
+import { LoginPage } from '@poms/frontend/login.page';
+import { ProductPage } from '@poms/frontend/product.page';
 
 import { requireEnv, getCouponCode } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
-import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
+import { UIReference, slugs, outcomeMarker, inputValues, toggles } from '@config';
 
 /**
  * Test Group: Cart functionalities for guests
@@ -24,15 +24,18 @@ test.describe('Cart functionalities (guest)', () => {
 	/**
 	 * Before each test: add a product to the cart, navigate to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
-	 * @param testInfo -  Playwright class that allows interaction with the report.
 	 */
 	test.beforeEach(async ({ page }, testInfo) => {
-		const productPage = new BaseProductPage(page);
-		await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple);
+		test.skip(
+			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
+			'Disabled by test toggle: couponCodes',
+		);
 
-		const productAddedNotification = `${outcomeMarker.productPage.simpleProductAddedNotification} ${UIReference.text.frontend.product.simpleProduct}`;
-		const notificationValidator = new NotificationValidatorUtils(page, testInfo);
-		await notificationValidator.validate(productAddedNotification);
+		const productPage = new ProductPage(page);
+		await productPage.addSimpleProductToCart(
+			UIReference.text.frontend.product.simpleProduct,
+			slugs.frontend.product.simple,
+		);
 
 		await page.goto(slugs.frontend.cart.index);
 	});
@@ -42,9 +45,13 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @assume we have already added a product to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Add_product_to_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-		await expect(page.getByRole('heading')
-			.getByRole('link', {name: UIReference.text.frontend.product.simpleProduct}), `Product is visible in cart`).toBeVisible();
+	test('Add_product_to_cart', { tag: ['@cart', '@cold'] }, async ({ page }) => {
+		await expect(
+			page
+				.getByRole('heading')
+				.getByRole('link', { name: UIReference.text.frontend.product.simpleProduct }),
+			`Product is visible in cart`,
+		).toBeVisible();
 	});
 
 	/**
@@ -52,38 +59,53 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @assume we have already added a product to the cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Product_remains_in_cart_after_login',{ tag: ['@cart', '@account', '@hot']}, async ({page}) => {
-		await test.step('Add another product to cart', async () =>{
-			const productpage = new BaseProductPage(page);
-			await productpage.addSimpleProductToCart(UIReference.text.frontend.product.secondSimpleProduct, slugs.frontend.product.secondSimple);
-		});
+	test(
+		'Product_remains_in_cart_after_login',
+		{ tag: ['@cart', '@account', '@hot'] },
+		async ({ page }) => {
+			await test.step('Add another product to cart', async () => {
+				const productpage = new ProductPage(page);
+				await productpage.addSimpleProductToCart(
+					UIReference.text.frontend.product.secondSimpleProduct,
+					slugs.frontend.product.secondSimple,
+				);
+			});
 
-		await test.step('Log in with account', async () =>{
-			const loginPage = new BaseLoginPage(page);
+			await test.step('Log in with account', async () => {
+				const loginPage = new LoginPage(page);
 
-			const parallelIndex = test.info().parallelIndex;
-			const email = `playwright+${parallelIndex}@elgentos.nl`;
-			const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+				const parallelIndex = test.info().parallelIndex;
+				const email = `playwright+${parallelIndex}@elgentos.nl`;
+				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-			await loginPage.goToLoginPage();
-			await loginPage.login(email, password);
-		});
+				await loginPage.goToLoginPage();
+				await loginPage.login(email, password);
+			});
 
-		await page.goto(slugs.frontend.cart.index);
+			await page.goto(slugs.frontend.cart.index);
 
-		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.text.frontend.product.simpleProduct }),
-			`${UIReference.text.frontend.product.simpleProduct} should still be in cart`).toBeVisible();
-		await expect(page.getByRole('heading').getByRole('link', { name: UIReference.text.frontend.product.secondSimpleProduct }),
-			`${UIReference.text.frontend.product.secondSimpleProduct} should still be in cart`).toBeVisible();
-	});
+			await expect(
+				page
+					.getByRole('heading')
+					.getByRole('link', { name: UIReference.text.frontend.product.simpleProduct }),
+				`${UIReference.text.frontend.product.simpleProduct} should still be in cart`,
+			).toBeVisible();
+			await expect(
+				page.getByRole('heading').getByRole('link', {
+					name: UIReference.text.frontend.product.secondSimpleProduct,
+				}),
+				`${UIReference.text.frontend.product.secondSimpleProduct} should still be in cart`,
+			).toBeVisible();
+		},
+	);
 
 	/**
 	 * Test: Remove the product that was added to the cart in beforeEach().
 	 * @assume there's already a product in the cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Remove_product_from_cart',{ tag: ['@cart','@cold'],}, async ({page}) => {
-		const cart = new BaseCartPage(page);
+	test('Remove_product_from_cart', { tag: ['@cart', '@cold'] }, async ({ page }) => {
+		const cart = new CartPage(page);
 		await cart.removeProduct(UIReference.text.frontend.product.simpleProduct);
 	});
 
@@ -92,8 +114,8 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @assume there's already a product in the cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Change_product_quantity_in_cart',{ tag: ['@cart', '@cold'],}, async ({page}) => {
-		const cart = new BaseCartPage(page);
+	test('Change_product_quantity_in_cart', { tag: ['@cart', '@cold'] }, async ({ page }) => {
+		const cart = new CartPage(page);
 		await cart.changeProductQuantity('2');
 	});
 
@@ -102,34 +124,46 @@ test.describe('Cart functionalities (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
-	test('Add_coupon_code_in_cart',{ tag: ['@cart', '@coupon-code', '@cold']}, async ({page, browserName}) => {
-		const cart = new BaseCartPage(page);
-		const discountCode = getCouponCode(browserName);
+	test(
+		'Add_coupon_code_in_cart',
+		{ tag: ['@cart', '@coupon-code', '@cold'] },
+		async ({ page, browserName }) => {
+			const cart = new CartPage(page);
+			const discountCode = getCouponCode(browserName);
 
-		await cart.applyDiscountCode(discountCode);
-	});
+			await cart.applyDiscountCode(discountCode);
+		},
+	);
 
 	/**
 	 * Test: A guest removes a coupon code from their cart.
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - Name of browser running tests. Used to retrieve coupon code.
 	 */
-	test('Remove_coupon_code_from_cart',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page, browserName}) => {
-		const cart = new BaseCartPage(page);
-		const discountCode = getCouponCode(browserName);
+	test(
+		'Remove_coupon_code_from_cart',
+		{ tag: ['@cart', '@coupon-code', '@cold'] },
+		async ({ page, browserName }) => {
+			const cart = new CartPage(page);
+			const discountCode = getCouponCode(browserName);
 
-		await cart.applyDiscountCode(discountCode);
-		await cart.removeDiscountCode();
-	});
+			await cart.applyDiscountCode(discountCode);
+			await cart.removeDiscountCode();
+		},
+	);
 
 	/**
 	 * Test: If a guest uses an invalid coupon code, it should not work.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Invalid_coupon_code_is_rejected',{ tag: ['@cart', '@coupon-code', '@cold'] }, async ({page}) => {
-		const cart = new BaseCartPage(page);
-		await cart.enterWrongCouponCode("Incorrect Coupon Code");
-	});
+	test(
+		'Invalid_coupon_code_is_rejected',
+		{ tag: ['@cart', '@coupon-code', '@cold'] },
+		async ({ page }) => {
+			const cart = new CartPage(page);
+			await cart.enterWrongCouponCode('Incorrect Coupon Code');
+		},
+	);
 });
 
 /**
@@ -140,75 +174,109 @@ test.describe('Price checking tests', () => {
 	 * Test: the data of a simple product in cart is consistent through the checkout
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Simple_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-		let productPagePrice: string;
-		let productPageAmount: string;
-		let checkoutProductDetails: string[];
+	test(
+		'Simple_product_cart_data_consistent_from_PDP_to_checkout',
+		{ tag: ['@cart-price-check', '@cold'] },
+		async ({ page }) => {
+			let productPagePrice: string;
+			let productPageAmount: string;
+			let checkoutProductDetails: string[];
 
-		const cart = new BaseCartPage(page);
+			const cart = new CartPage(page);
 
-		await test.step('Step: Add simple product to cart', async () =>{
-			const productPage = new BaseProductPage(page);
-			await page.goto(slugs.frontend.product.simple);
-			// set quantity to 2 so we can see that the math works
-			await page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
+			await test.step('Step: Add simple product to cart', async () => {
+				const productPage = new ProductPage(page);
+				await page.goto(slugs.frontend.product.simple);
+				// set quantity to 2 so we can see that the math works
+				await page.getByLabel(UIReference.text.shared.forms.quantity).fill('2');
 
-			productPagePrice = await page.locator(UIReference.selectors.frontend.product.price).innerText();
-			productPageAmount = await page.getByLabel(UIReference.text.shared.forms.quantity).inputValue();
-			await productPage.addSimpleProductToCart(UIReference.text.frontend.product.simpleProduct, slugs.frontend.product.simple, '2');
-		});
+				productPagePrice = await page
+					.locator(UIReference.selectors.frontend.product.price)
+					.innerText();
+				productPageAmount = await page
+					.getByLabel(UIReference.text.shared.forms.quantity)
+					.inputValue();
+				await productPage.addSimpleProductToCart(
+					UIReference.text.frontend.product.simpleProduct,
+					slugs.frontend.product.simple,
+					'2',
+				);
+			});
 
-		await test.step('Step: go to checkout, get values', async () =>{
-			await page.goto(slugs.frontend.checkout.index);
-			await page.waitForLoadState();
+			await test.step('Step: go to checkout, get values', async () => {
+				await page.goto(slugs.frontend.checkout.index);
+				await page.waitForLoadState();
 
-			// returns productPriceInCheckout and productQuantityInCheckout
-			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.simpleProduct);
-		});
+				// returns productPriceInCheckout and productQuantityInCheckout
+				checkoutProductDetails = await cart.getCheckoutValues(
+					UIReference.text.frontend.product.simpleProduct,
+				);
+			});
 
-		await test.step('Step: Calculate and check expectations', async () =>{
-			await cart.calculateProductPricesAndCompare(productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]);
-		});
-	});
+			await test.step('Step: Calculate and check expectations', async () => {
+				await cart.calculateProductPricesAndCompare(
+					productPagePrice,
+					productPageAmount,
+					checkoutProductDetails[0],
+					checkoutProductDetails[1],
+				);
+			});
+		},
+	);
 
 	/**
 	 * Test: the data of a configurable product in cart is consistent through the checkout
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test('Configurable_product_cart_data_consistent_from_PDP_to_checkout',{ tag: ['@cart-price-check', '@cold']}, async ({page}) => {
-		var productPagePrice: string;
-		var productPageAmount: string;
-		var checkoutProductDetails: string[];
+	test(
+		'Configurable_product_cart_data_consistent_from_PDP_to_checkout',
+		{ tag: ['@cart-price-check', '@cold'] },
+		async ({ page }) => {
+			let productPagePrice: string;
+			let productPageAmount: string;
+			let checkoutProductDetails: string[];
 
-		const cart = new BaseCartPage(page);
+			const cart = new CartPage(page);
 
-		await test.step('Step: Add configurable product to cart', async () =>{
-			const productPage = new BaseProductPage(page);
-			// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
-			await page.goto(slugs.frontend.product.configurable);
-			// set quantity to 2 so we can see that the math works
-			await page.getByLabel('Quantity').fill('2');
+			await test.step('Step: Add configurable product to cart', async () => {
+				const productPage = new ProductPage(page);
+				// Navigate to the configurable product page so we can retrieve price and amount before adding it to cart
+				await page.goto(slugs.frontend.product.configurable);
+				// set quantity to 2 so we can see that the math works
+				await page.getByLabel('Quantity').fill('2');
 
-			productPagePrice = await page.locator(UIReference.selectors.frontend.product.price).innerText();
-			productPageAmount = await page.getByLabel(UIReference.text.shared.forms.quantity).inputValue();
+				productPagePrice = await page
+					.locator(UIReference.selectors.frontend.product.price)
+					.innerText();
+				productPageAmount = await page
+					.getByLabel(UIReference.text.shared.forms.quantity)
+					.inputValue();
 
-			await productPage.addConfigurableProductToCart(
-				UIReference.text.frontend.product.configurableProduct, slugs.frontend.product.configurable, '2'
-			);
-		});
+				await productPage.addConfigurableProductToCart(
+					UIReference.text.frontend.product.configurableProduct,
+					slugs.frontend.product.configurable,
+					'2',
+				);
+			});
 
-		await test.step('Step: go to checkout, get values', async () =>{
-			await page.goto(slugs.frontend.checkout.index);
-			await page.waitForLoadState();
+			await test.step('Step: go to checkout, get values', async () => {
+				await page.goto(slugs.frontend.checkout.index);
+				await page.waitForLoadState();
 
-			// returns productPriceInCheckout and productQuantityInCheckout
-			checkoutProductDetails = await cart.getCheckoutValues(UIReference.text.frontend.product.configurableProduct);
-		});
+				// returns productPriceInCheckout and productQuantityInCheckout
+				checkoutProductDetails = await cart.getCheckoutValues(
+					UIReference.text.frontend.product.configurableProduct,
+				);
+			});
 
-		await test.step('Step: Calculate and check expectations', async () =>{
-			await cart.calculateProductPricesAndCompare(
-				productPagePrice, productPageAmount, checkoutProductDetails[0], checkoutProductDetails[1]
-			);
-		});
-	});
+			await test.step('Step: Calculate and check expectations', async () => {
+				await cart.calculateProductPricesAndCompare(
+					productPagePrice,
+					productPageAmount,
+					checkoutProductDetails[0],
+					checkoutProductDetails[1],
+				);
+			});
+		},
+	);
 });

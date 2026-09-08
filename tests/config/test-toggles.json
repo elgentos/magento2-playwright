@@ -1,0 +1,12 @@
+{
+	"compare": true,
+	"wishlist": true,
+	"couponCodes": true,
+	"newsletter": true,
+	"reviews": true,
+	"contactForm": true,
+	"categoryFilters": true,
+	"fixedRateShipping": true,
+	"checkMoneyOrder": true,
+	"visualRegression": true
+}

@@ -68,3 +68,29 @@ jobs:
             name: test-results
             path: test-results
             retention-days: 30
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      # --ignore-scripts: the postinstall runs the interactive install.js
+      # wizard, and build.js deletes tests/ when CI=true.
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: TypeScript
+        run: npm run typecheck
+
+      - name: ESLint
+        run: npm run lint:ci
+
+      - name: Prettier
+        run: npm run format:check

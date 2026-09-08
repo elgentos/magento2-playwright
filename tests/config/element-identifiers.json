@@ -4,6 +4,7 @@
 			"spinner": "#container .spinner",
 			"header": "#header",
 			"pageTitle": "h1.page-title",
+			"notification": "#messages .message, .magewire.notification.message",
 			"message": "#messages div div.messages div div.message span",
 			"errorMessage": "#messages div .messages div .error span",
 			"successMessage": "div.message.success"
@@ -231,6 +232,7 @@
 			"category": {
 				"title": "Women",
 				"activeFilter": "Active filtering",
+				"filterSelected": "filter selected",
 				"filterRegion": "Product filters",
 				"sizeFilter": "Size filter",
 				"sizeM": "Filter Size M",
@@ -274,7 +276,7 @@
 				"newsletterSubscribe": "Subscribe"
 			},
 			"login": {
-				"title" : "Customer Login"
+				"title": "Customer Login"
 			},
 			"minicart": {
 				"empty": "Cart is empty",
@@ -295,8 +297,8 @@
 				"fullScreenClose": "Close fullscreen",
 				"thumbnail": "View larger image"
 			},
-			"register" : {
-				"title" : "Create New Customer Account"
+			"register": {
+				"title": "Create New Customer Account"
 			},
 			"search": {
 				"placeholder": "Search entire store here...",

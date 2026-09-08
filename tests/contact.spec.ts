@@ -1,7 +1,8 @@
 // @ts-check
 
 import { test } from '@playwright/test';
-import { BaseContactPage } from '@poms/frontend/contact.page';
+import { toggles } from '@config';
+import { ContactPage } from '@poms/frontend/contact.page';
 
 /**
  * @feature Magento 2 Contact Form
@@ -14,7 +15,8 @@ import { BaseContactPage } from '@poms/frontend/contact.page';
  *  @and the fields should be empty again.
  */
 test('Send_message_through_contact_form', { tag: ['@contact-form', '@hot'] }, async ({ page }) => {
-	const contactPage = new BaseContactPage(page);
+	test.skip(toggles.contactForm === false, 'Disabled by test toggle: contactForm');
+	const contactPage = new ContactPage(page);
 	await contactPage.goToContactPage();
 	await contactPage.fillOutForm();
 });

@@ -25,3 +25,4 @@ node_modules/
 /base-tests/
 /i18n/
 docs/superpowers/
+.superpowers/

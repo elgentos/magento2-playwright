@@ -9,7 +9,7 @@
 
 import { test, expect } from '@playwright/test';
 
-import { BaseLoginPage } from '@poms/frontend/login.page';
+import { LoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
 
 import { outcomeMarker, inputValues } from '@config';
@@ -21,10 +21,10 @@ import { outcomeMarker, inputValues } from '@config';
  */
 test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) => {
 	const id = test.info().parallelIndex;
-	let user = `playwright+${id}@elgentos.nl`;
-	let password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
+	const user = `playwright+${id}@elgentos.nl`;
+	const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
-	const loginPage = new BaseLoginPage(page);
+	const loginPage = new LoginPage(page);
 	await loginPage.goToLoginPage();
 	await loginPage.login(user, password);
 
@@ -38,11 +38,17 @@ test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) =>
 
 	// Confirm user is logged in
 	expect(customerData, `Customer data should exist in localStorage`).toBeTruthy();
-	expect(customerData, `Customer data should contain customer information`).toHaveProperty('customer');
+	expect(customerData, `Customer data should contain customer information`).toHaveProperty(
+		'customer',
+	);
 
 	// Soft expects below (not required to pass)
-	expect.soft(customerData.customer.fullname, `Customer firstname should match`).toContain(inputValues.account.firstName);
-	expect.soft(customerData.customer.fullname, `Customer lastname should match`).toContain(inputValues.account.lastName);
+	expect
+		.soft(customerData.customer.fullname, `Customer firstname should match`)
+		.toContain(inputValues.account.firstName);
+	expect
+		.soft(customerData.customer.fullname, `Customer lastname should match`)
+		.toContain(inputValues.account.lastName);
 });
 
 /**
@@ -50,8 +56,12 @@ test('User_logs_in_with_valid_credentials', { tag: '@hot' }, async ({ page }) =>
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Invalid_credentials_are_rejected', async ({ page }) => {
-	const loginPage = new BaseLoginPage(page);
-	await loginPage.loginExpectError('invalid@example.com', 'wrongpassword', outcomeMarker.login.invalidCredentialsMessage);
+	const loginPage = new LoginPage(page);
+	await loginPage.loginExpectError(
+		'invalid@example.com',
+		'wrongpassword',
+		outcomeMarker.login.invalidCredentialsMessage,
+	);
 });
 
 /**
@@ -59,6 +69,6 @@ test('Invalid_credentials_are_rejected', async ({ page }) => {
  * @param page - Playwright page instance used for interacting with the website.
  */
 test('Login_fails_with_missing_password', async ({ page }) => {
-	const loginPage = new BaseLoginPage(page);
+	const loginPage = new LoginPage(page);
 	await loginPage.loginExpectError('invalid@example.com', '', '');
 });

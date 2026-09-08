@@ -55,10 +55,11 @@ Five JSON config files live in `config/`. The loader (`config/index.ts`) deep-me
 | `input-values.json` | `inputValues` | Test data (names, addresses, credit cards, search terms) |
 | `slugs.json` | `slugs` | URL paths for all pages |
 | `outcome-markers.json` | `outcomeMarker` | Expected success/error messages |
+| `test-toggles.json` | `toggles` | Persistent switches for optional store capabilities |
 
 **Import config like this:**
 ```typescript
-import { UIReference, slugs, outcomeMarker, inputValues } from '@config';
+import { UIReference, slugs, outcomeMarker, inputValues, toggles } from '@config';
 ```
 
 ## Path Aliases
@@ -72,6 +73,7 @@ Defined in `tsconfig.json`. Always use these instead of relative paths:
 | `@poms/*` | `base-tests/poms/*` or `tests/poms/*` |
 | `@types/*` | `base-tests/types/*` or `tests/types/*` |
 | `@fixtures/*` | `base-tests/fixtures/*` or `tests/fixtures/*` |
+| `@base/*` | `base-tests/*` only. This is how a `tests/` override imports the packaged class it extends — `@poms/*` would resolve back to the override itself. |
 
 ## Authentication & Fixtures
 
@@ -95,35 +97,95 @@ import { test, expect } from '@playwright/test';
 ## Page Object Model Pattern
 
 POMs live in `poms/frontend/` and `poms/admin/`. Each POM:
-- Takes a `Page` in its constructor.
-- Defines locators as `readonly` properties using config values (never hardcoded strings).
+- Takes a `Page` via `constructor(public readonly page: Page) {}`.
+- Defines locators as `get` accessors using config values (never hardcoded strings), built lazily rather than assigned in the constructor.
 - Exposes action methods (e.g., `login()`, `addToCart()`).
 - Uses `UIReference` for element labels and `slugs` for navigation.
+- Is a **named export**, using the unprefixed class name (`LoginPage`, not `BaseLoginPage`) — no default export.
 
-Example:
+Example (see `tests/poms/frontend/login.page.ts` for the real file this is based on):
 ```typescript
 import { UIReference, slugs } from '@config';
+import type { Locator, Page } from '@playwright/test';
 
-class LoginPage {
-  readonly page: Page;
-  readonly loginEmailField: Locator;
+export class LoginPage {
+  constructor(public readonly page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-    this.loginEmailField = page.getByRole('textbox', {
-      name: UIReference.credentials.emailFieldLabel, exact: true
+  get loginEmailField(): Locator {
+    return this.page.getByRole('textbox', {
+      name: UIReference.text.shared.forms.email, exact: true
     });
   }
 
   async login(email: string, password: string) {
-    await this.page.goto(slugs.account.loginSlug);
+    await this.page.goto(slugs.frontend.account.login);
     // ...
   }
 }
-export default LoginPage;
 ```
 
 Some POMs extend `MagewireUtils` (for pages with Hyva Magewire reactivity) to get `waitForMagewireRequests()`.
+
+## Overriding a POM in a store
+
+To change one method, subclass instead of copying the file. A file in
+`tests/poms/` completely replaces the `base-tests/` file of the same name, so it
+must export the same symbol name — and it reaches its parent through `@base/*`,
+never through `@poms/*` (which would resolve to itself).
+
+```typescript
+// tests/poms/frontend/login.page.ts
+import { LoginPage as BaseLoginPage } from '@base/poms/frontend/login.page';
+
+export class LoginPage extends BaseLoginPage {
+  // only what differs for this store
+  async login(email: string, password: string) {
+    // custom implementation
+  }
+}
+```
+
+Rules:
+
+- Export the **same name** the base file exports. Specs and other POMs import
+  that name; renaming it breaks them.
+- Import the parent from `@base/*`. This is the one alias that always points at
+  the packaged base layer.
+- Locators are `get` accessors, so a subclass can override one by redeclaring
+  the getter, optionally reusing `super.someGetter`.
+- Cross-POM references need nothing special: a base POM doing
+  `new MainMenuPage(this.page)` resolves through `@poms/*` and therefore picks
+  up a store's override automatically.
+
+### Two resolution quirks worth knowing
+
+`tsc` resolves a `paths` array first-match; Playwright resolves it **last**-match.
+The arrays are ordered base-first so Playwright picks `tests/` — **do not
+"fix" the ordering**, it is deliberate. Consequences:
+
+- A stale `base-tests/` makes `npx tsc --noEmit` report errors that do not
+  affect a test run. Run `node build.js` first.
+- IDE go-to-definition follows `tsc`, so it lands on the base copy while the
+  runtime uses the store copy.
+
+### Verifying the seam — run this locally
+
+The override mechanism is covered by `npm run verify:seam`, which builds a
+consumer-shaped fixture in a temp dir and checks that a `tests/` file shadows
+its `base-tests/` counterpart, can extend it, and is picked up when another POM
+composes it.
+
+**It does not run in CI — it is a local pre-merge check, and nothing enforces
+it.** Run it, and make sure it prints `PASS`, whenever you change any of:
+
+- a `paths` entry in `tsconfig.json` or `tsconfig.example.json`
+- a POM's class name, or its export style
+- a POM member's visibility (`private` / `protected` / `public`)
+- the Playwright version
+
+That last one matters most. The whole mechanism rests on Playwright resolving
+`paths` arrays last-match-wins, which is undocumented upstream and could change
+in a patch release. This harness is the only thing that would catch it.
 
 ## Test Spec Patterns
 
@@ -134,7 +196,7 @@ import { test } from '@utils/fixtures.utils';
 import { test as base, expect } from '@playwright/test';
 
 import { outcomeMarker, inputValues } from '@config';
-import LoginPage from '@poms/frontend/login.page';
+import { LoginPage } from '@poms/frontend/login.page';
 
 base('Test_name_uses_underscores', { tag: '@hot' }, async ({ page, browserName }) => {
   const loginPage = new LoginPage(page);
@@ -163,18 +225,48 @@ const email = requireEnv(`MAGENTO_EXISTING_ACCOUNT_EMAIL_${browserName.toUpperCa
 
 ## Style Guide
 
-- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON.
+- **Indentation:** tabs (as 4 spaces) for TypeScript and JSON. Enforced by Prettier — run `npm run format` rather than hand-aligning.
 - **No hardcoded strings.** All UI labels, URLs, messages, and test data come from config JSON files. If a value doesn't exist in config, add it there first, then reference it.
 - **Locator strategy:** Prefer `page.getByRole()` with config labels. Fall back to `page.locator()` with a config selector only when roles don't work.
 - **Test names:** Use `Underscored_names_describing_the_scenario`.
 - **Files end with a newline**, no trailing whitespace.
-- **Default exports** for POM classes.
+- **Named exports** for POM classes, using the unprefixed name (`LoginPage`, not `BaseLoginPage`). Every layer exports the same name — that is what makes overrides work.
+- **Never add `instanceof`, `.constructor`, or `Object.getPrototypeOf` checks on POMs.** A base POM and a store's override are separate classes from separate modules, so identity comparisons across them are unreliable by construction.
 - **Use path aliases** (`@config`, `@poms/*`, etc.), never relative paths for cross-directory imports.
 - **Use `.press("Enter")` instead of `.click()`** on submit buttons to avoid WebKit issues.
 
+### Linting
+
+Style is mechanically enforced. A blocking `lint` job runs on every pull request and GitLab pipeline.
+
+```bash
+npm run typecheck     # TypeScript compiler validation
+npm run lint          # ESLint: type-aware TS rules + Playwright rules
+npm run lint:ci       # ESLint with the current warning baseline
+npm run format        # Prettier: rewrite JS, TS, and JSON files
+npm run format:check  # Prettier: verify JS, TS, and JSON files
+```
+
+Config lives in `eslint.config.mjs` and `.prettierrc.json`. Both are `.npmignore`d — they are
+contributor tooling and are not shipped to consumers of the package.
+
+`base-tests/` is never linted; it is generated from `tests/` by `build.js`. Warnings mark
+pre-existing debt — do not increase the total, and lower the `lint:ci` warning baseline when warnings
+are removed.
+
+Prettier intentionally formats source code and JSON only. Markdown and YAML retain their existing
+formatting to avoid unrelated documentation and pipeline diffs.
+
+Run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once, so the bulk Prettier commit does
+not obscure `git blame`.
+
 ## CI/CD Pipeline
 
-A single `testing_suite` stage in `.gitlab-ci.yml` runs `npx playwright test`. Setup (`init.setup.ts`, the `setup` Playwright project) runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup stage.
+`.gitlab-ci.yml` has three stages: `lint`, `testing_suite`, `mirror`. The `lint` stage runs type
+checking, ESLint with the warning baseline, and Prettier, and blocks the pipeline on failure.
+`testing_suite` runs `npx playwright test`; setup (`init.setup.ts`, the `setup` Playwright project)
+runs automatically as a dependency of the chromium/firefox/webkit projects — no separate setup
+stage.
 
 Run locally:
 
@@ -193,7 +285,7 @@ npx playwright test --project=setup                   # Run setup only (rarely n
 4. **Use the authenticated `test` fixture** from `@utils/fixtures.utils` when the test needs a logged-in user.
 5. **Use POMs** for page interactions. Don't put locator logic directly in spec files.
 6. **Config is deep-merged.** When overriding config in `tests/config/`, you only need to specify the keys you're changing.
-7. **Setup runs as a project dependency.** `init.setup.ts` creates accounts, disables admin CAPTCHA, and sets up coupon codes. It runs automatically before any browser test via `dependencies: ['setup']` in `playwright.config.ts` — never invoke it manually.
+7. **Setup runs as a project dependency.** `init.setup.ts` creates accounts, disables admin CAPTCHA, and sets up coupon codes when the `couponCodes` toggle is enabled. It runs automatically before any browser test via `dependencies: ['setup']` in `playwright.config.ts` — never invoke it manually.
 8. **Browser-specific data** uses env vars suffixed with the browser engine name (e.g., `_CHROMIUM`, `_FIREFOX`, `_WEBKIT`).
 9. **Magewire pages** (checkout, cart) need `waitForMagewireRequests()` after interactions that trigger Magewire calls.
 10. **Commit messages:** Write concise messages describing the change.

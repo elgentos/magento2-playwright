@@ -3,7 +3,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 import path from 'path';
-import fs from "node:fs";
+import fs from 'node:fs';
 import { getHttpCredentials } from '@utils/env.utils';
 
 dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
@@ -16,20 +16,22 @@ const EXCLUDED_SPEC_FILES = new Set(['setup.spec.ts']);
 
 function getTestFiles(baseDir: string, customDir?: string): string[] {
 	const baseFiles = new Set(
-		fs.readdirSync(baseDir)
-			.filter(file => file.endsWith('.spec.ts'))
-			.filter(file => !EXCLUDED_SPEC_FILES.has(file))
-			.map(file => path.join(baseDir, file))
+		fs
+			.readdirSync(baseDir)
+			.filter((file) => file.endsWith('.spec.ts'))
+			.filter((file) => !EXCLUDED_SPEC_FILES.has(file))
+			.map((file) => path.join(baseDir, file)),
 	);
 
 	if (!customDir || !fs.existsSync(customDir)) {
 		return Array.from(baseFiles);
 	}
 
-	const customFiles = fs.readdirSync(customDir)
-		.filter(file => file.endsWith('.spec.ts'))
-		.filter(file => !EXCLUDED_SPEC_FILES.has(file))
-		.map(file => path.join(customDir, file));
+	const customFiles = fs
+		.readdirSync(customDir)
+		.filter((file) => file.endsWith('.spec.ts'))
+		.filter((file) => !EXCLUDED_SPEC_FILES.has(file))
+		.map((file) => path.join(customDir, file));
 
 	if (customFiles.length === 0) {
 		return Array.from(baseFiles);
@@ -57,18 +59,20 @@ function getTestFiles(baseDir: string, customDir?: string): string[] {
 
 function getSetupFiles(baseDir: string, customDir?: string): string[] {
 	const baseFiles = new Set(
-		fs.readdirSync(baseDir)
-			.filter(file => file.endsWith('.setup.ts'))
-			.map(file => path.join(baseDir, file))
+		fs
+			.readdirSync(baseDir)
+			.filter((file) => file.endsWith('.setup.ts'))
+			.map((file) => path.join(baseDir, file)),
 	);
 
 	if (!customDir || !fs.existsSync(customDir)) {
 		return Array.from(baseFiles);
 	}
 
-	const customFiles = fs.readdirSync(customDir)
-		.filter(file => file.endsWith('.setup.ts'))
-		.map(file => path.join(customDir, file));
+	const customFiles = fs
+		.readdirSync(customDir)
+		.filter((file) => file.endsWith('.setup.ts'))
+		.map((file) => path.join(customDir, file));
 
 	if (customFiles.length === 0) {
 		return Array.from(baseFiles);
@@ -91,25 +95,20 @@ function getSetupFiles(baseDir: string, customDir?: string): string[] {
 	return Array.from(setupFiles);
 }
 
-const testFiles = getTestFiles(
-	path.join(__dirname, 'base-tests'),
-	path.join(__dirname, 'tests'),
-);
+const testFiles = getTestFiles(path.join(__dirname, 'base-tests'), path.join(__dirname, 'tests'));
 
-const setupFiles = getSetupFiles(
-	path.join(__dirname, 'base-tests'),
-	path.join(__dirname, 'tests'),
-);
+const setupFiles = getSetupFiles(path.join(__dirname, 'base-tests'), path.join(__dirname, 'tests'));
 
 function getArtifactRoot(): string {
 	const currentDir = path.resolve(__dirname);
 	const parts = currentDir.split(path.sep);
-	const appIndex = parts.findIndex((part, index) =>
-		part === 'app' &&
-		parts[index + 1] === 'design' &&
-		parts[index + 2] === 'frontend' &&
-		parts[index + 5] === 'web' &&
-		parts[index + 6] === 'playwright'
+	const appIndex = parts.findIndex(
+		(part, index) =>
+			part === 'app' &&
+			parts[index + 1] === 'design' &&
+			parts[index + 2] === 'frontend' &&
+			parts[index + 5] === 'web' &&
+			parts[index + 6] === 'playwright',
 	);
 
 	if (appIndex >= 0) {
@@ -147,11 +146,15 @@ export default defineConfig({
 
 		// Record video based on PLAYWRIGHT_VIDEO environment variable
 		// See https://playwright.dev/docs/api/class-testoptions#test-options-video
-		video: (process.env.PLAYWRIGHT_VIDEO as 'on' | 'off' | 'retain-on-failure' | 'on-first-retry') || 'retain-on-failure',
+		video:
+			(process.env.PLAYWRIGHT_VIDEO as
+				'on' | 'off' | 'retain-on-failure' | 'on-first-retry') || 'retain-on-failure',
 
 		// Create a screenshot at the end of a test if the test fails.
 		// See https://playwright.dev/docs/api/class-testoptions#test-options-screenshot
-		screenshot: (process.env.PLAYWRIGHT_SCREENSHOT as 'on' | 'off' | 'only-on-failure' | 'on-first-failure') || 'only-on-failure',
+		screenshot:
+			(process.env.PLAYWRIGHT_SCREENSHOT as
+				'on' | 'off' | 'only-on-failure' | 'on-first-failure') || 'only-on-failure',
 
 		// Collect trace when retrying a failed test. See https://playwright.dev/docs/trace-viewer
 		trace: 'retain-on-failure',
@@ -199,7 +202,7 @@ export default defineConfig({
 			dependencies: ['setup'],
 			use: {
 				...devices['Desktop Firefox'],
-				userAgent: 'Playwright'
+				userAgent: 'Playwright',
 			},
 		},
 
@@ -209,7 +212,7 @@ export default defineConfig({
 			dependencies: ['setup'],
 			use: {
 				...devices['Desktop Safari'],
-				userAgent: 'Playwright'
+				userAgent: 'Playwright',
 			},
 		},
 

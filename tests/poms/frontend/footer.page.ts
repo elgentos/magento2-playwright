@@ -1,11 +1,12 @@
 // @ts-check
 
 import { expect, Locator, type Page } from '@playwright/test';
-import { UIReference , outcomeMarker } from '@config';
+import { UIReference, outcomeMarker } from '@config';
 import { faker } from '@faker-js/faker';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
-export class BaseFooter {
-	constructor(public readonly page: Page) { }
+export class Footer {
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -18,19 +19,15 @@ export class BaseFooter {
 
 	// get newsLetterFormItems: returns the fields
 	// of the newsletter subscription form in the footer.
-	get newsLetterFormItems () {
+	get newsLetterFormItems() {
 		return {
-			emailField : this.page.getByRole('textbox', { name: UIReference.text.frontend.footer.newsletterInput }),
-			subscribeButton : this.page.getByRole('button', { name: UIReference.text.frontend.footer.newsletterSubscribe })
-		}
-	}
-
-	// get messageLocators: return message locators
-	get messageLocators() {
-		return {
-			generalMessage : this.page.locator(UIReference.selectors.shared.message),
-			successMessage: this.page.locator(UIReference.selectors.shared.successMessage)
-		}
+			emailField: this.page.getByRole('textbox', {
+				name: UIReference.text.frontend.footer.newsletterInput,
+			}),
+			subscribeButton: this.page.getByRole('button', {
+				name: UIReference.text.frontend.footer.newsletterSubscribe,
+			}),
+		};
 	}
 
 	// ==============================================
@@ -60,18 +57,26 @@ export class BaseFooter {
 	async switchCurrency() {
 		await this.goToFooterElement();
 
-		const isUsdActive = await this.page.getByRole('button', {
-			name: UIReference.text.frontend.footer.currencyDollar
-		}).isVisible();
+		const isUsdActive = await this.page
+			.getByRole('button', {
+				name: UIReference.text.frontend.footer.currencyDollar,
+			})
+			.isVisible();
 
-		const currencyToOpen = isUsdActive ? UIReference.text.frontend.footer.currencyDollar : UIReference.text.frontend.footer.currencyEuro;
-		const currencyToSelect = isUsdActive ? UIReference.text.frontend.footer.currencyEuro : UIReference.text.frontend.footer.currencyDollar;
+		const currencyToOpen = isUsdActive
+			? UIReference.text.frontend.footer.currencyDollar
+			: UIReference.text.frontend.footer.currencyEuro;
+		const currencyToSelect = isUsdActive
+			? UIReference.text.frontend.footer.currencyEuro
+			: UIReference.text.frontend.footer.currencyDollar;
 
 		await this.page.getByRole('button', { name: currencyToOpen }).click();
 
 		await expect(
-			this.page.getByRole('navigation', { name: UIReference.text.frontend.footer.currencyLabel }),
-			'Footer navigation is visible'
+			this.page.getByRole('navigation', {
+				name: UIReference.text.frontend.footer.currencyLabel,
+			}),
+			'Footer navigation is visible',
 		).toBeVisible();
 
 		await this.page.getByRole('link', { name: currencyToSelect }).click();
@@ -80,7 +85,7 @@ export class BaseFooter {
 
 		await expect(
 			this.page.getByRole('button', { name: currencyToSelect }),
-			'Currency selector is visible'
+			'Currency selector is visible',
 		).toBeVisible();
 	}
 
@@ -90,13 +95,15 @@ export class BaseFooter {
 	 */
 	async subscribeToNewsletter() {
 		const subscriptionOutput = outcomeMarker.footerPage.newsletterSubscription;
-		await expect(this.newsLetterFormItems.emailField, 'Confirm newsletter form in footer is visible').toBeVisible();
+		await expect(
+			this.newsLetterFormItems.emailField,
+			'Confirm newsletter form in footer is visible',
+		).toBeVisible();
 
 		await this.newsLetterFormItems.emailField.fill(faker.internet.email());
 		await this.newsLetterFormItems.subscribeButton.click();
-		await this.messageLocators.successMessage.waitFor();
 
 		// Final assertion to confirm test ran correctly.
-		await expect(this.messageLocators.successMessage).toContainText(subscriptionOutput);
+		await new NotificationValidatorUtils(this.page).validate(subscriptionOutput);
 	}
 }

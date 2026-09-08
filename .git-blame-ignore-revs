@@ -1,0 +1,5 @@
+# Revisions to skip in git blame. Enable with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: apply prettier formatting across tests and node scripts
+e848f82e047a6249386f85d2b3d6fa67896bd9b4

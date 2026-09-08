@@ -1,8 +1,8 @@
 // @ts-check
 
 interface Window {
-  magewire?: {
-    processing: boolean;
-    [key: string]: any;
-  };
+	magewire?: {
+		processing: boolean;
+		[key: string]: any;
+	};
 }

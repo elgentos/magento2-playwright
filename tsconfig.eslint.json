@@ -1,0 +1,24 @@
+{
+	// Standalone config for type-aware tooling in a fresh clone. Shared options
+	// follow tsconfig.example.json, while the tooling-only target intentionally
+	// uses es2022. tests/ is the source because base-tests/ is generated.
+	"compilerOptions": {
+		"target": "es2022",
+		"module": "commonjs",
+		"strict": true,
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"resolveJsonModule": true,
+		"moduleResolution": "node",
+		"baseUrl": ".",
+		"paths": {
+			"@config": ["./tests/config"],
+			"@utils/*": ["./tests/utils/*"],
+			"@poms/*": ["./tests/poms/*"],
+			"@types/*": ["./tests/types/*"],
+			"@fixtures/*": ["./tests/fixtures/*"]
+		}
+	},
+	// Add new tracked root-level TypeScript files explicitly.
+	"include": ["tests/**/*.ts", "playwright.config.example.ts", "playwrightRequestConfig.ts"]
+}

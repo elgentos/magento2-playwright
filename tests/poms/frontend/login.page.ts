@@ -3,10 +3,11 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
-import { BaseMainMenuPage } from '@poms/frontend/mainmenu.page';
+import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { MainMenuPage } from '@poms/frontend/mainmenu.page';
 
-export class BaseLoginPage {
-	constructor(public readonly page: Page) { }
+export class LoginPage {
+	constructor(public readonly page: Page) {}
 
 	// ==============================================
 	// Element getters
@@ -14,16 +15,26 @@ export class BaseLoginPage {
 
 	// get comparePageTitle: returns title locator for comparison page.
 	protected get loginPageTitle(): Locator {
-		return this.page.getByRole('heading', { name: UIReference.text.frontend.login.title, level:1 });
+		return this.page.getByRole('heading', {
+			name: UIReference.text.frontend.login.title,
+			level: 1,
+		});
 	}
 
 	// get loginFormFields: returns the input and button locators of the login form.
 	get loginFormFields() {
 		return {
-			emailField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.email, exact: true }),
-			passwordField: this.page.getByRole('textbox', { name: UIReference.text.shared.forms.password }),
-			loginButton: this.page.getByRole('button', { name: UIReference.text.shared.buttons.login })
-		}
+			emailField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.email,
+				exact: true,
+			}),
+			passwordField: this.page.getByRole('textbox', {
+				name: UIReference.text.shared.forms.password,
+			}),
+			loginButton: this.page.getByRole('button', {
+				name: UIReference.text.shared.buttons.login,
+			}),
+		};
 	}
 
 	// ==============================================
@@ -50,7 +61,7 @@ export class BaseLoginPage {
 	 * @param password {string} - password of the account to log in with.
 	 */
 	async login(email: string, password: string) {
-		const mainmenu = new BaseMainMenuPage(this.page);
+		const mainmenu = new MainMenuPage(this.page);
 
 		await this.loginFormFields.emailField.fill(email);
 		await this.loginFormFields.passwordField.fill(password);
@@ -65,7 +76,10 @@ export class BaseLoginPage {
 			// Open the account menu, then check the 'Sign Out' button is visible.
 			await mainmenu.mainMenuAccountButton.waitFor();
 			await mainmenu.mainMenuAccountButton.click();
-			await expect(mainmenu.mainMenuLogoutItem, 'Sign Out button is visible, user is logged in').toBeVisible();
+			await expect(
+				mainmenu.mainMenuLogoutItem,
+				'Sign Out button is visible, user is logged in',
+			).toBeVisible();
 		}).toPass();
 	}
 
@@ -83,6 +97,18 @@ export class BaseLoginPage {
 		await this.page.waitForLoadState('networkidle');
 
 		// Assertion to confirm the login attempt failed.
-		await expect(this.page, 'Should stay on login page').toHaveURL(slugToRegex(slugs.frontend.account.login));
+		await expect(this.page, 'Should stay on login page').toHaveURL(
+			slugToRegex(slugs.frontend.account.login),
+		);
+		if (errorMessage) {
+			await new NotificationValidatorUtils(this.page).validate(errorMessage);
+		} else {
+			const validationMessage = await this.loginFormFields.passwordField.evaluate(
+				(field: HTMLInputElement) => field.validationMessage,
+			);
+			expect(validationMessage, 'Password field should report a validation error').not.toBe(
+				'',
+			);
+		}
 	}
 }
