@@ -21,7 +21,7 @@ test.describe('Checkout (logged in user)', () => {
 	 * @assume the user is already logged in
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }, testInfo) => {
+	test.beforeEach(async ({ page, cartWithSimpleProduct }, testInfo) => {
 		test.skip(
 			testInfo.tags.includes('@simple-product-order') &&
 				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
@@ -29,14 +29,9 @@ test.describe('Checkout (logged in user)', () => {
 		);
 
 		const magewire = new MagewireUtils(page);
-		const productPage = new ProductPage(page);
 
 		magewire.startMonitoring();
 
-		await productPage.addSimpleProductToCart(
-			UIReference.text.frontend.product.simpleProduct,
-			slugs.frontend.product.simple,
-		);
 		await page.goto(slugs.frontend.checkout.index);
 	});
 
@@ -111,7 +106,7 @@ test.describe('Checkout (guest)', () => {
 	 * Before each test: set op monitoring and add product to cart
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }, testInfo) => {
+	test.beforeEach(async ({ page, cartWithSimpleProduct }, testInfo) => {
 		test.skip(
 			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
 			'Disabled by test toggle: couponCodes',
@@ -130,12 +125,7 @@ test.describe('Checkout (guest)', () => {
 		const magewire = new MagewireUtils(page);
 		magewire.startMonitoring();
 
-		// ensure product in cart
-		const productPage = new ProductPage(page);
-		await productPage.addSimpleProductToCart(
-			UIReference.text.frontend.product.simpleProduct,
-			slugs.frontend.product.simple,
-		);
+		// the cart is seeded by the cartWithSimpleProduct fixture
 
 		// to checkout
 		await page.goto(slugs.frontend.checkout.index);

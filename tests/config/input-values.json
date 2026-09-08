@@ -65,6 +65,9 @@
 		"secondStreetAddressValue": "Under the Stairs",
 		"secondZipCodeValue": "67890"
 	},
+	"product": {
+		"simpleProductQuantity": 1
+	},
 	"search": {
 		"queryMultipleResults": "bag",
 		"querySpecificProduct": "Push It Messenger Bag",
