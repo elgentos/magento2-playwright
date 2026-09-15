@@ -2,12 +2,30 @@
 
 /**
  * Utility to retrieve required environment variables.
- * Throws an error when the variable is not set.
+ * Throws an error when the variable is missing or set to an empty string.
  */
 export function requireEnv(varName: string): string {
 	const value = process.env[varName];
 	if (!value) {
-		throw new Error(`${varName} is not defined in the .env file.`);
+		/*
+		 * Distinguish "absent" from "present but empty", because the two have very
+		 * different causes and the old message ("not defined in the .env file")
+		 * pointed at the wrong one.
+		 *
+		 * dotenv only populates keys that are *absent* from process.env — it tests
+		 * with hasOwnProperty, not for truthiness. So a variable exported as an empty
+		 * string does not just fail this check, it also silently suppresses the .env
+		 * fallback that would otherwise have supplied a value. CI does exactly that:
+		 * GitHub Actions exports `FOO=` when `secrets.FOO` resolves to nothing, which
+		 * is indistinguishable from a set secret until you look at the value.
+		 */
+		const isPresentButEmpty = Object.prototype.hasOwnProperty.call(process.env, varName);
+		const reason = isPresentButEmpty
+			? 'is set to an empty string, which also suppresses the .env fallback ' +
+				'(in CI this usually means the secret did not resolve)'
+			: 'is not set in the environment or in .env';
+
+		throw new Error(`${varName} ${reason}.`);
 	}
 	return value;
 }
