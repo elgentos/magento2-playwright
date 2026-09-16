@@ -7,7 +7,7 @@
  * @fileoverview Test to ensure order history remains functional.
  */
 
-import { test } from '@playwright/test';
+import { guestTest as test } from '@utils/fixtures.utils';
 
 import { LoginPage } from '@poms/frontend/login.page';
 import { ProductPage } from '@poms/frontend/product.page';

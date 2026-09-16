@@ -7,7 +7,7 @@
  * @fileoverview various tests to ensure authentication is possible on the webshop.
  */
 
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 
 import { LoginPage } from '@poms/frontend/login.page';
 import { requireEnv } from '@utils/env.utils';
