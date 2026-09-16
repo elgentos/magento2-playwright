@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 import { outcomeMarker } from '@config';
 
 import { MainMenuPage } from '@poms/frontend/mainmenu.page';
