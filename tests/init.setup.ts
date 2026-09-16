@@ -184,13 +184,22 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 /**
  * Set up coupon codes through the Magento API. Iterates over every entry in
  * inputValues.coupon.codes (keyed by uppercase browser name); creating the
- * coupon if missing, activating it if disabled, or just annotating it if it
- * already exists and is active.
+ * coupon if missing, or repairing an existing one so it is active, associated
+ * with every storefront website and carries a working discount action.
  */
 test(`Set_coupon_codes`, { tag: '@api' }, async () => {
 	test.skip(toggles.couponCodes === false, 'Disabled by test toggle: couponCodes');
 
 	const couponCodeEntries = Object.entries(inputValues.coupon.codes) as [string, string][];
+
+	// Collect every storefront website id (everything except the 'admin' website) once, so
+	// the coupon can be associated with all websites whether we create a new rule or repair
+	// an existing one. Filter on the website code: the admin website's name is 'Admin' in a
+	// default install, so matching on the name leaves website 0 in the list.
+	const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
+	const websiteIds: number[] = websiteInfo
+		.filter((website: { code: string }) => website.code !== 'admin')
+		.map((website: { id: number }) => website.id);
 
 	for (const [browserKey, couponCode] of couponCodeEntries) {
 		await test.step(`Ensure coupon "${couponCode}" (${browserKey}) exists and is active`, async () => {
@@ -211,38 +220,62 @@ test(`Set_coupon_codes`, { tag: '@api' }, async () => {
 				const ruleId = coupon.rule_id;
 				const rule = await APIClient.get(`/rest/V1/salesRules/${ruleId}`);
 
-				if (!rule.is_active) {
+				// Determine what needs repairing: activation, website association and/or the
+				// discount action. A pre-existing rule without a valid discount action reads
+				// as present and active, but the storefront rejects it with "cannot be
+				// applied" - so treat it as broken instead of reporting it as healthy.
+				const wasInactive = !rule.is_active;
+				const existingWebsiteIds: number[] = rule.website_ids ?? [];
+				const missingWebsiteIds = websiteIds.filter(
+					(id) => !existingWebsiteIds.includes(id),
+				);
+				const hasInvalidAction =
+					rule.simple_action !== 'by_percent' || !rule.discount_amount;
+
+				if (wasInactive || missingWebsiteIds.length > 0 || hasInvalidAction) {
+					// Repair everything in a single PUT, matching what the create branch below
+					// produces: active, all storefront websites, 10% discount.
 					rule.is_active = true;
+					rule.website_ids = websiteIds;
+
+					if (hasInvalidAction) {
+						rule.simple_action = 'by_percent';
+						rule.discount_amount = 10;
+					}
+
 					const updateCoupon = await APIClient.put(`/rest/V1/salesRules/${ruleId}`, {
 						rule: rule,
 					});
 
-					if (updateCoupon.is_active) {
-						test.info().annotations.push({
-							type: 'Coupon notice',
-							description: `Your code "${coupon.code}" was found, but we had to activate it manually.`,
-						});
+					const repairs: string[] = [];
+					if (wasInactive && updateCoupon.is_active) {
+						repairs.push('we had to activate it manually');
 					}
+					if (missingWebsiteIds.length > 0) {
+						repairs.push(
+							`we associated it with all websites (added: ${missingWebsiteIds.join(', ')})`,
+						);
+					}
+					if (hasInvalidAction) {
+						repairs.push('we set a 10% discount action so it can actually be applied');
+					}
+
+					test.info().annotations.push({
+						type: 'Coupon notice',
+						description: `Your code "${coupon.code}" was found, but ${repairs.join(' and ')}.`,
+					});
 				} else {
 					test.info().annotations.push({
 						type: 'Coupon notice',
-						description: `Your code "${coupon.code}" was found. Active status: ${rule.is_active}.`,
+						description: `Your code "${coupon.code}" was found. Active status: ${rule.is_active}. Associated with all websites, discount action: ${rule.simple_action} / ${rule.discount_amount}.`,
 					});
 				}
 			} else {
 				// Not present. Create the rule + coupon.
-				const websiteInfo = await APIClient.get(`/rest/V1/store/websites`);
 				const customerGroups = await APIClient.get(
 					`/rest/V1/customerGroups/search?searchCriteria=all`,
 				);
-				const websiteIds: any[] = [];
 				const customerGroupsIds: any[] = [];
-
-				websiteInfo.forEach((website: { name: string; id: any }) => {
-					if (website.name !== 'admin') {
-						websiteIds.push(website.id);
-					}
-				});
 
 				customerGroups.items.forEach((customerGroup: { id: any }) => {
 					customerGroupsIds.push(customerGroup.id);
@@ -258,6 +291,10 @@ test(`Set_coupon_codes`, { tag: '@api' }, async () => {
 					stop_rules_processing: true,
 					is_advanced: true,
 					sort_order: 0,
+					// Without a simple_action the rule has no discount action to execute, so the
+					// storefront rejects the coupon with "cannot be applied". 'by_percent' with
+					// discount_amount 10 applies a 10% discount to any non-empty cart.
+					simple_action: 'by_percent',
 					discount_amount: 10,
 					discount_step: 0,
 					apply_to_shipping: false,
