@@ -50,52 +50,30 @@ test.describe(
 		 * @param request - APIRequestContext instance used to create accounts with the API.
 		 */
 		test(
-			'Change_password',
+			'User_changes_password',
 			{ tag: ['@account-credentials', '@hot'] },
 			async ({ page, request }) => {
+
 				const accountPage = new AccountPage(page);
 				const loginPage = new LoginPage(page);
 
-				const parallelIndex = test.info().parallelIndex;
-				const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
-				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+				const testAccount = await accountPage.ensureAccount(apiClient);
 				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
-
-				// Ensure a fresh account exists with the original password
-				const searchResponse = await apiClient.get(
-					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
-				);
-
-				if (searchResponse.items?.length > 0) {
-					await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
-				}
-
-				await apiClient.post('/rest/V1/customers', {
-					customer: {
-						email,
-						firstname: inputValues.account.firstName,
-						lastname: inputValues.account.lastName,
-					},
-					password,
-				});
 
 				// Login and change password via UI
 				await loginPage.goToLoginPage();
-				await loginPage.login(email, password);
+				await loginPage.login(testAccount.email, testAccount.password);
 				await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
 				await expect(
 					page.getByRole('textbox', {
 						name: UIReference.text.shared.forms.currentPassword,
 					}),
 				).toBeVisible();
-				await accountPage.updatePassword(password, changedPassword);
+				await accountPage.updatePassword(testAccount.password, changedPassword);
 
 				// Verify the new password works via API
 				const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
-					data: { username: email, password: changedPassword },
+					data: { username: testAccount.email, password: changedPassword },
 				});
 				expect(
 					tokenResponse.ok(),

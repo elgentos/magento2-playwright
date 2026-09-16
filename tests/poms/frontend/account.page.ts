@@ -1,10 +1,14 @@
 // @ts-check
 
-import { expect, type Locator, type Page, test, TestInfo } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
+
+import ApiClient from '@utils/apiClient.utils';
+import { requireEnv } from '@utils/env.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
+
+import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 
 export class AccountPage {
 	constructor(public readonly page: Page) {}
@@ -121,6 +125,53 @@ export class AccountPage {
 				name: UIReference.text.frontend.common.navigation.createAccount,
 			}),
 		};
+	}
+
+	// ==============================================
+	// Helper methods
+	// ==============================================
+
+	/**
+	 * Ensure stale pw_test accounts from previous are deleted,
+	 * Then create new account to use in Change_password test.
+	 */
+	async ensureAccount(apiClient: ApiClient){
+		// // Set up API Client
+		// const apiClient = await new ApiClient().create();
+
+		const parallelIndex = test.info().parallelIndex;
+		const email = `playwright_pwtest_${parallelIndex}@elgentostest.nl`;
+		const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+
+
+		// Ensure a fresh account exists with the original password
+		const searchResponse = await apiClient.get(
+			`/rest/V1/customers/search` +
+				`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+				`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
+				`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+		);
+
+		// If a stale account has been found, delete it.
+		if (searchResponse.items?.length > 0) {
+			await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
+		}
+
+		// create new test account.
+		await apiClient.post('/rest/V1/customers', {
+			customer: {
+				email,
+				firstname: inputValues.account.firstName,
+				lastname: inputValues.account.lastName,
+			},
+			password,
+		});
+
+		// // Dispose of API Client instance
+		// await apiClient.dispose();
+
+		// return account credentials
+		return {email, password};
 	}
 
 	// ==============================================
