@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 import { UIReference, outcomeMarker, inputValues, slugs } from '@config';
 import { slugToRegex } from '@utils/url.utils';
 

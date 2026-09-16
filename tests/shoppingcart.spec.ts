@@ -7,7 +7,7 @@
  * @fileoverview Various tests to ensure shopping-cart functions remain working.
  */
 
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 
 import { CartPage } from '@poms/frontend/shoppingcart.page';
 import { LoginPage } from '@poms/frontend/login.page';
