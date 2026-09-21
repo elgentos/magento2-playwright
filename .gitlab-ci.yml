@@ -228,4 +228,3 @@ run_testing_suite:
     paths:
       - playwright-report/
       - test-results/
-      - .env
