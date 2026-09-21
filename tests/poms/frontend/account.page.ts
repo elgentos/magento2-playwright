@@ -135,11 +135,10 @@ export class AccountPage {
 	 * Ensure stale pw_test accounts from previous are deleted,
 	 * Then create new account to use in Change_password test.
 	 */
-	async ensureAccount(apiClient: ApiClient){
+	async ensureAccount(apiClient: ApiClient) {
 		const parallelIndex = test.info().parallelIndex;
 		const email = `playwright_pwtest_${parallelIndex}@elgentostest.nl`;
 		const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-
 
 		// Ensure a fresh account exists with the original password
 		const searchResponse = await apiClient.get(
@@ -165,7 +164,7 @@ export class AccountPage {
 		});
 
 		// return account credentials
-		return {email, password};
+		return { email, password };
 	}
 
 	// ==============================================
@@ -311,7 +310,7 @@ export class AccountPage {
 		const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
 		// click the correct button based on if there's more than one address (defaultAddress boolean)
-		if(defaultAddress) {
+		if (defaultAddress) {
 			await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click();
 		} else {
 			await this.editAddressButton.click();

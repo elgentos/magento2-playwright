@@ -53,7 +53,6 @@ test.describe(
 			'User_changes_password',
 			{ tag: ['@account-credentials', '@hot'] },
 			async ({ page, request }) => {
-
 				const accountPage = new AccountPage(page);
 				const loginPage = new LoginPage(page);
 

@@ -10,7 +10,6 @@ class ApiClient {
 
 	constructor() {}
 
-
 	// ==============================================
 	// General / initialization methods
 	// ==============================================
@@ -96,7 +95,6 @@ class ApiClient {
 		return !this.tokenExpiry || Date.now() >= this.tokenExpiry;
 	}
 
-
 	// ==============================================
 	// CRUD methods
 	// ==============================================
@@ -142,8 +140,8 @@ class ApiClient {
 	 */
 	async delete(url: string): Promise<void> {
 		const response = await this.context.delete(url);
-		if(!response.ok()){
-			throw new Error(`API call failed [${response.status()}]: ${await response.text()}`)
+		if (!response.ok()) {
+			throw new Error(`API call failed [${response.status()}]: ${await response.text()}`);
 		}
 		await this.handleResponse(response);
 	}
@@ -157,9 +155,9 @@ class ApiClient {
 	async clearStaleAccounts(item: string): Promise<void> {
 		const searchResponse = await this.get(
 			`/rest/V1/customers/search` +
-			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=${item}` +
-			`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+				`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+				`&searchCriteria[filterGroups][0][filters][0][value]=${item}` +
+				`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
 		);
 
 		if (searchResponse.items?.length > 0) {
