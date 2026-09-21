@@ -1,7 +1,7 @@
 // @ts-check
 
 // Import test and expect from utils to ensure authenticated state.
-import { test, expect } from '@utils/fixtures.utils';
+import { test, guestTest, expect } from '@utils/fixtures.utils';
 
 import { ProductPage } from '@poms/frontend/product.page';
 import { AccountPage } from '@poms/frontend/account.page';
@@ -103,24 +103,21 @@ test.describe('Checkout (logged in user)', () => {
 /**
  * Test Group: checkout tests for users that are *not* logged in (guests)
  */
-test.describe('Checkout (guest)', () => {
-	// Ensure we are *not* using the authenticated state.
-	test.use({ storageState: { cookies: [], origins: [] } });
-
+guestTest.describe('Checkout (guest)', () => {
 	/**
 	 * Before each test: set op monitoring and add product to cart
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }, testInfo) => {
-		test.skip(
+	guestTest.beforeEach(async ({ page }, testInfo) => {
+		guestTest.skip(
 			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
 			'Disabled by test toggle: couponCodes',
 		);
-		test.skip(
+		guestTest.skip(
 			testInfo.tags.includes('@price-calculation') && toggles.fixedRateShipping === false,
 			'Disabled by test toggle: fixedRateShipping',
 		);
-		test.skip(
+		guestTest.skip(
 			testInfo.tags.includes('@payment-methods') &&
 				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
 			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
@@ -146,7 +143,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test(
+	guestTest(
 		'Add_coupon_code_in_checkout',
 		{ tag: ['@checkout', '@coupon-code', '@cold'] },
 		async ({ page, browserName }) => {
@@ -166,7 +163,7 @@ test.describe('Checkout (guest)', () => {
 	 * Test: Verify the prices are being calculated correctly in the checkout
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test(
+	guestTest(
 		'Verify_price_calculations_in_checkout',
 		{ tag: ['@checkout', '@price-calculation'] },
 		async ({ page }) => {
@@ -198,7 +195,7 @@ test.describe('Checkout (guest)', () => {
 	 * @param page - Playwright page instance used to interact with the website.
 	 * @param browserName - name of the browser running the test. Used for the coupon code.
 	 */
-	test(
+	guestTest(
 		'Remove_coupon_code_from_checkout',
 		{ tag: ['@checkout', '@coupon-code', '@cold'] },
 		async ({ page, browserName }) => {
@@ -219,7 +216,7 @@ test.describe('Checkout (guest)', () => {
 	 * Test: Using an invalid coupon code does not work
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test(
+	guestTest(
 		'Invalid_coupon_code_in_checkout_is_rejected',
 		{ tag: ['@checkout', '@coupon-code', '@cold'] },
 		async ({ page }) => {
@@ -238,16 +235,16 @@ test.describe('Checkout (guest)', () => {
 	 * @then I should see a confirmation that my order has been placed
 	 *  @and a order number should be created and shown to me
 	 */
-	test(
+	guestTest(
 		'Guest_can_select_payment_methods',
 		{ tag: ['@checkout', '@payment-methods', '@hot'] },
 		async ({ page }) => {
 			// Marking test as slow to allow more time befoure timeout
-			test.slow();
+			guestTest.slow();
 			const checkoutPage = new CheckoutPage(page);
 
 			// Test with check/money order payment
-			await test.step('Place order with check/money order payment', async () => {
+			await guestTest.step('Place order with check/money order payment', async () => {
 				await page.goto(slugs.frontend.checkout.index);
 				await checkoutPage.fillShippingAddress();
 				await checkoutPage.selectShippingMethod('fixed');

@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test } from '@playwright/test';
+import { guestTest as test } from '@utils/fixtures.utils';
 import { toggles } from '@config';
 
 import { CategoryPage } from '@poms/frontend/category.page';
