@@ -136,9 +136,6 @@ export class AccountPage {
 	 * Then create new account to use in Change_password test.
 	 */
 	async ensureAccount(apiClient: ApiClient){
-		// // Set up API Client
-		// const apiClient = await new ApiClient().create();
-
 		const parallelIndex = test.info().parallelIndex;
 		const email = `playwright_pwtest_${parallelIndex}@elgentostest.nl`;
 		const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
@@ -166,9 +163,6 @@ export class AccountPage {
 			},
 			password,
 		});
-
-		// // Dispose of API Client instance
-		// await apiClient.dispose();
 
 		// return account credentials
 		return {email, password};
@@ -317,9 +311,11 @@ export class AccountPage {
 		const country = values?.country || faker.helpers.arrayElement(inputValues.addressCountries);
 
 		// click the correct button based on if there's more than one address (defaultAddress boolean)
-		defaultAddress
-			? await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click()
-			: await this.editAddressButton.click();
+		if(defaultAddress) {
+			await this.page.getByRole('link', { name: 'Change Shipping Address arrow' }).click();
+		} else {
+			await this.editAddressButton.click();
+		}
 
 		const oldAddress = await streetAddressField.inputValue();
 
