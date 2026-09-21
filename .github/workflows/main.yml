@@ -39,12 +39,21 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Copy config files
         run: |
           cp playwright.config.example.ts playwright.config.ts
           cp tsconfig.example.json tsconfig.json
+
+      - name: Check secret propagation
+        shell: bash
+        run: |
+          for name in MAGENTO_ADMIN_USERNAME MAGENTO_ADMIN_PASSWORD MAGENTO_ADMIN_SLUG \
+                      MAGENTO_EXISTING_ACCOUNT_PASSWORD MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD; do
+            if [ -n "${!name:-}" ]; then echo "$name: SET"; else echo "$name: EMPTY"; fi
+          done
+          echo "event=${{ github.event_name }} fork=${{ github.event.pull_request.head.repo.fork }}"
 
       - name: Run Playwright tests
         run: |

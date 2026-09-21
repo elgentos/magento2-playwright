@@ -1,12 +1,13 @@
 // @ts-check
 
 import { defineConfig, devices } from '@playwright/test';
-import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'node:fs';
-import { getHttpCredentials } from '@utils/env.utils';
+import { getHttpCredentials, loadEnvironment } from '@utils/env.utils';
 
-dotenv.config({ path: path.resolve(__dirname, '.env'), quiet: true });
+// Not dotenv.config(): that leaves an env var exported as an empty string
+// (an unresolved CI secret) shadowing the .env value. See loadEnvironment().
+loadEnvironment(path.resolve(__dirname, '.env'));
 
 // Files that should never be matched by the regular browser projects.
 // setup.spec.ts is excluded because setup now runs as the 'setup' project

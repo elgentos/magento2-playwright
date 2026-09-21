@@ -1,13 +1,63 @@
 // @ts-check
 
+import dotenv from 'dotenv';
+import fs from 'node:fs';
+
+/**
+ * Loads .env into process.env, treating an empty string as "not set".
+ *
+ * dotenv.config() cannot do this job: it only populates keys that are *absent*
+ * from process.env, because it tests with hasOwnProperty rather than for
+ * truthiness. GitHub Actions exports `FOO=` whenever `secrets.FOO` fails to
+ * resolve, so an unresolved secret does not merely fail requireEnv() below — it
+ * silently shadows the .env value that would otherwise have covered for it.
+ *
+ * A real, non-empty environment variable still wins over .env, so genuine CI
+ * secrets keep priority over the local defaults written by install.js.
+ *
+ * Safe to call when the file is missing: a checkout without .env simply leaves
+ * process.env as it found it, and requireEnv() reports the missing key.
+ */
+export function loadEnvironment(envPath: string): void {
+	if (!fs.existsSync(envPath)) {
+		return;
+	}
+
+	const parsed = dotenv.parse(fs.readFileSync(envPath));
+
+	for (const [key, value] of Object.entries(parsed)) {
+		// Falsy covers both cases dotenv.config() conflates: absent, and set-to-empty.
+		if (!process.env[key]) {
+			process.env[key] = value;
+		}
+	}
+}
+
 /**
  * Utility to retrieve required environment variables.
- * Throws an error when the variable is not set.
+ * Throws an error when the variable is missing or set to an empty string.
  */
 export function requireEnv(varName: string): string {
 	const value = process.env[varName];
 	if (!value) {
-		throw new Error(`${varName} is not defined in the .env file.`);
+		/*
+		 * Distinguish "absent" from "present but empty", because the two have very
+		 * different causes and the old message ("not defined in the .env file")
+		 * pointed at the wrong one.
+		 *
+		 * Reaching the empty-string branch means loadEnvironment() could not cover
+		 * for the blank value either — there was no .env, or it does not define this
+		 * key. In CI that combination almost always means the secret did not resolve
+		 * (GitHub Actions exports `FOO=` when `secrets.FOO` resolves to nothing,
+		 * which is indistinguishable from a set secret until you look at the value).
+		 */
+		const isPresentButEmpty = Object.prototype.hasOwnProperty.call(process.env, varName);
+		const reason = isPresentButEmpty
+			? 'is set to an empty string and .env supplied no fallback value ' +
+				'(in CI this usually means the secret did not resolve)'
+			: 'is not set in the environment or in .env';
+
+		throw new Error(`${varName} ${reason}.`);
 	}
 	return value;
 }
