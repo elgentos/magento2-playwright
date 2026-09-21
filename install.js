@@ -74,13 +74,28 @@ class Install {
 	}
 
 	async setEnvVariables() {
-		// Check if user
-		if (!this.isCi) {
-			const initialAnswer = await this.askQuestion(
-				'Do you want to customize environment variables? (y/N): ',
+		/*
+		 * CI takes its configuration from the CI environment, never from this
+		 * wizard's defaults. Writing them would be actively harmful: loadEnvironment()
+		 * in playwright.config treats an empty variable as absent and fills it from
+		 * .env, so a secret that fails to resolve (GitHub Actions exports `FOO=` for
+		 * a PR from a fork, which never receives secrets) would be silently replaced
+		 * by a placeholder such as `Test1234!`. The run then fails much later with
+		 * whatever the target Magento says about those wrong credentials, instead of
+		 * with requireEnv()'s report of the variable that never arrived.
+		 */
+		if (this.isCi) {
+			console.log(
+				'CI detected; skipping .env generation. Configuration must come from ' +
+					'the CI environment, and a missing variable will be reported by name.',
 			);
-			this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
+			return;
 		}
+
+		const initialAnswer = await this.askQuestion(
+			'Do you want to customize environment variables? (y/N): ',
+		);
+		this.useDefaults = initialAnswer.trim().toLowerCase() !== 'y';
 
 		// Read and update .env file
 		const envPath = path.resolve(__dirname, this.pathToBaseDir, '.env');
@@ -88,7 +103,7 @@ class Install {
 
 		for (const [key, value] of Object.entries(this.envVars)) {
 			let userInput = '';
-			if (!this.isCi && !this.useDefaults) {
+			if (!this.useDefaults) {
 				userInput = await this.askQuestion(`Enter ${key} (default: ${value.default}): `);
 			}
 			envContent += `${key}=${userInput || value.default}\n`;
