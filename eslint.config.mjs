@@ -81,6 +81,14 @@ export default tseslint.config(
 	{
 		files: ['tests/**/*.spec.ts', 'tests/**/*.setup.ts'],
 		extends: [playwright.configs['flat/recommended']],
+		settings: {
+			// account.spec.ts and checkout.spec.ts use the `guestTest` fixture object
+			// (from @utils/fixtures.utils) directly, without aliasing it to `test`.
+			// Without this, the plugin doesn't recognise `guestTest.describe(...)` /
+			// `guestTest(...)` as test-defining calls, and flags every `expect()`
+			// inside them as a standalone expect outside a test block.
+			playwright: { globalAliases: { test: ['guestTest'] } },
+		},
 		rules: {
 			'playwright/no-focused-test': 'error',
 			'playwright/no-conditional-in-test': 'warn',

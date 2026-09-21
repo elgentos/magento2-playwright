@@ -35,6 +35,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   +import { AdminLogin } from '@poms/admin/adminlogin.page';
   ```
 
+### Fixtures
+
+- `@utils/fixtures.utils` now exports `guestTest` alongside `test`. Both carry the
+  cookie-consent decision captured by `globalSetup`, which was previously written
+  to `consentCookies.json` and never read. Specs that dropped authentication with
+  `test.use({ storageState: { cookies: [], origins: [] } })` must switch to
+  `guestTest` — the old form also drops the consent cookies.
+- Worker auth state moved from `test-results/.auth/{parallelIndex}.json` to
+  `.auth/{projectName}/worker_{parallelIndex}.json`: it survives Playwright
+  clearing `test-results/`, and chromium/firefox/webkit no longer share one
+  state file per index. They do still share the Magento account at a given
+  index, which is safe because no spec mutates the shared login.
+- The consent seed moved with it, from `tests/utils/.auth/consentCookies.json`
+  to `.auth/consentCookies.json` at the project root, so a store that overrides
+  only one of `global-setup.ts` / `fixtures.utils.ts` cannot end up with the
+  writer and the reader pointing at different directories.
+- New `@fixtures/*` layer (`tests/fixtures/storage-state.ts`) owns those paths and
+  the consent-seed reader.
+- `globalSetup` caps consent capture at 30s and can no longer abort the run.
+- `globalSetup` now detects a CMP-less environment in ~5s instead of spending the
+  full 30s retry budget, then continues immediately with an empty seed.
+- New optional `.env` variable `COOKIE_CONSENT_CMP_HOST`.
+
 ### Added
 
 - `@base/*` path alias, so a POM override in `tests/` can extend its packaged
@@ -42,7 +65,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `bin/verify-override-seam.js` (`npm run verify:seam`), which verifies the override mechanism against a throwaway consumer-shaped fixture. It is a local pre-merge check for contributors, deliberately not wired into CI.
 - CLI tool `magento2-playwright` (registered under `bin` in `package.json`) with two commands: `setup` (interactive wizard that configures `.env` with base URL and admin credentials) and `create-coupons` (creates coupon codes in Magento per browser engine via the admin API). New `bin/cli.js`, `bin/commands/`, and `bin/helpers/` files.
 - Visual regression tests in `healthcheck.spec.ts` (ticket 164): a new "Visual Regression Tests" group that captures a fresh production baseline per page/browser, then compares the base URL against it with `toHaveScreenshot` (using per-page mask selectors). Viewport and device scale factor are pinned so screenshots are byte-comparable across browsers. Tagged `@smoke @visual @cold`.
-- Consent-cookie global setup `tests/utils/global-setup.ts` (ticket 480): captures the consentmanager.net "Reject all" cookies once and persists them as a storageState file (`tests/utils/.auth/consentCookies.json`) so tests skip the consent modal.
+- Consent-cookie global setup `tests/utils/global-setup.ts` (ticket 480): captures the consentmanager.net "Reject all" cookies once and persists them as a storageState file (`.auth/consentCookies.json`) so tests skip the consent modal.
 - `playwrightRequestConfig.ts` with `getPlaywrightRequestConfig()` / `getPlaywrightApiRequestConfig()` helpers that split HTTP Basic Auth credentials out of the base URL.
 - `_authGuard` auto-fixture in `fixtures.utils.ts` that verifies a worker's stored auth is still valid and re-authenticates inline when needed; auth state is now scoped per `(project, parallelIndex)`.
 - `optionalEnv()` and `getCouponCode()` helpers in `env.utils.ts`. Coupon codes follow a `{browser}321` pattern, overridable via the `MAGENTO_COUPON_CODE_PATTERN` env variable.

@@ -30,7 +30,7 @@ const SENTINEL = '#seam-override-marker';
 // Distinct from SENTINEL so a false-positive match between the two checks is
 // not possible.
 const COMPOSE_SENTINEL = '#seam-compose-marker';
-const LAYER_DIRS = ['poms', 'utils', 'config', 'types'];
+const LAYER_DIRS = ['poms', 'utils', 'config', 'types', 'fixtures'];
 
 /**
  * The base layer to copy. In local development tests/ is authoritative. In CI,

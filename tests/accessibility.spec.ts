@@ -10,7 +10,7 @@
  * For more info on Web Content Accessibility Guidelines (WCAG), see:
  * https://www.w3.org/WAI/WCAG2A-Conformance
  */
-import { test, expect } from '@playwright/test';
+import { guestTest as test, expect } from '@utils/fixtures.utils';
 import AxeBuilder from '@axe-core/playwright';
 
 import { UIReference, slugs } from '@config';

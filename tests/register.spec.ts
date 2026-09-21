@@ -1,14 +1,11 @@
 // @ts-check
 
-import { test } from '@playwright/test';
+import { guestTest as test } from '@utils/fixtures.utils';
 import { faker } from '@faker-js/faker';
 import { inputValues } from '@config';
 
 import { RegisterPage } from '@poms/frontend/register.page';
 import { requireEnv } from '@utils/env.utils';
-
-// Reset storageState to ensure we're not logged in before running these tests.
-test.use({ storageState: { cookies: [], origins: [] } });
 
 /**
  * @feature Magento 2 Account Creation
