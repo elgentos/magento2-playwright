@@ -13,8 +13,19 @@ on:
         default: ''
 
 jobs:
+  # A pull_request run from a fork never receives repository or environment
+  # secrets, so every MAGENTO_* value below would arrive empty and the suite
+  # would fail against the demo store with a misleading Magento error. Fork PRs
+  # still get the lint job below; a maintainer runs the full suite from a branch
+  # in this repository, or via workflow_dispatch.
+  #
+  # Deliberately not pull_request_target: that would run fork-authored code with
+  # these credentials in scope.
   build-and-selftest:
-    if: github.event_name == 'workflow_dispatch' || github.head_ref != 'gitlab-main'
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.head_ref != 'gitlab-main' &&
+      github.event.pull_request.head.repo.fork != true)
     runs-on: ubuntu-latest
 
     environment: magento-playwright
@@ -78,6 +89,8 @@ jobs:
             path: test-results
             retention-days: 30
 
+  # Deliberately ungated: this job needs no secrets, so it runs for every pull
+  # request including forks, which build-and-selftest above cannot.
   lint:
     runs-on: ubuntu-latest
     steps:
