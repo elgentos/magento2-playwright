@@ -90,9 +90,9 @@ test(`Create_test_accounts`, { tag: ['@setup', '@api'] }, async ({ browserName }
 		// Start by checking if the accounts already exist
 		const allCustomers = await APIClient.get(
 			`/rest/V1/customers/search` +
-			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-			`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright_user%25` +
-			`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`,
+				`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+				`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright_user%25` +
+				`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`,
 		);
 		const testAccountsPresent = allCustomers.items ?? [];
 
@@ -147,9 +147,9 @@ test(
 		// Try to find our coupon codes, then check if testing coupon exists
 		const couponCheckResponse = await APIClient.get(
 			`/rest/V1/coupons/search` +
-			`?searchCriteria[filter_groups][0][filters][0][field]=code` +
-			`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
-			`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`,
+				`?searchCriteria[filter_groups][0][filters][0][field]=code` +
+				`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
+				`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`,
 		);
 		const codePresent = couponCheckResponse.items.some(
 			(item: { code: string }) => item.code === `${couponCode}`,

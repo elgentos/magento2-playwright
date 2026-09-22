@@ -24,7 +24,7 @@ test.describe('Checkout (logged in user)', () => {
 	test.beforeEach(async ({ page }, testInfo) => {
 		test.skip(
 			testInfo.tags.includes('@simple-product-order') &&
-			(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
+				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
 			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
 		);
 
@@ -119,7 +119,7 @@ guestTest.describe('Checkout (guest)', () => {
 		);
 		guestTest.skip(
 			testInfo.tags.includes('@payment-methods') &&
-			(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
+				(toggles.fixedRateShipping === false || toggles.checkMoneyOrder === false),
 			'Requires enabled test toggles: fixedRateShipping and checkMoneyOrder',
 		);
 
