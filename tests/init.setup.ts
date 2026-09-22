@@ -115,7 +115,7 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
  * Set up test accounts through the Magento API.
  *
  */
-test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
+test(`Create_test_accounts`, { tag: '@api' }, async ({ }) => {
 	test.slow(); // Mark as slow to double test time.
 
 	const ACCOUNTS_PER_PROJECT = 13;
@@ -128,9 +128,9 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 		// Fetch existing playwright+* accounts so we only create missing ones.
 		const allCustomers = await APIClient.get(
 			`/rest/V1/customers/search` +
-				`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-				`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright%2B%25` +
-				`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`,
+			`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+			`&searchCriteria[filterGroups][0][filters][0][value]=%25playwright%2B%25` +
+			`&searchCriteria[filterGroups][0][filters][0][conditionType]=like`,
 		);
 		const existingEmails = new Set<string>(
 			(allCustomers.items ?? []).map((c: { email: string }) => c.email),
@@ -205,9 +205,9 @@ test(`Set_coupon_codes`, { tag: '@api' }, async () => {
 		await test.step(`Ensure coupon "${couponCode}" (${browserKey}) exists and is active`, async () => {
 			const couponCheckResponse = await APIClient.get(
 				`/rest/V1/coupons/search` +
-					`?searchCriteria[filter_groups][0][filters][0][field]=code` +
-					`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
-					`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`,
+				`?searchCriteria[filter_groups][0][filters][0][field]=code` +
+				`&searchCriteria[filter_groups][0][filters][0][value]=%${couponCode}%` +
+				`&searchCriteria[filter_groups][0][filters][0][condition_type]=like`,
 			);
 			const codePresent = couponCheckResponse.items.some(
 				(item: { code: string }) => item.code === `${couponCode}`,

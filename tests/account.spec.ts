@@ -61,9 +61,9 @@ guestTest.describe(
 				// Ensure a fresh account exists with the original password
 				const searchResponse = await apiClient.get(
 					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+					`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+					`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
+					`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
 				);
 
 				if (searchResponse.items?.length > 0) {
@@ -121,9 +121,9 @@ guestTest.describe(
 				// Ensure a fresh account exists with the original email
 				const searchResponse = await apiClient.get(
 					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${originalEmail}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+					`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+					`&searchCriteria[filterGroups][0][filters][0][value]=${originalEmail}` +
+					`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
 				);
 
 				if (searchResponse.items?.length > 0) {
@@ -133,9 +133,9 @@ guestTest.describe(
 				// Also clean up any leftover updated email account from a previous run
 				const updatedSearchResponse = await apiClient.get(
 					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${updatedEmail}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+					`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+					`&searchCriteria[filterGroups][0][filters][0][value]=${updatedEmail}` +
+					`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
 				);
 
 				if (updatedSearchResponse.items?.length > 0) {
