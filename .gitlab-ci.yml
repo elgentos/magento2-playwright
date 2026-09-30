@@ -221,7 +221,7 @@ run_testing_suite:
   script:
     - echo "Running test suite"
     - printf "elgentos\n" | npm install
-    - CI=true npx playwright test --workers=3 --max-failures=1 --trace=retain-on-failure
+    - CI=true npx playwright test --workers=2 --max-failures=1 --trace=retain-on-failure
   allow_failure: false
   artifacts:
     when: always
