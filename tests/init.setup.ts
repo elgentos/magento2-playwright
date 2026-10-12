@@ -68,7 +68,9 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
 				name: UIReference.text.admin.configuration.magentoIncomingMessage,
 			}),
 			button: page
-				.getByRole('dialog', {name: UIReference.text.admin.configuration.magentoIncomingMessage})
+				.getByRole('dialog', {
+					name: UIReference.text.admin.configuration.magentoIncomingMessage,
+				})
 				.getByRole('button'),
 		},
 	];
