@@ -1,5 +1,6 @@
 // @ts-check
 
+import type { Response } from '@playwright/test';
 import dotenv from 'dotenv';
 import fs from 'node:fs';
 
@@ -83,6 +84,26 @@ export function getHttpCredentials(): { username: string; password: string } | u
 		return { username, password };
 	}
 	return undefined;
+}
+
+/**
+ * Whether a response is the HTTP Basic Auth challenge rather than the real answer.
+ *
+ * Firefox surfaces that challenge — a 401 on the request sent *without*
+ * credentials — as a separate response before retrying with them, so a plain
+ * `page.waitForResponse(url)` resolves on the 401. Chromium and WebKit answer
+ * the challenge inside their network stack and never expose it.
+ *
+ * A 401 on the retried request (which does carry an Authorization header) is
+ * not a challenge: it means the credentials are wrong, and must stay visible.
+ * Without configured credentials nothing is a challenge, since no retry follows.
+ */
+export function isBasicAuthChallenge(response: Response): boolean {
+	return (
+		!!getHttpCredentials() &&
+		response.status() === 401 &&
+		!response.request().headers()['authorization']
+	);
 }
 
 /**
