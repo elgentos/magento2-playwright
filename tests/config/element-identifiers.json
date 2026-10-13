@@ -53,7 +53,10 @@
 			"product": {
 				"price": ".final-price .price-wrapper .price",
 				"optionForm": "#product_addtocart_form",
-				"optionValue": "input[type='radio']"
+				"optionValue": "input[type='radio']",
+				"lightboxOpener": ".group.stack",
+				"lightboxCloseButton": ".absolute.right-2",
+				"lightboxImage": "img"
 			},
 			"checkout": {
 				"cartDetails": "#checkout-cart-details div",
@@ -295,7 +298,8 @@
 				"configurableProduct": "Inez Full Zip Jacket",
 				"fullScreenOpen": "Click to view image in",
 				"fullScreenClose": "Close fullscreen",
-				"thumbnail": "View larger image"
+				"thumbnail": "View larger image",
+				"nextImage": "Next image"
 			},
 			"register": {
 				"title": "Create New Customer Account"

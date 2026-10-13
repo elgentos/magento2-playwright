@@ -5,6 +5,14 @@ import { UIReference, outcomeMarker, slugs } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { slugToRegex } from '@utils/url.utils';
 
+// The lightbox opens and closes with an animated transition. WebKit on a loaded CI runner
+// can take several seconds to finish it, well past the default 5s expect timeout.
+const LIGHTBOX_TRANSITION_TIMEOUT = 30_000;
+
+// Upper bound on 'next image' clicks, in case a store's gallery wraps around instead of
+// disabling the button on the last image.
+const MAX_LIGHTBOX_IMAGES = 20;
+
 export class ProductPage {
 	constructor(public readonly page: Page) {}
 
@@ -85,14 +93,30 @@ export class ProductPage {
 	 * get lightboxElements
 	 * Returns the various elements related to the lightbox:
 	 * a tool to show the product pictures in a larger box.
+	 * The gallery behind the lightbox has its own 'next image' button,
+	 * so every element inside the lightbox is scoped to the dialog.
 	 */
 	get lightboxElements() {
+		const lightbox = this.page.getByRole('dialog').filter({
+			has: this.page.getByRole('button', {
+				name: UIReference.text.frontend.product.nextImage,
+				exact: true,
+			}),
+		});
+
 		return {
-			fullScreenOpener: this.page.locator('.group.stack').first(),
-			fullScreenCloser: this.page.locator('.absolute.right-2'),
-			thumbnails: this.page
-				.getByRole('button', { name: UIReference.text.frontend.product.thumbnail })
-				.all(),
+			fullScreenOpener: this.page
+				.locator(UIReference.selectors.frontend.product.lightboxOpener)
+				.first(),
+			lightbox,
+			fullScreenCloser: lightbox.locator(
+				UIReference.selectors.frontend.product.lightboxCloseButton,
+			),
+			image: lightbox.locator(UIReference.selectors.frontend.product.lightboxImage),
+			nextButton: lightbox.getByRole('button', {
+				name: UIReference.text.frontend.product.nextImage,
+				exact: true,
+			}),
 		};
 	}
 
@@ -320,24 +344,34 @@ export class ProductPage {
 	async openLightboxAndScrollThrough(product: string, slug: string) {
 		await this.goToProductPage(product, slug);
 
-		await this.lightboxElements.fullScreenOpener.click();
-		await expect(this.lightboxElements.fullScreenCloser).toBeVisible();
+		const { fullScreenOpener, lightbox, fullScreenCloser, image, nextButton } =
+			this.lightboxElements;
 
-		for (const img of await this.lightboxElements.thumbnails) {
-			await img.click();
-			// wait for transition animation
-			await this.page.waitForTimeout(500);
-			await expect(img, `CSS class 'border-primary' appended to button`).toHaveClass(
-				new RegExp(outcomeMarker.productPage.borderClassRegex),
+		await fullScreenOpener.click();
+		await expect(lightbox, `lightbox should be open`).toBeVisible();
+		// The lightbox fades in; interacting with it mid-transition makes clicks unreliable.
+		await expect(lightbox, `lightbox should be fully faded in`).toHaveCSS('opacity', '1', {
+			timeout: LIGHTBOX_TRANSITION_TIMEOUT,
+		});
+
+		let imagesShown = 1;
+		while (imagesShown < MAX_LIGHTBOX_IMAGES && (await nextButton.isEnabled())) {
+			const previousSrc = (await image.getAttribute('src')) ?? '';
+			await nextButton.click();
+			await expect(image, `lightbox should show the next image`).not.toHaveAttribute(
+				'src',
+				previousSrc,
 			);
+			imagesShown++;
 		}
+		expect(imagesShown, `lightbox should scroll through more than one image`).toBeGreaterThan(
+			1,
+		);
 
-		await this.lightboxElements.fullScreenCloser.click();
+		await fullScreenCloser.click();
 
-		// Final assertion: after closing the lightbox, the 'close lightbox' button should be hidden
-		await expect(
-			this.lightboxElements.fullScreenCloser,
-			`'close lightbox' button should be hidden`,
-		).toBeHidden();
+		await expect(lightbox, `lightbox should be closed`).toBeHidden({
+			timeout: LIGHTBOX_TRANSITION_TIMEOUT,
+		});
 	}
 }
