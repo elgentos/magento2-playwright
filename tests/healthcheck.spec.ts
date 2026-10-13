@@ -8,12 +8,25 @@
  * This file also checks the HTTP authentication headers are sent.
  */
 
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page, type Response } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 
-import { requireEnv, getHttpCredentials } from '@utils/env.utils';
+import { requireEnv, getHttpCredentials, isBasicAuthChallenge } from '@utils/env.utils';
 import { UIReference, slugs, toggles } from '@config';
+
+/**
+ * Waits for the response to `url`, skipping the HTTP Basic Auth challenge that
+ * Firefox exposes as a separate 401 before the authenticated retry.
+ * @param page - Playwright page instance the navigation happens in.
+ * @param url - Absolute URL or slug, resolved against PLAYWRIGHT_BASE_URL.
+ */
+function waitForPageResponse(page: Page, url: string): Promise<Response> {
+	const expectedUrl = new URL(url, requireEnv('PLAYWRIGHT_BASE_URL')).href;
+	return page.waitForResponse(
+		(response) => response.url() === expectedUrl && !isBasicAuthChallenge(response),
+	);
+}
 
 function regressionSnapshotName(label: string, browser: string, extension: 'png' | 'yml'): string {
 	const now = new Date();
@@ -83,7 +96,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 */
 	test('Homepage_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
 		const homepageURL = requireEnv(`PLAYWRIGHT_BASE_URL`);
-		const homepageResponsePromise = page.waitForResponse(homepageURL);
+		const homepageResponsePromise = waitForPageResponse(page, homepageURL);
 
 		await page.goto(homepageURL);
 		const homepageResponse = await homepageResponsePromise;
@@ -100,7 +113,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Plp_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
-		const plpResponsePromise = page.waitForResponse(slugs.frontend.category.index);
+		const plpResponsePromise = waitForPageResponse(page, slugs.frontend.category.index);
 
 		await page.goto(slugs.frontend.category.index);
 		const plpResponse = await plpResponsePromise;
@@ -117,7 +130,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Pdp_returns_200', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
-		const pdpResponsePromise = page.waitForResponse(slugs.frontend.product.simple);
+		const pdpResponsePromise = waitForPageResponse(page, slugs.frontend.product.simple);
 
 		await page.goto(slugs.frontend.product.simple);
 		const pdpResponse = await pdpResponsePromise;
@@ -138,7 +151,7 @@ test.describe('Smoke tests for critical pages', () => {
 	 * @param page - Playwright page instance used for interacting with the website.
 	 */
 	test('Checkout_returns_302_then_redirects', { tag: ['@smoke', '@cold'] }, async ({ page }) => {
-		const responsePromise = page.waitForResponse(slugs.frontend.checkout.index);
+		const responsePromise = waitForPageResponse(page, slugs.frontend.checkout.index);
 
 		await page.goto(slugs.frontend.checkout.index);
 		const response = await responsePromise;
