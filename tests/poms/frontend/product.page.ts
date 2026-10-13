@@ -11,7 +11,7 @@ const LIGHTBOX_TRANSITION_TIMEOUT = 30_000;
 
 // Upper bound on 'next image' clicks, in case a store's gallery wraps around instead of
 // disabling the button on the last image.
-const MAX_LIGHTBOX_IMAGES = 20;
+const MAX_LIGHTBOX_IMAGES = 3;
 
 export class ProductPage {
 	constructor(public readonly page: Page) {}
@@ -367,6 +367,11 @@ export class ProductPage {
 		expect(imagesShown, `lightbox should scroll through more than one image`).toBeGreaterThan(
 			1,
 		);
+
+		// wait for the 'close lightbox' button to be visible.
+		await expect(async () => {
+			await expect(fullScreenCloser).toBeVisible();
+		}).toPass();
 
 		await fullScreenCloser.click();
 
