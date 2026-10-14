@@ -58,20 +58,33 @@ guestTest.describe(
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
+				// Ensure a fresh account exists with the original password
+				await apiClient.clearStaleAccounts(email);
+
+				// Now create the actual test account:
+				await apiClient.post('/rest/V1/customers', {
+					customer: {
+						email,
+						firstname: inputValues.account.firstName,
+						lastname: inputValues.account.lastName,
+					},
+					password,
+				});
+
 				// Login and change password via UI
 				await loginPage.goToLoginPage();
-				await loginPage.login(testAccount.email, testAccount.password);
+				await loginPage.login(email, password);
 				await page.goto(slugs.frontend.account.changePassword, { waitUntil: 'load' });
 				await expect(
 					page.getByRole('textbox', {
 						name: UIReference.text.shared.forms.currentPassword,
 					}),
 				).toBeVisible();
-				await accountPage.updatePassword(testAccount.password, changedPassword);
+				await accountPage.updatePassword(password, changedPassword);
 
 				// Verify the new password works via API
 				const tokenResponse = await request.post('/rest/V1/integration/customer/token', {
-					data: { username: testAccount.email, password: changedPassword },
+					data: { username: email, password: changedPassword },
 				});
 				expect(
 					tokenResponse.ok(),
