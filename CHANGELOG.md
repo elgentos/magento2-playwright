@@ -3,7 +3,43 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 7.0.0
+## [7.1.0] - 2026-10-14
+
+### Added
+
+- `isBasicAuthChallenge(response)` in `@utils/env.utils`: tells whether a
+  response is the HTTP Basic Auth challenge (a 401 on a request sent without an
+  `Authorization` header) rather than the real answer. A 401 on a request that
+  does carry credentials is not treated as a challenge, so wrong credentials stay
+  visible.
+
+### Fixed
+
+- `healthcheck.spec.ts` smoke tests (`Homepage_returns_200`, `Plp_returns_200`,
+  `Pdp_returns_200`, `Checkout_returns_302_then_redirects`) failed on Firefox
+  behind HTTP Basic Auth: Firefox exposes the 401 challenge as a separate
+  response, which `page.waitForResponse(url)` resolved on. They now wait through
+  a `waitForPageResponse()` helper that matches the absolute URL exactly and
+  skips the challenge.
+- `package-lock.json` still listed the package as version `6.0.0`.
+
+### Removed
+
+- Files that were published by accident are no longer part of the npm package:
+  the `wiki/` folder, the local visual-regression baselines in
+  `tests/utils/snapshots/` (~17 MB) and a stale
+  `.magento2-playwright.manifest.json`. Nothing in the suite reads them; the
+  healthcheck creates `tests/utils/snapshots/` itself when it is missing.
+
+### CI
+
+- `run_testing_suite` runs with 2 workers instead of 1, and records traces and
+  video only on the first retry (`--trace=on-first-retry`,
+  `PLAYWRIGHT_VIDEO=on-first-retry`) instead of for every test.
+- The debug job prints the runner's resources (CPU count, container CPU limit,
+  memory, `/dev/shm`).
+
+## [7.0.0] - 2026-09-23
 
 ### Breaking
 

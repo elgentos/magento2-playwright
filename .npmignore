@@ -1,26 +1,38 @@
-#folders
+# IDE/ editor
 .idea
 .vscode
-.github
 .claude
-.auth/*
+.github
+
+# Dependencies
 node_modules/
+
+# Playwright artifacts
 /test-results/
-/auth-storage/
 /playwright-report/
+
+# Backup mirror / generated content
+.auth/*
+/auth-storage/
+/.superpowers/
 /base-tests/
 /docs/
-/.superpowers/
-/.playwright-mcp/
+/tests/utils/snapshots/
+/i18n/
 
-#files
+# Local config (generated from *.example.* templates)
 /*.config.ts
-/.env
 /tsconfig.json
+
+# Other
+/.env
+.mcp.json
+/.playwright-mcp/
 /.gitlab-ci.yml
-/.auth
 /eslint.config.mjs
 /.prettierrc.json
 /.prettierignore
 /tsconfig.eslint.json
 /.git-blame-ignore-revs
+/wiki/
+/timing-report/
