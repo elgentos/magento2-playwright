@@ -19,6 +19,38 @@
 		"contactFormEmailValue": "robertbaratheon@gameofthrones.com",
 		"contactFormMessage": "Hello! I am filling out this form as a test only. Feel free to ignore this message."
 	},
+	"customOptions": {
+		"skuPrefix": "playwright-custom-options",
+		"fieldLabel": "Engraving",
+		"fieldValue": "Coverage engraving",
+		"areaLabel": "Gift message",
+		"areaValue": "Coverage gift message",
+		"fileLabel": "Artwork",
+		"dropdownLabel": "Finish",
+		"radioLabel": "Shape",
+		"checkboxLabel": "Extras",
+		"multipleLabel": "Accessories",
+		"dateLabel": "Delivery date",
+		"dateTimeLabel": "Appointment",
+		"timeLabel": "Pickup time",
+		"selectionValues": [
+			{
+				"title": "Fixed surcharge",
+				"price": 5,
+				"priceType": "fixed"
+			},
+			{
+				"title": "Percentage surcharge",
+				"price": 10,
+				"priceType": "percent"
+			},
+			{
+				"title": "No surcharge",
+				"price": 0,
+				"priceType": "fixed"
+			}
+		]
+	},
 	"coupon": {
 		"couponCodeRuleName": "Test coupon",
 		"couponType": "Specific Coupon",
