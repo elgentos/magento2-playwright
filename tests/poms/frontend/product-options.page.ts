@@ -101,12 +101,9 @@ export class ProductOptionsPage {
 		await this.option(labels.areaLabel).getByRole('textbox').fill(labels.areaValue);
 
 		await file.setInputFiles({
-			name: 'coverage.png',
-			mimeType: 'image/png',
-			buffer: Buffer.from(
-				'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z9ZsAAAAASUVORK5CYII=',
-				'base64',
-			),
+			name: labels.upload.name,
+			mimeType: labels.upload.mimeType,
+			buffer: Buffer.from(labels.upload.base64, 'base64'),
 		});
 		await expect(file).toHaveJSProperty('validationMessage', '');
 

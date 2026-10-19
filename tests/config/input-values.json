@@ -21,11 +21,18 @@
 	},
 	"customOptions": {
 		"skuPrefix": "playwright-custom-options",
+		"fixtureLockLabel": "Playwright fixture lock",
 		"fieldLabel": "Engraving",
 		"fieldValue": "Coverage engraving",
 		"areaLabel": "Gift message",
 		"areaValue": "Coverage gift message",
 		"fileLabel": "Artwork",
+		"upload": {
+			"name": "coverage.png",
+			"mimeType": "image/png",
+			"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Z9ZsAAAAASUVORK5CYII=",
+			"extension": "png"
+		},
 		"dropdownLabel": "Finish",
 		"radioLabel": "Shape",
 		"checkboxLabel": "Extras",
