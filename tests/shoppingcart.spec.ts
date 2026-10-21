@@ -18,40 +18,49 @@ import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 import { UIReference, slugs, outcomeMarker, inputValues, toggles } from '@config';
 
 /**
- * Test Group: Cart functionalities for guests
+ * Test Group: Putting a product in the cart. Separate from the group below
+ * because this is the add-to-cart coverage itself: it has to start from an
+ * empty cart and go through the UI, where the others only need a full cart.
  */
-test.describe('Cart functionalities (guest)', () => {
+test.describe('Cart filling (guest)', () => {
 	/**
-	 * Before each test: add a product to the cart, navigate to the cart.
+	 * Test: A guest adds a product to their cart
+	 * @assume the cart is empty.
 	 * @param page - Playwright page instance used to interact with the website.
 	 */
-	test.beforeEach(async ({ page }, testInfo) => {
-		test.skip(
-			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
-			'Disabled by test toggle: couponCodes',
-		);
-
+	test('Add_product_to_cart', { tag: ['@cart', '@cold'] }, async ({ page }) => {
 		const productPage = new ProductPage(page);
 		await productPage.addSimpleProductToCart(
 			UIReference.text.frontend.product.simpleProduct,
 			slugs.frontend.product.simple,
 		);
-
 		await page.goto(slugs.frontend.cart.index);
-	});
 
-	/**
-	 * Test: A guest adds a product to their cart
-	 * @assume we have already added a product to the cart.
-	 * @param page - Playwright page instance used to interact with the website.
-	 */
-	test('Add_product_to_cart', { tag: ['@cart', '@cold'] }, async ({ page }) => {
 		await expect(
 			page
 				.getByRole('heading')
 				.getByRole('link', { name: UIReference.text.frontend.product.simpleProduct }),
 			`Product is visible in cart`,
 		).toBeVisible();
+	});
+});
+
+/**
+ * Test Group: Cart functionalities for guests
+ */
+test.describe('Cart functionalities (guest)', () => {
+	/**
+	 * Before each test: the cartWithSimpleProduct fixture has already seeded the
+	 * cart over HTTP, so this only has to open it.
+	 * @param page - Playwright page instance used to interact with the website.
+	 */
+	test.beforeEach(async ({ page, cartWithSimpleProduct }, testInfo) => {
+		test.skip(
+			testInfo.tags.includes('@coupon-code') && toggles.couponCodes === false,
+			'Disabled by test toggle: couponCodes',
+		);
+
+		await page.goto(slugs.frontend.cart.index);
 	});
 
 	/**

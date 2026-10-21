@@ -23,8 +23,9 @@ import fs from 'fs';
 import path from 'path';
 
 import { requireEnv, getHttpCredentials, getConsentCmpHost } from '@utils/env.utils';
-import { slugs, UIReference } from '@config';
+import { inputValues, slugs, UIReference } from '@config';
 import { slugToRegex } from '@utils/url.utils';
+import { seedCart, type CartSeedItem } from '@utils/cart.utils';
 import { getConsentCookies, guestStorageState, workerAuthStatePath } from '@fixtures/storage-state';
 
 export * from '@playwright/test';
@@ -56,284 +57,349 @@ async function blockConsentManager(context: BrowserContext): Promise<void> {
 }
 
 /**
+ * Cart preconditions, declared on both test objects under the same name so a
+ * spec reads the same whether or not it is logged in. Opt in per test by
+ * destructuring the fixture; a test that omits it gets an untouched cart, which
+ * is what the add-to-cart tests themselves need.
+ */
+type CartFixtures = {
+	cartWithSimpleProduct: void;
+	cartWithConfigurableProduct: void;
+};
+
+/**
+ * The carts these fixtures start a test with. Functions rather than constants
+ * so the config read happens per test rather than at import time. seedCart
+ * resolves a configurable's variant from its PDP, so both are just a slug.
+ */
+const simpleProductCart = (): CartSeedItem[] => [
+	{
+		slug: slugs.frontend.product.simple,
+		quantity: inputValues.product.simpleProductQuantity,
+	},
+];
+
+const configurableProductCart = (): CartSeedItem[] => [
+	{
+		slug: slugs.frontend.product.configurable,
+		quantity: inputValues.product.configurableProductQuantity,
+	},
+];
+
+/**
  * Guest (unauthenticated) test object. Its storageState carries only the
  * consent cookies and has NO dependency on workerStorageState, so requesting it
  * never triggers the login fixture. Guest specs import it as `test`
  * (`import { guestTest as test, expect } from '@utils/fixtures.utils'`); files
  * that mix both use `guestTest.describe(...)` for the logged-out group.
  */
-export const guestTest = baseTest.extend({
-	// Resolved here, at test-execution time — after globalSetup wrote the seed.
-	// Empty destructuring is how Playwright detects this fixture has no
-	// dependencies (see file header) — it is not an unused-pattern mistake.
-	// eslint-disable-next-line no-empty-pattern
-	storageState: async ({}, use) => use(guestStorageState()),
-});
-
-/** Authenticated test object (the default for specs that need a session). */
-export const test = baseTest.extend<{ _authGuard: void }, { workerStorageState: string }>({
-	// Use the same storage state for all tests in this worker.
-	storageState: ({ workerStorageState }, use) => use(workerStorageState),
-
-	/**
-	 * Auto-fixture: verifies the worker's stored auth is still valid for the
-	 * current test and re-authenticates inline if not. Catches sessions that
-	 * expired or rotated between fixture init and this test running.
-	 *
-	 * Skipped for guest tests, whose storageState is an object rather than the
-	 * worker's file path.
-	 */
-	_authGuard: [
-		async ({ page, storageState }, use) => {
-			const expectedPath = workerAuthStatePath(
-				test.info().project.name,
-				test.info().parallelIndex,
-			);
-
-			if (typeof storageState === 'string' && storageState === expectedPath) {
-				const isLoggedIn = await page.request
-					.get('/customer/section/load?sections=customer')
-					.then((r) => (r.ok() ? r.json() : null))
-					.then(
-						(j: { customer?: { firstname?: string } } | null) =>
-							!!j?.customer?.firstname,
-					)
-					.catch(() => false);
-
-				if (!isLoggedIn) {
-					const id = test.info().parallelIndex;
-					const username = `playwright+${id}@elgentos.nl`;
-					const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
-
-					await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
-					await page
-						.getByRole('textbox', {
-							name: UIReference.text.shared.forms.email,
-							exact: true,
-						})
-						.fill(username);
-					await page
-						.getByRole('textbox', { name: UIReference.text.shared.forms.password })
-						.fill(password);
-					await page
-						.getByRole('button', { name: UIReference.text.shared.buttons.login })
-						.click();
-					await page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
-
-					// Keep the consent decision in the refreshed file: this context
-					// inherited it from the worker state, but re-seed explicitly so a
-					// file written here is never the one that loses it.
-					await page.context().addCookies(getConsentCookies());
-					await page.context().storageState({ path: storageState });
-				}
-			}
-
+export const guestTest = baseTest
+	.extend({
+		// Resolved here, at test-execution time — after globalSetup wrote the seed.
+		// Empty destructuring is how Playwright detects this fixture has no
+		// dependencies (see file header) — it is not an unused-pattern mistake.
+		// eslint-disable-next-line no-empty-pattern
+		storageState: async ({}, use) => use(guestStorageState()),
+	})
+	.extend<CartFixtures>({
+		cartWithSimpleProduct: async ({ page }, use) => {
+			await seedCart(page, simpleProductCart());
 			await use();
 		},
-		{ auto: true },
-	],
 
-	// Authenticate once per worker with a worker-scoped fixture.
-	workerStorageState: [
-		async ({ browser }, use) => {
-			const id = test.info().parallelIndex;
-			const fileName = workerAuthStatePath(test.info().project.name, id);
+		cartWithConfigurableProduct: async ({ page }, use) => {
+			await seedCart(page, configurableProductCart());
+			await use();
+		},
+	});
 
-			// Check if the user is actually logged in
-			const userIsLoggedIn = async (storageState?: string): Promise<boolean> => {
+/** Authenticated test object (the default for specs that need a session). */
+export const test = baseTest
+	.extend<{ _authGuard: void }, { workerStorageState: string }>({
+		// Use the same storage state for all tests in this worker.
+		storageState: ({ workerStorageState }, use) => use(workerStorageState),
+
+		/**
+		 * Auto-fixture: verifies the worker's stored auth is still valid for the
+		 * current test and re-authenticates inline if not. Catches sessions that
+		 * expired or rotated between fixture init and this test running.
+		 *
+		 * Skipped for guest tests, whose storageState is an object rather than the
+		 * worker's file path.
+		 */
+		_authGuard: [
+			async ({ page, storageState }, use) => {
+				const expectedPath = workerAuthStatePath(
+					test.info().project.name,
+					test.info().parallelIndex,
+				);
+
+				if (typeof storageState === 'string' && storageState === expectedPath) {
+					const isLoggedIn = await page.request
+						.get('/customer/section/load?sections=customer')
+						.then((r) => (r.ok() ? r.json() : null))
+						.then(
+							(j: { customer?: { firstname?: string } } | null) =>
+								!!j?.customer?.firstname,
+						)
+						.catch(() => false);
+
+					if (!isLoggedIn) {
+						const id = test.info().parallelIndex;
+						const username = `playwright+${id}@elgentos.nl`;
+						const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
+
+						await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
+						await page
+							.getByRole('textbox', {
+								name: UIReference.text.shared.forms.email,
+								exact: true,
+							})
+							.fill(username);
+						await page
+							.getByRole('textbox', { name: UIReference.text.shared.forms.password })
+							.fill(password);
+						await page
+							.getByRole('button', { name: UIReference.text.shared.buttons.login })
+							.click();
+						await page.waitForURL(slugToRegex(slugs.frontend.account.overview, true));
+
+						// Keep the consent decision in the refreshed file: this context
+						// inherited it from the worker state, but re-seed explicitly so a
+						// file written here is never the one that loses it.
+						await page.context().addCookies(getConsentCookies());
+						await page.context().storageState({ path: storageState });
+					}
+				}
+
+				await use();
+			},
+			{ auto: true },
+		],
+
+		// Authenticate once per worker with a worker-scoped fixture.
+		workerStorageState: [
+			async ({ browser }, use) => {
+				const id = test.info().parallelIndex;
+				const fileName = workerAuthStatePath(test.info().project.name, id);
+
+				// Check if the user is actually logged in
+				const userIsLoggedIn = async (storageState?: string): Promise<boolean> => {
+					const context = await browser.newContext({
+						baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
+						storageState,
+						ignoreHTTPSErrors: true,
+						httpCredentials: getHttpCredentials(),
+					});
+
+					try {
+						const page = await context.newPage();
+						await page.goto(slugs.frontend.account.overview, {
+							waitUntil: 'domcontentloaded',
+							timeout: AUTH_TIMEOUT_MS,
+						});
+
+						return !page.url().includes(slugs.frontend.account.login);
+					} catch {
+						// This is only a cache-validity probe: a transient failure means
+						// "not trustworthy, rebuild", never "fail every test in this worker".
+						return false;
+					} finally {
+						await context.close();
+					}
+				};
+
+				/**
+				 * A cached auth file is only safe to reuse if it still carries the
+				 * consent cookies. A file built by an older run (or before the seed
+				 * existed) lacks them, which lets the banner intercept clicks in every
+				 * test of this worker. Rebuild instead of trusting the file.
+				 */
+				const fileHasConsentCookies = (storageFile: string): boolean => {
+					try {
+						const saved = JSON.parse(fs.readFileSync(storageFile, 'utf8'));
+						const savedNames = new Set(
+							(saved.cookies ?? []).map((c: { name: string }) => c.name),
+						);
+						return getConsentCookies().every((c) => savedNames.has(c.name));
+					} catch {
+						return false;
+					}
+				};
+
+				if (
+					fs.existsSync(fileName) &&
+					fileHasConsentCookies(fileName) &&
+					(await userIsLoggedIn(fileName))
+				) {
+					await use(fileName);
+					return;
+				}
+
+				/**
+				 * Authenticate in a context free of *session* state — but NOT free of
+				 * the consent decision. With `storageState: undefined` the context
+				 * starts with zero cookies, the CMP dialog renders on the login page,
+				 * and its overlay swallows the click on the login button, failing every
+				 * authenticated test in the worker.
+				 */
 				const context = await browser.newContext({
-					baseURL: requireEnv('PLAYWRIGHT_BASE_URL'),
-					storageState,
+					storageState: { cookies: getConsentCookies(), origins: [] },
+					baseURL: requireEnv(`PLAYWRIGHT_BASE_URL`),
 					ignoreHTTPSErrors: true,
 					httpCredentials: getHttpCredentials(),
 				});
+				await blockConsentManager(context);
 
-				try {
-					const page = await context.newPage();
-					await page.goto(slugs.frontend.account.overview, {
-						waitUntil: 'domcontentloaded',
-						timeout: AUTH_TIMEOUT_MS,
-					});
+				const page = await context.newPage();
 
-					return !page.url().includes(slugs.frontend.account.login);
-				} catch {
-					// This is only a cache-validity probe: a transient failure means
-					// "not trustworthy, rebuild", never "fail every test in this worker".
-					return false;
-				} finally {
-					await context.close();
-				}
-			};
+				// One pre-provisioned account per parallel index; init.setup.ts creates
+				// them (playwright+0@ … playwright+12@) through the Magento API.
+				const account = {
+					username: `playwright+${id}@elgentos.nl`,
+					password: requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`),
+				};
 
-			/**
-			 * A cached auth file is only safe to reuse if it still carries the
-			 * consent cookies. A file built by an older run (or before the seed
-			 * existed) lacks them, which lets the banner intercept clicks in every
-			 * test of this worker. Rebuild instead of trusting the file.
-			 */
-			const fileHasConsentCookies = (storageFile: string): boolean => {
-				try {
-					const saved = JSON.parse(fs.readFileSync(storageFile, 'utf8'));
-					const savedNames = new Set(
-						(saved.cookies ?? []).map((c: { name: string }) => c.name),
-					);
-					return getConsentCookies().every((c) => savedNames.has(c.name));
-				} catch {
-					return false;
-				}
-			};
-
-			if (
-				fs.existsSync(fileName) &&
-				fileHasConsentCookies(fileName) &&
-				(await userIsLoggedIn(fileName))
-			) {
-				await use(fileName);
-				return;
-			}
-
-			/**
-			 * Authenticate in a context free of *session* state — but NOT free of
-			 * the consent decision. With `storageState: undefined` the context
-			 * starts with zero cookies, the CMP dialog renders on the login page,
-			 * and its overlay swallows the click on the login button, failing every
-			 * authenticated test in the worker.
-			 */
-			const context = await browser.newContext({
-				storageState: { cookies: getConsentCookies(), origins: [] },
-				baseURL: requireEnv(`PLAYWRIGHT_BASE_URL`),
-				ignoreHTTPSErrors: true,
-				httpCredentials: getHttpCredentials(),
-			});
-			await blockConsentManager(context);
-
-			const page = await context.newPage();
-
-			// One pre-provisioned account per parallel index; init.setup.ts creates
-			// them (playwright+0@ … playwright+12@) through the Magento API.
-			const account = {
-				username: `playwright+${id}@elgentos.nl`,
-				password: requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`),
-			};
-
-			const emailField = page.getByRole('textbox', {
-				name: UIReference.text.shared.forms.email,
-				exact: true,
-			});
-			const pwField = page.getByRole('textbox', {
-				name: UIReference.text.shared.forms.password,
-			});
-			const loginButton = page.getByRole('button', {
-				name: UIReference.text.shared.buttons.login,
-			});
-
-			/**
-			 * The test's own trace does not cover this context, so dump the page
-			 * state into the report instead. Best-effort throughout: diagnostics
-			 * must never mask the real error.
-			 */
-			const dumpFailureState = async (error: unknown): Promise<void> => {
-				const label = `auth-fixture-worker-${id}`;
-
-				try {
-					const info = test.info();
-
-					await info.attach(`${label}-screenshot.png`, {
-						body: await page.screenshot({ fullPage: true }),
-						contentType: 'image/png',
-					});
-
-					// The headings list is the payload that matters for a greeting or
-					// translation mismatch: it shows the text that IS on the page next
-					// to the text we waited for.
-					await info.attach(`${label}-context.txt`, {
-						contentType: 'text/plain',
-						body: [
-							`account:  ${account.username}`,
-							`url:      ${page.url()}`,
-							`title:    ${await page.title()}`,
-							`headings: ${JSON.stringify(await page.getByRole('heading').allTextContents())}`,
-							`error:    ${error instanceof Error ? error.message : String(error)}`,
-						].join(`\n`),
-					});
-
-					await info.attach(`${label}-page.html`, {
-						body: await page.content(),
-						contentType: 'text/html',
-					});
-				} catch (dumpError) {
-					console.error(
-						`[auth fixture] failed to capture failure state: ${String(dumpError)}`,
-					);
-				}
-			};
-
-			try {
-				await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
-				await emailField.waitFor({ timeout: AUTH_TIMEOUT_MS });
-
-				await emailField.fill(account.username);
-				await pwField.fill(account.password);
-				await loginButton.click();
-
-				const loginErrorMessage = page.locator(UIReference.selectors.shared.errorMessage);
+				const emailField = page.getByRole('textbox', {
+					name: UIReference.text.shared.forms.email,
+					exact: true,
+				});
+				const pwField = page.getByRole('textbox', {
+					name: UIReference.text.shared.forms.password,
+				});
+				const loginButton = page.getByRole('button', {
+					name: UIReference.text.shared.buttons.login,
+				});
 
 				/**
-				 * Race the successful navigation against Magento's error message so
-				 * refused credentials fail fast and say why, instead of surfacing as
-				 * a bare timeout. Both branches swallow their own rejection, so the
-				 * loser of the race cannot raise an unhandled rejection.
+				 * The test's own trace does not cover this context, so dump the page
+				 * state into the report instead. Best-effort throughout: diagnostics
+				 * must never mask the real error.
 				 */
-				const outcome = await Promise.race([
-					page
-						.waitForURL(slugToRegex(slugs.frontend.account.overview, true), {
-							timeout: AUTH_TIMEOUT_MS,
-						})
-						.then(() => 'account' as const)
-						.catch(() => 'timeout' as const),
-					loginErrorMessage
-						.waitFor({ state: 'visible', timeout: AUTH_TIMEOUT_MS })
-						.then(() => 'error' as const)
-						.catch(() => 'timeout' as const),
-				]);
+				const dumpFailureState = async (error: unknown): Promise<void> => {
+					const label = `auth-fixture-worker-${id}`;
 
-				if (outcome === 'error') {
-					const message = (await loginErrorMessage.textContent())?.trim();
-					throw new Error(
-						`Auth fixture could not log in as ${account.username}. ` +
-							`Magento returned: "${message}"`,
+					try {
+						const info = test.info();
+
+						await info.attach(`${label}-screenshot.png`, {
+							body: await page.screenshot({ fullPage: true }),
+							contentType: 'image/png',
+						});
+
+						// The headings list is the payload that matters for a greeting or
+						// translation mismatch: it shows the text that IS on the page next
+						// to the text we waited for.
+						await info.attach(`${label}-context.txt`, {
+							contentType: 'text/plain',
+							body: [
+								`account:  ${account.username}`,
+								`url:      ${page.url()}`,
+								`title:    ${await page.title()}`,
+								`headings: ${JSON.stringify(await page.getByRole('heading').allTextContents())}`,
+								`error:    ${error instanceof Error ? error.message : String(error)}`,
+							].join(`\n`),
+						});
+
+						await info.attach(`${label}-page.html`, {
+							body: await page.content(),
+							contentType: 'text/html',
+						});
+					} catch (dumpError) {
+						console.error(
+							`[auth fixture] failed to capture failure state: ${String(dumpError)}`,
+						);
+					}
+				};
+
+				try {
+					await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
+					await emailField.waitFor({ timeout: AUTH_TIMEOUT_MS });
+
+					await emailField.fill(account.username);
+					await pwField.fill(account.password);
+					await loginButton.click();
+
+					const loginErrorMessage = page.locator(
+						UIReference.selectors.shared.errorMessage,
 					);
+
+					/**
+					 * Race the successful navigation against Magento's error message so
+					 * refused credentials fail fast and say why, instead of surfacing as
+					 * a bare timeout. Both branches swallow their own rejection, so the
+					 * loser of the race cannot raise an unhandled rejection.
+					 */
+					const outcome = await Promise.race([
+						page
+							.waitForURL(slugToRegex(slugs.frontend.account.overview, true), {
+								timeout: AUTH_TIMEOUT_MS,
+							})
+							.then(() => 'account' as const)
+							.catch(() => 'timeout' as const),
+						loginErrorMessage
+							.waitFor({ state: 'visible', timeout: AUTH_TIMEOUT_MS })
+							.then(() => 'error' as const)
+							.catch(() => 'timeout' as const),
+					]);
+
+					if (outcome === 'error') {
+						const message = (await loginErrorMessage.textContent())?.trim();
+						throw new Error(
+							`Auth fixture could not log in as ${account.username}. ` +
+								`Magento returned: "${message}"`,
+						);
+					}
+
+					if (outcome === 'timeout') {
+						throw new Error(
+							`Auth fixture: login as ${account.username} neither reached the account ` +
+								`page nor produced an error within ${AUTH_TIMEOUT_MS}ms.`,
+						);
+					}
+
+					await expect(async () => {
+						await expect(
+							page.locator(UIReference.selectors.shared.pageTitle),
+							`Account page has the expected title`,
+						).toContainText(UIReference.text.frontend.account.title);
+					}).toPass({ timeout: AUTH_TIMEOUT_MS });
+				} catch (error) {
+					await dumpFailureState(error);
+					await context.close();
+					throw error;
 				}
 
-				if (outcome === 'timeout') {
-					throw new Error(
-						`Auth fixture: login as ${account.username} neither reached the account ` +
-							`page nor produced an error within ${AUTH_TIMEOUT_MS}ms.`,
-					);
-				}
-
-				await expect(async () => {
-					await expect(
-						page.locator(UIReference.selectors.shared.pageTitle),
-						`Account page has the expected title`,
-					).toContainText(UIReference.text.frontend.account.title);
-				}).toPass({ timeout: AUTH_TIMEOUT_MS });
-			} catch (error) {
-				await dumpFailureState(error);
+				// Seed the consent decision into the saved state as well, so it is
+				// present for every test that reuses this file.
+				await page.context().addCookies(getConsentCookies());
+				fs.mkdirSync(path.dirname(fileName), { recursive: true });
+				await page.context().storageState({ path: fileName });
+				console.log(`${fileName} has been newly built.`);
 				await context.close();
-				throw error;
-			}
 
-			// Seed the consent decision into the saved state as well, so it is
-			// present for every test that reuses this file.
-			await page.context().addCookies(getConsentCookies());
-			fs.mkdirSync(path.dirname(fileName), { recursive: true });
-			await page.context().storageState({ path: fileName });
-			console.log(`${fileName} has been newly built.`);
-			await context.close();
-
-			await use(fileName);
+				await use(fileName);
+			},
+			{ scope: 'worker' },
+		],
+	})
+	.extend<CartFixtures>({
+		/**
+		 * `_authGuard` is destructured for its ordering, not its value: Magento
+		 * merges a guest quote into the customer's on login, so seeding before the
+		 * guard's inline re-login could move the item onto the wrong quote or double
+		 * it. Naming the guard as a dependency forces login-then-seed instead of
+		 * leaving the order to Playwright's auto-fixture scheduling.
+		 */
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		cartWithSimpleProduct: async ({ page, _authGuard }, use) => {
+			await seedCart(page, simpleProductCart());
+			await use();
 		},
-		{ scope: 'worker' },
-	],
-});
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		cartWithConfigurableProduct: async ({ page, _authGuard }, use) => {
+			await seedCart(page, configurableProductCart());
+			await use();
+		},
+	});
