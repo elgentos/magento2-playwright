@@ -17,6 +17,7 @@ node_modules/
 
 # Playwright artifacts
 /playwright-report/
+/timing-report/
 /test-results/
 /.playwright-mcp/
 /tests/utils/snapshots/

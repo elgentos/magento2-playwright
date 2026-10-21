@@ -214,6 +214,13 @@ export class AdminLogin {
 		if (!(await this.customerCreateReCaptchaOption.isVisible())) {
 			// option not visible, accordion is closed.
 			await this.storefrontReCaptchaAccordion.click();
+
+			// Sometimes, the accordion *does* open, it just takes longer.
+			// After the accordion has been clicked above, confirm it's visible now.
+			if (!(await this.customerCreateReCaptchaOption.isVisible())) {
+				await this.storefrontReCaptchaAccordion.click();
+			}
+
 			// Confirm the option is now open
 			await expect(
 				this.customerCreateReCaptchaOption,
@@ -318,6 +325,13 @@ export class AdminLogin {
 		if (!(await this.adminSharingOption.isVisible())) {
 			// tab is closed.
 			await this.adminSecurityAccordion.click();
+
+			// Sometimes, the accordion *does* open, it just takes longer.
+			// After the accordion has been clicked above, confirm it's visible now.
+			if (!(await this.adminSharingOption.isVisible())) {
+				await this.adminSecurityAccordion.click();
+			}
+
 			await expect(this.adminSharingOption, `Security tab is opened`).toBeVisible();
 		}
 
