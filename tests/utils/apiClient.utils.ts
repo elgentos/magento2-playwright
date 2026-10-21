@@ -1,6 +1,6 @@
 // @ts-check
 
-import { request, expect, APIRequestContext, APIResponse } from '@playwright/test';
+import { request, APIRequestContext, APIResponse } from '@playwright/test';
 import { requireEnv, getHttpCredentials } from '@utils/env.utils';
 
 class ApiClient {
@@ -9,6 +9,10 @@ class ApiClient {
 	private tokenExpiry: number | undefined;
 
 	constructor() {}
+
+	// ==============================================
+	// General / initialization methods
+	// ==============================================
 
 	/**
 	 * Initializes the ApiClient by ensuring a valid token and setting up the request context.
@@ -91,6 +95,10 @@ class ApiClient {
 		return !this.tokenExpiry || Date.now() >= this.tokenExpiry;
 	}
 
+	// ==============================================
+	// CRUD methods
+	// ==============================================
+
 	/**
 	 * Performs a GET request to the specified URL.
 	 * @param {string} url The endpoint URL to send the request to.
@@ -128,12 +136,38 @@ class ApiClient {
 	/**
 	 * Performs a DELETE request to the specified URL.
 	 * @param {string} url The endpoint URL to send the request to.
-	 * @returns {Promise<void>} A Promise indicating successful deletion.
+	 * @returns {Promise<void>} does not return anything except if the delete request failed.
 	 */
 	async delete(url: string): Promise<void> {
 		const response = await this.context.delete(url);
-		return this.handleResponse(response);
+		if (!response.ok()) {
+			throw new Error(`API call failed [${response.status()}]: ${await response.text()}`);
+		}
+		await this.handleResponse(response);
 	}
+
+	/**
+	 * Performs a GET to check if stale accounts are present.
+	 * These items come from account tests. If found, performs a DELETE request.
+	 * @param {string} item account to search for.
+	 * @returns {Promise<void>} does not return anything except if the delete request failed.
+	 */
+	async clearStaleAccounts(item: string): Promise<void> {
+		const searchResponse = await this.get(
+			`/rest/V1/customers/search` +
+				`?searchCriteria[filterGroups][0][filters][0][field]=email` +
+				`&searchCriteria[filterGroups][0][filters][0][value]=${item}` +
+				`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
+		);
+
+		if (searchResponse.items?.length > 0) {
+			await this.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
+		}
+	}
+
+	// ==============================================
+	// Handling methods
+	// ==============================================
 
 	/**
 	 * Handles an API response, checking for success and parsing the JSON body.
