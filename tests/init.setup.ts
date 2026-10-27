@@ -142,7 +142,7 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 		const skipped: string[] = [];
 
 		for (let accountId = 0; accountId < ACCOUNTS_PER_PROJECT; accountId++) {
-			const email = `playwright+${accountId}@elgentos.nl`;
+			const email = `playwright+${accountId}@${inputValues.account.emailDomain}`;
 
 			if (existingEmails.has(email)) {
 				skipped.push(email);

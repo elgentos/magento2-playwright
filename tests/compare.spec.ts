@@ -1,7 +1,7 @@
 // @ts-check
 
 import { guestTest as test, expect } from '@utils/fixtures.utils';
-import { UIReference, outcomeMarker, slugs, toggles } from '@config';
+import { UIReference, outcomeMarker, slugs, toggles, inputValues } from '@config';
 
 import { ComparePage } from '@poms/frontend/compare.page';
 import { LoginPage } from '@poms/frontend/login.page';
@@ -108,7 +108,7 @@ test(
 
 		await test.step('Log in with account', async () => {
 			const id = test.info().parallelIndex;
-			const user = `playwright+${id}@elgentos.nl`;
+			const user = `playwright+${id}@${inputValues.account.emailDomain}`;
 			const password = requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`);
 
 			const loginPage = new LoginPage(page);
