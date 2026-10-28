@@ -146,7 +146,7 @@ export const test = baseTest
 
 					if (!isLoggedIn) {
 						const id = test.info().parallelIndex;
-						const username = `playwright+${id}@elgentos.nl`;
+						const username = `playwright+${id}@${inputValues.account.emailDomain}`;
 						const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
 						await page.goto(slugs.frontend.account.login, { waitUntil: 'load' });
@@ -256,7 +256,7 @@ export const test = baseTest
 				// One pre-provisioned account per parallel index; init.setup.ts creates
 				// them (playwright+0@ … playwright+12@) through the Magento API.
 				const account = {
-					username: `playwright+${id}@elgentos.nl`,
+					username: `playwright+${id}@${inputValues.account.emailDomain}`,
 					password: requireEnv(`MAGENTO_EXISTING_ACCOUNT_PASSWORD`),
 				};
 

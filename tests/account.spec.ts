@@ -54,7 +54,7 @@ guestTest.describe(
 				const loginPage = new LoginPage(page);
 
 				const parallelIndex = guestTest.info().parallelIndex;
-				const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
+				const email = `playwright_pwtest_${parallelIndex}@${inputValues.account.emailDomain}`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
@@ -106,8 +106,8 @@ guestTest.describe(
 				const loginPage = new LoginPage(page);
 
 				const parallelIndex = guestTest.info().parallelIndex;
-				const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
-				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@elgentos.nl`;
+				const originalEmail = `playwright_emailtest_${parallelIndex}@${inputValues.account.emailDomain}`;
+				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@${inputValues.account.emailDomain}`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
 				// Ensure stale accounts leftover from previous tests are cleared.

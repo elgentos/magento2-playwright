@@ -84,7 +84,7 @@ test.describe('Cart functionalities (guest)', () => {
 				const loginPage = new LoginPage(page);
 
 				const parallelIndex = test.info().parallelIndex;
-				const email = `playwright+${parallelIndex}@elgentos.nl`;
+				const email = `playwright+${parallelIndex}@${inputValues.account.emailDomain}`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
 				await loginPage.goToLoginPage();
