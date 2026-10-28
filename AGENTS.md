@@ -101,7 +101,7 @@ evaluated during collection, before `globalSetup` has written the seed. Use
 
 The authenticated object:
 - Logs in as a pre-provisioned account chosen by worker index
-  (`playwright+{parallelIndex}@elgentos.nl`, created by `init.setup.ts`).
+  (`playwright+{parallelIndex}@example.com`, created by `init.setup.ts`).
 - Stores auth state in `.auth/{projectName}/worker_{parallelIndex}.json`, so
   chromium, firefox and webkit never share a *state file*. They do still share
   the Magento *customer* at a given index, which is safe because no spec

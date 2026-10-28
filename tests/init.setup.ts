@@ -68,7 +68,9 @@ test('Disable_login_captcha_and_enable_multiple_login', async ({ page }) => {
 				name: UIReference.text.admin.configuration.magentoIncomingMessage,
 			}),
 			button: page
-				.locator(UIReference.selectors.admin.common.modalHeader)
+				.getByRole('dialog', {
+					name: UIReference.text.admin.configuration.magentoIncomingMessage,
+				})
 				.getByRole('button'),
 		},
 	];
@@ -140,7 +142,7 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 		const skipped: string[] = [];
 
 		for (let accountId = 0; accountId < ACCOUNTS_PER_PROJECT; accountId++) {
-			const email = `playwright+${accountId}@elgentos.nl`;
+			const email = `playwright+${accountId}@${inputValues.account.emailDomain}`;
 
 			if (existingEmails.has(email)) {
 				skipped.push(email);

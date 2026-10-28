@@ -54,22 +54,14 @@ guestTest.describe(
 				const loginPage = new LoginPage(page);
 
 				const parallelIndex = guestTest.info().parallelIndex;
-				const email = `playwright_pwtest_${parallelIndex}@elgentos.nl`;
+				const email = `playwright_pwtest_${parallelIndex}@${inputValues.account.emailDomain}`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 				const changedPassword = requireEnv('MAGENTO_EXISTING_ACCOUNT_CHANGED_PASSWORD');
 
 				// Ensure a fresh account exists with the original password
-				const searchResponse = await apiClient.get(
-					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${email}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
-				);
+				await apiClient.clearStaleAccounts(email);
 
-				if (searchResponse.items?.length > 0) {
-					await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
-				}
-
+				// Now create the actual test account:
 				await apiClient.post('/rest/V1/customers', {
 					customer: {
 						email,
@@ -114,35 +106,13 @@ guestTest.describe(
 				const loginPage = new LoginPage(page);
 
 				const parallelIndex = guestTest.info().parallelIndex;
-				const originalEmail = `playwright_emailtest_${parallelIndex}@elgentos.nl`;
-				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@elgentos.nl`;
+				const originalEmail = `playwright_emailtest_${parallelIndex}@${inputValues.account.emailDomain}`;
+				const updatedEmail = `playwright_emailtest_updated_${parallelIndex}@${inputValues.account.emailDomain}`;
 				const password = requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD');
 
-				// Ensure a fresh account exists with the original email
-				const searchResponse = await apiClient.get(
-					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${originalEmail}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
-				);
-
-				if (searchResponse.items?.length > 0) {
-					await apiClient.delete(`/rest/V1/customers/${searchResponse.items[0].id}`);
-				}
-
-				// Also clean up any leftover updated email account from a previous run
-				const updatedSearchResponse = await apiClient.get(
-					`/rest/V1/customers/search` +
-						`?searchCriteria[filterGroups][0][filters][0][field]=email` +
-						`&searchCriteria[filterGroups][0][filters][0][value]=${updatedEmail}` +
-						`&searchCriteria[filterGroups][0][filters][0][conditionType]=eq`,
-				);
-
-				if (updatedSearchResponse.items?.length > 0) {
-					await apiClient.delete(
-						`/rest/V1/customers/${updatedSearchResponse.items[0].id}`,
-					);
-				}
+				// Ensure stale accounts leftover from previous tests are cleared.
+				await apiClient.clearStaleAccounts(originalEmail);
+				await apiClient.clearStaleAccounts(updatedEmail);
 
 				await apiClient.post('/rest/V1/customers', {
 					customer: {

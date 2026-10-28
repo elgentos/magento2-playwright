@@ -4,7 +4,6 @@ import { guestTest as test, expect } from '@utils/fixtures.utils';
 import { UIReference, outcomeMarker, slugs } from '@config';
 
 import { MainMenuPage } from '@poms/frontend/mainmenu.page';
-import { ProductPage } from '@poms/frontend/product.page';
 import { MiniCartPage } from '@poms/frontend/minicart.page';
 
 test.describe(
@@ -13,23 +12,21 @@ test.describe(
 	() => {
 		/**
 		 * @feature BeforeEach runs before each test in this group.
-		 * @scenario Add a product to the cart and confirm it's there.
-		 * @given I am on any page
-		 * @when I navigate to a (simple) product page
-		 *  @and I add it to my cart
-		 *  @then I should see a notification
+		 * @scenario Start with a product already in the cart and confirm it's there.
+		 * @given the cartWithSimpleProduct fixture has seeded a simple product
+		 * @when I open the product's page
 		 * @when I click the cart in the main menu
 		 *  @then the minicart should become visible
 		 *  @and I should see the product in the minicart
 		 */
-		test.beforeEach(async ({ page }) => {
+		test.beforeEach(async ({ page, cartWithSimpleProduct }) => {
 			const mainMenu = new MainMenuPage(page);
-			const productPage = new ProductPage(page);
 
-			await productPage.addSimpleProductToCart(
-				UIReference.text.frontend.product.simpleProduct,
-				slugs.frontend.product.simple,
-			);
+			// The fixture seeds over HTTP without navigating, so this group picks
+			// its own starting page — and it has to be the PDP, because
+			// checkPriceWithProductPage reads the product's price and <h1> from
+			// whatever page happens to be current.
+			await page.goto(slugs.frontend.product.simple);
 			await mainMenu.openMiniCart();
 			await expect(
 				page.getByText(outcomeMarker.miniCart.simpleProductInCartTitle),
@@ -136,24 +133,21 @@ test.describe(
 	() => {
 		/**
 		 * @feature BeforeEach runs before each test in this group.
-		 * @scenario Add a configurable product to the cart and confirm it's there.
-		 * @given I am on any page
-		 * @when I navigate to a (simple) product page
-		 *  @and I add it to my cart
-		 *  @then I should see a notification
+		 * @scenario Start with a configurable product already in the cart.
+		 * @given the cartWithConfigurableProduct fixture has seeded a variant
+		 * @when I open the product's page
 		 * @when I click the cart in the main menu
 		 *  @then the minicart should become visible
 		 *  @and I should see the product in the minicart
 		 */
-		test.beforeEach(async ({ page }) => {
+		test.beforeEach(async ({ page, cartWithConfigurableProduct }) => {
 			const mainMenu = new MainMenuPage(page);
-			const productPage = new ProductPage(page);
 
-			await productPage.addConfigurableProductToCart(
-				UIReference.text.frontend.product.configurableProduct,
-				slugs.frontend.product.configurable,
-				'2',
-			);
+			// The fixture seeds over HTTP without navigating, so this group picks
+			// its own starting page — and it has to be the PDP, because
+			// checkPriceWithProductPage reads the product's price and <h1> from
+			// whatever page happens to be current.
+			await page.goto(slugs.frontend.product.configurable);
 			await mainMenu.openMiniCart();
 			await expect(
 				page.getByText(outcomeMarker.miniCart.configurableProductMinicartTitle),

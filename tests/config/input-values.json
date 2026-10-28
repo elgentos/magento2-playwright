@@ -1,7 +1,8 @@
 {
 	"account": {
 		"firstName": "Playwright",
-		"lastName": "TestAccount"
+		"lastName": "TestAccount",
+		"emailDomain": "example.com"
 	},
 	"accountCreation": {
 		"emailHandleValue": "test-user",
@@ -64,6 +65,10 @@
 		"secondProvinceValue": "South Dakota",
 		"secondStreetAddressValue": "Under the Stairs",
 		"secondZipCodeValue": "67890"
+	},
+	"product": {
+		"configurableProductQuantity": 2,
+		"simpleProductQuantity": 1
 	},
 	"search": {
 		"queryMultipleResults": "bag",
