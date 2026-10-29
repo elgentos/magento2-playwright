@@ -46,6 +46,10 @@
 	"contactPage": {
 		"messageSentConfirmationText": "Thanks for contacting us with"
 	},
+	"customOptions": {
+		"fileRequired": "Please select a file.",
+		"selectionRequired": "Please select one of the options."
+	},
 	"customerOverviewPage": {
 		"searchResultsFoundText": "records found"
 	},
