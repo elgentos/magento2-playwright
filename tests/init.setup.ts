@@ -169,7 +169,7 @@ test(`Create_test_accounts`, { tag: '@api' }, async ({}) => {
 						},
 					],
 				},
-				password: `${requireEnv('MAGENTO_ADMIN_PASSWORD')}`,
+				password: `${requireEnv('MAGENTO_EXISTING_ACCOUNT_PASSWORD')}`,
 			};
 
 			await APIClient.post(`/rest/V1/customers`, customerPayload);

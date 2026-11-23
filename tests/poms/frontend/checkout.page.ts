@@ -4,6 +4,7 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 import { UIReference, outcomeMarker, slugs, inputValues } from '@config';
 import { slugToRegex } from '@utils/url.utils';
+import { parsePrice } from '@utils/price.utils';
 import MagewireUtils from '@utils/magewire.utils';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
 
@@ -343,16 +344,8 @@ export class CheckoutPage extends MagewireUtils {
 	// Price summary methods
 	// ==============================================
 
-	/**
-	 * Helper method to retrieve the value from a field
-	 * @param element {locator} - the element to retieve the price from
-	 * @returns match {float} - a float variable from what was originally text.
-	 */
 	async getPriceValue(element: Locator): Promise<number> {
-		const priceText = await element.innerText();
-		// Extract just the price part after the $ symbol
-		const match = priceText.match(/\$\s*([\d.]+)/);
-		return match ? parseFloat(match[1]) : 0;
+		return parsePrice(await element.innerText());
 	}
 
 	/**

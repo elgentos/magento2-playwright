@@ -3,6 +3,7 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { UIReference, outcomeMarker } from '@config';
 import NotificationValidatorUtils from '@utils/notificationValidator.utils';
+import { parsePrice } from '@utils/price.utils';
 
 export class CartPage {
 	constructor(public readonly page: Page) {}
@@ -251,13 +252,10 @@ export class CartPage {
 		priceCheckout: string,
 		amountCheckout: string,
 	) {
-		// perform magic to calculate price * amount and mold it into the correct form again
-		pricePDP = pricePDP.replace(UIReference.text.frontend.common.priceSymbol, '');
-		const pricePDPInt = Number(pricePDP);
-		const quantityPDPInt = parseInt(amountPDP);
-		const calculatedPricePDP =
-			`${UIReference.text.frontend.common.priceSymbol}` +
-			(pricePDPInt * quantityPDPInt).toFixed(2);
+		// Compare values, not formatting: rebuilding a price string would guess
+		// the store's number format.
+		const calculatedPricePDP = +(parsePrice(pricePDP) * parseInt(amountPDP)).toFixed(2);
+		const pricePaidInCheckout = parsePrice(priceCheckout);
 
 		// Final assertions: confirm the quantities are the same in cart and checkout,
 		// then confirm the price listed in the checkout equals our calculcated price.
@@ -267,7 +265,7 @@ export class CartPage {
 		).toEqual(amountCheckout);
 		expect(
 			calculatedPricePDP,
-			`Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${priceCheckout})`,
-		).toEqual(priceCheckout);
+			`Price * qty on PDP (${calculatedPricePDP}) equals price * qty in checkout (${pricePaidInCheckout})`,
+		).toEqual(pricePaidInCheckout);
 	}
 }
