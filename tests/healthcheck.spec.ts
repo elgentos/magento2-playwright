@@ -232,7 +232,10 @@ test.describe('Visual Regression Tests', () => {
 				// 2. Capture production and write it to the snapshot path that step 4's
 				//    assertion reads. One file per page/browser/day — re-running on the
 				//    same day overwrites it with the latest production state.
-				const productionBuffer = await page.screenshot({ mask: masks });
+				const productionBuffer = await page.screenshot({
+					mask: masks,
+					animations: 'disabled',
+				});
 				const baselinePath = testInfo.snapshotPath(snapshotName);
 				fs.mkdirSync(path.dirname(baselinePath), { recursive: true });
 				fs.writeFileSync(baselinePath, productionBuffer);
