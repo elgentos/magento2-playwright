@@ -25,5 +25,5 @@ node_modules/
 # Backup mirror / generated content
 /base-tests/
 /i18n/
-docs/superpowers/
+docs/
 .superpowers/
