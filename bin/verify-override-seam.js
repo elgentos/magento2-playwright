@@ -75,25 +75,15 @@ function buildFixture(dir, source) {
 	fs.symlinkSync(path.join(REPO, 'node_modules'), path.join(dir, 'node_modules'), 'dir');
 
 	// base-tests/utils/global-setup.ts imports this via a relative ../../ path,
-	// mirroring the real repo layout (playwrightRequestConfig.ts lives at the
-	// project root, two levels above tests/utils/). Not part of the seam under
-	// test, but required for the fixture to type-check.
+	// mirroring the real layout (playwrightRequestConfig.ts lives at the project
+	// root, two levels above base-tests/utils/; build.js copies it there for
+	// consumers). Its own '@utils/env.utils' import resolves against the
+	// base-tests/utils/ layer copied above. Not part of the seam under test, but
+	// required for the fixture to type-check.
 	fs.copyFileSync(
 		path.join(REPO, 'playwrightRequestConfig.ts'),
 		path.join(dir, 'playwrightRequestConfig.ts'),
 	);
-
-	// playwrightRequestConfig.ts imports './tests/utils/env.utils' by a hardcoded
-	// relative path (not an alias), so the fixture needs a tests/utils/ mirror
-	// too. This does NOT model a real consumer's tests/ — build.js:96 creates a
-	// real consumer's tests/ directory empty via mkdirSync. The mirror exists
-	// purely so the hardcoded relative-import chain (global-setup.ts ->
-	// ../../playwrightRequestConfig -> ./tests/utils/env.utils) has something to
-	// resolve against for type-checking.
-	const utilsSource = path.join(source, 'utils');
-	if (fs.existsSync(utilsSource)) {
-		fs.cpSync(utilsSource, path.join(dir, 'tests', 'utils'), { recursive: true });
-	}
 
 	// Aliases come from the SHIPPED template, so a missing @base/* fails this test.
 	fs.writeFileSync(

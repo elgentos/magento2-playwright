@@ -5,6 +5,9 @@ class Build {
 	pathToBaseDir = '../../../'; // default: when installed via npm
 	tempDirTests = 'base-tests';
 	exampleFileName = '.example';
+	// Package-owned modules that base-tests/ imports by a relative path into the
+	// project root (e.g. global-setup.ts -> '../../playwrightRequestConfig').
+	rootModuleFiles = ['playwrightRequestConfig.ts'];
 
 	constructor() {
 		const isLocalDev = fs.existsSync(path.resolve(__dirname, '.git'));
@@ -14,6 +17,7 @@ class Build {
 		}
 
 		this.copyExampleFiles();
+		this.copyRootModuleFiles();
 		this.copyTestsToTempFolder();
 		this.createNewTestsFolderForCustomTests();
 	}
@@ -33,9 +37,13 @@ class Build {
 		);
 
 		for (const file of exampleFiles) {
-			// destination will be created or overwritten by default.
-			const sourceFile = './' + file;
-			const destFile = this.pathToBaseDir + file.replace(this.exampleFileName, '');
+			// COPYFILE_EXCL: the destination is only created, never overwritten.
+			const sourceFile = path.resolve(__dirname, file);
+			const destFile = path.resolve(
+				__dirname,
+				this.pathToBaseDir,
+				file.replace(this.exampleFileName, ''),
+			);
 
 			try {
 				fs.copyFileSync(sourceFile, destFile, fs.constants.COPYFILE_EXCL);
@@ -47,6 +55,29 @@ class Build {
 					throw err;
 				}
 			}
+		}
+	}
+
+	/**
+	 * @feature Copy root module files
+	 * @scenario Copy package-owned modules that `base-tests/` imports from the project root.
+	 * @given `base-tests/utils/global-setup.ts` imports `../../playwrightRequestConfig`
+	 * @when I run the Build script
+	 * @then Every file in `rootModuleFiles` should be copied to the root directory
+	 *  @and Existing destination files should be overwritten, so they stay in sync with `base-tests/`
+	 */
+	copyRootModuleFiles() {
+		for (const file of this.rootModuleFiles) {
+			const sourceFile = path.resolve(__dirname, file);
+			const destFile = path.resolve(__dirname, this.pathToBaseDir, file);
+
+			// In the dev repo the source already sits in the root.
+			if (sourceFile === destFile) {
+				continue;
+			}
+
+			fs.copyFileSync(sourceFile, destFile);
+			console.log(`${file} was copied to destination`);
 		}
 	}
 
