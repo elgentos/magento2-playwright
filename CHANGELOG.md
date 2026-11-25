@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `build.js` now copies `playwrightRequestConfig.ts` to the project root on
+  install. `base-tests/utils/global-setup.ts` imports it by a relative path, so
+  without it every run failed with a module-not-found error. The file is
+  overwritten on each install, so it stays in sync with `base-tests/`.
+
 ## [7.1.0] - 2026-10-14
 
 ### Added
